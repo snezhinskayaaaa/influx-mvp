@@ -27,7 +27,7 @@ export function Navigation() {
       <div
         className={`transition-all duration-300 ${
           isScrolled
-            ? "max-w-5xl mx-auto bg-background/95 backdrop-blur-lg border border-border rounded-full shadow-lg px-6 py-3"
+            ? "max-w-5xl mx-auto bg-background/70 backdrop-blur-xl border border-border/50 rounded-full shadow-lg px-6 py-3"
             : "container px-4 bg-transparent"
         }`}
       >
