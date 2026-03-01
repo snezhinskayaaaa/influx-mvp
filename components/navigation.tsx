@@ -68,7 +68,7 @@ export function Navigation() {
             <Button variant="outline" size="sm" asChild className="rounded-full">
               <Link href="/signin">Log In</Link>
             </Button>
-            <Button asChild size="sm" className="bg-[#FF6B35] hover:bg-[#FF6B35]/90 text-white rounded-full">
+            <Button asChild size="sm" className="bg-primary hover:bg-primary/90 text-white rounded-full">
               <Link href="/signup">
                 Get Started
                 <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
