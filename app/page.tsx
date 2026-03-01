@@ -36,7 +36,7 @@ export default function Home() {
               Influx helps brands and virtual talents to find each other and launch campaigns on the same platform. Explore the first marketplace of AI influencers.
             </p>
             <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Button size="lg" asChild className="bg-warning hover:bg-warning/90 h-14 px-8 text-lg">
+              <Button size="lg" asChild className="bg-[#FF6B35] hover:bg-[#FF6B35]/90 text-white h-14 px-8 text-lg">
                 <Link href="/signup?type=brand">
                   <Building2 className="mr-2 h-5 w-5" />
                   For brands
@@ -272,7 +272,7 @@ export default function Home() {
             <Card className="p-8 border-2 border-primary relative">
               <Badge className="mb-4 bg-primary">For Brands</Badge>
               <div className="absolute -top-4 right-6">
-                <Badge className="bg-warning text-warning-foreground">Popular</Badge>
+                <Badge className="bg-[#FF6B35] text-white">Popular</Badge>
               </div>
               <h3 className="text-2xl font-bold mb-2">STARTER</h3>
               <p className="text-5xl font-bold mb-6">$299<span className="text-lg text-muted-foreground">/mo</span></p>
