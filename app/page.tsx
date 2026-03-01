@@ -27,32 +27,29 @@ export default function Home() {
         <div className="container px-6 lg:px-8">
           <div className="mx-auto max-w-4xl text-center">
             <h1 className="text-5xl font-bold tracking-tight sm:text-6xl lg:text-7xl">
-              The First Marketplace for{" "}
+              AI Influencers and brands{" "}
               <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-                AI Influencers
+                connected
               </span>
             </h1>
-            <p className="mt-6 text-xl text-muted-foreground sm:text-2xl max-w-2xl mx-auto leading-relaxed">
-              Connect with verified virtual talent. Launch campaigns in minutes. Track real results.
+            <p className="mt-6 text-xl text-muted-foreground sm:text-2xl max-w-3xl mx-auto leading-relaxed">
+              Influx helps brands and virtual talents to find each other and launch campaigns on the same platform. Explore the first marketplace of AI influencers.
             </p>
             <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Button size="lg" asChild className="bg-secondary hover:bg-secondary/90 h-14 px-8 text-lg">
+              <Button size="lg" asChild className="bg-warning hover:bg-warning/90 h-14 px-8 text-lg">
+                <Link href="/signup?type=brand">
+                  <Building2 className="mr-2 h-5 w-5" />
+                  For brands
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Link>
+              </Button>
+              <Button size="lg" variant="outline" asChild className="h-14 px-8 text-lg border-muted-foreground/30 text-muted-foreground hover:bg-muted hover:text-foreground">
                 <Link href="/signup?type=influencer">
                   <Sparkles className="mr-2 h-5 w-5" />
                   Join as Influencer
                 </Link>
               </Button>
-              <Button size="lg" variant="outline" asChild className="h-14 px-8 text-lg border-primary text-primary hover:bg-primary hover:text-primary-foreground">
-                <Link href="/signup?type=brand">
-                  <Building2 className="mr-2 h-5 w-5" />
-                  Find Talent
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Link>
-              </Button>
             </div>
-            <p className="mt-4 text-sm text-muted-foreground">
-              Free for influencers • 20% commission on deals
-            </p>
 
             {/* Hero Visual - Placeholder for AI influencer grid */}
             <div className="mt-16 grid grid-cols-2 sm:grid-cols-3 gap-4 max-w-2xl mx-auto">
