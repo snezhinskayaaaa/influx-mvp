@@ -37,7 +37,7 @@ export function Navigation() {
             <NetworkLogo className="w-8 h-8 transition-transform group-hover:scale-110" />
             <div className="flex items-baseline gap-1">
               <span className="text-2xl font-bold text-primary">INFLUX</span>
-              <span className="text-xs font-medium text-foreground/60">market</span>
+              <span className="text-xs font-medium text-foreground/60">connect</span>
             </div>
           </Link>
 
