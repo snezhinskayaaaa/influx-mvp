@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Navigation } from "@/components/navigation";
 import {
   Sparkles,
   Building2,
@@ -19,40 +20,10 @@ export default function Home() {
   return (
     <div className="flex min-h-screen flex-col">
       {/* Navigation */}
-      <nav className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container flex h-20 items-center justify-between px-6 lg:px-8">
-          <div className="flex items-center gap-12">
-            <Link href="/" className="flex items-center space-x-2">
-              <span className="text-2xl font-bold text-primary">INFLUX.AI</span>
-            </Link>
-            <div className="hidden md:flex gap-8">
-              <Link href="#how-it-works" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
-                How It Works
-              </Link>
-              <Link href="#pricing" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
-                Pricing
-              </Link>
-              <Link href="#browse" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
-                Browse Influencers
-              </Link>
-            </div>
-          </div>
-          <div className="flex items-center gap-4">
-            <Button variant="ghost" asChild>
-              <Link href="/signin">Sign In</Link>
-            </Button>
-            <Button asChild className="bg-warning hover:bg-warning/90">
-              <Link href="/signup">
-                Get Started
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Link>
-            </Button>
-          </div>
-        </div>
-      </nav>
+      <Navigation />
 
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-b from-muted/50 to-background py-24 sm:py-32">
+      <section className="relative overflow-hidden bg-gradient-to-b from-background to-background pt-32 pb-24 sm:pt-40 sm:pb-32">
         <div className="container px-6 lg:px-8">
           <div className="mx-auto max-w-4xl text-center">
             <h1 className="text-5xl font-bold tracking-tight sm:text-6xl lg:text-7xl">
@@ -194,7 +165,7 @@ export default function Home() {
       </section>
 
       {/* How It Works Section */}
-      <section id="how-it-works" className="py-24 sm:py-32 bg-gradient-to-b from-muted/50 to-background">
+      <section id="how-it-works" className="py-24 sm:py-32 bg-background">
         <div className="container px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold tracking-tight sm:text-5xl">
