@@ -36,7 +36,7 @@ export default function Home() {
               Influx helps brands and virtual talents to find each other and launch campaigns on the same platform. Explore the first marketplace of AI influencers.
             </p>
             <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Button size="lg" asChild className="bg-primary hover:bg-primary/90 text-white h-14 px-8 text-lg">
+              <Button size="lg" asChild className="bg-secondary hover:bg-secondary/90 text-white h-14 px-8 text-lg">
                 <Link href="/signup?type=brand">
                   <Building2 className="mr-2 h-5 w-5" />
                   For brands

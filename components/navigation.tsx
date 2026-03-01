@@ -65,9 +65,6 @@ export function Navigation() {
 
           {/* Actions */}
           <div className="flex items-center gap-3">
-            <Button variant="outline" size="sm" asChild className="rounded-full">
-              <Link href="/signin">Log In</Link>
-            </Button>
             <Button asChild size="sm" className="bg-primary hover:bg-primary/90 text-white rounded-full">
               <Link href="/signup">
                 Get Started
