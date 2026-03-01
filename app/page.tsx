@@ -36,15 +36,13 @@ export default function Home() {
               Influx helps brands and virtual talents to find each other and launch campaigns on the same platform. Explore the first marketplace of AI influencers.
             </p>
             <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
-              <div className="relative h-14 rounded-xl p-[2px] bg-gradient-to-r from-primary/30 to-secondary/30 hover:from-primary/35 hover:to-secondary/35 transition-all">
-                <Button size="lg" asChild className="h-full bg-gradient-to-r from-primary/10 to-secondary/10 hover:from-primary/12 hover:to-secondary/12 backdrop-blur-sm border-0 px-8 text-lg transition-all rounded-xl">
-                  <Link href="/signup?type=brand" className="flex items-center">
-                    <Building2 className="mr-2 h-5 w-5 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent" />
-                    <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent font-medium">For brands</span>
-                    <ArrowRight className="ml-2 h-4 w-4 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent" />
-                  </Link>
-                </Button>
-              </div>
+              <Button size="lg" asChild className="bg-gradient-to-r from-primary/15 to-secondary/15 hover:from-primary/20 hover:to-secondary/20 backdrop-blur-sm border-0 h-14 px-8 text-lg transition-all rounded-2xl">
+                <Link href="/signup?type=brand" className="flex items-center">
+                  <Building2 className="mr-2 h-5 w-5 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent" />
+                  <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent font-medium">For brands</span>
+                  <ArrowRight className="ml-2 h-4 w-4 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent" />
+                </Link>
+              </Button>
               <Button size="lg" variant="outline" asChild className="h-14 px-8 text-lg border-muted-foreground/30 text-muted-foreground hover:bg-muted hover:text-foreground">
                 <Link href="/signup?type=influencer">
                   <Sparkles className="mr-2 h-5 w-5" />
