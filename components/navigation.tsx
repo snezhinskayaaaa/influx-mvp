@@ -65,7 +65,7 @@ export function Navigation() {
 
           {/* Actions */}
           <div className="flex items-center gap-3">
-            <Button asChild size="sm" className="bg-primary hover:bg-primary/90 text-white rounded-full">
+            <Button asChild size="sm" className="bg-primary/10 hover:bg-primary/20 backdrop-blur-sm border-2 border-primary/30 text-primary hover:text-primary rounded-xl transition-all">
               <Link href="/signup">
                 Get Started
                 <ArrowRight className="ml-1.5 h-3.5 w-3.5" />

@@ -36,11 +36,12 @@ export default function Home() {
               Influx helps brands and virtual talents to find each other and launch campaigns on the same platform. Explore the first marketplace of AI influencers.
             </p>
             <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Button size="lg" asChild className="bg-secondary/10 hover:bg-secondary/20 backdrop-blur-sm border-2 border-secondary/30 text-secondary hover:text-secondary h-14 px-8 text-lg transition-all">
-                <Link href="/signup?type=brand">
-                  <Building2 className="mr-2 h-5 w-5" />
-                  For brands
-                  <ArrowRight className="ml-2 h-4 w-4" />
+              <Button size="lg" asChild className="relative overflow-hidden bg-gradient-to-r from-primary/10 to-secondary/10 hover:from-primary/20 hover:to-secondary/20 backdrop-blur-sm border-2 border-transparent bg-clip-padding h-14 px-8 text-lg transition-all group">
+                <Link href="/signup?type=brand" className="relative">
+                  <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-primary to-secondary opacity-30 group-hover:opacity-40 transition-opacity -z-10"></div>
+                  <Building2 className="mr-2 h-5 w-5 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent" />
+                  <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent font-semibold">For brands</span>
+                  <ArrowRight className="ml-2 h-4 w-4 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent" />
                 </Link>
               </Button>
               <Button size="lg" variant="outline" asChild className="h-14 px-8 text-lg border-muted-foreground/30 text-muted-foreground hover:bg-muted hover:text-foreground">
