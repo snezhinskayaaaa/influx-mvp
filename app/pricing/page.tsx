@@ -239,7 +239,7 @@ export default function PricingPage() {
 
               {/* ELITE */}
               <motion.div variants={fadeInUp} className="min-w-[300px] md:min-w-0 snap-center">
-                <Card className="p-5 md:p-8 bg-gradient-to-br from-secondary/20 to-success/10 backdrop-blur-sm border-2 border-secondary/50 hover:border-secondary transition-all h-full flex flex-col shadow-2xl">
+                <Card className="p-5 md:p-8 bg-gradient-to-br from-secondary/20 to-primary/10 backdrop-blur-sm border-2 border-secondary/50 hover:border-secondary transition-all h-full flex flex-col shadow-2xl">
                   <div className="mb-5 md:mb-6">
                     <Crown className="h-8 w-8 md:h-10 md:w-10 text-secondary mb-3 md:mb-4" />
                     <h3 className="text-xl md:text-2xl font-bold mb-2 flex items-center gap-2">
@@ -250,7 +250,7 @@ export default function PricingPage() {
                       <span className="text-3xl md:text-4xl font-bold">$149</span>
                       <span className="text-sm md:text-base text-muted-foreground">/month</span>
                     </div>
-                    <Badge className="bg-success/20 text-success border-success/30 mb-3 md:mb-4 text-xs">
+                    <Badge className="bg-primary/20 text-primary border-primary/30 mb-3 md:mb-4 text-xs">
                       First month $9
                     </Badge>
                     <p className="text-sm text-muted-foreground">
@@ -532,17 +532,17 @@ export default function PricingPage() {
                   </div>
                 </div>
 
-                <div className="relative bg-gradient-to-br from-secondary/20 to-success/10 backdrop-blur-sm p-3 sm:p-5 rounded-lg sm:rounded-xl border-2 border-secondary/50 shadow-2xl transition-all hover:shadow-2xl hover:scale-105">
+                <div className="relative bg-gradient-to-br from-secondary/20 to-primary/10 backdrop-blur-sm p-3 sm:p-5 rounded-lg sm:rounded-xl border-2 border-secondary/50 shadow-2xl transition-all hover:shadow-2xl hover:scale-105">
                   <div className="absolute top-2 right-2 sm:top-2.5 sm:right-2.5">
                     <div className="w-1.5 h-1.5 rounded-full bg-secondary animate-pulse"></div>
                   </div>
                   <div className="text-[10px] sm:text-xs font-medium text-muted-foreground mb-1 sm:mb-2 uppercase tracking-wider">ELITE Plan</div>
-                  <div className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-secondary to-success bg-clip-text text-transparent mb-1 sm:mb-2">
+                  <div className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-secondary to-primary bg-clip-text text-transparent mb-1 sm:mb-2">
                     ${eliteFee.toFixed(0)}
                   </div>
-                  <div className="inline-flex items-center gap-1 sm:gap-1.5 px-2 sm:px-2.5 py-0.5 sm:py-1 bg-success/20 border border-success/30 rounded-full">
-                    <Zap className="h-2.5 w-2.5 sm:h-3 sm:w-3 text-success" />
-                    <span className="text-[10px] sm:text-xs text-success font-bold uppercase tracking-wide">
+                  <div className="inline-flex items-center gap-1 sm:gap-1.5 px-2 sm:px-2.5 py-0.5 sm:py-1 bg-primary/20 border border-primary/30 rounded-full">
+                    <Zap className="h-2.5 w-2.5 sm:h-3 sm:w-3 text-primary" />
+                    <span className="text-[10px] sm:text-xs text-primary font-bold uppercase tracking-wide">
                       SAVE ${(freeFee - eliteFee).toFixed(0)}/mo
                     </span>
                   </div>

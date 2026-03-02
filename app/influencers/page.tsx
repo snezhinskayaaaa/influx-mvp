@@ -127,7 +127,7 @@ export default function InfluencersPage() {
                   <div>
                     <div className="flex items-center gap-2 mb-1">
                       <h3 className="text-base lg:text-xl font-bold">Your Earnings</h3>
-                      <Badge className="bg-success/10 text-success border-success/20 text-xs">
+                      <Badge className="bg-primary/10 text-primary border-primary/20 text-xs">
                         Verified
                       </Badge>
                     </div>
@@ -147,8 +147,8 @@ export default function InfluencersPage() {
                     $<AnimatedEarnings />
                   </div>
                   <div className="flex items-center gap-2 mt-2">
-                    <TrendingUp className="h-3 w-3 lg:h-4 lg:w-4 text-success" />
-                    <span className="text-xs lg:text-sm text-success font-medium">+342% from last month</span>
+                    <TrendingUp className="h-3 w-3 lg:h-4 lg:w-4 text-primary" />
+                    <span className="text-xs lg:text-sm text-primary font-medium">+342% from last month</span>
                   </div>
                 </div>
 
@@ -186,7 +186,7 @@ export default function InfluencersPage() {
                       transition={{ delay: 0.6 }}
                     >
                       <motion.div
-                        className="h-full bg-gradient-to-r from-success to-secondary"
+                        className="h-full bg-gradient-to-r from-primary to-secondary"
                         initial={{ width: 0 }}
                         animate={{ width: "95%" }}
                         transition={{ duration: 1, delay: 0.8, ease: "easeOut" }}
@@ -235,7 +235,7 @@ export default function InfluencersPage() {
               <motion.div
                 animate={{ y: [0, 10, 0] }}
                 transition={{ repeat: Infinity, duration: 4, ease: "easeInOut", delay: 0.5 }}
-                className="absolute -bottom-4 -left-4 w-20 h-20 lg:w-24 lg:h-24 rounded-full bg-gradient-to-br from-success/20 to-secondary/20 blur-2xl"
+                className="absolute -bottom-4 -left-4 w-20 h-20 lg:w-24 lg:h-24 rounded-full bg-gradient-to-br from-primary/20 to-secondary/20 blur-2xl"
               />
             </div>
           </div>
@@ -306,7 +306,7 @@ export default function InfluencersPage() {
               </p>
             </Card>
 
-            <Card className="text-center p-4 lg:p-6 border-2 hover:border-success/40 transition-all hover:shadow-lg min-w-[240px] lg:min-w-0 snap-center">
+            <Card className="text-center p-4 lg:p-6 border-2 hover:border-primary/40 transition-all hover:shadow-lg min-w-[240px] lg:min-w-0 snap-center">
               <div className="w-12 h-12 lg:w-16 lg:h-16 rounded-2xl bg-muted/80 flex items-center justify-center mx-auto mb-3 lg:mb-4">
                 <Target className="h-6 w-6 lg:h-8 lg:w-8 text-foreground" />
               </div>
@@ -519,7 +519,7 @@ export default function InfluencersPage() {
             </Card>
 
             {/* Creator Elite */}
-            <Card className="p-4 lg:p-6 bg-gradient-to-br from-secondary/5 to-success/10 border-2 border-secondary/50 hover:border-secondary transition-all flex flex-col min-w-[280px] lg:min-w-0 snap-center">
+            <Card className="p-4 lg:p-6 bg-gradient-to-br from-secondary/5 to-primary/10 border-2 border-secondary/50 hover:border-secondary transition-all flex flex-col min-w-[280px] lg:min-w-0 snap-center">
               <div className="mb-4 lg:mb-6 h-[140px] lg:h-[160px]">
                 <Crown className="h-6 w-6 lg:h-8 lg:w-8 text-secondary mb-2 lg:mb-3" />
                 <h3 className="text-base lg:text-xl font-bold mb-1 lg:mb-2 flex items-center gap-1">
@@ -530,7 +530,7 @@ export default function InfluencersPage() {
                   <span className="text-2xl lg:text-3xl font-bold">$149</span>
                   <span className="text-sm lg:text-base text-muted-foreground">/month</span>
                 </div>
-                <Badge className="bg-success/20 text-success border-success/30 text-xs">
+                <Badge className="bg-primary/20 text-primary border-primary/30 text-xs">
                   First month $9
                 </Badge>
               </div>
@@ -570,7 +570,7 @@ export default function InfluencersPage() {
       >
         <div className="container max-w-6xl mx-auto">
           <div className="text-center mb-16">
-            <Badge className="mb-4 bg-success/10 text-success border-success/20">
+            <Badge className="mb-4 bg-primary/10 text-primary border-primary/20">
               Secure & Reliable
             </Badge>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4">
@@ -583,29 +583,29 @@ export default function InfluencersPage() {
 
           <div className="flex overflow-x-auto gap-4 pb-4 md:grid md:grid-cols-2 md:gap-8 md:overflow-visible snap-x snap-mandatory md:snap-none mb-8 lg:mb-12">
             {/* Escrow Protection */}
-            <Card className="p-5 lg:p-8 bg-gradient-to-br from-success/5 to-transparent border-success/20 min-w-[300px] md:min-w-0 snap-center">
+            <Card className="p-5 lg:p-8 bg-gradient-to-br from-primary/5 to-transparent border-primary/20 min-w-[300px] md:min-w-0 snap-center">
               <div className="flex items-center gap-2 lg:gap-3 mb-4 lg:mb-6">
-                <div className="w-10 h-10 lg:w-12 lg:h-12 rounded-xl bg-success/10 flex items-center justify-center">
-                  <Shield className="h-5 w-5 lg:h-6 lg:w-6 text-success" />
+                <div className="w-10 h-10 lg:w-12 lg:h-12 rounded-xl bg-primary/10 flex items-center justify-center">
+                  <Shield className="h-5 w-5 lg:h-6 lg:w-6 text-primary" />
                 </div>
                 <h3 className="text-lg lg:text-2xl font-bold">Escrow Protection</h3>
               </div>
 
               <div className="space-y-2 lg:space-y-4">
                 <div className="flex items-start gap-2 lg:gap-3">
-                  <CheckCircle2 className="h-4 w-4 lg:h-5 lg:w-5 text-success shrink-0 mt-0.5 lg:mt-1" />
+                  <CheckCircle2 className="h-4 w-4 lg:h-5 lg:w-5 text-primary shrink-0 mt-0.5 lg:mt-1" />
                   <p className="text-xs lg:text-base text-muted-foreground">Funds secured before you start work</p>
                 </div>
                 <div className="flex items-start gap-2 lg:gap-3">
-                  <CheckCircle2 className="h-4 w-4 lg:h-5 lg:w-5 text-success shrink-0 mt-0.5 lg:mt-1" />
+                  <CheckCircle2 className="h-4 w-4 lg:h-5 lg:w-5 text-primary shrink-0 mt-0.5 lg:mt-1" />
                   <p className="text-xs lg:text-base text-muted-foreground">Automatic payment release on completion</p>
                 </div>
                 <div className="flex items-start gap-2 lg:gap-3">
-                  <CheckCircle2 className="h-4 w-4 lg:h-5 lg:w-5 text-success shrink-0 mt-0.5 lg:mt-1" />
+                  <CheckCircle2 className="h-4 w-4 lg:h-5 lg:w-5 text-primary shrink-0 mt-0.5 lg:mt-1" />
                   <p className="text-xs lg:text-base text-muted-foreground">Fair dispute resolution included</p>
                 </div>
                 <div className="flex items-start gap-2 lg:gap-3">
-                  <CheckCircle2 className="h-4 w-4 lg:h-5 lg:w-5 text-success shrink-0 mt-0.5 lg:mt-1" />
+                  <CheckCircle2 className="h-4 w-4 lg:h-5 lg:w-5 text-primary shrink-0 mt-0.5 lg:mt-1" />
                   <p className="text-xs lg:text-base text-muted-foreground">Full payment transparency</p>
                 </div>
               </div>
