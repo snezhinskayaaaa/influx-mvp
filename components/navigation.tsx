@@ -82,7 +82,7 @@ export function Navigation() {
           <div className="flex items-center gap-3">
             <Button asChild variant="ghost" size="sm" className="hidden sm:flex text-sm font-medium text-muted-foreground hover:bg-muted/50 hover:text-foreground">
               <Link href="/login">
-                Sign in
+                Log in
               </Link>
             </Button>
             <Button asChild size="sm" className="hidden sm:flex bg-primary/10 hover:bg-primary/15 backdrop-blur-sm border-2 border-primary/30 text-primary rounded-xl transition-all">
@@ -166,7 +166,7 @@ export function Navigation() {
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 <Link href="/login">
-                  Sign in
+                  Log in
                 </Link>
               </Button>
               <Button
