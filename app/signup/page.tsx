@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Navigation } from "@/components/navigation";
 import { NetworkLogo } from "@/components/logo";
 import { motion } from "framer-motion";
 import {
@@ -69,54 +68,52 @@ export default function SignupPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <Navigation />
-
+    <div className="min-h-screen bg-background flex items-center justify-center px-4 py-6 sm:py-8">
       {/* Signup Section */}
       <motion.section
         initial="hidden"
         animate="visible"
         variants={fadeInUp}
-        className="pt-32 pb-20 px-4"
+        className="w-full"
       >
         <div className="container max-w-md mx-auto">
-          <div className="text-center mb-8">
-            <Link href="/" className="inline-flex items-center gap-3 group mb-6">
-              <NetworkLogo className="w-12 h-12 transition-transform group-hover:scale-110" />
+          <div className="text-center mb-4 sm:mb-6">
+            <Link href="/" className="inline-flex items-center gap-2 sm:gap-3 group mb-3 sm:mb-4">
+              <NetworkLogo className="w-8 h-8 sm:w-10 sm:h-10 transition-transform group-hover:scale-110" />
               <div className="flex items-baseline gap-1">
-                <span className="text-3xl font-bold text-primary">INFLUX</span>
-                <span className="text-sm font-medium text-foreground/60">connect</span>
+                <span className="text-2xl sm:text-3xl font-bold text-primary">INFLUX</span>
+                <span className="text-xs sm:text-sm font-medium text-foreground/60">connect</span>
               </div>
             </Link>
-            <h1 className="text-3xl sm:text-4xl font-bold mb-2">
+            <h1 className="text-2xl sm:text-3xl font-bold mb-1 sm:mb-2">
               Create your account
             </h1>
-            <p className="text-muted-foreground">
+            <p className="text-sm sm:text-base text-muted-foreground">
               Join the future of influencer marketing
             </p>
           </div>
 
-          <Card className="p-6 sm:p-8 bg-gradient-to-br from-primary/5 via-background/50 to-secondary/5 backdrop-blur-xl border-2 border-primary/20 shadow-2xl">
+          <Card className="p-4 sm:p-6 bg-gradient-to-br from-primary/5 via-background/50 to-secondary/5 backdrop-blur-xl border-2 border-primary/20 shadow-2xl">
             {/* Account Type Toggle */}
-            <div className="mb-6">
-              <Label className="text-sm font-medium mb-3 block">
+            <div className="mb-4 sm:mb-5">
+              <Label className="text-xs sm:text-sm font-medium mb-2 sm:mb-3 block">
                 I want to join as a
               </Label>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-2 gap-2 sm:gap-3">
                 <button
                   type="button"
                   onClick={() => setUserType("creator")}
-                  className={`p-4 rounded-xl border-2 transition-all text-left ${
+                  className={`p-2.5 sm:p-3 rounded-lg sm:rounded-xl border-2 transition-all text-left ${
                     userType === "creator"
                       ? "border-secondary bg-secondary/10"
                       : "border-border hover:border-secondary/50"
                   }`}
                 >
-                  <Sparkles className={`h-5 w-5 mb-2 ${
+                  <Sparkles className={`h-4 w-4 sm:h-5 sm:w-5 mb-1 sm:mb-1.5 ${
                     userType === "creator" ? "text-secondary" : "text-muted-foreground"
                   }`} />
-                  <div className="text-sm font-semibold">Creator</div>
-                  <div className="text-xs text-muted-foreground">
+                  <div className="text-xs sm:text-sm font-semibold">Creator</div>
+                  <div className="text-[10px] sm:text-xs text-muted-foreground">
                     Monetize influence
                   </div>
                 </button>
@@ -124,17 +121,17 @@ export default function SignupPage() {
                 <button
                   type="button"
                   onClick={() => setUserType("brand")}
-                  className={`p-4 rounded-xl border-2 transition-all text-left ${
+                  className={`p-2.5 sm:p-3 rounded-lg sm:rounded-xl border-2 transition-all text-left ${
                     userType === "brand"
                       ? "border-primary bg-primary/10"
                       : "border-border hover:border-primary/50"
                   }`}
                 >
-                  <Building2 className={`h-5 w-5 mb-2 ${
+                  <Building2 className={`h-4 w-4 sm:h-5 sm:w-5 mb-1 sm:mb-1.5 ${
                     userType === "brand" ? "text-primary" : "text-muted-foreground"
                   }`} />
-                  <div className="text-sm font-semibold">Brand</div>
-                  <div className="text-xs text-muted-foreground">
+                  <div className="text-xs sm:text-sm font-semibold">Brand</div>
+                  <div className="text-[10px] sm:text-xs text-muted-foreground">
                     Find AI talent
                   </div>
                 </button>
@@ -145,10 +142,10 @@ export default function SignupPage() {
             <Button
               type="button"
               variant="outline"
-              className="w-full h-12 mb-6 border-2 hover:border-primary/50 hover:bg-primary/5 transition-all"
+              className="w-full h-10 sm:h-11 mb-4 sm:mb-5 border-2 hover:border-primary/50 hover:bg-primary/5 transition-all text-sm"
               onClick={handleGoogleSignup}
             >
-              <svg className="w-5 h-5 mr-3" viewBox="0 0 24 24">
+              <svg className="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3" viewBox="0 0 24 24">
                 <path
                   fill="#4285F4"
                   d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -170,7 +167,7 @@ export default function SignupPage() {
             </Button>
 
             {/* Divider */}
-            <div className="relative mb-6">
+            <div className="relative mb-4 sm:mb-5">
               <div className="absolute inset-0 flex items-center">
                 <div className="w-full border-t border-border"></div>
               </div>
@@ -182,100 +179,100 @@ export default function SignupPage() {
             </div>
 
             {/* Signup Form */}
-            <form onSubmit={handleSignup} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="name" className="text-sm font-medium">
+            <form onSubmit={handleSignup} className="space-y-3 sm:space-y-3.5">
+              <div className="space-y-1.5 sm:space-y-2">
+                <Label htmlFor="name" className="text-xs sm:text-sm font-medium">
                   {userType === "brand" ? "Company name" : "Full name"}
                 </Label>
                 <div className="relative">
-                  <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <User className="absolute left-2.5 sm:left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 sm:h-4 sm:w-4 text-muted-foreground" />
                   <Input
                     id="name"
                     type="text"
                     placeholder={userType === "brand" ? "Your company" : "Your name"}
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className="pl-10 h-11 border-2 focus:border-primary"
+                    className="pl-8 sm:pl-10 h-9 sm:h-10 border-2 focus:border-primary text-sm"
                     required
                   />
                 </div>
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="email" className="text-sm font-medium">
+              <div className="space-y-1.5 sm:space-y-2">
+                <Label htmlFor="email" className="text-xs sm:text-sm font-medium">
                   Email
                 </Label>
                 <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Mail className="absolute left-2.5 sm:left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 sm:h-4 sm:w-4 text-muted-foreground" />
                   <Input
                     id="email"
                     type="email"
                     placeholder="you@example.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="pl-10 h-11 border-2 focus:border-primary"
+                    className="pl-8 sm:pl-10 h-9 sm:h-10 border-2 focus:border-primary text-sm"
                     required
                   />
                 </div>
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="password" className="text-sm font-medium">
+              <div className="space-y-1.5 sm:space-y-2">
+                <Label htmlFor="password" className="text-xs sm:text-sm font-medium">
                   Password
                 </Label>
                 <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Lock className="absolute left-2.5 sm:left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 sm:h-4 sm:w-4 text-muted-foreground" />
                   <Input
                     id="password"
                     type={showPassword ? "text" : "password"}
                     placeholder="Create a password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="pl-10 pr-10 h-11 border-2 focus:border-primary"
+                    className="pl-8 sm:pl-10 pr-9 sm:pr-10 h-9 sm:h-10 border-2 focus:border-primary text-sm"
                     required
                     minLength={8}
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                    className="absolute right-2.5 sm:right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
                   >
                     {showPassword ? (
-                      <EyeOff className="h-4 w-4" />
+                      <EyeOff className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                     ) : (
-                      <Eye className="h-4 w-4" />
+                      <Eye className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                     )}
                   </button>
                 </div>
-                <p className="text-xs text-muted-foreground">
+                <p className="text-[10px] sm:text-xs text-muted-foreground">
                   Must be at least 8 characters
                 </p>
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="confirmPassword" className="text-sm font-medium">
+              <div className="space-y-1.5 sm:space-y-2">
+                <Label htmlFor="confirmPassword" className="text-xs sm:text-sm font-medium">
                   Confirm password
                 </Label>
                 <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Lock className="absolute left-2.5 sm:left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 sm:h-4 sm:w-4 text-muted-foreground" />
                   <Input
                     id="confirmPassword"
                     type={showConfirmPassword ? "text" : "password"}
                     placeholder="Confirm your password"
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
-                    className="pl-10 pr-10 h-11 border-2 focus:border-primary"
+                    className="pl-8 sm:pl-10 pr-9 sm:pr-10 h-9 sm:h-10 border-2 focus:border-primary text-sm"
                     required
                   />
                   <button
                     type="button"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                    className="absolute right-2.5 sm:right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
                   >
                     {showConfirmPassword ? (
-                      <EyeOff className="h-4 w-4" />
+                      <EyeOff className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                     ) : (
-                      <Eye className="h-4 w-4" />
+                      <Eye className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                     )}
                   </button>
                 </div>
@@ -283,27 +280,27 @@ export default function SignupPage() {
 
               <Button
                 type="submit"
-                className="w-full h-11 bg-gradient-to-r from-primary to-secondary hover:opacity-90 transition-opacity"
+                className="w-full h-9 sm:h-10 bg-gradient-to-r from-primary to-secondary hover:opacity-90 transition-opacity text-sm"
               >
                 Create account
-                <ArrowRight className="ml-2 h-4 w-4" />
+                <ArrowRight className="ml-2 h-3.5 w-3.5 sm:h-4 sm:w-4" />
               </Button>
 
-              <p className="text-xs text-center text-muted-foreground">
+              <p className="text-[10px] sm:text-xs text-center text-muted-foreground pt-1">
                 By signing up, you agree to our{" "}
                 <Link href="/terms" className="text-primary hover:underline">
-                  Terms of Service
+                  Terms
                 </Link>{" "}
                 and{" "}
                 <Link href="/privacy" className="text-primary hover:underline">
-                  Privacy Policy
+                  Privacy
                 </Link>
               </p>
             </form>
           </Card>
 
           {/* Login link */}
-          <p className="text-center mt-6 text-sm text-muted-foreground">
+          <p className="text-center mt-4 sm:mt-5 text-xs sm:text-sm text-muted-foreground">
             Already have an account?{" "}
             <Link href="/login" className="text-primary font-medium hover:underline">
               Sign in
