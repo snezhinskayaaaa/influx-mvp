@@ -113,7 +113,7 @@ export default function Home() {
                   </Link>
                 </Button>
                 <Button size="lg" variant="outline" asChild className="w-full sm:w-64 h-14 text-base border-muted-foreground/30 text-muted-foreground hover:bg-muted hover:text-foreground transition-all">
-                  <Link href="/signup?type=influencer" className="flex items-center justify-center">
+                  <Link href="/influencers" className="flex items-center justify-center">
                     Join as Influencer
                   </Link>
                 </Button>
@@ -237,10 +237,10 @@ export default function Home() {
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: "-50px" }}
-            className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 lg:gap-8 max-w-4xl mx-auto"
+            className="flex overflow-x-auto gap-4 pb-4 md:grid md:grid-cols-2 md:gap-8 md:overflow-visible snap-x snap-mandatory md:snap-none max-w-4xl mx-auto"
           >
             {/* For Brands */}
-            <motion.div variants={cardVariant}>
+            <motion.div variants={cardVariant} className="min-w-[300px] md:min-w-0 snap-center">
               <Card className="p-4 sm:p-6 lg:p-8 bg-gradient-to-br from-primary/5 to-primary/10 border border-primary/30 hover:border-primary/40 transition-all hover:shadow-lg h-full flex flex-col">
               <div className="mb-4 sm:mb-6">
                 <div className="w-10 h-10 sm:w-12 sm:h-12 lg:w-14 lg:h-14 rounded-xl sm:rounded-2xl bg-primary/10 flex items-center justify-center">
@@ -275,7 +275,7 @@ export default function Home() {
             </motion.div>
 
             {/* For Influencers */}
-            <motion.div variants={cardVariant}>
+            <motion.div variants={cardVariant} className="min-w-[300px] md:min-w-0 snap-center">
               <Card className="p-4 sm:p-6 lg:p-8 bg-gradient-to-br from-secondary/5 to-secondary/10 border border-secondary/30 hover:border-secondary/40 transition-all hover:shadow-lg h-full flex flex-col">
               <div className="mb-4 sm:mb-6">
                 <div className="w-10 h-10 sm:w-12 sm:h-12 lg:w-14 lg:h-14 rounded-xl sm:rounded-2xl bg-secondary/10 flex items-center justify-center">
@@ -301,7 +301,7 @@ export default function Home() {
                 </li>
               </ul>
               <Button asChild variant="outline" className="w-full border-secondary/40 text-secondary hover:bg-secondary/10">
-                <Link href="/signup?type=influencer">
+                <Link href="/influencers">
                   Join as influencer
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
@@ -628,10 +628,11 @@ export default function Home() {
 
       {/* Footer */}
       <footer className="border-t bg-muted/50">
-        <div className="container px-6 lg:px-8 py-12">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-            <div>
-              <Link href="/" className="flex items-center gap-3 group mb-4">
+        <div className="container px-6 lg:px-8 py-8">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-6">
+            {/* Logo & Slogan */}
+            <div className="flex flex-col items-center md:items-start">
+              <Link href="/" className="flex items-center gap-3 group mb-2">
                 <NetworkLogo className="w-8 h-8 transition-transform group-hover:scale-110" />
                 <div className="flex items-baseline gap-1">
                   <span className="text-xl font-bold text-primary">INFLUX</span>
@@ -640,31 +641,10 @@ export default function Home() {
               </Link>
               <p className="text-sm text-muted-foreground">Where influence flows</p>
             </div>
-            <div>
-              <h4 className="font-semibold mb-4">Product</h4>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li><Link href="/browse" className="hover:text-foreground">Browse</Link></li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-semibold mb-4">Company</h4>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li><Link href="/about" className="hover:text-foreground">About</Link></li>
-                <li><Link href="/contact" className="hover:text-foreground">Contact</Link></li>
-                <li><Link href="/blog" className="hover:text-foreground">Blog</Link></li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-semibold mb-4">Contact us</h4>
 
-              {/* Email */}
-              <Link href="mailto:aiinflux@proton.me" className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-4">
-                <Mail className="h-4 w-4" />
-                aiinflux@proton.me
-              </Link>
-
-              {/* Social Media Links */}
-              <div className="flex items-center gap-3 flex-wrap">
+            {/* Social Media & Contact */}
+            <div className="flex flex-col items-center md:items-end gap-3">
+              <div className="flex items-center gap-3">
                 <Link href="https://www.instagram.com/influx.connect/" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-2xl border-2 border-muted-foreground/30 flex items-center justify-center text-muted-foreground hover:border-primary hover:text-primary transition-all">
                   <Instagram className="h-5 w-5" />
                 </Link>
@@ -683,10 +663,16 @@ export default function Home() {
                   <Linkedin className="h-5 w-5" />
                 </Link>
               </div>
+              <Link href="mailto:aiinflux@proton.me" className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
+                <Mail className="h-4 w-4" />
+                aiinflux@proton.me
+              </Link>
             </div>
           </div>
-          <div className="border-t mt-12 pt-8 text-center text-sm text-muted-foreground">
-            <p>&copy; 2026 Influx.Connect. All rights reserved.</p>
+
+          {/* Copyright */}
+          <div className="text-center pt-6 mt-6 border-t">
+            <p className="text-sm text-muted-foreground">&copy; 2026 INFLUXconnect. All rights reserved.</p>
           </div>
         </div>
       </footer>
