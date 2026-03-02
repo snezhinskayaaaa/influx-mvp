@@ -50,7 +50,7 @@ const fadeInUp = {
     scale: 1,
     transition: {
       duration: 0.8,
-      ease: [0.25, 0.4, 0.25, 1],
+      ease: [0.25, 0.4, 0.25, 1] as const,
       opacity: { duration: 0.6 }
     }
   }
@@ -75,7 +75,7 @@ const cardVariant = {
     scale: 1,
     transition: {
       duration: 0.5,
-      ease: [0.25, 0.4, 0.25, 1]
+      ease: [0.25, 0.4, 0.25, 1] as const
     }
   }
 };
