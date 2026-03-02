@@ -19,6 +19,7 @@ import {
   Award,
   Gift,
   Calculator,
+  ChevronDown,
 } from "lucide-react";
 
 const fadeInUp = {
@@ -48,6 +49,7 @@ export default function PricingPage() {
   const [userType, setUserType] = useState<"brands" | "creators">("creators");
   const [calculatorDeals, setCalculatorDeals] = useState(5);
   const [calculatorAvgDeal, setCalculatorAvgDeal] = useState(500);
+  const [openFaq, setOpenFaq] = useState<number | null>(null);
 
   const freeFee = calculatorDeals * calculatorAvgDeal * 0.2;
   const proFee = calculatorDeals * calculatorAvgDeal * 0.15 + 49;
@@ -228,7 +230,7 @@ export default function PricingPage() {
 
               {/* ELITE */}
               <motion.div variants={fadeInUp}>
-                <Card className="p-8 bg-gradient-to-br from-secondary/5 to-accent/10 border-2 border-secondary/50 hover:border-secondary transition-all h-full flex flex-col">
+                <Card className="p-8 bg-gradient-to-br from-secondary/5 to-success/10 border-2 border-secondary/50 hover:border-secondary transition-all h-full flex flex-col">
                   <div className="mb-6">
                     <Crown className="h-10 w-10 text-secondary mb-4" />
                     <h3 className="text-2xl font-bold mb-2 flex items-center gap-2">
@@ -239,7 +241,7 @@ export default function PricingPage() {
                       <span className="text-4xl font-bold">$149</span>
                       <span className="text-muted-foreground">/month</span>
                     </div>
-                    <Badge className="bg-accent/20 text-accent border-accent/30 mb-4">
+                    <Badge className="bg-success/20 text-success border-success/30 mb-4">
                       First month $9
                     </Badge>
                     <p className="text-sm text-muted-foreground">
@@ -515,7 +517,7 @@ export default function PricingPage() {
                   <div className="text-2xl font-bold text-secondary mb-1">
                     ${eliteFee.toFixed(0)}
                   </div>
-                  <div className="text-xs text-accent font-medium">
+                  <div className="text-xs text-success font-medium">
                     SAVE ${(freeFee - eliteFee).toFixed(0)}/month 💰
                   </div>
                 </div>

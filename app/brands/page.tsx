@@ -83,8 +83,8 @@ export default function BrandsPage() {
             </div>
 
             <div className="text-center p-6">
-              <div className="w-16 h-16 rounded-2xl bg-accent/10 flex items-center justify-center mx-auto mb-4">
-                <Zap className="h-8 w-8 text-accent" />
+              <div className="w-16 h-16 rounded-2xl bg-success/10 flex items-center justify-center mx-auto mb-4">
+                <Zap className="h-8 w-8 text-success" />
               </div>
               <h3 className="text-xl font-semibold mb-3">Fast Deployment</h3>
               <p className="text-muted-foreground">
@@ -273,7 +273,7 @@ export default function BrandsPage() {
       <section className="py-20 px-4">
         <div className="container max-w-6xl mx-auto">
           <div className="text-center mb-16">
-            <Badge className="mb-4 bg-accent/10 text-accent border-accent/20">
+            <Badge className="mb-4 bg-success/10 text-success border-success/20">
               Secure & Transparent
             </Badge>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4">
@@ -286,29 +286,29 @@ export default function BrandsPage() {
 
           <div className="grid md:grid-cols-2 gap-8 mb-12">
             {/* Escrow System */}
-            <Card className="p-8 bg-gradient-to-br from-accent/5 to-transparent border-accent/20">
+            <Card className="p-8 bg-gradient-to-br from-success/5 to-transparent border-success/20">
               <div className="flex items-center gap-3 mb-6">
-                <div className="w-12 h-12 rounded-xl bg-accent/10 flex items-center justify-center">
-                  <Lock className="h-6 w-6 text-accent" />
+                <div className="w-12 h-12 rounded-xl bg-success/10 flex items-center justify-center">
+                  <Lock className="h-6 w-6 text-success" />
                 </div>
                 <h3 className="text-2xl font-bold">Escrow System</h3>
               </div>
 
               <div className="space-y-4">
                 <div className="flex items-start gap-3">
-                  <ArrowDownCircle className="h-5 w-5 text-accent shrink-0 mt-1" />
+                  <ArrowDownCircle className="h-5 w-5 text-success shrink-0 mt-1" />
                   <p className="text-muted-foreground">All payments flow through our secure platform</p>
                 </div>
                 <div className="flex items-start gap-3">
-                  <ArrowDownCircle className="h-5 w-5 text-accent shrink-0 mt-1" />
+                  <ArrowDownCircle className="h-5 w-5 text-success shrink-0 mt-1" />
                   <p className="text-muted-foreground">Automatic release based on milestones</p>
                 </div>
                 <div className="flex items-start gap-3">
-                  <ArrowDownCircle className="h-5 w-5 text-accent shrink-0 mt-1" />
+                  <ArrowDownCircle className="h-5 w-5 text-success shrink-0 mt-1" />
                   <p className="text-muted-foreground">Built-in dispute resolution</p>
                 </div>
                 <div className="flex items-start gap-3">
-                  <ArrowDownCircle className="h-5 w-5 text-accent shrink-0 mt-1" />
+                  <ArrowDownCircle className="h-5 w-5 text-success shrink-0 mt-1" />
                   <p className="text-muted-foreground">Full transaction transparency</p>
                 </div>
               </div>
