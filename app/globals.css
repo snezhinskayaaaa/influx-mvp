@@ -177,3 +177,12 @@
     @apply mx-auto;
   }
 }
+
+@layer components {
+  .btn-brand-gradient {
+    background: linear-gradient(to right, oklch(0.552 0.233 264.052 / 0.10), oklch(0.456 0.165 292.606 / 0.10)) !important;
+  }
+  .btn-brand-gradient:hover {
+    background: linear-gradient(to right, oklch(0.552 0.233 264.052 / 0.105), oklch(0.456 0.165 292.606 / 0.105)) !important;
+  }
+}

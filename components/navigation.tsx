@@ -42,25 +42,27 @@ export function Navigation() {
           </Link>
 
           {/* Navigation Links */}
-          <div className="hidden md:flex items-center gap-8">
-            <Link
-              href="#how-it-works"
-              className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
-            >
-              How It Works
-            </Link>
-            <Link
-              href="#pricing"
-              className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
-            >
-              Pricing
-            </Link>
-            <Link
-              href="#browse"
-              className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
-            >
-              Browse Influencers
-            </Link>
+          <div className="hidden md:flex items-center gap-4">
+            <Button asChild variant="ghost" size="sm" className="text-sm font-medium text-muted-foreground hover:bg-muted/50 hover:text-foreground">
+              <Link href="/brands">
+                Browse Talent
+              </Link>
+            </Button>
+            <Button asChild variant="ghost" size="sm" className="text-sm font-medium text-muted-foreground hover:bg-muted/50 hover:text-foreground">
+              <Link href="/creators">
+                Monetize Content
+              </Link>
+            </Button>
+            <Button asChild variant="ghost" size="sm" className="text-sm font-medium text-muted-foreground hover:bg-muted/50 hover:text-foreground">
+              <Link href="/pricing">
+                Pricing
+              </Link>
+            </Button>
+            <Button asChild variant="ghost" size="sm" className="text-sm font-medium text-muted-foreground hover:bg-muted/50 hover:text-foreground">
+              <Link href="/referral">
+                Referral program
+              </Link>
+            </Button>
           </div>
 
           {/* Actions */}
