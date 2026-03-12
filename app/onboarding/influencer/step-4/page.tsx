@@ -16,7 +16,7 @@ export default function InfluencerOnboardingStep4() {
 
   const handleNext = () => {
     // At least one price should be filled
-    if (cpm || cpc || cpa || cpe) {
+    if (cpm || cpc || cpe) {
       // TODO: Save to state/context
       router.push("/onboarding/influencer/step-5");
     }
@@ -26,7 +26,7 @@ export default function InfluencerOnboardingStep4() {
     router.push("/onboarding/influencer/step-3");
   };
 
-  const isValid = cpm || cpc || cpa || cpe;
+  const isValid = cpm || cpc || cpe;
 
   return (
     <OnboardingLayout
