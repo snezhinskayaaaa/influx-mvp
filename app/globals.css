@@ -187,4 +187,69 @@
   .btn-brand-gradient:hover {
     background: linear-gradient(to right, oklch(0.552 0.233 264.052 / 0.105), oklch(0.456 0.165 292.606 / 0.105)) !important;
   }
+
+  /* Date Picker Calendar Styles */
+  input[type="date"]::-webkit-calendar-picker-indicator {
+    cursor: pointer;
+    opacity: 0.6;
+    transition: opacity 0.2s;
+  }
+
+  input[type="date"]::-webkit-calendar-picker-indicator:hover {
+    opacity: 1;
+  }
+
+  /* Calendar Dropdown */
+  input[type="date"]::-webkit-datetime-edit {
+    padding: 0;
+  }
+
+  input[type="date"]::-webkit-datetime-edit-fields-wrapper {
+    padding: 0;
+  }
+
+  input[type="date"]::-webkit-datetime-edit-text {
+    color: var(--muted-foreground);
+  }
+
+  input[type="date"]::-webkit-datetime-edit-month-field,
+  input[type="date"]::-webkit-datetime-edit-day-field,
+  input[type="date"]::-webkit-datetime-edit-year-field {
+    color: var(--foreground);
+  }
+
+  input[type="date"]::-webkit-datetime-edit-month-field:focus,
+  input[type="date"]::-webkit-datetime-edit-day-field:focus,
+  input[type="date"]::-webkit-datetime-edit-year-field:focus {
+    background: linear-gradient(to right, var(--primary), var(--secondary));
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    outline: none;
+  }
+
+  /* React Day Picker Overrides */
+  .rdp {
+    --rdp-accent-color: var(--primary);
+    --rdp-background-color: var(--primary);
+  }
+
+  .rdp-day_button {
+    border-radius: 0.375rem;
+  }
+
+  .rdp-caption_label {
+    font-size: 0.875rem;
+    font-weight: 500;
+  }
+
+  .rdp-nav_button {
+    border: none;
+  }
+
+  .rdp-weekday {
+    font-size: 0.8rem;
+    font-weight: 400;
+    color: var(--muted-foreground);
+  }
 }

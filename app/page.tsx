@@ -7,6 +7,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Navigation } from "@/components/navigation";
 import { NetworkLogo } from "@/components/logo";
+import { CountdownTimer } from "@/components/countdown-timer";
 import {
   Carousel,
   CarouselContent,
@@ -39,7 +40,11 @@ import {
   Twitter,
   Facebook,
   Linkedin,
-  Mail
+  Mail,
+  Crown,
+  Flame,
+  Award,
+  Check
 } from "lucide-react";
 
 const fadeInUp = {
@@ -623,6 +628,208 @@ export default function Home() {
             <CarouselPrevious className="hover:bg-muted hover:text-foreground -left-4 sm:-left-12" />
             <CarouselNext className="hover:bg-muted hover:text-foreground -right-4 sm:-right-12" />
           </Carousel>
+        </div>
+      </motion.section>
+
+      {/* Founding Members Program - Limited Time Offer */}
+      <motion.section
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: "-100px" }}
+        variants={fadeInUp}
+        className="py-12 sm:py-16 bg-gradient-to-b from-primary/5 via-background to-background relative overflow-hidden"
+      >
+        {/* Background decorative elements */}
+        <div className="absolute inset-0 bg-grid-white/5 [mask-image:radial-gradient(white,transparent_85%)]" />
+
+        <div className="container px-6 lg:px-8 max-w-6xl mx-auto relative z-10">
+          {/* Header */}
+          <div className="text-center mb-8 sm:mb-12">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-amber-500/20 to-orange-500/20 border-2 border-amber-500/30 mb-4">
+              <Flame className="h-4 w-4 text-amber-500" />
+              <span className="text-sm font-semibold bg-gradient-to-r from-amber-500 to-orange-500 bg-clip-text text-transparent">
+                LIMITED TIME OFFER
+              </span>
+              <Flame className="h-4 w-4 text-amber-500" />
+            </div>
+
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4">
+              <span className="bg-gradient-to-r from-primary via-amber-500 to-secondary bg-clip-text text-transparent">
+                Founding Members Program
+              </span>
+            </h2>
+
+            <p className="text-base sm:text-lg text-muted-foreground max-w-3xl mx-auto mb-6">
+              Join in the first month and lock in the lowest rates forever
+            </p>
+
+            {/* Countdown Timer */}
+            <CountdownTimer />
+          </div>
+
+          {/* Main Offer Card */}
+          <Card className="p-6 sm:p-8 lg:p-10 bg-gradient-to-br from-primary/10 via-background to-secondary/10 backdrop-blur-xl border-2 border-primary/30 shadow-2xl mb-8">
+            <div className="grid md:grid-cols-2 gap-8 lg:gap-12">
+              {/* For Brands */}
+              <div className="space-y-6">
+                <div className="flex items-start gap-4">
+                  <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center shrink-0">
+                    <Building2 className="h-6 w-6 text-primary" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold mb-2">For Brands</h3>
+                    <p className="text-sm text-muted-foreground">Launch pricing for early adopters</p>
+                  </div>
+                </div>
+
+                <div className="bg-gradient-to-br from-primary/5 to-transparent p-6 rounded-2xl border border-primary/20">
+                  <div className="flex items-baseline gap-2 mb-4">
+                    <span className="text-4xl font-bold text-primary">2%</span>
+                    <span className="text-lg text-muted-foreground">on deposit</span>
+                  </div>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    Add $1,000 → Get $980 campaign budget
+                  </p>
+                  <div className="flex items-center gap-2 text-sm">
+                    <Check className="h-4 w-4 text-primary" />
+                    <span className="text-muted-foreground">vs. 4% standard rate (coming soon)</span>
+                  </div>
+                </div>
+
+                <div className="space-y-3">
+                  <div className="flex items-start gap-3">
+                    <Crown className="h-5 w-5 text-amber-500 shrink-0 mt-0.5" />
+                    <div>
+                      <p className="font-medium text-sm">Founding Member Status</p>
+                      <p className="text-xs text-muted-foreground">Leave feedback → Lock 2% rate forever</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <Award className="h-5 w-5 text-primary shrink-0 mt-0.5" />
+                    <div>
+                      <p className="font-medium text-sm">Early Adopter Badge</p>
+                      <p className="text-xs text-muted-foreground">Without feedback → Badge only (rates increase to 4%)</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* For Creators */}
+              <div className="space-y-6">
+                <div className="flex items-start gap-4">
+                  <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-secondary/20 to-secondary/10 flex items-center justify-center shrink-0">
+                    <Sparkles className="h-6 w-6 text-secondary" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold mb-2">For Creators</h3>
+                    <p className="text-sm text-muted-foreground">Best rates in the industry</p>
+                  </div>
+                </div>
+
+                <div className="bg-gradient-to-br from-secondary/5 to-transparent p-6 rounded-2xl border border-secondary/20">
+                  <div className="flex items-baseline gap-2 mb-4">
+                    <span className="text-4xl font-bold text-secondary">3%</span>
+                    <span className="text-lg text-muted-foreground">on withdrawal</span>
+                  </div>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    Earn $1,000 → Receive $970 (includes gas fees)
+                  </p>
+                  <div className="flex items-center gap-2 text-sm">
+                    <Check className="h-4 w-4 text-secondary" />
+                    <span className="text-muted-foreground">vs. 6% standard rate (coming soon)</span>
+                  </div>
+                </div>
+
+                <div className="space-y-3">
+                  <div className="flex items-start gap-3">
+                    <Crown className="h-5 w-5 text-amber-500 shrink-0 mt-0.5" />
+                    <div>
+                      <p className="font-medium text-sm">Founding Member Status</p>
+                      <p className="text-xs text-muted-foreground">Leave feedback → Lock 3% rate forever</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <Award className="h-5 w-5 text-secondary shrink-0 mt-0.5" />
+                    <div>
+                      <p className="font-medium text-sm">Early Adopter Badge</p>
+                      <p className="text-xs text-muted-foreground">Without feedback → Badge only (rates increase to 6%)</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* How to Qualify */}
+            <div className="mt-8 pt-8 border-t border-border/50">
+              <div className="flex items-start gap-4 mb-6">
+                <MessageSquare className="h-6 w-6 text-primary shrink-0" />
+                <div>
+                  <h4 className="font-semibold mb-2">How to Become a Founding Member</h4>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    Complete your first transaction (campaign for brands, withdrawal for creators) within the first month and leave honest feedback. Your rates will be locked forever at 2%/3%.
+                  </p>
+                </div>
+              </div>
+
+              <div className="grid sm:grid-cols-3 gap-4">
+                <div className="bg-muted/30 p-4 rounded-xl border border-border/50">
+                  <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-sm font-bold text-primary mb-3">1</div>
+                  <p className="text-sm font-medium mb-1">Sign up in month 1</p>
+                  <p className="text-xs text-muted-foreground">Join during launch period</p>
+                </div>
+                <div className="bg-muted/30 p-4 rounded-xl border border-border/50">
+                  <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-sm font-bold text-primary mb-3">2</div>
+                  <p className="text-sm font-medium mb-1">Complete first transaction</p>
+                  <p className="text-xs text-muted-foreground">Campaign or withdrawal</p>
+                </div>
+                <div className="bg-muted/30 p-4 rounded-xl border border-border/50">
+                  <div className="w-8 h-8 rounded-full bg-amber-500/20 flex items-center justify-center text-sm font-bold text-amber-500 mb-3">3</div>
+                  <p className="text-sm font-medium mb-1">Leave feedback</p>
+                  <p className="text-xs text-muted-foreground">Lock your rates forever</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Total Comparison */}
+            <div className="mt-8 p-6 bg-gradient-to-r from-primary/5 via-transparent to-secondary/5 rounded-2xl border border-primary/20">
+              <div className="text-center mb-4">
+                <Badge className="bg-primary/10 text-primary border-primary/20 mb-2">
+                  Total Platform Fee
+                </Badge>
+                <p className="text-sm text-muted-foreground">End-to-end transaction cost</p>
+              </div>
+              <div className="flex items-center justify-center gap-8">
+                <div className="text-center">
+                  <div className="text-3xl font-bold text-primary mb-1">5%</div>
+                  <div className="text-xs text-muted-foreground">Founding Members</div>
+                  <div className="text-xs font-medium text-primary">(2% + 3%)</div>
+                </div>
+                <div className="text-2xl text-muted-foreground">→</div>
+                <div className="text-center">
+                  <div className="text-3xl font-bold text-muted-foreground mb-1">10%</div>
+                  <div className="text-xs text-muted-foreground">Standard Rate</div>
+                  <div className="text-xs font-medium text-muted-foreground">(4% + 6%)</div>
+                </div>
+              </div>
+              <p className="text-center text-xs text-muted-foreground mt-4">
+                Save <span className="font-bold text-primary">5% on every transaction</span> as a Founding Member
+              </p>
+            </div>
+          </Card>
+
+          {/* CTA */}
+          <div className="text-center">
+            <Button asChild size="lg" className="bg-gradient-to-r from-primary to-secondary text-white hover:opacity-90 transition-all h-14 text-base px-10 rounded-2xl shadow-xl">
+              <Link href="/signup">
+                <Crown className="mr-2 h-5 w-5" />
+                Join as Founding Member
+                <ArrowRight className="ml-2 h-5 w-5" />
+              </Link>
+            </Button>
+            <p className="text-xs text-muted-foreground mt-4">
+              Only available for the first month • No credit card required
+            </p>
+          </div>
         </div>
       </motion.section>
 

@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { NetworkLogo } from "@/components/logo";
+import { CountdownTimer } from "@/components/countdown-timer";
 import { motion, useAnimationControls } from "framer-motion";
 import { useState, useEffect } from "react";
 import {
@@ -31,7 +32,10 @@ import {
   Clock,
   Award,
   Crown,
-  Check
+  Check,
+  Flame,
+  ArrowDownCircle,
+  CheckSquare
 } from "lucide-react";
 import Link from "next/link";
 
@@ -242,6 +246,191 @@ export default function InfluencersPage() {
         </div>
       </motion.section>
 
+      {/* Early Adopters Program */}
+      <motion.section
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: "-100px" }}
+        variants={fadeInUp}
+        className="py-16 sm:py-20 bg-gradient-to-b from-background via-secondary/5 to-background relative overflow-hidden"
+      >
+        {/* Background decorative elements */}
+        <div className="absolute inset-0 bg-grid-white/5 [mask-image:radial-gradient(white,transparent_85%)]" />
+
+        <div className="container px-6 lg:px-8 max-w-6xl mx-auto relative z-10">
+          {/* Header */}
+          <div className="text-center mb-10 sm:mb-14">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-amber-500/20 to-orange-500/20 border-2 border-amber-500/30 mb-5">
+              <Flame className="h-4 w-4 text-amber-500" />
+              <span className="text-sm font-semibold bg-gradient-to-r from-amber-500 to-orange-500 bg-clip-text text-transparent">
+                LIMITED TIME - FIRST MONTH ONLY
+              </span>
+              <Flame className="h-4 w-4 text-amber-500" />
+            </div>
+
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4">
+              <span className="bg-gradient-to-r from-secondary via-amber-500 to-primary bg-clip-text text-transparent">
+                Be a Founding Creator
+              </span>
+            </h2>
+
+            <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto mb-6">
+              Complete your first payout during our launch month and lock in the lowest withdrawal fees forever
+            </p>
+
+            {/* Countdown */}
+            <CountdownTimer />
+          </div>
+
+          {/* Main Benefits Card */}
+          <Card className="p-6 sm:p-10 lg:p-12 bg-gradient-to-br from-secondary/10 via-background to-amber-500/10 backdrop-blur-xl border-2 border-secondary/30 shadow-2xl mb-10">
+            <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 mb-8">
+              {/* Left: Pricing */}
+              <div>
+                <div className="flex items-start gap-4 mb-6">
+                  <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-secondary/30 to-secondary/10 flex items-center justify-center shrink-0">
+                    <Sparkles className="h-7 w-7 text-secondary" />
+                  </div>
+                  <div>
+                    <h3 className="text-2xl font-bold mb-2">Launch Pricing</h3>
+                    <p className="text-muted-foreground">Lowest fees in the industry</p>
+                  </div>
+                </div>
+
+                <div className="bg-gradient-to-br from-secondary/10 to-transparent p-6 rounded-2xl border-2 border-secondary/30 mb-6">
+                  <div className="flex items-baseline gap-3 mb-4">
+                    <span className="text-5xl font-bold text-secondary">3%</span>
+                    <span className="text-xl text-muted-foreground">withdrawal fee</span>
+                  </div>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    Only when you cash out your earnings (includes gas fees)
+                  </p>
+                  <div className="bg-muted/50 p-4 rounded-xl mb-4">
+                    <p className="text-sm font-medium mb-1">Example:</p>
+                    <p className="text-sm text-muted-foreground">
+                      Withdraw $1,000 → 3% fee ($30) → Receive $970 USDC
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm">
+                    <CheckCircle2 className="h-4 w-4 text-secondary" />
+                    <span className="text-muted-foreground">vs. 6% standard rate (after launch)</span>
+                  </div>
+                </div>
+
+                <div className="space-y-3">
+                  <div className="flex items-start gap-3">
+                    <Crown className="h-5 w-5 text-amber-500 shrink-0 mt-1" />
+                    <div>
+                      <p className="font-semibold text-sm mb-1">Founding Creator Status</p>
+                      <p className="text-xs text-muted-foreground">Complete first withdrawal + leave feedback = Lock 3% rate forever</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <Award className="h-5 w-5 text-secondary shrink-0 mt-1" />
+                    <div>
+                      <p className="font-semibold text-sm mb-1">Early Adopter Badge</p>
+                      <p className="text-xs text-muted-foreground">Without feedback = Badge only (rates increase to 6%)</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Right: Benefits */}
+              <div>
+                <h3 className="text-xl font-bold mb-6">What You Get as a Founding Creator</h3>
+                <div className="space-y-4">
+                  <div className="flex items-start gap-3 p-3 rounded-lg hover:bg-muted/30 transition-colors">
+                    <div className="w-8 h-8 rounded-lg bg-secondary/10 flex items-center justify-center shrink-0">
+                      <CheckCircle2 className="h-4 w-4 text-secondary" />
+                    </div>
+                    <div>
+                      <p className="font-medium text-sm">Lifetime 3% Fee</p>
+                      <p className="text-xs text-muted-foreground">Keep $20 more on every $1K earned</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-3 p-3 rounded-lg hover:bg-muted/30 transition-colors">
+                    <div className="w-8 h-8 rounded-lg bg-secondary/10 flex items-center justify-center shrink-0">
+                      <Crown className="h-4 w-4 text-amber-500" />
+                    </div>
+                    <div>
+                      <p className="font-medium text-sm">Exclusive Founder Badge</p>
+                      <p className="text-xs text-muted-foreground">Stand out to premium brands</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-3 p-3 rounded-lg hover:bg-muted/30 transition-colors">
+                    <div className="w-8 h-8 rounded-lg bg-secondary/10 flex items-center justify-center shrink-0">
+                      <Zap className="h-4 w-4 text-secondary" />
+                    </div>
+                    <div>
+                      <p className="font-medium text-sm">Priority Support</p>
+                      <p className="text-xs text-muted-foreground">Direct line to our founding team</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-3 p-3 rounded-lg hover:bg-muted/30 transition-colors">
+                    <div className="w-8 h-8 rounded-lg bg-secondary/10 flex items-center justify-center shrink-0">
+                      <TrendingUp className="h-4 w-4 text-secondary" />
+                    </div>
+                    <div>
+                      <p className="font-medium text-sm">Featured Placement</p>
+                      <p className="text-xs text-muted-foreground">Boosted visibility in brand searches</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-3 p-3 rounded-lg hover:bg-muted/30 transition-colors">
+                    <div className="w-8 h-8 rounded-lg bg-secondary/10 flex items-center justify-center shrink-0">
+                      <Shield className="h-4 w-4 text-secondary" />
+                    </div>
+                    <div>
+                      <p className="font-medium text-sm">Shape the Platform</p>
+                      <p className="text-xs text-muted-foreground">Your voice matters in our development</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* How to Qualify */}
+            <div className="pt-8 border-t border-border/50">
+              <h4 className="font-bold text-center mb-6">How to Become a Founding Creator</h4>
+              <div className="grid sm:grid-cols-3 gap-4">
+                <div className="bg-muted/30 p-5 rounded-xl border border-border/50 text-center">
+                  <div className="w-10 h-10 rounded-full bg-secondary/20 flex items-center justify-center text-base font-bold text-secondary mb-4 mx-auto">1</div>
+                  <p className="font-semibold text-sm mb-2">Join This Month</p>
+                  <p className="text-xs text-muted-foreground">Sign up during launch period</p>
+                </div>
+                <div className="bg-muted/30 p-5 rounded-xl border border-border/50 text-center">
+                  <div className="w-10 h-10 rounded-full bg-secondary/20 flex items-center justify-center text-base font-bold text-secondary mb-4 mx-auto">2</div>
+                  <p className="font-semibold text-sm mb-2">Complete Campaign</p>
+                  <p className="text-xs text-muted-foreground">Earn and withdraw your first payment</p>
+                </div>
+                <div className="bg-muted/30 p-5 rounded-xl border border-border/50 text-center">
+                  <div className="w-10 h-10 rounded-full bg-amber-500/20 flex items-center justify-center text-base font-bold text-amber-500 mb-4 mx-auto">3</div>
+                  <p className="font-semibold text-sm mb-2">Share Feedback</p>
+                  <p className="text-xs text-muted-foreground">Lock 3% rate forever</p>
+                </div>
+              </div>
+            </div>
+          </Card>
+
+          {/* CTA */}
+          <div className="text-center">
+            <Button asChild size="lg" className="bg-gradient-to-r from-secondary to-primary text-white hover:opacity-90 transition-all h-16 text-lg px-12 rounded-2xl shadow-2xl">
+              <Link href="/signup?type=influencer" className="flex items-center justify-center">
+                <Crown className="mr-2 h-6 w-6" />
+                Become a Founding Creator
+                <ArrowRight className="ml-2 h-6 w-6" />
+              </Link>
+            </Button>
+            <p className="text-sm text-muted-foreground mt-4">
+              No fees to join • Instant payouts • Start earning today
+            </p>
+          </div>
+        </div>
+      </motion.section>
+
       {/* Stats Bar */}
       <motion.section
         initial="hidden"
@@ -432,6 +621,165 @@ export default function InfluencersPage() {
         </div>
       </motion.section>
 
+      {/* Protected Payment System */}
+      <motion.section
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: "-100px" }}
+        variants={fadeInUp}
+        className="py-12 lg:py-20 px-4 bg-gradient-to-b from-background to-muted/30"
+      >
+        <div className="container max-w-6xl mx-auto">
+          <div className="text-center mb-16">
+            <Badge className="mb-4 bg-success/10 text-success border-success/20">
+              Secure & Transparent
+            </Badge>
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4">
+              Your Earnings Are Protected
+            </h2>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              Every payment is secured through our escrow system with milestone-based releases
+            </p>
+          </div>
+
+          <div className="flex overflow-x-auto gap-4 pb-4 md:grid md:grid-cols-2 md:gap-8 md:overflow-visible snap-x snap-mandatory md:snap-none mb-8 lg:mb-12">
+            {/* Escrow System */}
+            <Card className="p-5 lg:p-8 bg-gradient-to-br from-success/5 to-transparent border-success/20 min-w-[300px] md:min-w-0 snap-center">
+              <div className="flex items-center gap-2 lg:gap-3 mb-4 lg:mb-6">
+                <div className="w-10 h-10 lg:w-12 lg:h-12 rounded-xl bg-success/10 flex items-center justify-center">
+                  <Lock className="h-5 w-5 lg:h-6 lg:w-6 text-success" />
+                </div>
+                <h3 className="text-lg lg:text-2xl font-bold">Escrow Protection</h3>
+              </div>
+
+              <div className="space-y-2 lg:space-y-4">
+                <div className="flex items-start gap-2 lg:gap-3">
+                  <ArrowDownCircle className="h-4 w-4 lg:h-5 lg:w-5 text-success shrink-0 mt-0.5 lg:mt-1" />
+                  <p className="text-xs lg:text-base text-muted-foreground">Funds secured before work starts</p>
+                </div>
+                <div className="flex items-start gap-2 lg:gap-3">
+                  <ArrowDownCircle className="h-4 w-4 lg:h-5 lg:w-5 text-success shrink-0 mt-0.5 lg:mt-1" />
+                  <p className="text-xs lg:text-base text-muted-foreground">Automatic milestone-based releases</p>
+                </div>
+                <div className="flex items-start gap-2 lg:gap-3">
+                  <ArrowDownCircle className="h-4 w-4 lg:h-5 lg:w-5 text-success shrink-0 mt-0.5 lg:mt-1" />
+                  <p className="text-xs lg:text-base text-muted-foreground">Protected from non-payment</p>
+                </div>
+                <div className="flex items-start gap-2 lg:gap-3">
+                  <ArrowDownCircle className="h-4 w-4 lg:h-5 lg:w-5 text-success shrink-0 mt-0.5 lg:mt-1" />
+                  <p className="text-xs lg:text-base text-muted-foreground">Transparent transaction history</p>
+                </div>
+              </div>
+            </Card>
+
+            {/* Fast Payouts */}
+            <Card className="p-5 lg:p-8 bg-gradient-to-br from-primary/5 to-transparent border-primary/20 min-w-[300px] md:min-w-0 snap-center">
+              <div className="flex items-center gap-2 lg:gap-3 mb-4 lg:mb-6">
+                <div className="w-10 h-10 lg:w-12 lg:h-12 rounded-xl bg-primary/10 flex items-center justify-center">
+                  <DollarSign className="h-5 w-5 lg:h-6 lg:w-6 text-primary" />
+                </div>
+                <h3 className="text-lg lg:text-2xl font-bold">Fast Withdrawals</h3>
+              </div>
+
+              <div className="space-y-2 lg:space-y-4">
+                <div className="flex items-start gap-2 lg:gap-3">
+                  <CheckSquare className="h-4 w-4 lg:h-5 lg:w-5 text-primary shrink-0 mt-0.5 lg:mt-1" />
+                  <p className="text-xs lg:text-base text-muted-foreground">Multiple withdrawal methods</p>
+                </div>
+                <div className="flex items-start gap-2 lg:gap-3">
+                  <CheckSquare className="h-4 w-4 lg:h-5 lg:w-5 text-primary shrink-0 mt-0.5 lg:mt-1" />
+                  <p className="text-xs lg:text-base text-muted-foreground">Same-day processing available</p>
+                </div>
+                <div className="flex items-start gap-2 lg:gap-3">
+                  <CheckSquare className="h-4 w-4 lg:h-5 lg:w-5 text-primary shrink-0 mt-0.5 lg:mt-1" />
+                  <p className="text-xs lg:text-base text-muted-foreground">Low transaction fees</p>
+                </div>
+                <div className="flex items-start gap-2 lg:gap-3">
+                  <CheckSquare className="h-4 w-4 lg:h-5 lg:w-5 text-primary shrink-0 mt-0.5 lg:mt-1" />
+                  <p className="text-xs lg:text-base text-muted-foreground">Detailed earnings reports</p>
+                </div>
+              </div>
+            </Card>
+          </div>
+
+          {/* Milestone Flow */}
+          <Card className="p-5 lg:p-8 bg-gradient-to-br from-secondary/5 to-transparent border-secondary/20">
+            <div className="flex items-center gap-2 lg:gap-3 mb-5 lg:mb-8">
+              <div className="w-10 h-10 lg:w-12 lg:h-12 rounded-xl bg-secondary/10 flex items-center justify-center">
+                <CreditCard className="h-5 w-5 lg:h-6 lg:w-6 text-secondary" />
+              </div>
+              <h3 className="text-lg lg:text-2xl font-bold">Milestone-Based Payments</h3>
+            </div>
+
+            <div className="relative">
+              {/* Decorative Progress Line with Gradient */}
+              <div className="hidden lg:block absolute top-12 left-[16%] right-[16%] h-1 bg-gradient-to-r from-secondary/30 via-secondary/60 to-secondary/30 rounded-full" />
+              <div className="hidden lg:block absolute top-[46px] left-[16%] right-[16%] h-0.5 bg-gradient-to-r from-secondary/10 via-secondary/30 to-secondary/10" />
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3 lg:gap-6">
+                {/* Milestone 1: Negotiation - 25% */}
+                <div className="relative bg-background rounded-xl border-2 border-secondary/30 p-3 lg:p-5 hover:border-secondary/50 transition-all">
+                  <div className="flex items-center gap-1.5 lg:gap-2 mb-2 lg:mb-3">
+                    <div className="w-8 h-8 lg:w-10 lg:h-10 rounded-lg bg-secondary/10 flex items-center justify-center">
+                      <FileText className="h-4 w-4 lg:h-5 lg:w-5 text-secondary" />
+                    </div>
+                    <div>
+                      <span className="text-base lg:text-xl font-bold text-secondary">25%</span>
+                    </div>
+                  </div>
+                  <h4 className="font-bold text-xs lg:text-base mb-1 lg:mb-2">Negotiation</h4>
+                  <p className="text-[10px] lg:text-sm text-muted-foreground leading-relaxed">
+                    First payment releases when both parties agree on collaboration terms and conditions.
+                  </p>
+                </div>
+
+                {/* Milestone 2: Content Approval - 25% */}
+                <div className="relative bg-background rounded-xl border-2 border-secondary/30 p-3 lg:p-5 hover:border-secondary/50 transition-all">
+                  <div className="flex items-center gap-1.5 lg:gap-2 mb-2 lg:mb-3">
+                    <div className="w-8 h-8 lg:w-10 lg:h-10 rounded-lg bg-secondary/10 flex items-center justify-center">
+                      <CheckCircle2 className="h-4 w-4 lg:h-5 lg:w-5 text-secondary" />
+                    </div>
+                    <div>
+                      <span className="text-base lg:text-xl font-bold text-secondary">25%</span>
+                    </div>
+                  </div>
+                  <h4 className="font-bold text-xs lg:text-base mb-1 lg:mb-2">Content Approval</h4>
+                  <p className="text-[10px] lg:text-sm text-muted-foreground leading-relaxed">
+                    Payment releases automatically when brand approves your final content version.
+                  </p>
+                </div>
+
+                {/* Milestone 3: Publication & Metrics - 50% */}
+                <div className="relative bg-background rounded-xl border-2 border-secondary/30 p-3 lg:p-5 hover:border-secondary/50 transition-all">
+                  <div className="flex items-center gap-1.5 lg:gap-2 mb-2 lg:mb-3">
+                    <div className="w-8 h-8 lg:w-10 lg:h-10 rounded-lg bg-secondary/10 flex items-center justify-center">
+                      <BarChart3 className="h-4 w-4 lg:h-5 lg:w-5 text-secondary" />
+                    </div>
+                    <div>
+                      <span className="text-base lg:text-xl font-bold text-secondary">50%</span>
+                    </div>
+                  </div>
+                  <h4 className="font-bold text-xs lg:text-base mb-1 lg:mb-2">Publication & Metrics</h4>
+                  <p className="text-[10px] lg:text-sm text-muted-foreground leading-relaxed">
+                    Final 50% releases when you publish content and deliver performance metrics.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </Card>
+
+          {/* CTA */}
+          <div className="text-center mt-12">
+            <Button asChild size="lg" className="bg-primary/10 hover:bg-primary/15 backdrop-blur-sm border-2 border-primary/30 h-14 text-base transition-all rounded-xl px-8">
+              <Link href="/signup?type=influencer" className="flex items-center justify-center">
+                <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent font-medium">Start Earning Today</span>
+                <ArrowRight className="ml-2 h-5 w-5 text-secondary" />
+              </Link>
+            </Button>
+          </div>
+        </div>
+      </motion.section>
+
       {/* Pricing Plans */}
       <motion.section
         initial="hidden"
@@ -453,7 +801,7 @@ export default function InfluencersPage() {
             </p>
           </div>
 
-          <div className="flex overflow-x-auto gap-4 pb-4 pt-4 lg:grid lg:grid-cols-3 lg:gap-6 lg:overflow-visible snap-x snap-mandatory lg:snap-none">
+          <div className="flex overflow-x-auto gap-4 pb-4 pt-4 lg:grid lg:grid-cols-2 lg:gap-6 lg:overflow-visible snap-x snap-mandatory lg:snap-none">
             {/* Free Plan */}
             <Card className="p-4 lg:p-6 bg-muted/30 border-2 border-border hover:border-secondary/50 transition-all flex flex-col min-w-[280px] lg:min-w-0 snap-center">
               <div className="mb-4 lg:mb-6 h-[140px] lg:h-[160px]">
@@ -469,10 +817,10 @@ export default function InfluencersPage() {
               </div>
 
               <div className="mb-4 lg:mb-6 flex-1">
-                <p className="text-xs text-muted-foreground mb-2">Platform fee:</p>
+                <p className="text-xs text-muted-foreground mb-2">Features:</p>
                 <div className="text-xs lg:text-sm space-y-1 text-muted-foreground">
-                  <p>20% per campaign</p>
-                  <p>Basic analytics & support</p>
+                  <p>Unlimited campaign applications</p>
+                  <p>Basic analytics & community support</p>
                 </div>
               </div>
 
@@ -505,47 +853,14 @@ export default function InfluencersPage() {
               <div className="mb-4 lg:mb-6 flex-1">
                 <p className="text-xs text-muted-foreground mb-2">Premium features:</p>
                 <div className="text-xs lg:text-sm space-y-1 text-muted-foreground">
-                  <p>15% fee (save 5%), verified badge</p>
-                  <p>Priority placement & advanced analytics</p>
+                  <p>Verified badge & priority placement</p>
+                  <p>Advanced analytics & priority support</p>
                 </div>
               </div>
 
               <Button asChild className="w-full bg-primary hover:bg-primary/90 h-9 lg:h-10 text-sm">
                 <Link href="/signup?type=influencer&plan=pro">
                   Start Pro Trial
-                  <ArrowRight className="ml-2 h-3 w-3 lg:h-4 lg:w-4" />
-                </Link>
-              </Button>
-            </Card>
-
-            {/* Creator Elite */}
-            <Card className="p-4 lg:p-6 bg-gradient-to-br from-secondary/5 to-primary/10 border-2 border-secondary/50 hover:border-secondary transition-all flex flex-col min-w-[280px] lg:min-w-0 snap-center">
-              <div className="mb-4 lg:mb-6 h-[140px] lg:h-[160px]">
-                <Crown className="h-6 w-6 lg:h-8 lg:w-8 text-secondary mb-2 lg:mb-3" />
-                <h3 className="text-base lg:text-xl font-bold mb-1 lg:mb-2 flex items-center gap-1">
-                  CREATOR ELITE
-                  <Sparkles className="h-4 w-4 text-secondary" />
-                </h3>
-                <div className="flex items-baseline gap-1 mb-2">
-                  <span className="text-2xl lg:text-3xl font-bold">$149</span>
-                  <span className="text-sm lg:text-base text-muted-foreground">/month</span>
-                </div>
-                <Badge className="bg-primary/20 text-primary border-primary/30 text-xs">
-                  First month $9
-                </Badge>
-              </div>
-
-              <div className="mb-4 lg:mb-6 flex-1">
-                <p className="text-xs text-muted-foreground mb-2">Elite features:</p>
-                <div className="text-xs lg:text-sm space-y-1 text-muted-foreground">
-                  <p>10% fee (save 10%), "Top Creator" badge ⭐</p>
-                  <p>Homepage featured, account manager</p>
-                </div>
-              </div>
-
-              <Button asChild variant="outline" className="w-full border-secondary/50 text-secondary hover:bg-secondary/10 h-9 lg:h-10 text-sm">
-                <Link href="/signup?type=influencer&plan=elite">
-                  Start Elite Trial
                   <ArrowRight className="ml-2 h-3 w-3 lg:h-4 lg:w-4" />
                 </Link>
               </Button>
@@ -650,6 +965,109 @@ export default function InfluencersPage() {
               </Link>
             </Button>
           </div>
+        </div>
+      </motion.section>
+
+      {/* How Withdrawals Work */}
+      <motion.section
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: "-100px" }}
+        variants={fadeInUp}
+        className="py-12 sm:py-16 bg-muted/30"
+      >
+        <div className="container px-6 lg:px-8 max-w-4xl mx-auto">
+          <div className="text-center mb-8 md:mb-10">
+            <Badge className="mb-4 bg-secondary/10 text-secondary border-secondary/20">
+              <Flame className="h-3 w-3 mr-1 inline" />
+              Launch Pricing - 3% Only
+            </Badge>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4">
+              How Withdrawals Work
+            </h2>
+            <p className="text-base md:text-lg text-muted-foreground max-w-2xl mx-auto">
+              Industry-low 3% fee on withdrawals. Lock this rate forever by leaving feedback after your first payout.
+            </p>
+          </div>
+
+          <Card className="p-6 md:p-8 bg-gradient-to-br from-secondary/5 via-background to-primary/5 border-2 border-secondary/20">
+            <div className="space-y-6">
+              {/* Service Fee Info */}
+              <div className="flex items-start gap-4">
+                <div className="w-12 h-12 rounded-xl bg-secondary/10 flex items-center justify-center shrink-0">
+                  <DollarSign className="h-6 w-6 text-secondary" />
+                </div>
+                <div className="flex-1">
+                  <div className="flex items-baseline gap-3 mb-2">
+                    <h3 className="text-lg font-semibold">3% Withdrawal Fee</h3>
+                    <Badge className="bg-amber-500/10 text-amber-600 border-amber-500/20 text-xs">
+                      Launch Offer
+                    </Badge>
+                  </div>
+                  <p className="text-sm text-muted-foreground mb-3">
+                    Applied only when you withdraw earnings. Covers secure crypto payouts, blockchain gas fees,
+                    KYC/AML compliance, and instant processing.
+                  </p>
+                  <div className="bg-muted/50 p-3 rounded-lg mb-3">
+                    <p className="text-sm">
+                      <span className="font-medium">Example:</span> Withdraw $1,000 → 3% fee ($30) → Receive $970 USDC
+                    </p>
+                  </div>
+                  <div className="flex items-start gap-2 text-xs text-muted-foreground bg-secondary/5 p-3 rounded-lg">
+                    <Crown className="h-4 w-4 text-amber-500 shrink-0 mt-0.5" />
+                    <p>
+                      <span className="font-semibold text-foreground">Founding Members:</span> Complete your first withdrawal
+                      and leave feedback to lock 3% forever. Standard rate increases to 6% after launch month.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* What's Included */}
+              <div className="pt-4 border-t">
+                <h4 className="text-base font-semibold mb-4">What's Included in Withdrawal Fee:</h4>
+                <div className="grid sm:grid-cols-2 gap-3">
+                  <div className="flex items-start gap-2">
+                    <Check className="h-5 w-5 text-secondary shrink-0 mt-0.5" />
+                    <span className="text-sm">Instant crypto payouts</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <Check className="h-5 w-5 text-secondary shrink-0 mt-0.5" />
+                    <span className="text-sm">All gas fees covered</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <Check className="h-5 w-5 text-secondary shrink-0 mt-0.5" />
+                    <span className="text-sm">KYC/AML verification</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <Check className="h-5 w-5 text-secondary shrink-0 mt-0.5" />
+                    <span className="text-sm">Multi-chain support</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <Check className="h-5 w-5 text-secondary shrink-0 mt-0.5" />
+                    <span className="text-sm">Transaction security</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <Check className="h-5 w-5 text-secondary shrink-0 mt-0.5" />
+                    <span className="text-sm">24/7 support</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Benefits */}
+              <div className="pt-4 border-t bg-gradient-to-r from-secondary/5 to-transparent -mx-6 md:-mx-8 px-6 md:px-8 py-4 rounded-b-lg">
+                <div className="flex items-start gap-3">
+                  <Sparkles className="h-5 w-5 text-secondary shrink-0 mt-0.5" />
+                  <div>
+                    <p className="text-sm font-medium mb-1">Fastest payouts in the industry</p>
+                    <p className="text-xs text-muted-foreground">
+                      Request withdrawal → Processed in 24-48 hours → Crypto arrives in minutes after approval.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </Card>
         </div>
       </motion.section>
 

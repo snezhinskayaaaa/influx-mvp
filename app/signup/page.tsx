@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -34,6 +34,7 @@ const fadeInUp = {
 
 export default function SignupPage() {
   const searchParams = useSearchParams();
+  const router = useRouter();
   const typeParam = searchParams.get("type");
 
   const [userType, setUserType] = useState<"creator" | "brand">(
@@ -60,11 +61,25 @@ export default function SignupPage() {
     }
     // TODO: Implement signup logic
     console.log("Signup:", { userType, name, email, password });
+
+    // Redirect to appropriate onboarding
+    if (userType === "brand") {
+      router.push("/onboarding/brand");
+    } else {
+      router.push("/onboarding/influencer");
+    }
   };
 
   const handleGoogleSignup = () => {
     // TODO: Implement Google OAuth
     console.log("Google signup as:", userType);
+
+    // Redirect to appropriate onboarding
+    if (userType === "brand") {
+      router.push("/onboarding/brand");
+    } else {
+      router.push("/onboarding/influencer");
+    }
   };
 
   return (

@@ -71,20 +71,10 @@ export function Navigation() {
                 Pricing
               </Link>
             </Button>
-            <Button asChild variant="ghost" size="sm" className="text-sm font-medium text-muted-foreground hover:bg-muted/50 hover:text-foreground">
-              <Link href="/referral">
-                Referral program
-              </Link>
-            </Button>
           </div>
 
           {/* Actions */}
           <div className="flex items-center gap-3">
-            <Button asChild variant="ghost" size="sm" className="hidden sm:flex text-sm font-medium text-muted-foreground hover:bg-muted/50 hover:text-foreground">
-              <Link href="/login">
-                Log in
-              </Link>
-            </Button>
             <Button asChild size="sm" className="hidden sm:flex bg-primary/10 hover:bg-primary/15 backdrop-blur-sm border-2 border-primary/30 text-primary rounded-xl transition-all">
               <Link href="/signup">
                 Get Started
@@ -145,30 +135,8 @@ export function Navigation() {
                 Pricing
               </Link>
             </Button>
-            <Button
-              asChild
-              variant="ghost"
-              size="lg"
-              className="w-full justify-start text-base font-medium text-muted-foreground hover:bg-muted/50 hover:text-foreground"
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              <Link href="/referral">
-                Referral program
-              </Link>
-            </Button>
 
             <div className="border-t pt-4 mt-2 space-y-3">
-              <Button
-                asChild
-                variant="ghost"
-                size="lg"
-                className="w-full justify-start text-base font-medium text-muted-foreground hover:bg-muted/50 hover:text-foreground"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                <Link href="/login">
-                  Log in
-                </Link>
-              </Button>
               <Button
                 asChild
                 size="lg"

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -29,6 +30,7 @@ const fadeInUp = {
 };
 
 export default function LoginPage() {
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -37,11 +39,18 @@ export default function LoginPage() {
     e.preventDefault();
     // TODO: Implement login logic
     console.log("Login:", { email, password });
+
+    // For demo, redirect to brand dashboard
+    // In production, check user type from API
+    router.push("/dashboard/brand");
   };
 
   const handleGoogleLogin = () => {
     // TODO: Implement Google OAuth
     console.log("Google login");
+
+    // For demo, redirect to brand dashboard
+    router.push("/dashboard/brand");
   };
 
   return (
@@ -66,7 +75,7 @@ export default function LoginPage() {
               Welcome back
             </h1>
             <p className="text-sm sm:text-base text-muted-foreground">
-              Sign in to your account to continue
+              Log in to your account to continue
             </p>
           </div>
 
@@ -172,7 +181,7 @@ export default function LoginPage() {
                 type="submit"
                 className="w-full h-9 sm:h-10 bg-gradient-to-r from-primary to-secondary hover:opacity-90 transition-opacity text-sm"
               >
-                Sign in
+                Log in
                 <ArrowRight className="ml-2 h-3.5 w-3.5 sm:h-4 sm:w-4" />
               </Button>
             </form>
