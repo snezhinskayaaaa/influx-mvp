@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { Suspense, useState, useEffect } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -32,7 +32,7 @@ const fadeInUp = {
   },
 };
 
-export default function SignupPage() {
+function SignupForm() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const typeParam = searchParams.get("type");
@@ -324,5 +324,17 @@ export default function SignupPage() {
         </div>
       </motion.section>
     </div>
+  );
+}
+
+export default function SignupPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-muted-foreground">Loading...</div>
+      </div>
+    }>
+      <SignupForm />
+    </Suspense>
   );
 }
