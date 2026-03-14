@@ -29,6 +29,17 @@ import {
   Clock,
   Briefcase,
   BarChart3,
+  Camera,
+  Save,
+  Instagram,
+  Twitter,
+  Youtube,
+  ArrowRight,
+  Link as LinkIcon,
+  MessageSquare,
+  Upload,
+  ExternalLink,
+  Rocket,
 } from "lucide-react";
 import {
   Select,
@@ -53,6 +64,31 @@ interface Campaign {
   platforms: string[];
   deadline: string;
   status: "open" | "applied" | "approved" | "active" | "completed";
+  startDate?: string;
+  endDate?: string;
+  goal?: string;
+  targetViews?: string;
+  targetClicks?: string;
+  targetEngagements?: string;
+  productName?: string;
+  productPrice?: string;
+  productLink?: string;
+  brandTag?: string;
+  hashtags?: string;
+  detailedRequirements?: string;
+  influencerTerms?: string;
+  brandTerms?: string;
+  influencerApprovedTerms?: boolean;
+  brandApprovedTerms?: boolean;
+  currentContentUrl?: string;
+  contentApproved?: boolean;
+  publishedUrl?: string;
+  publicMetrics?: {
+    views?: number;
+    likes?: number;
+    comments?: number;
+    shares?: number;
+  };
 }
 
 const mockDiscoverCampaigns: Campaign[] = [
@@ -128,6 +164,17 @@ const mockMyCampaigns: Campaign[] = [
     platforms: ["Instagram", "TikTok"],
     deadline: "2026-04-10",
     status: "applied",
+    startDate: "2026-03-15",
+    endDate: "2026-04-10",
+    goal: "engagement",
+    targetEngagements: "15000",
+    productName: "FitLife Pro App",
+    productLink: "https://fitlife.com/app",
+    brandTag: "@fitlife",
+    hashtags: "#FitLife #FitnessGoals #WorkoutMotivation",
+    detailedRequirements: "Create authentic workout transformation content showing the app features. Include before/after progress and highlight key app functionalities.",
+    influencerApprovedTerms: false,
+    brandApprovedTerms: false,
   },
   {
     id: 5,
@@ -142,6 +189,18 @@ const mockMyCampaigns: Campaign[] = [
     platforms: ["Instagram"],
     deadline: "2026-05-01",
     status: "approved",
+    startDate: "2026-03-20",
+    endDate: "2026-05-01",
+    goal: "brand-awareness",
+    targetViews: "100000",
+    productName: "GreenEarth Eco Pack",
+    productLink: "https://greenearth.com/products",
+    brandTag: "@greenearth",
+    hashtags: "#EcoFriendly #SustainableLiving #GreenEarth",
+    detailedRequirements: "Showcase our eco-friendly products in your daily routine. Focus on sustainability benefits and lifestyle integration.",
+    influencerApprovedTerms: true,
+    brandApprovedTerms: true,
+    brandTerms: "Content must align with eco-conscious values. Product packaging must be visible.",
   },
   {
     id: 6,
@@ -156,6 +215,27 @@ const mockMyCampaigns: Campaign[] = [
     platforms: ["YouTube", "Instagram"],
     deadline: "2026-03-20",
     status: "active",
+    startDate: "2026-02-15",
+    endDate: "2026-03-20",
+    goal: "conversions",
+    targetEngagements: "20000",
+    productName: "Wanderlust Travel Backpack",
+    productPrice: "149",
+    productLink: "https://wanderlust.com/backpack",
+    brandTag: "@wanderlust",
+    hashtags: "#Wanderlust #TravelGear #Adventure",
+    detailedRequirements: "Create engaging review content showing the backpack in real travel scenarios. Highlight durability and features.",
+    influencerApprovedTerms: true,
+    brandApprovedTerms: true,
+    contentApproved: true,
+    currentContentUrl: "https://drive.google.com/file/d/sample123",
+    publishedUrl: "https://youtube.com/watch?v=sample123",
+    publicMetrics: {
+      views: 85000,
+      likes: 4200,
+      comments: 340,
+      shares: 180,
+    },
   },
 ];
 
@@ -164,7 +244,13 @@ export default function InfluencerDashboard() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [selectedPlatform, setSelectedPlatform] = useState("all");
+  const [selectedBudget, setSelectedBudget] = useState("all");
   const [showFilters, setShowFilters] = useState(false);
+  const [selectedCampaignDetails, setSelectedCampaignDetails] = useState<Campaign | null>(null);
+  const [currentPipelineStage, setCurrentPipelineStage] = useState(1);
+  const [isCampaignDetailsExpanded, setIsCampaignDetailsExpanded] = useState(false);
+  const [contentLinkInput, setContentLinkInput] = useState("");
+  const [publishedLinkInput, setPublishedLinkInput] = useState("");
 
   const categories = [
     "all",
@@ -181,6 +267,15 @@ export default function InfluencerDashboard() {
 
   const platforms = ["all", "Instagram", "TikTok", "YouTube", "Twitter"];
 
+  const budgetRanges = [
+    { value: "all", label: "All Budgets" },
+    { value: "0-1000", label: "$0 - $1,000" },
+    { value: "1000-3000", label: "$1,000 - $3,000" },
+    { value: "3000-5000", label: "$3,000 - $5,000" },
+    { value: "5000-10000", label: "$5,000 - $10,000" },
+    { value: "10000+", label: "$10,000+" },
+  ];
+
   const filteredDiscoverCampaigns = mockDiscoverCampaigns.filter((campaign) => {
     const matchesSearch =
       campaign.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -189,7 +284,18 @@ export default function InfluencerDashboard() {
       selectedCategory === "all" || campaign.category === selectedCategory;
     const matchesPlatform =
       selectedPlatform === "all" || campaign.platforms.includes(selectedPlatform);
-    return matchesSearch && matchesCategory && matchesPlatform;
+
+    let matchesBudget = true;
+    if (selectedBudget !== "all") {
+      const budget = campaign.budget;
+      if (selectedBudget === "0-1000") matchesBudget = budget <= 1000;
+      else if (selectedBudget === "1000-3000") matchesBudget = budget > 1000 && budget <= 3000;
+      else if (selectedBudget === "3000-5000") matchesBudget = budget > 3000 && budget <= 5000;
+      else if (selectedBudget === "5000-10000") matchesBudget = budget > 5000 && budget <= 10000;
+      else if (selectedBudget === "10000+") matchesBudget = budget > 10000;
+    }
+
+    return matchesSearch && matchesCategory && matchesPlatform && matchesBudget;
   });
 
   const getPricingLabel = (model: string) => {
@@ -223,10 +329,10 @@ export default function InfluencerDashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5">
+    <div className="min-h-screen bg-background">
       {/* Header */}
-      <nav className="fixed top-0 left-0 right-0 z-50 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container max-w-full px-6 h-20">
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-primary/5 backdrop-blur-md border-b border-border/50 py-4">
+        <div className="px-6 sm:px-12 lg:px-16">
           <div className="flex items-center justify-between">
             <Link href="/" className="flex items-center gap-3 group">
               <NetworkLogo className="w-8 h-8 transition-transform group-hover:scale-110" />
@@ -241,9 +347,6 @@ export default function InfluencerDashboard() {
                 <PopoverTrigger asChild>
                   <Button variant="ghost" size="sm" className="relative text-sm font-medium text-muted-foreground hover:bg-muted/50 hover:text-foreground">
                     <Bell className="h-4 w-4" />
-                    <span className="absolute -top-1 -right-1 h-4 w-4 bg-primary text-primary-foreground text-[10px] font-semibold rounded-full flex items-center justify-center">
-                      2
-                    </span>
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-96 p-0" align="end" sideOffset={8}>
@@ -348,8 +451,50 @@ export default function InfluencerDashboard() {
           </nav>
         </aside>
 
+        {/* Mobile Navigation */}
+        <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-background/95 backdrop-blur-xl border-t z-40">
+          <div className="flex items-center justify-around px-2 py-3">
+            <button
+              onClick={() => setActiveTab("discover")}
+              className={`flex flex-col items-center gap-1 px-3 py-2 rounded-lg transition-colors ${
+                activeTab === "discover" ? "text-primary" : "text-muted-foreground"
+              }`}
+            >
+              <Search className="h-5 w-5" />
+              <span className="text-xs font-medium">Discover</span>
+            </button>
+            <button
+              onClick={() => setActiveTab("my-campaigns")}
+              className={`flex flex-col items-center gap-1 px-3 py-2 rounded-lg transition-colors ${
+                activeTab === "my-campaigns" ? "text-primary" : "text-muted-foreground"
+              }`}
+            >
+              <BarChart3 className="h-5 w-5" />
+              <span className="text-xs font-medium">Campaigns</span>
+            </button>
+            <button
+              onClick={() => setActiveTab("profile")}
+              className={`flex flex-col items-center gap-1 px-3 py-2 rounded-lg transition-colors ${
+                activeTab === "profile" ? "text-primary" : "text-muted-foreground"
+              }`}
+            >
+              <User className="h-5 w-5" />
+              <span className="text-xs font-medium">Profile</span>
+            </button>
+            <button
+              onClick={() => setActiveTab("settings")}
+              className={`flex flex-col items-center gap-1 px-3 py-2 rounded-lg transition-colors ${
+                activeTab === "settings" ? "text-primary" : "text-muted-foreground"
+              }`}
+            >
+              <Settings className="h-5 w-5" />
+              <span className="text-xs font-medium">Settings</span>
+            </button>
+          </div>
+        </div>
+
         {/* Main Content */}
-        <main className="flex-1 p-6 lg:p-8 overflow-auto">
+        <main className="flex-1 p-4 sm:p-6 lg:p-8 pb-24 lg:pb-8 overflow-auto">
           <AnimatePresence mode="wait">
           {/* Discover Campaigns Tab */}
           {activeTab === "discover" && (
@@ -367,47 +512,47 @@ export default function InfluencerDashboard() {
                 </p>
               </div>
 
-              {/* Search and Filters */}
-              <Card className="p-4 mb-6">
-                <div className="flex flex-col sm:flex-row gap-4">
+              {/* Search & Filters */}
+              <div className="mb-6 space-y-4">
+                <div className="flex gap-3">
                   <div className="relative flex-1">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     <Input
                       placeholder="Search campaigns or brands..."
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
-                      className="pl-10"
+                      className="pl-10 h-11"
                     />
                   </div>
                   <Button
                     variant="outline"
                     onClick={() => setShowFilters(!showFilters)}
-                    className="sm:w-auto"
+                    className="h-11 gap-2 shrink-0 hover:bg-primary/10 hover:text-primary hover:border-primary/30"
                   >
-                    <Filter className="h-4 w-4 mr-2" />
+                    <Filter className="h-4 w-4" />
                     Filters
-                    {(selectedCategory !== "all" || selectedPlatform !== "all") && (
-                      <Badge className="ml-2 bg-primary/10 text-primary border-primary/30">
-                        {(selectedCategory !== "all" ? 1 : 0) + (selectedPlatform !== "all" ? 1 : 0)}
+                    {(selectedCategory !== "all" || selectedPlatform !== "all" || selectedBudget !== "all") && (
+                      <Badge className="ml-1 bg-primary text-primary-foreground px-1.5 py-0 text-xs">
+                        {[selectedCategory !== "all", selectedPlatform !== "all", selectedBudget !== "all"].filter(Boolean).length}
                       </Badge>
                     )}
                   </Button>
                 </div>
 
-                {/* Filter Panel */}
+                {/* Expandable Filters */}
                 {showFilters && (
                   <motion.div
                     initial={{ opacity: 0, height: 0 }}
                     animate={{ opacity: 1, height: "auto" }}
                     exit={{ opacity: 0, height: 0 }}
-                    className="mt-4 pt-4 border-t space-y-4"
+                    className="p-4 bg-muted/30 rounded-xl border-2 border-border"
                   >
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                       <div>
-                        <Label className="text-xs mb-2 block">Category</Label>
+                        <Label className="text-xs font-medium mb-2 block">Category</Label>
                         <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-                          <SelectTrigger>
-                            <SelectValue />
+                          <SelectTrigger className="h-10 hover:bg-primary/10 hover:text-primary hover:border-primary/30">
+                            <SelectValue placeholder="Select category" />
                           </SelectTrigger>
                           <SelectContent>
                             {categories.map((cat) => (
@@ -419,10 +564,10 @@ export default function InfluencerDashboard() {
                         </Select>
                       </div>
                       <div>
-                        <Label className="text-xs mb-2 block">Platform</Label>
+                        <Label className="text-xs font-medium mb-2 block">Platform</Label>
                         <Select value={selectedPlatform} onValueChange={setSelectedPlatform}>
-                          <SelectTrigger>
-                            <SelectValue />
+                          <SelectTrigger className="h-10 hover:bg-primary/10 hover:text-primary hover:border-primary/30">
+                            <SelectValue placeholder="Select platform" />
                           </SelectTrigger>
                           <SelectContent>
                             {platforms.map((platform) => (
@@ -433,23 +578,39 @@ export default function InfluencerDashboard() {
                           </SelectContent>
                         </Select>
                       </div>
-                    </div>
-                    <div className="flex gap-2">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => {
-                          setSelectedCategory("all");
-                          setSelectedPlatform("all");
-                        }}
-                      >
-                        <X className="h-3 w-3 mr-1" />
-                        Clear Filters
-                      </Button>
+                      <div>
+                        <div className="flex items-center justify-between mb-2">
+                          <Label className="text-xs font-medium">Budget (per influencer)</Label>
+                          {(selectedCategory !== "all" || selectedPlatform !== "all" || selectedBudget !== "all") && (
+                            <button
+                              onClick={() => {
+                                setSelectedCategory("all");
+                                setSelectedPlatform("all");
+                                setSelectedBudget("all");
+                              }}
+                              className="text-xs text-muted-foreground hover:text-foreground transition-colors"
+                            >
+                              Clear all
+                            </button>
+                          )}
+                        </div>
+                        <Select value={selectedBudget} onValueChange={setSelectedBudget}>
+                          <SelectTrigger className="h-10 hover:bg-primary/10 hover:text-primary hover:border-primary/30">
+                            <SelectValue placeholder="Select budget" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {budgetRanges.map((range) => (
+                              <SelectItem key={range.value} value={range.value}>
+                                {range.label}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
                     </div>
                   </motion.div>
                 )}
-              </Card>
+              </div>
 
               {/* Campaigns List */}
               <div className="space-y-4">
@@ -461,67 +622,63 @@ export default function InfluencerDashboard() {
                     transition={{ duration: 0.3 }}
                   >
                     <Card className="p-6 hover:shadow-lg transition-shadow">
-                      <div className="flex flex-col lg:flex-row gap-6">
+                      <div className="flex gap-4">
                         {/* Brand Avatar */}
                         <div className="flex-shrink-0">
-                          <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center text-3xl">
+                          <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-primary/10 to-secondary/10 flex items-center justify-center text-3xl">
                             {campaign.brandAvatar}
                           </div>
                         </div>
 
                         {/* Campaign Info */}
-                        <div className="flex-1 space-y-3">
-                          <div className="flex items-start justify-between gap-4">
-                            <div>
-                              <h3 className="text-lg font-semibold mb-1">{campaign.title}</h3>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-start justify-between gap-4 mb-2">
+                            <div className="flex-1 min-w-0">
+                              <h3 className="text-xl font-bold mb-1">{campaign.title}</h3>
                               <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                                <span>{campaign.brand}</span>
+                                <span className="font-medium">{campaign.brand}</span>
                                 <span>•</span>
-                                <Badge variant="outline" className="text-xs">
-                                  {campaign.category}
-                                </Badge>
+                                <span>{campaign.category}</span>
                               </div>
                             </div>
-                            <Badge className={getStatusColor(campaign.status)}>
+                            <Badge className={`${getStatusColor(campaign.status)} shrink-0 px-3 py-1 border`}>
                               {campaign.status === "open" && "Open"}
                               {campaign.status === "applied" && "Applied"}
                               {campaign.status === "approved" && "Approved"}
+                              {campaign.status === "active" && "Active"}
                             </Badge>
                           </div>
 
-                          <p className="text-sm text-muted-foreground">{campaign.description}</p>
+                          <p className="text-sm text-muted-foreground mb-3">{campaign.description}</p>
 
-                          <div className="flex flex-wrap gap-4 text-sm">
+                          {/* Price and Deadline */}
+                          <div className="flex items-center gap-6 mb-3 text-sm">
                             <div className="flex items-center gap-2">
                               <DollarSign className="h-4 w-4 text-primary" />
-                              <span className="font-semibold">${campaign.budget}</span>
-                              <span className="text-muted-foreground">
-                                ({getPricingLabel(campaign.pricingModel)})
-                              </span>
+                              <span className="font-bold">${campaign.budget.toLocaleString()}</span>
+                              <span className="text-muted-foreground">({campaign.pricingModel})</span>
                             </div>
-                            <div className="flex items-center gap-2">
-                              <Calendar className="h-4 w-4 text-muted-foreground" />
-                              <span className="text-muted-foreground">
-                                Deadline: {new Date(campaign.deadline).toLocaleDateString()}
-                              </span>
+                            <div className="flex items-center gap-2 text-muted-foreground">
+                              <Calendar className="h-4 w-4" />
+                              <span>Deadline: {new Date(campaign.deadline).toLocaleDateString()}</span>
                             </div>
                           </div>
 
                           {/* Platforms */}
-                          <div className="flex flex-wrap gap-2">
+                          <div className="flex flex-wrap gap-2 mb-3">
                             {campaign.platforms.map((platform) => (
-                              <Badge key={platform} variant="secondary" className="text-xs">
+                              <Badge key={platform} className="bg-primary text-primary-foreground hover:bg-primary/90">
                                 {platform}
                               </Badge>
                             ))}
                           </div>
 
                           {/* Requirements */}
-                          <div className="space-y-1">
-                            <div className="text-xs font-medium text-muted-foreground">Requirements:</div>
+                          <div className="mb-3">
+                            <div className="text-xs font-medium text-muted-foreground mb-2">Requirements:</div>
                             <div className="flex flex-wrap gap-2">
                               {campaign.requirements.map((req, idx) => (
-                                <span key={idx} className="text-xs bg-muted px-2 py-1 rounded">
+                                <span key={idx} className="text-xs bg-muted/50 px-3 py-1.5 rounded-md">
                                   {req}
                                 </span>
                               ))}
@@ -529,19 +686,24 @@ export default function InfluencerDashboard() {
                           </div>
 
                           {/* Actions */}
-                          <div className="flex gap-2 pt-2">
+                          <div className="flex gap-2">
                             {campaign.status === "open" && (
                               <>
-                                <Button size="sm">Apply Now</Button>
-                                <Button size="sm" variant="outline">
-                                  <Heart className="h-4 w-4 mr-1" />
+                                <Button
+                                  size="default"
+                                  className="bg-primary/10 text-primary hover:bg-primary/20 border border-primary/30"
+                                >
+                                  Apply Now
+                                </Button>
+                                <Button size="default" variant="outline" className="gap-2">
+                                  <Heart className="h-4 w-4" />
                                   Save
                                 </Button>
                               </>
                             )}
                             {campaign.status === "applied" && (
-                              <Button size="sm" variant="outline" disabled>
-                                <Clock className="h-4 w-4 mr-1" />
+                              <Button size="default" variant="outline" disabled>
+                                <Clock className="h-4 w-4 mr-2" />
                                 Application Pending
                               </Button>
                             )}
@@ -574,67 +736,853 @@ export default function InfluencerDashboard() {
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.3 }}
             >
-              <div className="mb-6">
-                <h1 className="text-2xl sm:text-3xl font-bold mb-2">My Campaigns</h1>
-                <p className="text-muted-foreground text-sm sm:text-base">
-                  Track and manage your active collaborations
-                </p>
-              </div>
+              {selectedCampaignDetails ? (
+                <>
+                  <div className="mb-6 flex items-start justify-between">
+                    <div>
+                      <Button
+                        variant="outline"
+                        className="mb-4 hover:bg-muted"
+                        onClick={() => {
+                          setSelectedCampaignDetails(null);
+                          setIsCampaignDetailsExpanded(false);
+                        }}
+                      >
+                        <ArrowRight className="h-4 w-4 mr-2 rotate-180" />
+                        Back to Campaigns
+                      </Button>
+                      <h1 className="text-2xl sm:text-3xl font-bold mb-2">{selectedCampaignDetails.title}</h1>
+                      <div className="flex items-center gap-2">
+                        <Badge
+                          variant={selectedCampaignDetails.status === "active" ? "default" : "secondary"}
+                          className={
+                            selectedCampaignDetails.status === "active"
+                              ? "bg-success/10 text-success border-success/20"
+                              : selectedCampaignDetails.status === "applied"
+                              ? "bg-yellow-500/10 text-yellow-600 border-yellow-500/20"
+                              : selectedCampaignDetails.status === "approved"
+                              ? "bg-primary/10 text-primary border-primary/20"
+                              : "bg-muted text-muted-foreground border-border"
+                          }
+                        >
+                          <div
+                            className={`w-1.5 h-1.5 rounded-full mr-1.5 ${
+                              selectedCampaignDetails.status === "active"
+                                ? "bg-success"
+                                : selectedCampaignDetails.status === "applied"
+                                ? "bg-yellow-600"
+                                : selectedCampaignDetails.status === "approved"
+                                ? "bg-primary"
+                                : "bg-muted-foreground"
+                            }`}
+                          />
+                          {selectedCampaignDetails.status === "applied" && "Pending"}
+                          {selectedCampaignDetails.status === "approved" && "Approved"}
+                          {selectedCampaignDetails.status === "active" && "Active"}
+                          {selectedCampaignDetails.status === "completed" && "Completed"}
+                        </Badge>
+                        <Badge variant="outline" className="bg-muted text-foreground border-border">
+                          ${selectedCampaignDetails.budget.toLocaleString()} ({selectedCampaignDetails.pricingModel})
+                        </Badge>
+                      </div>
+                    </div>
+                  </div>
 
-              <div className="space-y-4">
-                {mockMyCampaigns.map((campaign) => (
-                  <Card key={campaign.id} className="p-6">
-                    <div className="flex flex-col lg:flex-row gap-6">
-                      <div className="flex-shrink-0">
-                        <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center text-3xl">
-                          {campaign.brandAvatar}
+                  {/* Brief Info Card */}
+                  <Card className="p-6 mb-6">
+                    <div className="space-y-4">
+                      {/* Brief Info */}
+                      <div className="grid grid-cols-4 gap-4">
+                        <div>
+                          <Label className="text-xs text-muted-foreground mb-1 block">Start Date</Label>
+                          <div className="text-sm font-medium">
+                            {selectedCampaignDetails.startDate
+                              ? new Date(selectedCampaignDetails.startDate).toLocaleDateString()
+                              : "Not set"}
+                          </div>
+                        </div>
+                        <div>
+                          <Label className="text-xs text-muted-foreground mb-1 block">End Date</Label>
+                          <div className="text-sm font-medium">
+                            {selectedCampaignDetails.endDate
+                              ? new Date(selectedCampaignDetails.endDate).toLocaleDateString()
+                              : "Not set"}
+                          </div>
+                        </div>
+                        <div>
+                          <Label className="text-xs text-muted-foreground mb-1 block">Brand</Label>
+                          <div className="text-sm font-medium">{selectedCampaignDetails.brand}</div>
+                        </div>
+                        <div>
+                          <Label className="text-xs text-muted-foreground mb-1 block">Goal</Label>
+                          <div className="text-sm font-medium capitalize">
+                            {selectedCampaignDetails.goal?.replace("-", " ") || "Not set"}
+                          </div>
                         </div>
                       </div>
 
-                      <div className="flex-1 space-y-3">
-                        <div className="flex items-start justify-between gap-4">
+                      {/* Target Metrics */}
+                      {(selectedCampaignDetails.targetViews ||
+                        selectedCampaignDetails.targetClicks ||
+                        selectedCampaignDetails.targetEngagements) && (
+                        <div className="border-t pt-4">
+                          <Label className="text-xs text-muted-foreground mb-3 block uppercase tracking-wide">
+                            Target Metrics
+                          </Label>
+                          <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                            {selectedCampaignDetails.targetViews && (
+                              <div className="bg-muted/30 rounded-lg p-3">
+                                <div className="text-xs text-muted-foreground mb-1">Target Views</div>
+                                <div className="text-lg font-bold text-primary">
+                                  {parseInt(selectedCampaignDetails.targetViews).toLocaleString()}
+                                </div>
+                              </div>
+                            )}
+                            {selectedCampaignDetails.targetClicks && (
+                              <div className="bg-muted/30 rounded-lg p-3">
+                                <div className="text-xs text-muted-foreground mb-1">Target Clicks</div>
+                                <div className="text-lg font-bold text-primary">
+                                  {parseInt(selectedCampaignDetails.targetClicks).toLocaleString()}
+                                </div>
+                              </div>
+                            )}
+                            {selectedCampaignDetails.targetEngagements && (
+                              <div className="bg-muted/30 rounded-lg p-3">
+                                <div className="text-xs text-muted-foreground mb-1">Target Engagements</div>
+                                <div className="text-lg font-bold text-primary">
+                                  {parseInt(selectedCampaignDetails.targetEngagements).toLocaleString()}
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Expand Button */}
+                      <Button
+                        variant="outline"
+                        className="w-full hover:bg-muted"
+                        onClick={() => setIsCampaignDetailsExpanded(!isCampaignDetailsExpanded)}
+                      >
+                        {isCampaignDetailsExpanded ? "Hide" : "Show"} Full Details
+                        <ChevronDown
+                          className={`ml-2 h-4 w-4 transition-transform ${
+                            isCampaignDetailsExpanded ? "rotate-180" : ""
+                          }`}
+                        />
+                      </Button>
+
+                      {/* Expanded Details */}
+                      {isCampaignDetailsExpanded && (
+                        <div className="space-y-4 border-t pt-4">
                           <div>
-                            <h3 className="text-lg font-semibold mb-1">{campaign.title}</h3>
-                            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                              <span>{campaign.brand}</span>
+                            <Label className="text-sm font-semibold mb-2 block">Description</Label>
+                            <p className="text-sm text-muted-foreground">
+                              {selectedCampaignDetails.description || "Not set"}
+                            </p>
+                          </div>
+
+                          <div>
+                            <Label className="text-sm font-semibold mb-2 block">Budget</Label>
+                            <p className="text-sm text-muted-foreground">
+                              ${selectedCampaignDetails.budget.toLocaleString()} ({selectedCampaignDetails.pricingModel})
+                            </p>
+                          </div>
+
+                          <div>
+                            <Label className="text-sm font-semibold mb-2 block">Platforms</Label>
+                            {selectedCampaignDetails.platforms && selectedCampaignDetails.platforms.length > 0 ? (
+                              <div className="flex gap-2">
+                                {selectedCampaignDetails.platforms.map((platform) => (
+                                  <Badge key={platform} variant="outline" className="capitalize">
+                                    {platform === "Instagram" && <Instagram className="h-3 w-3 mr-1" />}
+                                    {platform === "TikTok" && <TrendingUp className="h-3 w-3 mr-1" />}
+                                    {platform === "YouTube" && <Youtube className="h-3 w-3 mr-1" />}
+                                    {platform === "Twitter" && <Twitter className="h-3 w-3 mr-1" />}
+                                    {platform}
+                                  </Badge>
+                                ))}
+                              </div>
+                            ) : (
+                              <p className="text-sm text-muted-foreground">Not set</p>
+                            )}
+                          </div>
+
+                          {/* Product Details */}
+                          {(selectedCampaignDetails.productName || selectedCampaignDetails.productLink) && (
+                            <div className="border-t pt-4">
+                              <Label className="text-sm font-semibold mb-3 block">Product Details</Label>
+                              <div className="space-y-3">
+                                {selectedCampaignDetails.productName && (
+                                  <div>
+                                    <Label className="text-xs text-muted-foreground mb-1 block">Product Name</Label>
+                                    <p className="text-sm">{selectedCampaignDetails.productName}</p>
+                                  </div>
+                                )}
+                                {selectedCampaignDetails.productPrice && (
+                                  <div>
+                                    <Label className="text-xs text-muted-foreground mb-1 block">Product Price</Label>
+                                    <p className="text-sm font-medium">${selectedCampaignDetails.productPrice}</p>
+                                  </div>
+                                )}
+                                {selectedCampaignDetails.productLink && (
+                                  <div>
+                                    <Label className="text-xs text-muted-foreground mb-1 block">Product Link</Label>
+                                    <a
+                                      href={selectedCampaignDetails.productLink}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="text-sm text-primary hover:underline break-all"
+                                    >
+                                      {selectedCampaignDetails.productLink}
+                                    </a>
+                                  </div>
+                                )}
+                              </div>
                             </div>
-                          </div>
-                          <Badge className={getStatusColor(campaign.status)}>
-                            {campaign.status === "applied" && "Pending Approval"}
-                            {campaign.status === "approved" && "Approved"}
-                            {campaign.status === "active" && "In Progress"}
-                            {campaign.status === "completed" && "Completed"}
-                          </Badge>
+                          )}
+
+                          {/* Instructions */}
+                          {(selectedCampaignDetails.brandTag ||
+                            selectedCampaignDetails.hashtags ||
+                            selectedCampaignDetails.detailedRequirements) && (
+                            <div className="border-t pt-4">
+                              <Label className="text-sm font-semibold mb-3 block">Brand Instructions</Label>
+                              <div className="space-y-3">
+                                {selectedCampaignDetails.brandTag && (
+                                  <div>
+                                    <Label className="text-xs text-muted-foreground mb-1 block">Brand Tag</Label>
+                                    <p className="text-sm">{selectedCampaignDetails.brandTag}</p>
+                                  </div>
+                                )}
+                                {selectedCampaignDetails.hashtags && (
+                                  <div>
+                                    <Label className="text-xs text-muted-foreground mb-1 block">Hashtags</Label>
+                                    <p className="text-sm">{selectedCampaignDetails.hashtags}</p>
+                                  </div>
+                                )}
+                                {selectedCampaignDetails.detailedRequirements && (
+                                  <div>
+                                    <Label className="text-xs text-muted-foreground mb-1 block">
+                                      Detailed Requirements
+                                    </Label>
+                                    <p className="text-sm text-muted-foreground whitespace-pre-wrap">
+                                      {selectedCampaignDetails.detailedRequirements}
+                                    </p>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          )}
                         </div>
+                      )}
+                    </div>
+                  </Card>
 
-                        <p className="text-sm text-muted-foreground">{campaign.description}</p>
+                  {/* Pipeline */}
+                  <Card className="p-6">
+                    <div className="flex items-center justify-between mb-6">
+                      <h2 className="text-xl font-bold">Campaign Progress</h2>
+                    </div>
 
-                        <div className="flex flex-wrap gap-4 text-sm">
-                          <div className="flex items-center gap-2">
-                            <DollarSign className="h-4 w-4 text-primary" />
-                            <span className="font-semibold">${campaign.budget}</span>
+                    <div className="space-y-6">
+                      {/* Stage 1: Negotiation */}
+                      <div className="flex gap-4">
+                        <div className="flex flex-col items-center">
+                          <div
+                            className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold ${
+                              selectedCampaignDetails.status !== "applied"
+                                ? "bg-primary text-primary-foreground"
+                                : "bg-muted text-muted-foreground"
+                            }`}
+                          >
+                            1
                           </div>
-                          <div className="flex items-center gap-2">
-                            <Calendar className="h-4 w-4 text-muted-foreground" />
-                            <span className="text-muted-foreground">
-                              Due: {new Date(campaign.deadline).toLocaleDateString()}
-                            </span>
+                          <div className="w-0.5 h-full bg-border mt-2" />
+                        </div>
+                        <div className="flex-1 pb-6">
+                          <h3 className="font-semibold mb-2">Negotiation & Terms</h3>
+                          <p className="text-sm text-muted-foreground mb-3">
+                            Review campaign details and approve collaboration terms
+                          </p>
+
+                          {selectedCampaignDetails.status === "applied" ? (
+                            <div className="space-y-4">
+                              {/* Influencer Terms Input */}
+                              <div className="space-y-2">
+                                <Label className="text-sm font-medium">Your Terms (Optional)</Label>
+                                <Textarea
+                                  className="resize-none"
+                                  placeholder="Add any specific terms or requirements for this collaboration..."
+                                  value={selectedCampaignDetails.influencerTerms || ""}
+                                  onChange={(e) => setSelectedCampaignDetails({
+                                    ...selectedCampaignDetails,
+                                    influencerTerms: e.target.value
+                                  })}
+                                  rows={3}
+                                />
+                              </div>
+
+                              {/* Brand Terms (Read-only) */}
+                              {selectedCampaignDetails.brandTerms && (
+                                <div className="space-y-2">
+                                  <Label className="text-sm font-medium">Brand Terms</Label>
+                                  <div className="px-3 py-2 rounded-lg border border-border bg-muted/50 text-sm">
+                                    {selectedCampaignDetails.brandTerms}
+                                  </div>
+                                </div>
+                              )}
+
+                              {/* Approval Status */}
+                              <div className="flex items-center gap-2 px-4 py-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
+                                <Clock className="h-5 w-5 text-yellow-600" />
+                                <div>
+                                  <p className="text-sm font-medium text-yellow-600">
+                                    Waiting for Brand Approval
+                                  </p>
+                                  <p className="text-xs text-muted-foreground">
+                                    Your application is under review
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+                          ) : (
+                            <div className="space-y-3">
+                              <div className="flex items-center gap-2 px-4 py-3 rounded-lg bg-success/10 border border-success/20">
+                                <CheckCircle2 className="h-5 w-5 text-success" />
+                                <div>
+                                  <p className="text-sm font-medium text-success">Terms Approved</p>
+                                  <p className="text-xs text-muted-foreground">
+                                    Both parties have approved the collaboration terms
+                                  </p>
+                                </div>
+                              </div>
+
+                              <div className="flex items-center gap-2 px-4 py-3 rounded-lg bg-primary/10 border border-primary/20">
+                                <Wallet className="h-5 w-5 text-primary" />
+                                <div>
+                                  <p className="text-sm font-medium text-primary">
+                                    Initial Payment Secured (25%)
+                                  </p>
+                                  <p className="text-xs text-muted-foreground">
+                                    ${(selectedCampaignDetails.budget * 0.25).toLocaleString()} held in escrow
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Stage 2: Content Creation & Approval */}
+                      <div className="flex gap-4">
+                        <div className="flex flex-col items-center">
+                          <div
+                            className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold ${
+                              selectedCampaignDetails.status === "active" ||
+                              selectedCampaignDetails.status === "completed" ||
+                              selectedCampaignDetails.contentApproved
+                                ? "bg-secondary text-secondary-foreground"
+                                : "bg-muted text-muted-foreground"
+                            }`}
+                          >
+                            2
+                          </div>
+                          <div className="w-0.5 h-full bg-border mt-2" />
+                        </div>
+                        <div className="flex-1 pb-6">
+                          <h3 className="font-semibold mb-2">Content Creation & Approval</h3>
+                          <p className="text-sm text-muted-foreground mb-3">
+                            Create content and submit links for brand review
+                          </p>
+
+                          {selectedCampaignDetails.status === "applied" ? (
+                            <div className="text-center py-8 bg-muted/30 rounded-lg border border-dashed border-border">
+                              <Clock className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
+                              <p className="text-sm text-muted-foreground">
+                                Complete negotiation stage first
+                              </p>
+                            </div>
+                          ) : !selectedCampaignDetails.contentApproved ? (
+                            <div className="space-y-4">
+                              {/* Content Link Input */}
+                              <div className="space-y-2">
+                                <Label className="text-sm font-medium">Submit Content Link</Label>
+                                <p className="text-xs text-muted-foreground mb-2">
+                                  Share a link to your content (Google Drive, Dropbox, etc.)
+                                </p>
+                                <div className="flex gap-2">
+                                  <div className="relative flex-1">
+                                    <LinkIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                                    <Input
+                                      placeholder="https://drive.google.com/..."
+                                      value={contentLinkInput}
+                                      onChange={(e) => setContentLinkInput(e.target.value)}
+                                      className="pl-10 h-11"
+                                    />
+                                  </div>
+                                  <Button className="bg-gradient-to-r from-primary to-secondary">
+                                    <Upload className="h-4 w-4 mr-2" />
+                                    Submit
+                                  </Button>
+                                </div>
+                              </div>
+
+                              {selectedCampaignDetails.currentContentUrl && (
+                                <div className="space-y-3">
+                                  <div className="bg-background rounded-lg p-4 border border-border">
+                                    <div className="flex items-center gap-2 mb-2">
+                                      <LinkIcon className="h-4 w-4 text-primary" />
+                                      <span className="text-sm font-medium">Submitted Content</span>
+                                    </div>
+                                    <a
+                                      href={selectedCampaignDetails.currentContentUrl}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="text-sm text-primary hover:underline break-all flex items-center gap-1"
+                                    >
+                                      {selectedCampaignDetails.currentContentUrl}
+                                      <ExternalLink className="h-3 w-3" />
+                                    </a>
+                                  </div>
+
+                                  <div className="flex items-center gap-2 px-4 py-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
+                                    <Clock className="h-5 w-5 text-yellow-600" />
+                                    <div>
+                                      <p className="text-sm font-medium text-yellow-600">
+                                        Waiting for Brand Review
+                                      </p>
+                                      <p className="text-xs text-muted-foreground">
+                                        Brand will review and provide feedback
+                                      </p>
+                                    </div>
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+                          ) : (
+                            <div className="space-y-3">
+                              <div className="flex items-center gap-2 px-4 py-3 rounded-lg bg-success/10 border border-success/20">
+                                <CheckCircle2 className="h-5 w-5 text-success" />
+                                <div className="flex-1">
+                                  <p className="text-sm font-medium text-success">Content Approved</p>
+                                  <p className="text-xs text-muted-foreground">
+                                    Brand has approved your content
+                                  </p>
+                                </div>
+                              </div>
+
+                              <div className="flex items-center gap-2 px-4 py-3 rounded-lg bg-primary/10 border border-primary/20">
+                                <Wallet className="h-5 w-5 text-primary" />
+                                <div>
+                                  <p className="text-sm font-medium text-primary">
+                                    Content Approval Payment (25%)
+                                  </p>
+                                  <p className="text-xs text-muted-foreground">
+                                    ${(selectedCampaignDetails.budget * 0.25).toLocaleString()} released
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Stage 3: Publication & Metrics */}
+                      <div className="flex gap-4">
+                        <div className="flex flex-col items-center">
+                          <div
+                            className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold ${
+                              selectedCampaignDetails.publishedUrl
+                                ? "bg-success text-success-foreground"
+                                : "bg-muted text-muted-foreground"
+                            }`}
+                          >
+                            3
                           </div>
                         </div>
+                        <div className="flex-1">
+                          <h3 className="font-semibold mb-2">Publication & Metrics</h3>
+                          <p className="text-sm text-muted-foreground mb-3">
+                            Publish content and track performance metrics
+                          </p>
 
-                        <div className="flex gap-2 pt-2">
-                          <Button size="sm">View Details</Button>
-                          {campaign.status === "active" && (
-                            <Button size="sm" variant="outline">
-                              Submit Draft
-                            </Button>
+                          {!selectedCampaignDetails.contentApproved ? (
+                            <div className="text-center py-8 bg-muted/30 rounded-lg border border-dashed border-border">
+                              <Clock className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
+                              <p className="text-sm text-muted-foreground mb-1">
+                                Waiting for content approval
+                              </p>
+                              <p className="text-xs text-muted-foreground">
+                                You can publish after brand approves your content
+                              </p>
+                            </div>
+                          ) : !selectedCampaignDetails.publishedUrl ? (
+                            <div className="space-y-4">
+                              {/* Published Link Input */}
+                              <div className="space-y-2">
+                                <Label className="text-sm font-medium">Submit Published Content URL</Label>
+                                <p className="text-xs text-muted-foreground mb-2">
+                                  Share the link to your published content
+                                </p>
+                                <div className="flex gap-2">
+                                  <div className="relative flex-1">
+                                    <ExternalLink className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                                    <Input
+                                      placeholder="https://instagram.com/p/..."
+                                      value={publishedLinkInput}
+                                      onChange={(e) => setPublishedLinkInput(e.target.value)}
+                                      className="pl-10 h-11"
+                                    />
+                                  </div>
+                                  <Button className="bg-gradient-to-r from-secondary to-primary">
+                                    <Rocket className="h-4 w-4 mr-2" />
+                                    Publish
+                                  </Button>
+                                </div>
+                              </div>
+
+                              <div className="flex items-center gap-2 px-4 py-3 rounded-lg bg-primary/10 border border-primary/20">
+                                <Wallet className="h-5 w-5 text-primary" />
+                                <div>
+                                  <p className="text-sm font-medium text-primary">
+                                    Publication Payment (50%)
+                                  </p>
+                                  <p className="text-xs text-muted-foreground">
+                                    ${(selectedCampaignDetails.budget * 0.5).toLocaleString()} will be released
+                                    upon publication
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+                          ) : (
+                            <div className="space-y-3">
+                              <div className="bg-background rounded-lg p-4 border border-border">
+                                <div className="flex items-center gap-2 mb-2">
+                                  <Rocket className="h-4 w-4 text-success" />
+                                  <span className="text-sm font-medium">Published Content</span>
+                                </div>
+                                <a
+                                  href={selectedCampaignDetails.publishedUrl}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="text-sm text-primary hover:underline break-all flex items-center gap-1"
+                                >
+                                  {selectedCampaignDetails.publishedUrl}
+                                  <ExternalLink className="h-3 w-3" />
+                                </a>
+                              </div>
+
+                              {/* Public Metrics */}
+                              {selectedCampaignDetails.publicMetrics && (
+                                <div className="bg-background rounded-lg p-4 border border-border">
+                                  <div className="flex items-center justify-between mb-3">
+                                    <h4 className="text-sm font-semibold">Performance Metrics</h4>
+                                    <Badge variant="outline" className="text-xs">
+                                      Live
+                                    </Badge>
+                                  </div>
+                                  <div className="grid grid-cols-2 gap-3">
+                                    {selectedCampaignDetails.publicMetrics.views !== undefined && (
+                                      <div className="flex items-center gap-2 p-2 rounded-md bg-muted/50">
+                                        <Eye className="h-4 w-4 text-muted-foreground" />
+                                        <div>
+                                          <p className="text-xs text-muted-foreground">Views</p>
+                                          <p className="text-sm font-semibold">
+                                            {selectedCampaignDetails.publicMetrics.views.toLocaleString()}
+                                          </p>
+                                        </div>
+                                      </div>
+                                    )}
+                                    {selectedCampaignDetails.publicMetrics.likes !== undefined && (
+                                      <div className="flex items-center gap-2 p-2 rounded-md bg-muted/50">
+                                        <Heart className="h-4 w-4 text-muted-foreground" />
+                                        <div>
+                                          <p className="text-xs text-muted-foreground">Likes</p>
+                                          <p className="text-sm font-semibold">
+                                            {selectedCampaignDetails.publicMetrics.likes.toLocaleString()}
+                                          </p>
+                                        </div>
+                                      </div>
+                                    )}
+                                    {selectedCampaignDetails.publicMetrics.comments !== undefined && (
+                                      <div className="flex items-center gap-2 p-2 rounded-md bg-muted/50">
+                                        <MessageSquare className="h-4 w-4 text-muted-foreground" />
+                                        <div>
+                                          <p className="text-xs text-muted-foreground">Comments</p>
+                                          <p className="text-sm font-semibold">
+                                            {selectedCampaignDetails.publicMetrics.comments.toLocaleString()}
+                                          </p>
+                                        </div>
+                                      </div>
+                                    )}
+                                    {selectedCampaignDetails.publicMetrics.shares !== undefined && (
+                                      <div className="flex items-center gap-2 p-2 rounded-md bg-muted/50">
+                                        <TrendingUp className="h-4 w-4 text-muted-foreground" />
+                                        <div>
+                                          <p className="text-xs text-muted-foreground">Shares</p>
+                                          <p className="text-sm font-semibold">
+                                            {selectedCampaignDetails.publicMetrics.shares.toLocaleString()}
+                                          </p>
+                                        </div>
+                                      </div>
+                                    )}
+                                  </div>
+                                </div>
+                              )}
+
+                              <div className="flex items-center gap-2 px-4 py-3 rounded-lg bg-success/10 border border-success/20">
+                                <CheckCircle2 className="h-5 w-5 text-success" />
+                                <div>
+                                  <p className="text-sm font-medium text-success">Campaign Active</p>
+                                  <p className="text-xs text-muted-foreground">
+                                    Tracking metrics until campaign end
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
                           )}
                         </div>
                       </div>
                     </div>
                   </Card>
-                ))}
-              </div>
+                </>
+              ) : (
+                <>
+                  <div className="mb-6">
+                    <h1 className="text-2xl sm:text-3xl font-bold mb-2">My Campaigns</h1>
+                    <p className="text-muted-foreground text-sm sm:text-base">
+                      Track and manage your active collaborations
+                    </p>
+                  </div>
+
+                  {mockMyCampaigns.length === 0 ? (
+                <div className="flex flex-col items-center justify-center py-20">
+                  <Briefcase className="h-16 w-16 text-muted-foreground/50 mb-4" />
+                  <p className="text-muted-foreground text-lg font-medium mb-2">No campaigns yet</p>
+                  <p className="text-muted-foreground text-sm mb-6">Start applying to campaigns to get started</p>
+                  <Button onClick={() => setActiveTab("discover")} className="bg-gradient-to-r from-primary to-secondary">
+                    <Search className="h-4 w-4 mr-2" />
+                    Discover Campaigns
+                  </Button>
+                </div>
+              ) : (
+                <>
+                  {/* Search and Filter Bar */}
+                  <div className="flex items-center gap-4 mb-4">
+                    <div className="flex-1 relative">
+                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                      <Input
+                        placeholder="Search"
+                        className="pl-9 h-11 bg-card"
+                      />
+                    </div>
+                    <Select defaultValue="all">
+                      <SelectTrigger className="w-[180px] h-11 bg-card">
+                        <SelectValue placeholder="Status" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">All Status</SelectItem>
+                        <SelectItem value="applied">Pending</SelectItem>
+                        <SelectItem value="approved">Approved</SelectItem>
+                        <SelectItem value="active">Active</SelectItem>
+                        <SelectItem value="completed">Completed</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  {/* Desktop Table View */}
+                  <div className="hidden lg:block border rounded-lg overflow-hidden">
+                    {/* Table Header */}
+                    <div className="flex items-center px-6 py-4 bg-muted/30 border-b">
+                      <div className="w-[320px] text-xs font-semibold text-muted-foreground uppercase tracking-wide">Name</div>
+                      <div className="w-[100px] text-xs font-semibold text-muted-foreground uppercase tracking-wide">Pricing</div>
+                      <div className="w-[100px] text-xs font-semibold text-muted-foreground uppercase tracking-wide">Budget</div>
+                      <div className="w-[120px] text-xs font-semibold text-muted-foreground uppercase tracking-wide">Received</div>
+                      <div className="flex-1 text-xs font-semibold text-muted-foreground uppercase tracking-wide">Status</div>
+                      <div className="w-[140px] text-xs font-semibold text-muted-foreground uppercase tracking-wide text-right">Actions</div>
+                    </div>
+
+                    {/* Table Rows */}
+                    {mockMyCampaigns.map((campaign, index) => (
+                      <div
+                        key={campaign.id}
+                        onClick={() => setSelectedCampaignDetails(campaign)}
+                        className={`flex items-center px-6 py-5 hover:bg-muted/20 transition-colors cursor-pointer ${
+                          index !== mockMyCampaigns.length - 1 ? "border-b" : ""
+                        }`}
+                      >
+                        {/* Name Column */}
+                        <div className="w-[320px] flex items-center gap-3">
+                          <div className="w-12 h-12 rounded-lg bg-muted flex items-center justify-center shrink-0 text-2xl">
+                            {campaign.brandAvatar}
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <h3 className="text-sm font-semibold mb-1.5 truncate">{campaign.title}</h3>
+                            <div className="flex items-center gap-2">
+                              <Badge
+                                variant={campaign.status === "active" ? "default" : "secondary"}
+                                className={`w-[80px] justify-center ${
+                                  campaign.status === "active"
+                                    ? "bg-success/10 text-success border-success/20 hover:bg-success/20"
+                                    : campaign.status === "applied"
+                                    ? "bg-yellow-500/10 text-yellow-600 border-yellow-500/20"
+                                    : campaign.status === "approved"
+                                    ? "bg-primary/10 text-primary border-primary/20 hover:bg-primary/20"
+                                    : "bg-muted text-muted-foreground border-border"
+                                }`}
+                              >
+                                <div className={`w-1.5 h-1.5 rounded-full mr-1.5 ${
+                                  campaign.status === "active" ? "bg-success" :
+                                  campaign.status === "applied" ? "bg-yellow-600" :
+                                  campaign.status === "approved" ? "bg-primary" : "bg-muted-foreground"
+                                }`} />
+                                {campaign.status === "applied" && "Pending"}
+                                {campaign.status === "approved" && "Approved"}
+                                {campaign.status === "active" && "Active"}
+                                {campaign.status === "completed" && "Done"}
+                              </Badge>
+                              <span className="text-xs text-muted-foreground">{campaign.brand}</span>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Pricing Column */}
+                        <div className="w-[100px] flex items-center">
+                          <div className="flex flex-wrap gap-1">
+                            <div
+                              className={`text-xs px-2 py-0.5 rounded-md font-medium ${
+                                campaign.pricingModel === "CPM"
+                                  ? "bg-primary/10 text-primary border border-primary/20"
+                                  : campaign.pricingModel === "CPC"
+                                  ? "bg-secondary/10 text-secondary border border-secondary/20"
+                                  : "bg-muted text-foreground border border-border"
+                              }`}
+                            >
+                              {campaign.pricingModel}
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Budget Column */}
+                        <div className="w-[100px] flex items-center">
+                          <div className="text-base font-semibold">
+                            ${campaign.budget.toLocaleString()}
+                          </div>
+                        </div>
+
+                        {/* Received Column */}
+                        <div className="w-[120px] flex items-center">
+                          <div className="text-sm font-medium text-success">
+                            ${(() => {
+                              if (campaign.status === "applied") return "0";
+                              if (campaign.status === "approved") return (campaign.budget * 0.25).toLocaleString();
+                              if (campaign.status === "active") return (campaign.budget * 0.5).toLocaleString();
+                              if (campaign.status === "completed") return campaign.budget.toLocaleString();
+                              return "0";
+                            })()}
+                          </div>
+                        </div>
+
+                        {/* Status Column */}
+                        <div className="flex-1">
+                          <div className="text-sm text-muted-foreground">
+                            Due: {new Date(campaign.deadline).toLocaleDateString()}
+                          </div>
+                        </div>
+
+                        {/* Actions Column */}
+                        <div className="w-[140px] flex items-center justify-end gap-2">
+                          <Button size="sm" variant="ghost" className="h-8 w-8 p-0">
+                            <Eye className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Mobile Card View */}
+                  <div className="lg:hidden space-y-3">
+                    {mockMyCampaigns.map((campaign) => (
+                      <Card
+                        key={campaign.id}
+                        onClick={() => setSelectedCampaignDetails(campaign)}
+                        className="p-4 cursor-pointer hover:bg-muted/20 transition-colors"
+                      >
+                        <div className="flex items-start gap-3 mb-3">
+                          <div className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center shrink-0 text-xl">
+                            {campaign.brandAvatar}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <h3 className="text-sm font-semibold mb-1 leading-tight">{campaign.title}</h3>
+                            <Badge
+                              variant={campaign.status === "active" ? "default" : "secondary"}
+                              className={`text-[10px] px-2 py-0 h-5 ${
+                                campaign.status === "active"
+                                  ? "bg-success/10 text-success border-success/20"
+                                  : campaign.status === "applied"
+                                  ? "bg-yellow-500/10 text-yellow-600 border-yellow-500/20"
+                                  : campaign.status === "approved"
+                                  ? "bg-primary/10 text-primary border-primary/20"
+                                  : "bg-muted text-muted-foreground border-border"
+                              }`}
+                            >
+                              <div className={`w-1.5 h-1.5 rounded-full mr-1 ${
+                                campaign.status === "active" ? "bg-success" :
+                                campaign.status === "applied" ? "bg-yellow-600" :
+                                campaign.status === "approved" ? "bg-primary" : "bg-muted-foreground"
+                              }`} />
+                              {campaign.status === "applied" && "Pending"}
+                              {campaign.status === "approved" && "Approved"}
+                              {campaign.status === "active" && "Active"}
+                              {campaign.status === "completed" && "Done"}
+                            </Badge>
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-2 text-xs">
+                          <div>
+                            <div className="text-muted-foreground mb-0.5">Pricing</div>
+                            <div
+                              className={`inline-block text-[10px] px-2 py-0.5 rounded-md font-medium ${
+                                campaign.pricingModel === "CPM"
+                                  ? "bg-primary/10 text-primary border border-primary/20"
+                                  : campaign.pricingModel === "CPC"
+                                  ? "bg-secondary/10 text-secondary border border-secondary/20"
+                                  : "bg-muted text-foreground border border-border"
+                              }`}
+                            >
+                              {campaign.pricingModel}
+                            </div>
+                          </div>
+                          <div>
+                            <div className="text-muted-foreground mb-0.5">Budget</div>
+                            <div className="font-semibold">${campaign.budget.toLocaleString()}</div>
+                          </div>
+                          <div>
+                            <div className="text-muted-foreground mb-0.5">Received</div>
+                            <div className="font-semibold text-success">
+                              ${(() => {
+                                if (campaign.status === "applied") return "0";
+                                if (campaign.status === "approved") return (campaign.budget * 0.25).toLocaleString();
+                                if (campaign.status === "active") return (campaign.budget * 0.5).toLocaleString();
+                                if (campaign.status === "completed") return campaign.budget.toLocaleString();
+                                return "0";
+                              })()}
+                            </div>
+                          </div>
+                          <div>
+                            <div className="text-muted-foreground mb-0.5">Due</div>
+                            <div className="font-medium">{new Date(campaign.deadline).toLocaleDateString()}</div>
+                          </div>
+                        </div>
+                      </Card>
+                    ))}
+                  </div>
+                </>
+              )}
+                </>
+              )}
             </motion.div>
           )}
 
@@ -648,55 +1596,217 @@ export default function InfluencerDashboard() {
               transition={{ duration: 0.3 }}
             >
               <div className="mb-6">
-                <h1 className="text-2xl sm:text-3xl font-bold mb-2">Profile</h1>
-                <p className="text-muted-foreground text-sm sm:text-base">
-                  Manage your public profile and portfolio
-                </p>
+                <h1 className="text-2xl sm:text-3xl font-bold mb-2">Influencer Profile</h1>
+                <p className="text-muted-foreground text-sm sm:text-base">Manage your public profile and portfolio</p>
               </div>
 
               <Card className="p-6 sm:p-8">
-                <div className="space-y-6">
-                  <div className="flex items-center gap-6">
-                    <div className="w-24 h-24 rounded-full bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center text-4xl">
-                      🎭
+                <form className="space-y-5">
+                  <div className="flex items-center gap-4 pb-5 border-b">
+                    <div className="w-20 h-20 rounded-full bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center">
+                      <User className="h-10 w-10 text-primary" />
                     </div>
                     <div>
-                      <Button size="sm" variant="outline">Change Avatar</Button>
+                      <Button type="button" size="sm" variant="outline">
+                        <Camera className="h-4 w-4 mr-2" />
+                        Upload Avatar
+                      </Button>
+                      <p className="text-xs text-muted-foreground mt-2">JPG, PNG or SVG. Max 2MB.</p>
                     </div>
                   </div>
 
-                  <div className="grid gap-4">
-                    <div>
-                      <Label htmlFor="display-name">Display Name</Label>
-                      <Input id="display-name" defaultValue="Luna Virtual" />
-                    </div>
-                    <div>
-                      <Label htmlFor="username">Username</Label>
-                      <Input id="username" defaultValue="@lunavirtual" />
-                    </div>
-                    <div>
-                      <Label htmlFor="bio">Bio</Label>
-                      <Textarea
-                        id="bio"
-                        defaultValue="AI influencer creating authentic content for fashion and lifestyle brands"
-                        className="min-h-[100px]"
+                  <div>
+                    <Label htmlFor="display-name" className="text-sm font-medium mb-2 block">
+                      Display Name
+                    </Label>
+                    <Input
+                      id="display-name"
+                      placeholder="Your Name"
+                      defaultValue="Luna Virtual"
+                      className="h-11"
+                    />
+                  </div>
+
+                  <div>
+                    <Label htmlFor="bio" className="text-sm font-medium mb-2 block">
+                      About You
+                    </Label>
+                    <Textarea
+                      id="bio"
+                      placeholder="Tell brands about yourself, your niche, and what makes your content unique..."
+                      defaultValue="AI influencer creating authentic content for fashion and lifestyle brands"
+                      rows={5}
+                      className="resize-none"
+                    />
+                  </div>
+
+                  <div>
+                    <Label htmlFor="category" className="text-sm font-medium mb-2 block">
+                      Primary Category
+                    </Label>
+                    <Select defaultValue="fashion">
+                      <SelectTrigger className="h-11">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="fashion">Fashion & Style</SelectItem>
+                        <SelectItem value="beauty">Beauty & Care</SelectItem>
+                        <SelectItem value="tech">Technology</SelectItem>
+                        <SelectItem value="fitness">Health & Fitness</SelectItem>
+                        <SelectItem value="lifestyle">Lifestyle</SelectItem>
+                        <SelectItem value="food">Food & Beverage</SelectItem>
+                        <SelectItem value="travel">Travel</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="space-y-3">
+                    <Label className="text-sm font-medium">Social Media</Label>
+
+                    <div className="relative">
+                      <Instagram className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                      <Input
+                        placeholder="Instagram URL"
+                        defaultValue="https://instagram.com/lunavirtual"
+                        className="pl-10 h-11"
                       />
                     </div>
-                    <div>
-                      <Label htmlFor="categories">Categories</Label>
-                      <div className="flex flex-wrap gap-2 mt-2">
-                        <Badge>Fashion</Badge>
-                        <Badge>Lifestyle</Badge>
-                        <Badge>Beauty</Badge>
-                        <Button size="sm" variant="outline" className="h-6 text-xs">
-                          + Add
-                        </Button>
+
+                    <div className="relative">
+                      <TrendingUp className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                      <Input
+                        placeholder="TikTok URL"
+                        className="pl-10 h-11"
+                      />
+                    </div>
+
+                    <div className="relative">
+                      <Twitter className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                      <Input
+                        placeholder="X URL"
+                        className="pl-10 h-11"
+                      />
+                    </div>
+
+                    <div className="relative">
+                      <Youtube className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                      <Input
+                        placeholder="YouTube URL"
+                        className="pl-10 h-11"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="space-y-3 pt-2">
+                    <Label className="text-sm font-medium">Pricing Range (USD)</Label>
+                    <p className="text-xs text-muted-foreground">Set your minimum and maximum rates for different pricing models</p>
+
+                    <div className="grid grid-cols-1 gap-4">
+                      <div>
+                        <Label className="text-xs font-medium mb-2 block">
+                          CPM (Cost Per 1000 Views)
+                        </Label>
+                        <div className="flex items-center gap-3">
+                          <div className="relative flex-1">
+                            <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                            <Input
+                              type="number"
+                              placeholder="Min"
+                              defaultValue="10"
+                              className="pl-10 h-11"
+                              min="0"
+                              step="0.01"
+                            />
+                          </div>
+                          <span className="text-muted-foreground">-</span>
+                          <div className="relative flex-1">
+                            <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                            <Input
+                              type="number"
+                              placeholder="Max"
+                              defaultValue="20"
+                              className="pl-10 h-11"
+                              min="0"
+                              step="0.01"
+                            />
+                          </div>
+                        </div>
+                      </div>
+
+                      <div>
+                        <Label className="text-xs font-medium mb-2 block">
+                          CPC (Cost Per Click)
+                        </Label>
+                        <div className="flex items-center gap-3">
+                          <div className="relative flex-1">
+                            <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                            <Input
+                              type="number"
+                              placeholder="Min"
+                              defaultValue="0.30"
+                              className="pl-10 h-11"
+                              min="0"
+                              step="0.01"
+                            />
+                          </div>
+                          <span className="text-muted-foreground">-</span>
+                          <div className="relative flex-1">
+                            <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                            <Input
+                              type="number"
+                              placeholder="Max"
+                              defaultValue="0.70"
+                              className="pl-10 h-11"
+                              min="0"
+                              step="0.01"
+                            />
+                          </div>
+                        </div>
+                      </div>
+
+                      <div>
+                        <Label className="text-xs font-medium mb-2 block">
+                          CPE (Cost Per Engagement)
+                        </Label>
+                        <div className="flex items-center gap-3">
+                          <div className="relative flex-1">
+                            <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                            <Input
+                              type="number"
+                              placeholder="Min"
+                              defaultValue="0.50"
+                              className="pl-10 h-11"
+                              min="0"
+                              step="0.01"
+                            />
+                          </div>
+                          <span className="text-muted-foreground">-</span>
+                          <div className="relative flex-1">
+                            <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                            <Input
+                              type="number"
+                              placeholder="Max"
+                              defaultValue="1.00"
+                              className="pl-10 h-11"
+                              min="0"
+                              step="0.01"
+                            />
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
 
-                  <Button>Save Changes</Button>
-                </div>
+                  <div className="flex gap-3 pt-4">
+                    <Button className="flex-1 h-11 bg-gradient-to-r from-primary to-secondary hover:opacity-90">
+                      <Save className="h-4 w-4 mr-2" />
+                      Save Profile
+                    </Button>
+                    <Button type="button" variant="outline" className="h-11">
+                      Cancel
+                    </Button>
+                  </div>
+                </form>
               </Card>
             </motion.div>
           )}

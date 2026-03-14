@@ -1373,57 +1373,6 @@ export default function BrandDashboard() {
           </nav>
         </aside>
 
-        {/* Mobile Navigation */}
-        <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-background/95 backdrop-blur-xl border-t z-40">
-          <div className="flex items-center justify-around px-2 py-3">
-            <button
-              onClick={() => setActiveTab("discover")}
-              className={`flex flex-col items-center gap-1 px-3 py-2 rounded-lg transition-colors ${
-                activeTab === "discover" ? "text-primary" : "text-muted-foreground"
-              }`}
-            >
-              <Search className="h-5 w-5" />
-              <span className="text-xs font-medium">Discover</span>
-            </button>
-            <button
-              onClick={() => setActiveTab("campaigns")}
-              className={`flex flex-col items-center gap-1 px-3 py-2 rounded-lg transition-colors ${
-                activeTab === "campaigns" ? "text-primary" : "text-muted-foreground"
-              }`}
-            >
-              <BarChart3 className="h-5 w-5" />
-              <span className="text-xs font-medium">Campaigns</span>
-            </button>
-            <button
-              onClick={() => setActiveTab("create-campaign")}
-              className={`flex flex-col items-center gap-1 px-3 py-2 rounded-lg transition-colors ${
-                activeTab === "create-campaign" ? "text-secondary" : "text-muted-foreground"
-              }`}
-            >
-              <Plus className="h-5 w-5" />
-              <span className="text-xs font-medium">Create</span>
-            </button>
-            <button
-              onClick={() => setActiveTab("profile")}
-              className={`flex flex-col items-center gap-1 px-3 py-2 rounded-lg transition-colors ${
-                activeTab === "profile" ? "text-primary" : "text-muted-foreground"
-              }`}
-            >
-              <Building2 className="h-5 w-5" />
-              <span className="text-xs font-medium">Profile</span>
-            </button>
-            <button
-              onClick={() => setActiveTab("settings")}
-              className={`flex flex-col items-center gap-1 px-3 py-2 rounded-lg transition-colors ${
-                activeTab === "settings" ? "text-primary" : "text-muted-foreground"
-              }`}
-            >
-              <Settings className="h-5 w-5" />
-              <span className="text-xs font-medium">Settings</span>
-            </button>
-          </div>
-        </div>
-
         {/* Main Content */}
         <main className="flex-1 p-4 sm:p-6 lg:p-8 pb-24 lg:pb-8">
           <AnimatePresence mode="wait">
@@ -1613,48 +1562,48 @@ export default function BrandDashboard() {
                 {/* Influencers Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   {filteredInfluencers.map((influencer) => (
-                    <Card key={influencer.id} className="p-5 hover:shadow-lg transition-shadow">
+                    <Card key={influencer.id} className="p-2 sm:p-4 hover:shadow-lg transition-shadow">
                       <button
                         onClick={() => {/* TODO: Open profile */}}
-                        className="flex items-start gap-4 mb-4 w-full text-left hover:opacity-80 transition-opacity"
+                        className="flex items-center gap-1.5 sm:gap-3 mb-1 sm:mb-2 w-full text-left hover:opacity-80 transition-opacity"
                       >
-                        <div className="w-14 h-14 rounded-full bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center text-2xl cursor-pointer">
+                        <div className="w-9 h-9 sm:w-12 sm:h-12 rounded-full bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center text-base sm:text-xl cursor-pointer shrink-0">
                           {influencer.avatar}
                         </div>
                         <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2 mb-1">
-                            <h3 className="font-semibold truncate cursor-pointer">{influencer.name}</h3>
+                          <div className="flex items-center gap-1 leading-none">
+                            <h3 className="font-semibold text-xs sm:text-sm truncate cursor-pointer">{influencer.name}</h3>
                             {influencer.verified && (
-                              <CheckCircle2 className="h-4 w-4 text-primary shrink-0" />
+                              <CheckCircle2 className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-primary shrink-0" />
                             )}
                           </div>
-                          <p className="text-sm text-muted-foreground cursor-pointer">{influencer.username}</p>
+                          <p className="text-[10px] sm:text-xs text-muted-foreground cursor-pointer leading-none mt-0.5">{influencer.username}</p>
                         </div>
                       </button>
 
-                      <Badge className="mb-3 bg-secondary/10 text-secondary border-secondary/30 text-xs">
+                      <Badge className="mb-1 sm:mb-2 bg-secondary/10 text-secondary border-secondary/30 text-[9px] sm:text-[10px] py-0 px-1.5 h-4 sm:h-5">
                         {influencer.category}
                       </Badge>
 
-                      <div className="grid grid-cols-2 gap-3 mb-4 text-sm">
-                        <div>
-                          <div className="text-muted-foreground text-xs mb-1">Followers</div>
-                          <div className="font-semibold">{influencer.followers}</div>
+                      <div className="grid grid-cols-2 gap-1.5 sm:gap-2 mb-1 sm:mb-2">
+                        <div className="leading-none">
+                          <div className="text-muted-foreground text-[9px] sm:text-[10px] mb-0.5">Followers</div>
+                          <div className="font-semibold text-[10px] sm:text-xs">{influencer.followers}</div>
                         </div>
-                        <div>
-                          <div className="text-muted-foreground text-xs mb-1">Engagement</div>
-                          <div className="font-semibold text-primary">{influencer.engagement}</div>
+                        <div className="leading-none">
+                          <div className="text-muted-foreground text-[9px] sm:text-[10px] mb-0.5">Engagement</div>
+                          <div className="font-semibold text-primary text-[10px] sm:text-xs">{influencer.engagement}</div>
                         </div>
                       </div>
 
-                      <div className="flex items-center justify-between pt-3 border-t">
-                        <div>
-                          <div className="text-xs text-muted-foreground">CPM Rate</div>
-                          <div className="font-bold text-lg">{influencer.rate}</div>
+                      <div className="flex items-center justify-between pt-1 sm:pt-2 border-t">
+                        <div className="leading-none">
+                          <div className="text-[9px] sm:text-[10px] text-muted-foreground mb-0.5">CPM Rate</div>
+                          <div className="font-bold text-sm sm:text-base">{influencer.rate}</div>
                         </div>
                         <Button
                           size="sm"
-                          className="bg-primary/10 hover:bg-primary/20 text-primary border-2 border-primary/30"
+                          className="bg-primary/10 hover:bg-primary/20 text-primary border-2 border-primary/30 h-6 sm:h-8 text-[10px] sm:text-xs px-1.5 sm:px-2"
                           onClick={() => {
                             setSelectedInfluencer(influencer);
                             setShowCollaborateModal(true);
@@ -3388,7 +3337,8 @@ export default function BrandDashboard() {
                       </Select>
                     </div>
 
-                    <div className="border rounded-lg overflow-hidden">
+                    {/* Desktop Table View */}
+                    <div className="hidden lg:block border rounded-lg overflow-hidden">
                       {/* Table Header */}
                       <div className="flex items-center px-6 py-4 bg-muted/30 border-b">
                         <div className="w-[320px] text-xs font-semibold text-muted-foreground uppercase tracking-wide">Name</div>
@@ -3555,6 +3505,116 @@ export default function BrandDashboard() {
                           </button>
                         </div>
                       </div>
+                        ));
+                      })()}
+                    </div>
+
+                    {/* Mobile Card View */}
+                    <div className="lg:hidden space-y-3">
+                      {(() => {
+                        const filteredCampaigns = campaigns.filter((campaign) => {
+                          const matchesSearch = campaign.title.toLowerCase().includes(campaignSearchQuery.toLowerCase());
+                          const matchesStatus = campaignStatusFilter === "all" || campaign.status === campaignStatusFilter;
+                          return matchesSearch && matchesStatus;
+                        });
+
+                        return filteredCampaigns.map((campaign) => (
+                          <Card
+                            key={campaign.id}
+                            onClick={() => setSelectedCampaignDetails(campaign)}
+                            className="p-4 cursor-pointer hover:bg-muted/20 transition-colors"
+                          >
+                            <div className="flex items-start gap-3 mb-3">
+                              <div className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center shrink-0">
+                                <Briefcase className="h-5 w-5 text-muted-foreground" />
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <h3 className="text-sm font-semibold mb-1 leading-tight">{campaign.title}</h3>
+                                <div className="flex items-center gap-1.5 flex-wrap">
+                                  <Badge
+                                    variant={campaign.status === "active" ? "default" : "secondary"}
+                                    className={`text-[10px] px-2 py-0 h-5 ${
+                                      campaign.status === "active"
+                                        ? "bg-success/10 text-success border-success/20"
+                                        : "bg-primary/10 text-primary border-primary/20"
+                                    }`}
+                                  >
+                                    <div className={`w-1.5 h-1.5 rounded-full mr-1 ${campaign.status === "active" ? "bg-success" : "bg-primary"}`} />
+                                    {campaign.status === "active" ? "Active" : "Draft"}
+                                  </Badge>
+                                  <Badge variant="outline" className="bg-muted text-foreground border-border text-[10px] px-2 py-0 h-5">
+                                    ${campaign.budgetMin}-${campaign.budgetMax}/inf
+                                  </Badge>
+                                </div>
+                              </div>
+                            </div>
+
+                            <div className="space-y-3">
+                              <div className="grid grid-cols-2 gap-2 text-xs">
+                                <div>
+                                  <div className="text-muted-foreground mb-0.5">Needed</div>
+                                  <div className="font-semibold">{campaign.influencerCount || "0"} influencers</div>
+                                </div>
+                                <div>
+                                  <div className="text-muted-foreground mb-0.5">Pricing</div>
+                                  <div className="flex gap-1 flex-wrap">
+                                    {campaign.pricingModels.map((model) => (
+                                      <div
+                                        key={model}
+                                        className={`text-[10px] px-1.5 py-0.5 rounded-md font-medium ${
+                                          model === "cpm"
+                                            ? "bg-primary/10 text-primary border border-primary/20"
+                                            : model === "cpc"
+                                            ? "bg-secondary/10 text-secondary border border-secondary/20"
+                                            : "bg-muted text-foreground border border-border"
+                                        }`}
+                                      >
+                                        {model.toUpperCase()}
+                                      </div>
+                                    ))}
+                                  </div>
+                                </div>
+                              </div>
+
+                              <div>
+                                <div className="text-muted-foreground text-xs mb-2">Pipeline</div>
+                                <div className="flex items-center gap-1.5">
+                                  <div className="flex flex-col items-center gap-1 flex-1">
+                                    <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold ${
+                                      (campaign.currentStage || 1) >= 1
+                                        ? "bg-primary/10 text-primary"
+                                        : "bg-muted/50 text-muted-foreground"
+                                    }`}>
+                                      0
+                                    </div>
+                                    <span className="text-[9px] font-medium text-muted-foreground">Negot.</span>
+                                  </div>
+                                  <ArrowRight className="h-3 w-3 text-muted-foreground/40 mb-3" />
+                                  <div className="flex flex-col items-center gap-1 flex-1">
+                                    <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold ${
+                                      (campaign.currentStage || 1) >= 2
+                                        ? "bg-secondary/10 text-secondary"
+                                        : "bg-muted/50 text-muted-foreground"
+                                    }`}>
+                                      0
+                                    </div>
+                                    <span className="text-[9px] font-medium text-muted-foreground">Content</span>
+                                  </div>
+                                  <ArrowRight className="h-3 w-3 text-muted-foreground/40 mb-3" />
+                                  <div className="flex flex-col items-center gap-1 flex-1">
+                                    <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold ${
+                                      (campaign.currentStage || 1) >= 3
+                                        ? "bg-success/10 text-success"
+                                        : "bg-muted/50 text-muted-foreground"
+                                    }`}>
+                                      0
+                                    </div>
+                                    <span className="text-[9px] font-medium text-muted-foreground">Published</span>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </Card>
                         ));
                       })()}
                     </div>
@@ -4691,6 +4751,74 @@ export default function BrandDashboard() {
           </AnimatePresence>
         </main>
       </div>
+
+      {/* Mobile Navigation */}
+      <nav className="lg:hidden fixed bottom-0 inset-x-0 bg-white dark:bg-black border-t border-border z-[100] safe-area-inset-bottom">
+        <div className="flex items-center justify-around w-full px-2 py-2">
+          <button
+            onClick={() => {
+              setActiveTab("discover");
+              setSelectedCampaignDetails(null);
+            }}
+            className={`flex flex-col items-center justify-center gap-0.5 min-w-0 flex-1 transition-colors ${
+              activeTab === "discover" ? "text-primary" : "text-muted-foreground"
+            }`}
+          >
+            <div className="w-6 h-6 rounded-full bg-foreground flex items-center justify-center text-background text-xs font-bold shrink-0">
+              N
+            </div>
+            <span className="text-[8px] font-medium truncate max-w-full text-center">Discover</span>
+          </button>
+          <button
+            onClick={() => {
+              setActiveTab("campaigns");
+              setSelectedCampaignDetails(null);
+            }}
+            className={`flex flex-col items-center justify-center gap-0.5 min-w-0 flex-1 transition-colors ${
+              activeTab === "campaigns" ? "text-primary" : "text-muted-foreground"
+            }`}
+          >
+            <BarChart3 className="h-5 w-5 shrink-0" />
+            <span className="text-[8px] font-medium truncate max-w-full text-center">Campaigns</span>
+          </button>
+          <button
+            onClick={() => {
+              setActiveTab("create-campaign");
+              setSelectedCampaignDetails(null);
+            }}
+            className={`flex flex-col items-center justify-center gap-0.5 min-w-0 flex-1 transition-colors ${
+              activeTab === "create-campaign" ? "text-primary" : "text-muted-foreground"
+            }`}
+          >
+            <Plus className="h-5 w-5 shrink-0" />
+            <span className="text-[8px] font-medium truncate max-w-full text-center">Create</span>
+          </button>
+          <button
+            onClick={() => {
+              setActiveTab("profile");
+              setSelectedCampaignDetails(null);
+            }}
+            className={`flex flex-col items-center justify-center gap-0.5 min-w-0 flex-1 transition-colors ${
+              activeTab === "profile" ? "text-primary" : "text-muted-foreground"
+            }`}
+          >
+            <Building2 className="h-5 w-5 shrink-0" />
+            <span className="text-[8px] font-medium truncate max-w-full text-center">Profile</span>
+          </button>
+          <button
+            onClick={() => {
+              setActiveTab("settings");
+              setSelectedCampaignDetails(null);
+            }}
+            className={`flex flex-col items-center justify-center gap-0.5 min-w-0 flex-1 transition-colors ${
+              activeTab === "settings" ? "text-primary" : "text-muted-foreground"
+            }`}
+          >
+            <Settings className="h-5 w-5 shrink-0" />
+            <span className="text-[8px] font-medium truncate max-w-full text-center">Settings</span>
+          </button>
+        </div>
+      </nav>
 
       {/* Collaborate Modal */}
       <Dialog open={showCollaborateModal} onOpenChange={setShowCollaborateModal}>

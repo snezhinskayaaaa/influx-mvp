@@ -6,17 +6,31 @@ import { OnboardingLayout } from "@/components/onboarding-layout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { DollarSign, Info } from "lucide-react";
+import { Check, Instagram, Youtube, Video, Twitter, Users } from "lucide-react";
+
+const platforms = [
+  { id: "instagram", name: "Instagram", icon: Instagram },
+  { id: "tiktok", name: "TikTok", icon: Video },
+  { id: "youtube", name: "YouTube", icon: Youtube },
+  { id: "twitter", name: "X/Twitter", icon: Twitter },
+];
 
 export default function InfluencerOnboardingStep4() {
   const router = useRouter();
-  const [cpm, setCpm] = useState("");
-  const [cpc, setCpc] = useState("");
-  const [cpe, setCpe] = useState("");
+  const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>([]);
+  const [totalFollowers, setTotalFollowers] = useState("");
+  const [engagementRate, setEngagementRate] = useState("");
+
+  const togglePlatform = (platform: string) => {
+    setSelectedPlatforms((prev) =>
+      prev.includes(platform)
+        ? prev.filter((p) => p !== platform)
+        : [...prev, platform]
+    );
+  };
 
   const handleNext = () => {
-    // At least one price should be filled
-    if (cpm || cpc || cpe) {
+    if (selectedPlatforms.length > 0 && totalFollowers && parseInt(totalFollowers) > 0) {
       // TODO: Save to state/context
       router.push("/onboarding/influencer/step-5");
     }
@@ -26,96 +40,97 @@ export default function InfluencerOnboardingStep4() {
     router.push("/onboarding/influencer/step-3");
   };
 
-  const isValid = cpm || cpc || cpe;
+  const isValid = selectedPlatforms.length > 0 && totalFollowers && parseInt(totalFollowers) > 0;
 
   return (
     <OnboardingLayout
       currentStep={4}
-      totalSteps={6}
-      title="Set your rates"
-      subtitle="Tell brands what you charge for collaborations. You can always adjust these later."
+      totalSteps={5}
+      title="Platforms & audience"
+      subtitle="Tell us about your reach and where your audience can find you."
       onBack={handleBack}
     >
-      <div className="space-y-6 mb-8">
-        {/* Info Card */}
-        <div className="bg-primary/5 border border-primary/20 rounded-xl p-4">
-          <div className="flex items-start gap-3">
-            <Info className="h-5 w-5 text-primary shrink-0 mt-0.5" />
-            <div>
-              <p className="text-sm text-foreground mb-1 font-medium">Pricing Model</p>
-              <p className="text-xs text-muted-foreground">
-                Set your rates based on performance metrics. You can leave some fields empty if you don't offer that pricing model.
-              </p>
-            </div>
+      <div className="space-y-8 mb-8">
+        {/* Platforms */}
+        <div>
+          <Label className="text-sm font-medium mb-4 block">
+            Active platforms
+            <span className="text-muted-foreground ml-2 font-normal">(Select all that apply)</span>
+          </Label>
+          <div className="grid grid-cols-2 gap-3">
+            {platforms.map((platform) => {
+              const Icon = platform.icon;
+              return (
+                <button
+                  key={platform.id}
+                  onClick={() => togglePlatform(platform.id)}
+                  className={`relative p-4 sm:p-5 rounded-xl border-2 transition-all ${
+                    selectedPlatforms.includes(platform.id)
+                      ? "border-primary bg-primary/5"
+                      : "border-border hover:border-primary/50"
+                  }`}
+                >
+                  <div className="flex items-center gap-3">
+                    <Icon className={`h-5 w-5 ${selectedPlatforms.includes(platform.id) ? "text-primary" : "text-muted-foreground"}`} />
+                    <span className="text-sm sm:text-base font-medium">{platform.name}</span>
+                    {selectedPlatforms.includes(platform.id) && (
+                      <div className="ml-auto w-5 h-5 rounded-full bg-primary flex items-center justify-center shrink-0">
+                        <Check className="h-3 w-3 text-primary-foreground" />
+                      </div>
+                    )}
+                  </div>
+                </button>
+              );
+            })}
           </div>
         </div>
 
-        {/* CPM Rate */}
+        {/* Total Followers */}
         <div>
-          <Label htmlFor="cpm" className="text-sm font-medium mb-2 block">
-            CPM (Cost Per Mille)
+          <Label htmlFor="followers" className="text-sm font-medium mb-2 block">
+            Total followers across all platforms
           </Label>
           <div className="relative">
-            <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Users className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
             <Input
-              id="cpm"
+              id="followers"
               type="number"
-              placeholder="e.g., 15"
-              value={cpm}
-              onChange={(e) => setCpm(e.target.value)}
-              className="pl-10 h-11 sm:h-12"
+              placeholder="e.g., 50000"
+              value={totalFollowers}
+              onChange={(e) => setTotalFollowers(e.target.value)}
+              className="h-11 sm:h-12 pl-11"
               min="0"
-              step="0.01"
             />
           </div>
           <p className="text-xs text-muted-foreground mt-1.5">
-            Price per 1000 impressions
+            Enter your combined follower count from all platforms
           </p>
         </div>
 
-        {/* CPC Rate */}
+        {/* Engagement Rate */}
         <div>
-          <Label htmlFor="cpc" className="text-sm font-medium mb-2 block">
-            CPC (Cost Per Click)
+          <Label htmlFor="engagement" className="text-sm font-medium mb-2 block">
+            Average engagement rate
+            <span className="text-muted-foreground ml-2 font-normal">(Optional)</span>
           </Label>
           <div className="relative">
-            <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
-              id="cpc"
+              id="engagement"
               type="number"
-              placeholder="e.g., 0.50"
-              value={cpc}
-              onChange={(e) => setCpc(e.target.value)}
-              className="pl-10 h-11 sm:h-12"
+              placeholder="e.g., 5.2"
+              value={engagementRate}
+              onChange={(e) => setEngagementRate(e.target.value)}
+              className="h-11 sm:h-12 pr-10"
               min="0"
-              step="0.01"
+              max="100"
+              step="0.1"
             />
+            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground text-sm">
+              %
+            </span>
           </div>
           <p className="text-xs text-muted-foreground mt-1.5">
-            Price per click on your content
-          </p>
-        </div>
-
-        {/* CPE Rate */}
-        <div>
-          <Label htmlFor="cpe" className="text-sm font-medium mb-2 block">
-            CPE (Cost Per Engagement)
-          </Label>
-          <div className="relative">
-            <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input
-              id="cpe"
-              type="number"
-              placeholder="e.g., 0.75"
-              value={cpe}
-              onChange={(e) => setCpe(e.target.value)}
-              className="pl-10 h-11 sm:h-12"
-              min="0"
-              step="0.01"
-            />
-          </div>
-          <p className="text-xs text-muted-foreground mt-1.5">
-            Price per engagement (like, comment, share, save)
+            Likes + Comments ÷ Followers × 100
           </p>
         </div>
       </div>

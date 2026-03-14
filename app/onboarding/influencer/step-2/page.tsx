@@ -34,7 +34,7 @@ export default function InfluencerOnboardingStep2() {
   return (
     <OnboardingLayout
       currentStep={2}
-      totalSteps={6}
+      totalSteps={5}
       title="Creator profile"
       subtitle="Tell brands about yourself and share your social media handles so they can find you."
       onBack={handleBack}

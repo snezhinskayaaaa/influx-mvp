@@ -57,7 +57,7 @@ export default function InfluencerOnboardingStep3() {
   return (
     <OnboardingLayout
       currentStep={3}
-      totalSteps={6}
+      totalSteps={5}
       title="Content niche"
       subtitle="Select the categories that best describe your content. You can choose multiple niches."
       onBack={handleBack}
