@@ -137,7 +137,7 @@ export async function POST(request: NextRequest) {
     console.error('Signup error:', error)
     const errorMessage = error instanceof Error ? error.message : 'Unknown error'
     return NextResponse.json(
-      { success: false, error: 'An unexpected error occurred', debug: process.env.NODE_ENV !== 'production' ? errorMessage : undefined },
+      { success: false, error: `Signup failed: ${errorMessage}` },
       { status: 500 }
     )
   }
