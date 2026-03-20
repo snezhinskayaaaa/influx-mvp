@@ -116,7 +116,7 @@ function formatFollowers(count: number): string {
 
 export default function BrandsPage() {
   const [activeIndex, setActiveIndex] = useState(0);
-  const [influencerProfiles, setInfluencerProfiles] = useState<InfluencerProfile[]>(mockInfluencerProfiles);
+  const [influencerProfiles, setInfluencerProfiles] = useState<InfluencerProfile[]>([]);
 
   useEffect(() => {
     async function fetchInfluencers() {

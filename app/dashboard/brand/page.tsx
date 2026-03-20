@@ -757,7 +757,7 @@ export default function BrandDashboard() {
   const [campaignProductLink, setCampaignProductLink] = useState("");
   const [campaignProductDescription, setCampaignProductDescription] = useState("");
 
-  const [campaigns, setCampaigns] = useState<Campaign[]>(mockCampaigns);
+  const [campaigns, setCampaigns] = useState<Campaign[]>([]);
   const [selectedCampaignDetails, setSelectedCampaignDetails] = useState<Campaign | null>(null);
   const [campaignSearchQuery, setCampaignSearchQuery] = useState("");
   const [campaignStatusFilter, setCampaignStatusFilter] = useState<"all" | "active" | "draft">("all");
@@ -770,7 +770,7 @@ export default function BrandDashboard() {
   const [showInsufficientFundsDialog, setShowInsufficientFundsDialog] = useState(false);
   const [brandFeedbackText, setBrandFeedbackText] = useState("");
 
-  const [balance, setBalance] = useState(2500.00);
+  const [balance, setBalance] = useState(0);
   const [showTopUpModal, setShowTopUpModal] = useState(false);
   const [topUpMethod, setTopUpMethod] = useState<"card" | "crypto" | null>(null);
   const [topUpAmount, setTopUpAmount] = useState("");
@@ -782,10 +782,10 @@ export default function BrandDashboard() {
   const [selectedInfluencer, setSelectedInfluencer] = useState<Influencer | null>(null);
   const [selectedCampaignId, setSelectedCampaignId] = useState<number | null>(null);
 
-  const [influencers, setInfluencers] = useState<Influencer[]>(mockInfluencers);
+  const [influencers, setInfluencers] = useState<Influencer[]>([]);
 
   const [showNotifications, setShowNotifications] = useState(false);
-  const [notifications, setNotifications] = useState<Notification[]>(mockNotifications);
+  const [notifications, setNotifications] = useState<Notification[]>([]);
 
   const [expandedCampaignId, setExpandedCampaignId] = useState<number | null>(null);
   const [showApplicationsList, setShowApplicationsList] = useState<Record<number, boolean>>({});
@@ -805,17 +805,7 @@ export default function BrandDashboard() {
   const [brandConfirmsStart, setBrandConfirmsStart] = useState<Record<number, boolean>>({});
   const [brandApprovesDraft, setBrandApprovesDraft] = useState<Record<number, boolean>>({});
   const [revisionNotes, setRevisionNotes] = useState<Record<number, string>>({});
-  const [openCheckpoint, setOpenCheckpoint] = useState<Record<number, number>>(() => {
-    const initialOpenCheckpoints: Record<number, number> = {};
-    Object.values(mockCampaignInfluencers).flat().forEach((influencer) => {
-      if (influencer.timelineStage && influencer.status === "approved") {
-        initialOpenCheckpoints[influencer.id] = influencer.timelineStage;
-      }
-    });
-    // Explicitly set Sophia Digital to have checkpoint 1 open
-    initialOpenCheckpoints[6] = 1;
-    return initialOpenCheckpoints;
-  });
+  const [openCheckpoint, setOpenCheckpoint] = useState<Record<number, number>>({});
 
   // Fetch real data from API — mock data serves as fallback
   useEffect(() => {

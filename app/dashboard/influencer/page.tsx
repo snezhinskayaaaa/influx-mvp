@@ -252,8 +252,8 @@ export default function InfluencerDashboard() {
   const [contentLinkInput, setContentLinkInput] = useState("");
   const [publishedLinkInput, setPublishedLinkInput] = useState("");
 
-  const [discoverCampaigns, setDiscoverCampaigns] = useState<Campaign[]>(mockDiscoverCampaigns);
-  const [myCampaigns, setMyCampaigns] = useState<Campaign[]>(mockMyCampaigns);
+  const [discoverCampaigns, setDiscoverCampaigns] = useState<Campaign[]>([]);
+  const [myCampaigns, setMyCampaigns] = useState<Campaign[]>([]);
   const [walletBalance, setWalletBalance] = useState<number | null>(null);
   const [walletPending, setWalletPending] = useState<number | null>(null);
   const [walletTotalEarned, setWalletTotalEarned] = useState<number | null>(null);
@@ -482,11 +482,11 @@ export default function InfluencerDashboard() {
                 </div>
               </div>
               <div className="text-2xl font-bold text-primary text-left mb-2">
-                ${walletBalance !== null ? walletBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '3,450.00'}
+                ${walletBalance !== null ? walletBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '0.00'}
               </div>
               <div className="text-xs text-muted-foreground space-y-1">
-                <div>Pending: ${walletPending !== null ? walletPending.toLocaleString() : '1,200'}</div>
-                <div>Total Earned: ${walletTotalEarned !== null ? walletTotalEarned.toLocaleString() : '12,450'}</div>
+                <div>Pending: ${walletPending !== null ? walletPending.toLocaleString() : '0'}</div>
+                <div>Total Earned: ${walletTotalEarned !== null ? walletTotalEarned.toLocaleString() : '0'}</div>
               </div>
               <Button size="sm" className="w-full mt-3 h-8 text-xs">
                 Withdraw
