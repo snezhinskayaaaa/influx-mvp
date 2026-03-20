@@ -15,7 +15,8 @@ export default function OnboardingStep4() {
 
   const handleNext = () => {
     if (companyType && companySize) {
-      // TODO: Save to state/context
+      localStorage.setItem("brand_onboarding_company_type", companyType);
+      localStorage.setItem("brand_onboarding_company_size", companySize);
       router.push("/onboarding/brand/step-5");
     }
   };

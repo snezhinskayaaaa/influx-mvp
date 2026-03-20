@@ -45,7 +45,7 @@ export default function InfluencerOnboardingStep3() {
 
   const handleNext = () => {
     if (selectedNiches.length > 0) {
-      // TODO: Save to state/context
+      localStorage.setItem("influencer_onboarding_niches", JSON.stringify(selectedNiches));
       router.push("/onboarding/influencer/step-4");
     }
   };

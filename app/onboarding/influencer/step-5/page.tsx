@@ -41,13 +41,71 @@ export default function InfluencerOnboardingStep5() {
   const handleComplete = async () => {
     if (selectedGoal) {
       setIsSubmitting(true);
-      // TODO: Save all onboarding data to backend
+      try {
+        const platforms = JSON.parse(localStorage.getItem("influencer_onboarding_platforms") || "[]") as string[];
+        const totalFollowers = parseInt(localStorage.getItem("influencer_onboarding_followers") || "0", 10);
+        const engagement = parseFloat(localStorage.getItem("influencer_onboarding_engagement") || "0");
+        const niches = JSON.parse(localStorage.getItem("influencer_onboarding_niches") || "[]") as string[];
 
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+        const followersPerPlatform: Record<string, number> = {};
+        const engagementPerPlatform: Record<string, number> = {};
+        const platformCount = platforms.length || 1;
+        const splitFollowers = Math.round(totalFollowers / platformCount);
 
-      // Redirect to influencer dashboard
-      router.push("/dashboard/influencer");
+        for (const p of platforms) {
+          if (p === "instagram") {
+            followersPerPlatform.instagramFollowers = splitFollowers;
+            engagementPerPlatform.instagramEngagement = engagement;
+          } else if (p === "tiktok") {
+            followersPerPlatform.tiktokFollowers = splitFollowers;
+            engagementPerPlatform.tiktokEngagement = engagement;
+          } else if (p === "youtube") {
+            followersPerPlatform.youtubeSubscribers = splitFollowers;
+            engagementPerPlatform.youtubeEngagement = engagement;
+          }
+        }
+
+        const res = await fetch("/api/influencers/me", {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            handle: localStorage.getItem("influencer_onboarding_handle") || "",
+            bio: localStorage.getItem("influencer_onboarding_bio") || "",
+            instagramHandle: localStorage.getItem("influencer_onboarding_instagram") || "",
+            tiktokHandle: localStorage.getItem("influencer_onboarding_tiktok") || "",
+            youtubeHandle: localStorage.getItem("influencer_onboarding_youtube") || "",
+            niche: niches,
+            ...followersPerPlatform,
+            ...engagementPerPlatform,
+          }),
+        });
+
+        if (!res.ok) {
+          const data = await res.json();
+          throw new Error(data.error || "Failed to save profile");
+        }
+
+        // Clean up localStorage
+        const keys = [
+          "influencer_onboarding_source",
+          "influencer_onboarding_handle",
+          "influencer_onboarding_bio",
+          "influencer_onboarding_instagram",
+          "influencer_onboarding_tiktok",
+          "influencer_onboarding_youtube",
+          "influencer_onboarding_twitter",
+          "influencer_onboarding_niches",
+          "influencer_onboarding_platforms",
+          "influencer_onboarding_followers",
+          "influencer_onboarding_engagement",
+        ];
+        keys.forEach((key) => localStorage.removeItem(key));
+
+        router.push("/dashboard/influencer");
+      } catch (err) {
+        setIsSubmitting(false);
+        console.error("Influencer onboarding error:", err);
+      }
     }
   };
 

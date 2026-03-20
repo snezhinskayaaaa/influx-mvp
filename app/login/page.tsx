@@ -34,15 +34,32 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Implement login logic
-    console.log("Login:", { email, password });
-
-    // For demo, redirect to brand dashboard
-    // In production, check user type from API
-    router.push("/dashboard/brand");
+    setError("");
+    setLoading(true);
+    try {
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setError(data.error || "Login failed");
+        return;
+      }
+      if (data.user.role === "ADMIN") router.push("/admin");
+      else if (data.user.role === "BRAND") router.push("/dashboard/brand");
+      else router.push("/dashboard/influencer");
+    } catch {
+      setError("Something went wrong. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleGoogleLogin = () => {
@@ -185,6 +202,9 @@ export default function LoginPage() {
                 <ArrowRight className="ml-2 h-3.5 w-3.5 sm:h-4 sm:w-4" />
               </Button>
             </form>
+            {error && (
+              <p className="text-sm text-red-500 text-center mt-3">{error}</p>
+            )}
           </Card>
 
           {/* Sign up link */}

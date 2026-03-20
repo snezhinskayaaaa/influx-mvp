@@ -60,7 +60,9 @@ export default function OnboardingStep5() {
 
   const handleNext = () => {
     if (monthlyTarget && selectedPlatforms.length > 0 && selectedCategories.length > 0) {
-      // TODO: Save to state/context
+      localStorage.setItem("brand_onboarding_monthly_target", monthlyTarget);
+      localStorage.setItem("brand_onboarding_platforms", JSON.stringify(selectedPlatforms));
+      localStorage.setItem("brand_onboarding_categories", JSON.stringify(selectedCategories));
       router.push("/onboarding/brand/video-type");
     }
   };

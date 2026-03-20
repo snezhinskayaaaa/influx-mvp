@@ -20,7 +20,12 @@ export default function InfluencerOnboardingStep2() {
 
   const handleNext = () => {
     if (creatorName && bio) {
-      // TODO: Save to state/context
+      localStorage.setItem("influencer_onboarding_handle", creatorName);
+      localStorage.setItem("influencer_onboarding_bio", bio);
+      localStorage.setItem("influencer_onboarding_instagram", instagram);
+      localStorage.setItem("influencer_onboarding_tiktok", tiktok);
+      localStorage.setItem("influencer_onboarding_youtube", youtube);
+      localStorage.setItem("influencer_onboarding_twitter", twitter);
       router.push("/onboarding/influencer/step-3");
     }
   };

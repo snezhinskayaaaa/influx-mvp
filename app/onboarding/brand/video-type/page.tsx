@@ -39,7 +39,7 @@ export default function VideoTypePage() {
 
   const handleNext = () => {
     if (selectedType) {
-      // TODO: Save to state/context
+      localStorage.setItem("brand_onboarding_video_type", selectedType);
       router.push("/onboarding/brand/step-6");
     }
   };

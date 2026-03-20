@@ -23,7 +23,7 @@ export default function InfluencerOnboardingStep1() {
 
   const handleNext = () => {
     if (selectedSource) {
-      // TODO: Save to state/context
+      localStorage.setItem("influencer_onboarding_source", selectedSource);
       router.push("/onboarding/influencer/step-2");
     }
   };

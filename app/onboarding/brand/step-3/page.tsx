@@ -38,7 +38,7 @@ export default function OnboardingStep3() {
 
   const handleNext = () => {
     if (selectedIndustry) {
-      // TODO: Save to state/context
+      localStorage.setItem("brand_onboarding_industry", selectedIndustry);
       router.push("/onboarding/brand/step-4");
     }
   };

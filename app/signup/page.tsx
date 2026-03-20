@@ -46,6 +46,8 @@ function SignupForm() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (typeParam === "brand" || typeParam === "influencer" || typeParam === "creator") {
@@ -53,20 +55,40 @@ function SignupForm() {
     }
   }, [typeParam]);
 
-  const handleSignup = (e: React.FormEvent) => {
+  const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     if (password !== confirmPassword) {
-      alert("Passwords don't match!");
+      setError("Passwords don't match!");
       return;
     }
-    // TODO: Implement signup logic
-    console.log("Signup:", { userType, name, email, password });
-
-    // Redirect to appropriate onboarding
-    if (userType === "brand") {
-      router.push("/onboarding/brand");
-    } else {
-      router.push("/onboarding/influencer");
+    setError("");
+    setLoading(true);
+    try {
+      const res = await fetch("/api/auth/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email,
+          password,
+          fullName: name,
+          role: userType === "brand" ? "BRAND" : "INFLUENCER",
+          ...(userType === "brand" ? { companyName: name } : { handle: name.toLowerCase().replace(/\s+/g, '_') }),
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setError(data.error || "Signup failed");
+        return;
+      }
+      if (userType === "brand") {
+        router.push("/onboarding/brand");
+      } else {
+        router.push("/onboarding/influencer");
+      }
+    } catch {
+      setError("Something went wrong. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -301,6 +323,9 @@ function SignupForm() {
                 <ArrowRight className="ml-2 h-3.5 w-3.5 sm:h-4 sm:w-4" />
               </Button>
 
+              {error && (
+                <p className="text-sm text-red-500 text-center mt-2">{error}</p>
+              )}
               <p className="text-[10px] sm:text-xs text-center text-muted-foreground pt-1">
                 By signing up, you agree to our{" "}
                 <Link href="/terms" className="text-primary hover:underline">

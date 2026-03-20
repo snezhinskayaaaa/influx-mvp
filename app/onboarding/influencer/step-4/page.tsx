@@ -31,7 +31,9 @@ export default function InfluencerOnboardingStep4() {
 
   const handleNext = () => {
     if (selectedPlatforms.length > 0 && totalFollowers && parseInt(totalFollowers) > 0) {
-      // TODO: Save to state/context
+      localStorage.setItem("influencer_onboarding_platforms", JSON.stringify(selectedPlatforms));
+      localStorage.setItem("influencer_onboarding_followers", totalFollowers);
+      localStorage.setItem("influencer_onboarding_engagement", engagementRate);
       router.push("/onboarding/influencer/step-5");
     }
   };

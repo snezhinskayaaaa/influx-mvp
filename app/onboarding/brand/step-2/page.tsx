@@ -18,7 +18,10 @@ export default function OnboardingStep2() {
 
   const handleNext = () => {
     if (brandName && brandDescription) {
-      // TODO: Save to state/context
+      localStorage.setItem("brand_onboarding_website", website);
+      localStorage.setItem("brand_onboarding_name", brandName);
+      localStorage.setItem("brand_onboarding_description", brandDescription);
+      localStorage.setItem("brand_onboarding_special", brandSpecial);
       router.push("/onboarding/brand/business-type");
     }
   };

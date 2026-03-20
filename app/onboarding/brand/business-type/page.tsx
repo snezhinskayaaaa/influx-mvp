@@ -51,7 +51,7 @@ export default function BusinessTypePage() {
 
   const handleNext = () => {
     if (selectedType) {
-      // TODO: Save to state/context
+      localStorage.setItem("brand_onboarding_business_type", selectedType);
       router.push("/onboarding/brand/step-3");
     }
   };

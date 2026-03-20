@@ -35,13 +35,46 @@ export default function OnboardingStep6() {
   const handleComplete = async () => {
     if (selectedGoal) {
       setIsSubmitting(true);
-      // TODO: Save all onboarding data to backend
+      try {
+        const res = await fetch("/api/brands/me", {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            companyName: localStorage.getItem("brand_onboarding_name") || "",
+            website: localStorage.getItem("brand_onboarding_website") || "",
+            description: localStorage.getItem("brand_onboarding_description") || "",
+            industry: localStorage.getItem("brand_onboarding_industry") || "",
+          }),
+        });
 
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+        if (!res.ok) {
+          const data = await res.json();
+          throw new Error(data.error || "Failed to save profile");
+        }
 
-      // Redirect to dashboard
-      router.push("/dashboard/brand");
+        // Clean up localStorage
+        const keys = [
+          "brand_onboarding_source",
+          "brand_onboarding_website",
+          "brand_onboarding_name",
+          "brand_onboarding_description",
+          "brand_onboarding_special",
+          "brand_onboarding_business_type",
+          "brand_onboarding_industry",
+          "brand_onboarding_company_type",
+          "brand_onboarding_company_size",
+          "brand_onboarding_monthly_target",
+          "brand_onboarding_platforms",
+          "brand_onboarding_categories",
+          "brand_onboarding_video_type",
+        ];
+        keys.forEach((key) => localStorage.removeItem(key));
+
+        router.push("/dashboard/brand");
+      } catch (err) {
+        setIsSubmitting(false);
+        console.error("Brand onboarding error:", err);
+      }
     }
   };
 
