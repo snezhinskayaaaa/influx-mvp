@@ -339,6 +339,12 @@ export default function TermsPage() {
               <p className="text-sm text-muted-foreground">Where influence flows</p>
             </div>
 
+
+            {/* Legal */}
+            <div className="flex flex-col items-center gap-2">
+              <Link href="/terms" className="text-sm text-muted-foreground hover:text-primary transition-colors">Terms of Service</Link>
+              <Link href="/privacy" className="text-sm text-muted-foreground hover:text-primary transition-colors">Privacy Policy</Link>
+            </div>
             {/* Social Media & Contact */}
             <div className="flex flex-col items-center md:items-end gap-3">
               <div className="flex items-center gap-3">
@@ -367,10 +373,6 @@ export default function TermsPage() {
             </div>
           </div>
 
-          {/* Legal Links */}
-          <div className="flex justify-center gap-6 pt-6 mt-6 border-t">
-            <Link href="/terms" className="text-sm text-muted-foreground hover:text-primary transition-colors">Terms of Service</Link>
-            <Link href="/privacy" className="text-sm text-muted-foreground hover:text-primary transition-colors">Privacy Policy</Link>
           </div>
 
           {/* Copyright */}
