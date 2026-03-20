@@ -877,6 +877,12 @@ export default function Home() {
             </div>
           </div>
 
+          {/* Legal Links */}
+          <div className="flex justify-center gap-6 pt-6 mt-6 border-t">
+            <Link href="/terms" className="text-sm text-muted-foreground hover:text-primary transition-colors">Terms of Service</Link>
+            <Link href="/privacy" className="text-sm text-muted-foreground hover:text-primary transition-colors">Privacy Policy</Link>
+          </div>
+
           {/* Copyright */}
           <div className="text-center pt-6 mt-6 border-t">
             <p className="text-sm text-muted-foreground">&copy; 2026 INFLUXconnect. All rights reserved.</p>
