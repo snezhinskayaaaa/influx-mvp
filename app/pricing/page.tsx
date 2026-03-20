@@ -854,8 +854,6 @@ export default function PricingPage() {
             </div>
           </div>
 
-          </div>
-
           {/* Copyright */}
           <div className="text-center pt-6 mt-6 border-t">
             <p className="text-sm text-muted-foreground">&copy; 2026 INFLUXconnect. All rights reserved.</p>
