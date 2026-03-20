@@ -29,11 +29,14 @@ export async function POST(request: NextRequest) {
     }
 
     const amountCents = Math.round(amount * 100)
-    const fee = Math.round(amountCents * 0.02) // 2% deposit fee
+    const settings = await prisma.platformSettings.findUnique({ where: { id: 'default' } })
+    const feePercent = settings ? Number(settings.depositFeePercent) : 2
+    const fee = Math.round(amountCents * (feePercent / 100))
 
+    const netAmount = amountCents - fee
     const result = await prisma.brand.update({
       where: { id: brand.id },
-      data: { balance: { increment: amountCents } },
+      data: { balance: { increment: netAmount } },
     })
 
     await prisma.transaction.create({
@@ -50,7 +53,7 @@ export async function POST(request: NextRequest) {
       balance: result.balance,
       deposited: amountCents,
       fee,
-      totalCharged: amountCents + fee,
+      netAmount,
     })
   } catch (error) {
     console.error('POST /api/wallet/deposit error:', error)

@@ -34,7 +34,9 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Insufficient balance' }, { status: 400 })
     }
 
-    const fee = Math.round(amountCents * 0.03) // 3% withdrawal fee
+    const settings = await prisma.platformSettings.findUnique({ where: { id: 'default' } })
+    const feePercent = settings ? Number(settings.withdrawalFeePercent) : 3
+    const fee = Math.round(amountCents * (feePercent / 100))
     const payout = amountCents - fee
 
     const result = await prisma.influencer.update({

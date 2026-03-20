@@ -1,6 +1,6 @@
 import { jwtVerify } from 'jose'
 
-const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET || 'fallback-secret-change-in-production')
+const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET!)
 const COOKIE_NAME = 'influx-token'
 
 export interface TokenPayload {

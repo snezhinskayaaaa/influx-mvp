@@ -3,7 +3,7 @@ import type { NextRequest } from 'next/server'
 import { verifyTokenEdge, COOKIE_NAME } from '@/lib/auth-edge'
 
 // Routes that require authentication
-const protectedRoutes = ['/dashboard', '/admin']
+const protectedRoutes = ['/dashboard', '/admin', '/onboarding']
 
 // Routes that require specific roles
 const adminRoutes = ['/admin']
@@ -63,6 +63,7 @@ export const config = {
   matcher: [
     '/dashboard/:path*',
     '/admin/:path*',
+    '/onboarding/:path*',
     '/login',
     '/signup',
   ],

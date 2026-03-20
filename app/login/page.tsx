@@ -63,11 +63,8 @@ export default function LoginPage() {
   };
 
   const handleGoogleLogin = () => {
-    // TODO: Implement Google OAuth
-    console.log("Google login");
-
-    // For demo, redirect to brand dashboard
-    router.push("/dashboard/brand");
+    // TODO: Google OAuth will be implemented with proper OAuth flow
+    alert("Google authentication coming soon! Please use email for now.");
   };
 
   return (

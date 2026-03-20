@@ -93,15 +93,8 @@ function SignupForm() {
   };
 
   const handleGoogleSignup = () => {
-    // TODO: Implement Google OAuth
-    console.log("Google signup as:", userType);
-
-    // Redirect to appropriate onboarding
-    if (userType === "brand") {
-      router.push("/onboarding/brand");
-    } else {
-      router.push("/onboarding/influencer");
-    }
+    // TODO: Google OAuth will be implemented with proper OAuth flow
+    alert("Google authentication coming soon! Please use email for now.");
   };
 
   return (

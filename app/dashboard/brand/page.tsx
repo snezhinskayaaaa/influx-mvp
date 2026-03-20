@@ -783,6 +783,7 @@ export default function BrandDashboard() {
   const [selectedCampaignId, setSelectedCampaignId] = useState<number | null>(null);
 
   const [influencers, setInfluencers] = useState<Influencer[]>([]);
+  const [collaborations, setCollaborations] = useState<any[]>([]);
 
   const [showNotifications, setShowNotifications] = useState(false);
   const [notifications, setNotifications] = useState<Notification[]>([]);
@@ -923,6 +924,20 @@ export default function BrandDashboard() {
         }
       } catch (error) {
         console.error('Failed to fetch brand profile:', error);
+      }
+
+      // Fetch collaborations for brand's campaigns
+      try {
+        const collabRes = await fetch("/api/collaborations");
+        if (collabRes.ok) {
+          const collabData = await collabRes.json();
+          // Store collaborations in state for use in campaign views
+          if (collabData.collaborations) {
+            setCollaborations(collabData.collaborations);
+          }
+        }
+      } catch (error) {
+        console.error("Failed to fetch collaborations:", error);
       }
     };
 
@@ -1419,18 +1434,16 @@ export default function BrandDashboard() {
                             // API returns balance in cents
                             if (typeof data.balance === 'number') {
                               setBalance(data.balance / 100);
-                            } else {
-                              setBalance(balance + amount);
                             }
                           } else {
-                            console.error('Wallet deposit API failed:', await res.text());
-                            // Fallback: update locally
-                            setBalance(balance + amount);
+                            const data = await res.json().catch(() => ({}));
+                            alert(data.error || "Failed to deposit");
+                            return;
                           }
                         } catch (error) {
                           console.error('Failed to deposit via API:', error);
-                          // Fallback: update locally
-                          setBalance(balance + amount);
+                          alert("Failed to deposit. Please try again.");
+                          return;
                         }
                         setShowTopUpModal(false);
                         setTopUpAmount("");
@@ -3838,14 +3851,13 @@ export default function BrandDashboard() {
                         setCampaigns([createdCampaign, ...campaigns]);
                       } else {
                         const errData = await res.json().catch(() => ({}));
-                        console.error('API campaign creation failed:', errData.error || res.statusText);
-                        // Fallback: add locally
-                        setCampaigns([newCampaign, ...campaigns]);
+                        alert(errData.error || "Failed to create campaign");
+                        return;
                       }
                     } catch (error) {
                       console.error('Failed to create campaign via API:', error);
-                      // Fallback: add locally
-                      setCampaigns([newCampaign, ...campaigns]);
+                      alert("Failed to create campaign. Please try again.");
+                      return;
                     }
 
                     // Clear form

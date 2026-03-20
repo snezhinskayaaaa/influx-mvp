@@ -251,6 +251,12 @@ export default function InfluencerDashboard() {
   const [isCampaignDetailsExpanded, setIsCampaignDetailsExpanded] = useState(false);
   const [contentLinkInput, setContentLinkInput] = useState("");
   const [publishedLinkInput, setPublishedLinkInput] = useState("");
+  const [applyingCampaign, setApplyingCampaign] = useState<Campaign | null>(null);
+  const [proposedPrice, setProposedPrice] = useState("");
+  const [applicationMessage, setApplicationMessage] = useState("");
+  const [applyLoading, setApplyLoading] = useState(false);
+  const [applyError, setApplyError] = useState("");
+  const [applySuccess, setApplySuccess] = useState("");
 
   const [discoverCampaigns, setDiscoverCampaigns] = useState<Campaign[]>([]);
   const [myCampaigns, setMyCampaigns] = useState<Campaign[]>([]);
@@ -417,6 +423,73 @@ export default function InfluencerDashboard() {
         return "bg-gray-500/10 text-gray-600 border-gray-500/30";
       default:
         return "";
+    }
+  };
+
+  const handleApply = async () => {
+    if (!applyingCampaign || !proposedPrice) return;
+    setApplyLoading(true);
+    setApplyError("");
+    try {
+      const res = await fetch("/api/collaborations", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          campaignId: applyingCampaign.id,
+          proposedPrice: parseFloat(proposedPrice),
+          message: applicationMessage,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setApplyError(data.error || "Failed to apply");
+        return;
+      }
+      setApplySuccess("Application submitted successfully!");
+      setApplyingCampaign(null);
+      setProposedPrice("");
+      setApplicationMessage("");
+      // Refresh collaborations
+      const collabRes = await fetch("/api/collaborations");
+      if (collabRes.ok) {
+        const collabData = await collabRes.json();
+        if (collabData.collaborations && collabData.collaborations.length > 0) {
+          const statusMap: Record<string, Campaign["status"]> = {
+            APPLIED: "applied",
+            NEGOTIATING: "applied",
+            AGREED: "approved",
+            IN_PROGRESS: "active",
+            COMPLETED: "completed",
+            CANCELLED: "completed",
+          };
+          const mapped: Campaign[] = collabData.collaborations.map((collab: Record<string, unknown>) => {
+            const campaign = collab.campaign as Record<string, unknown>;
+            const brand = campaign?.brand as Record<string, unknown>;
+            const agreedPrice = collab.agreedPrice as number | null;
+            const colProposedPrice = collab.proposedPrice as number;
+            const budgetCents = agreedPrice || colProposedPrice || 0;
+            return {
+              id: collab.id,
+              title: (campaign?.title as string) || "",
+              brand: (brand?.companyName as string) || "Unknown Brand",
+              brandAvatar: "🏢",
+              category: (brand?.industry as string) || "General",
+              budget: Math.round(budgetCents / 100),
+              pricingModel: "CPM" as const,
+              description: (campaign?.description as string) || "",
+              requirements: (collab.deliverables as string[]) || [],
+              platforms: [],
+              deadline: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
+              status: statusMap[(collab.status as string)] || "applied",
+            };
+          });
+          setMyCampaigns(mapped);
+        }
+      }
+    } catch {
+      setApplyError("Something went wrong. Please try again.");
+    } finally {
+      setApplyLoading(false);
     }
   };
 
@@ -782,6 +855,7 @@ export default function InfluencerDashboard() {
                                 <Button
                                   size="default"
                                   className="bg-primary/10 text-primary hover:bg-primary/20 border border-primary/30"
+                                  onClick={() => setApplyingCampaign(campaign)}
                                 >
                                   Apply Now
                                 </Button>
@@ -1991,6 +2065,59 @@ export default function InfluencerDashboard() {
           </AnimatePresence>
         </main>
       </div>
+
+      {/* Apply Modal */}
+      {applyingCampaign && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+          <div className="bg-background border border-border rounded-2xl p-6 w-full max-w-md mx-4 shadow-2xl">
+            <h3 className="text-lg font-bold mb-1">Apply to Campaign</h3>
+            <p className="text-sm text-muted-foreground mb-4">{applyingCampaign.title}</p>
+
+            <div className="space-y-4">
+              <div>
+                <label className="text-sm font-medium mb-1 block">Your Price ($)</label>
+                <input
+                  type="number"
+                  value={proposedPrice}
+                  onChange={(e) => setProposedPrice(e.target.value)}
+                  placeholder="Enter your price"
+                  className="w-full px-3 py-2 rounded-lg border border-border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                />
+              </div>
+              <div>
+                <label className="text-sm font-medium mb-1 block">Message (optional)</label>
+                <textarea
+                  value={applicationMessage}
+                  onChange={(e) => setApplicationMessage(e.target.value)}
+                  placeholder="Why you're a great fit..."
+                  rows={3}
+                  className="w-full px-3 py-2 rounded-lg border border-border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary resize-none"
+                />
+              </div>
+
+              {applyError && <p className="text-sm text-red-500">{applyError}</p>}
+              {applySuccess && <p className="text-sm text-green-500">{applySuccess}</p>}
+
+              <div className="flex gap-3">
+                <Button
+                  variant="outline"
+                  className="flex-1"
+                  onClick={() => { setApplyingCampaign(null); setApplyError(""); }}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  className="flex-1"
+                  onClick={handleApply}
+                  disabled={applyLoading || !proposedPrice}
+                >
+                  {applyLoading ? "Submitting..." : "Submit Application"}
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
