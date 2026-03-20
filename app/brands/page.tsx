@@ -55,7 +55,15 @@ const fadeInUp = {
   },
 };
 
-const influencerProfiles = [
+interface InfluencerProfile {
+  id: number | string;
+  name: string;
+  niche: string;
+  followers: string;
+  image: string;
+}
+
+const mockInfluencerProfiles: InfluencerProfile[] = [
   {
     id: 1,
     name: "Luna AI",
@@ -100,8 +108,40 @@ const influencerProfiles = [
   }
 ];
 
+function formatFollowers(count: number): string {
+  if (count >= 1_000_000) return `${(count / 1_000_000).toFixed(1)}M`;
+  if (count >= 1_000) return `${Math.round(count / 1_000)}K`;
+  return String(count);
+}
+
 export default function BrandsPage() {
   const [activeIndex, setActiveIndex] = useState(0);
+  const [influencerProfiles, setInfluencerProfiles] = useState<InfluencerProfile[]>(mockInfluencerProfiles);
+
+  useEffect(() => {
+    async function fetchInfluencers() {
+      try {
+        const res = await fetch("/api/influencers");
+        if (!res.ok) return;
+        const data = await res.json();
+        if (data.influencers && data.influencers.length > 0) {
+          const mapped: InfluencerProfile[] = data.influencers.slice(0, 6).map(
+            (inf: { id: string; handle: string; niche: string[]; instagramFollowers: number }, idx: number) => ({
+              id: inf.id,
+              name: inf.handle,
+              niche: inf.niche?.[0] ?? "Creator",
+              followers: formatFollowers(inf.instagramFollowers ?? 0),
+              image: `/influencer-${idx + 1}.png`,
+            })
+          );
+          setInfluencerProfiles(mapped);
+        }
+      } catch {
+        // API unavailable — mock data stays as fallback
+      }
+    }
+    fetchInfluencers();
+  }, []);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -109,7 +149,7 @@ export default function BrandsPage() {
     }, 4000);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [influencerProfiles.length]);
 
   const getCardPosition = (index: number) => {
     const total = influencerProfiles.length;

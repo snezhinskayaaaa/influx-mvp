@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -52,7 +52,7 @@ import { NetworkLogo } from "@/components/logo";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
 interface Campaign {
-  id: number;
+  id: number | string;
   title: string;
   brand: string;
   brandAvatar: string;
@@ -252,6 +252,98 @@ export default function InfluencerDashboard() {
   const [contentLinkInput, setContentLinkInput] = useState("");
   const [publishedLinkInput, setPublishedLinkInput] = useState("");
 
+  const [discoverCampaigns, setDiscoverCampaigns] = useState<Campaign[]>(mockDiscoverCampaigns);
+  const [myCampaigns, setMyCampaigns] = useState<Campaign[]>(mockMyCampaigns);
+  const [walletBalance, setWalletBalance] = useState<number | null>(null);
+  const [walletPending, setWalletPending] = useState<number | null>(null);
+  const [walletTotalEarned, setWalletTotalEarned] = useState<number | null>(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        // Fetch available campaigns
+        const campaignsRes = await fetch('/api/campaigns');
+        if (campaignsRes.ok) {
+          const data = await campaignsRes.json();
+          if (data.campaigns && data.campaigns.length > 0) {
+            const mapped: Campaign[] = data.campaigns.map((c: Record<string, unknown>) => ({
+              id: c.id,
+              title: (c.title as string) || '',
+              brand: ((c as Record<string, unknown>).brand as Record<string, unknown>)?.companyName || 'Unknown Brand',
+              brandAvatar: '🏢',
+              category: ((c as Record<string, unknown>).brand as Record<string, unknown>)?.industry || 'General',
+              budget: Math.round(((c.budgetMax as number) || 0) / 100),
+              pricingModel: 'CPM' as const,
+              description: (c.description as string) || '',
+              requirements: (c.deliverables as string[]) || [],
+              platforms: [],
+              deadline: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+              status: 'open' as const,
+            }));
+            setDiscoverCampaigns(mapped);
+          }
+        }
+
+        // Fetch user's collaborations
+        const collabRes = await fetch('/api/collaborations');
+        if (collabRes.ok) {
+          const data = await collabRes.json();
+          if (data.collaborations && data.collaborations.length > 0) {
+            const statusMap: Record<string, Campaign['status']> = {
+              APPLIED: 'applied',
+              NEGOTIATING: 'applied',
+              AGREED: 'approved',
+              IN_PROGRESS: 'active',
+              COMPLETED: 'completed',
+              CANCELLED: 'completed',
+            };
+            const mapped: Campaign[] = data.collaborations.map((collab: Record<string, unknown>) => {
+              const campaign = collab.campaign as Record<string, unknown>;
+              const brand = campaign?.brand as Record<string, unknown>;
+              const agreedPrice = collab.agreedPrice as number | null;
+              const proposedPrice = collab.proposedPrice as number;
+              const budgetCents = agreedPrice || proposedPrice || 0;
+              return {
+                id: collab.id,
+                title: (campaign?.title as string) || '',
+                brand: (brand?.companyName as string) || 'Unknown Brand',
+                brandAvatar: '🏢',
+                category: (brand?.industry as string) || 'General',
+                budget: Math.round(budgetCents / 100),
+                pricingModel: 'CPM' as const,
+                description: (campaign?.description as string) || '',
+                requirements: (collab.deliverables as string[]) || [],
+                platforms: [],
+                deadline: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+                status: statusMap[(collab.status as string)] || 'applied',
+              };
+            });
+            setMyCampaigns(mapped);
+          }
+        }
+
+        // Fetch wallet balance
+        const walletRes = await fetch('/api/wallet');
+        if (walletRes.ok) {
+          const data = await walletRes.json();
+          if (data.wallet) {
+            setWalletBalance(Math.round((data.wallet.balance || 0) / 100));
+          }
+          if (data.transactions) {
+            const payouts = (data.transactions as Record<string, unknown>[])
+              .filter((t) => t.type === 'CAMPAIGN_PAYOUT')
+              .reduce((sum: number, t: Record<string, unknown>) => sum + ((t.amount as number) || 0), 0);
+            setWalletTotalEarned(Math.round(payouts / 100));
+          }
+        }
+      } catch (error) {
+        console.error('Failed to fetch dashboard data:', error);
+        // Keep mock data on error
+      }
+    };
+    fetchData();
+  }, []);
+
   const categories = [
     "all",
     "Fashion & Style",
@@ -276,7 +368,7 @@ export default function InfluencerDashboard() {
     { value: "10000+", label: "$10,000+" },
   ];
 
-  const filteredDiscoverCampaigns = mockDiscoverCampaigns.filter((campaign) => {
+  const filteredDiscoverCampaigns = discoverCampaigns.filter((campaign) => {
     const matchesSearch =
       campaign.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       campaign.brand.toLowerCase().includes(searchQuery.toLowerCase());
@@ -390,11 +482,11 @@ export default function InfluencerDashboard() {
                 </div>
               </div>
               <div className="text-2xl font-bold text-primary text-left mb-2">
-                $3,450.00
+                ${walletBalance !== null ? walletBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '3,450.00'}
               </div>
               <div className="text-xs text-muted-foreground space-y-1">
-                <div>Pending: $1,200</div>
-                <div>Total Earned: $12,450</div>
+                <div>Pending: ${walletPending !== null ? walletPending.toLocaleString() : '1,200'}</div>
+                <div>Total Earned: ${walletTotalEarned !== null ? walletTotalEarned.toLocaleString() : '12,450'}</div>
               </div>
               <Button size="sm" className="w-full mt-3 h-8 text-xs">
                 Withdraw
@@ -1356,7 +1448,7 @@ export default function InfluencerDashboard() {
                     </p>
                   </div>
 
-                  {mockMyCampaigns.length === 0 ? (
+                  {myCampaigns.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-20">
                   <Briefcase className="h-16 w-16 text-muted-foreground/50 mb-4" />
                   <p className="text-muted-foreground text-lg font-medium mb-2">No campaigns yet</p>
@@ -1404,12 +1496,12 @@ export default function InfluencerDashboard() {
                     </div>
 
                     {/* Table Rows */}
-                    {mockMyCampaigns.map((campaign, index) => (
+                    {myCampaigns.map((campaign, index) => (
                       <div
                         key={campaign.id}
                         onClick={() => setSelectedCampaignDetails(campaign)}
                         className={`flex items-center px-6 py-5 hover:bg-muted/20 transition-colors cursor-pointer ${
-                          index !== mockMyCampaigns.length - 1 ? "border-b" : ""
+                          index !== myCampaigns.length - 1 ? "border-b" : ""
                         }`}
                       >
                         {/* Name Column */}
@@ -1503,7 +1595,7 @@ export default function InfluencerDashboard() {
 
                   {/* Mobile Card View */}
                   <div className="lg:hidden space-y-3">
-                    {mockMyCampaigns.map((campaign) => (
+                    {myCampaigns.map((campaign) => (
                       <Card
                         key={campaign.id}
                         onClick={() => setSelectedCampaignDetails(campaign)}

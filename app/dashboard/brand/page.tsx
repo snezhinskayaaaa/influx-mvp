@@ -782,6 +782,8 @@ export default function BrandDashboard() {
   const [selectedInfluencer, setSelectedInfluencer] = useState<Influencer | null>(null);
   const [selectedCampaignId, setSelectedCampaignId] = useState<number | null>(null);
 
+  const [influencers, setInfluencers] = useState<Influencer[]>(mockInfluencers);
+
   const [showNotifications, setShowNotifications] = useState(false);
   const [notifications, setNotifications] = useState<Notification[]>(mockNotifications);
 
@@ -815,6 +817,128 @@ export default function BrandDashboard() {
     return initialOpenCheckpoints;
   });
 
+  // Fetch real data from API — mock data serves as fallback
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        // Fetch brand's campaigns
+        const campaignsRes = await fetch('/api/campaigns');
+        if (campaignsRes.ok) {
+          const data = await campaignsRes.json();
+          if (data.campaigns && data.campaigns.length > 0) {
+            const transformedCampaigns: Campaign[] = data.campaigns.map((c: Record<string, unknown>) => ({
+              id: c.id,
+              title: (c.title as string) || '',
+              status: ((c.status as string) || 'draft').toLowerCase() as 'active' | 'draft',
+              budgetMin: String(((c.budgetMin as number) || 0) / 100),
+              budgetMax: String(((c.budgetMax as number) || 0) / 100),
+              applications: (c._count as Record<string, number>)?.collaborations || 0,
+              applicationsList: undefined,
+              startDate: c.createdAt ? new Date(c.createdAt as string).toISOString().split('T')[0] : '',
+              endDate: '',
+              influencerCount: String((c.desiredInfluencerCount as number) || 1),
+              description: (c.description as string) || '',
+              goal: '',
+              platforms: [],
+              contentFormats: [],
+              pricingModels: [],
+              contentType: '',
+              influencerNiches: [],
+              productName: '',
+              productPrice: '',
+              productPhoto: '',
+              productLink: '',
+              productDescription: '',
+              brandTag: '',
+              hashtags: '',
+              creatorScript: '',
+              detailedRequirements: Array.isArray(c.deliverables) ? (c.deliverables as string[]).join('\n') : '',
+              createdAt: (c.createdAt as string) || new Date().toISOString(),
+              currentStage: 1,
+            }));
+            setCampaigns(transformedCampaigns);
+          }
+        }
+      } catch (error) {
+        console.error('Failed to fetch campaigns:', error);
+      }
+
+      try {
+        // Fetch approved influencers for browse/discover
+        const influencersRes = await fetch('/api/influencers');
+        if (influencersRes.ok) {
+          const data = await influencersRes.json();
+          if (data.influencers && data.influencers.length > 0) {
+            const transformedInfluencers: Influencer[] = data.influencers.map((inf: Record<string, unknown>) => {
+              const igFollowers = (inf.instagramFollowers as number) || 0;
+              let followersStr: string;
+              if (igFollowers >= 1_000_000) {
+                followersStr = `${(igFollowers / 1_000_000).toFixed(1)}M`;
+              } else if (igFollowers >= 1_000) {
+                followersStr = `${(igFollowers / 1_000).toFixed(0)}K`;
+              } else {
+                followersStr = String(igFollowers);
+              }
+
+              const engagement = inf.instagramEngagement != null ? Number(inf.instagramEngagement) : 0;
+              const pricePerPost = (inf.pricePerPost as number) || 0;
+
+              return {
+                id: inf.id,
+                name: (inf.handle as string) || '',
+                username: `@${(inf.handle as string) || ''}`,
+                avatar: '🌟',
+                followers: followersStr,
+                engagement: `${engagement.toFixed(1)}%`,
+                category: Array.isArray(inf.niche) && (inf.niche as string[]).length > 0 ? (inf.niche as string[])[0] : 'Other',
+                rate: `$${(pricePerPost / 100).toFixed(0)}`,
+                verified: (inf.isVerified as boolean) || false,
+                gender: 'Unknown',
+                ethnicity: 'Unknown',
+                age: 'Unknown',
+              } as Influencer;
+            });
+            setInfluencers(transformedInfluencers);
+          }
+        }
+      } catch (error) {
+        console.error('Failed to fetch influencers:', error);
+      }
+
+      try {
+        // Fetch wallet balance
+        const walletRes = await fetch('/api/wallet');
+        if (walletRes.ok) {
+          const data = await walletRes.json();
+          if (data.wallet && typeof data.wallet.balance === 'number') {
+            setBalance(data.wallet.balance / 100);
+          }
+        }
+      } catch (error) {
+        console.error('Failed to fetch wallet:', error);
+      }
+
+      try {
+        // Fetch brand profile
+        const brandRes = await fetch('/api/brands/me');
+        if (brandRes.ok) {
+          const data = await brandRes.json();
+          if (data.brand) {
+            const b = data.brand;
+            if (b.companyName) setCompanyName(b.companyName);
+            if (b.description) setCompanyBio(b.description);
+            if (b.website) setWebsiteUrl(b.website);
+            if (b.industry) setCompanyIndustry(b.industry);
+          }
+        }
+      } catch (error) {
+        console.error('Failed to fetch brand profile:', error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
   const categories = [
     "all",
     "Beauty & Care",
@@ -837,7 +961,7 @@ export default function BrandDashboard() {
     "Other"
   ];
 
-  const filteredInfluencers = mockInfluencers.filter((influencer) => {
+  const filteredInfluencers = influencers.filter((influencer) => {
     const matchesSearch = influencer.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
                          influencer.username.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesCategory = selectedCategory === "all" || influencer.category === selectedCategory;
@@ -1292,9 +1416,34 @@ export default function BrandDashboard() {
 
                   {/* Action Button */}
                   <Button
-                    onClick={() => {
+                    onClick={async () => {
                       if (topUpAmount && topUpMethod) {
-                        setBalance(balance + parseFloat(topUpAmount));
+                        const amount = parseFloat(topUpAmount);
+                        // Try to deposit via API
+                        try {
+                          const res = await fetch('/api/wallet/deposit', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ amount }),
+                          });
+                          if (res.ok) {
+                            const data = await res.json();
+                            // API returns balance in cents
+                            if (typeof data.balance === 'number') {
+                              setBalance(data.balance / 100);
+                            } else {
+                              setBalance(balance + amount);
+                            }
+                          } else {
+                            console.error('Wallet deposit API failed:', await res.text());
+                            // Fallback: update locally
+                            setBalance(balance + amount);
+                          }
+                        } catch (error) {
+                          console.error('Failed to deposit via API:', error);
+                          // Fallback: update locally
+                          setBalance(balance + amount);
+                        }
                         setShowTopUpModal(false);
                         setTopUpAmount("");
                         setTopUpMethod(null);
@@ -3640,7 +3789,7 @@ export default function BrandDashboard() {
                 </div>
 
 <Card className="p-6 sm:p-8">
-                  <form className="space-y-6" onSubmit={(e) => {
+                  <form className="space-y-6" onSubmit={async (e) => {
                     e.preventDefault();
 
                     const newCampaign: Campaign = {
@@ -3675,7 +3824,41 @@ export default function BrandDashboard() {
                       createdAt: new Date().toISOString(),
                     };
 
-                    setCampaigns([newCampaign, ...campaigns]);
+                    // Try to create campaign via API
+                    try {
+                      const res = await fetch('/api/campaigns', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                          title: campaignTitle,
+                          description: campaignDescription,
+                          budgetMin: parseFloat(campaignBudgetMin) || 0,
+                          budgetMax: parseFloat(campaignBudgetMax) || 0,
+                          desiredInfluencerCount: parseInt(campaignInfluencerCount) || 1,
+                          deliverables: campaignDetailedRequirements,
+                        }),
+                      });
+                      if (res.ok) {
+                        const data = await res.json();
+                        const apiCampaign = data.campaign;
+                        // Use API-returned id if available
+                        const createdCampaign: Campaign = {
+                          ...newCampaign,
+                          id: apiCampaign.id || newCampaign.id,
+                          createdAt: apiCampaign.createdAt || newCampaign.createdAt,
+                        };
+                        setCampaigns([createdCampaign, ...campaigns]);
+                      } else {
+                        const errData = await res.json().catch(() => ({}));
+                        console.error('API campaign creation failed:', errData.error || res.statusText);
+                        // Fallback: add locally
+                        setCampaigns([newCampaign, ...campaigns]);
+                      }
+                    } catch (error) {
+                      console.error('Failed to create campaign via API:', error);
+                      // Fallback: add locally
+                      setCampaigns([newCampaign, ...campaigns]);
+                    }
 
                     // Clear form
                     setCampaignTitle("");
