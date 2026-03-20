@@ -41,51 +41,47 @@ export async function POST(
       return NextResponse.json({ error: 'No agreed price set' }, { status: 400 })
     }
 
-    // Atomically transfer funds from frozen to influencer balance
-    const result = await prisma.$transaction(async (tx) => {
-      await tx.brand.update({
-        where: { id: collaboration.campaign.brand.id },
-        data: {
-          frozenBalance: { decrement: collaboration.agreedPrice! },
-        },
-      })
+    // Transfer funds from frozen to influencer balance (sequential)
+    await prisma.brand.update({
+      where: { id: collaboration.campaign.brand.id },
+      data: {
+        frozenBalance: { decrement: collaboration.agreedPrice! },
+      },
+    })
 
-      await tx.influencer.update({
-        where: { id: collaboration.influencer.id },
-        data: {
-          balance: { increment: collaboration.agreedPrice! },
-        },
-      })
+    await prisma.influencer.update({
+      where: { id: collaboration.influencer.id },
+      data: {
+        balance: { increment: collaboration.agreedPrice! },
+      },
+    })
 
-      const updated = await tx.collaboration.update({
-        where: { id },
-        data: {
-          status: 'COMPLETED',
-          completedAt: new Date(),
-        },
-      })
+    const result = await prisma.collaboration.update({
+      where: { id },
+      data: {
+        status: 'COMPLETED',
+        completedAt: new Date(),
+      },
+    })
 
-      await tx.transaction.create({
-        data: {
-          userId: collaboration.campaign.brand.userId,
-          type: 'CAMPAIGN_PAYOUT',
-          amount: collaboration.agreedPrice!,
-          description: `Payment to influencer for collaboration`,
-          referenceId: collaboration.id,
-        },
-      })
+    await prisma.transaction.create({
+      data: {
+        userId: collaboration.campaign.brand.userId,
+        type: 'CAMPAIGN_PAYOUT',
+        amount: collaboration.agreedPrice!,
+        description: `Payment to influencer for collaboration`,
+        referenceId: collaboration.id,
+      },
+    })
 
-      await tx.transaction.create({
-        data: {
-          userId: collaboration.influencer.userId,
-          type: 'CAMPAIGN_PAYOUT',
-          amount: collaboration.agreedPrice!,
-          description: `Earnings from collaboration`,
-          referenceId: collaboration.id,
-        },
-      })
-
-      return updated
+    await prisma.transaction.create({
+      data: {
+        userId: collaboration.influencer.userId,
+        type: 'CAMPAIGN_PAYOUT',
+        amount: collaboration.agreedPrice!,
+        description: `Earnings from collaboration`,
+        referenceId: collaboration.id,
+      },
     })
 
     return NextResponse.json({ collaboration: result })

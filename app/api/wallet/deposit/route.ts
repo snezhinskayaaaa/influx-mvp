@@ -31,23 +31,19 @@ export async function POST(request: NextRequest) {
     const amountCents = Math.round(amount * 100)
     const fee = Math.round(amountCents * 0.02) // 2% deposit fee
 
-    const result = await prisma.$transaction(async (tx) => {
-      const updated = await tx.brand.update({
-        where: { id: brand.id },
-        data: { balance: { increment: amountCents } },
-      })
+    const result = await prisma.brand.update({
+      where: { id: brand.id },
+      data: { balance: { increment: amountCents } },
+    })
 
-      await tx.transaction.create({
-        data: {
-          userId: user.userId,
-          type: 'DEPOSIT',
-          amount: amountCents,
-          fee,
-          description: `Deposit of $${amount.toFixed(2)} (fee: $${(fee / 100).toFixed(2)})`,
-        },
-      })
-
-      return updated
+    await prisma.transaction.create({
+      data: {
+        userId: user.userId,
+        type: 'DEPOSIT',
+        amount: amountCents,
+        fee,
+        description: `Deposit of $${amount.toFixed(2)} (fee: $${(fee / 100).toFixed(2)})`,
+      },
     })
 
     return NextResponse.json({

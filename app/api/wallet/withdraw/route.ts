@@ -37,23 +37,19 @@ export async function POST(request: NextRequest) {
     const fee = Math.round(amountCents * 0.03) // 3% withdrawal fee
     const payout = amountCents - fee
 
-    const result = await prisma.$transaction(async (tx) => {
-      const updated = await tx.influencer.update({
-        where: { id: influencer.id },
-        data: { balance: { decrement: amountCents } },
-      })
+    const result = await prisma.influencer.update({
+      where: { id: influencer.id },
+      data: { balance: { decrement: amountCents } },
+    })
 
-      await tx.transaction.create({
-        data: {
-          userId: user.userId,
-          type: 'WITHDRAWAL',
-          amount: amountCents,
-          fee,
-          description: `Withdrawal of $${amount.toFixed(2)} (fee: $${(fee / 100).toFixed(2)}, payout: $${(payout / 100).toFixed(2)})`,
-        },
-      })
-
-      return updated
+    await prisma.transaction.create({
+      data: {
+        userId: user.userId,
+        type: 'WITHDRAWAL',
+        amount: amountCents,
+        fee,
+        description: `Withdrawal of $${amount.toFixed(2)} (fee: $${(fee / 100).toFixed(2)}, payout: $${(payout / 100).toFixed(2)})`,
+      },
     })
 
     return NextResponse.json({

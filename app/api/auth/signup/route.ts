@@ -73,24 +73,23 @@ export async function POST(request: NextRequest) {
     }
 
     const passwordHash = await hashPassword(password)
-    const profileId = crypto.randomUUID()
 
-    // Create profile + role-specific record atomically
-    const profile = await prisma.$transaction(async (tx) => {
-      const newProfile = await tx.profile.create({
-        data: {
-          id: profileId,
-          email,
-          passwordHash,
-          fullName: fullName || null,
-          role,
-        },
-      })
+    // Create profile first
+    const profile = await prisma.profile.create({
+      data: {
+        email,
+        passwordHash,
+        fullName: fullName || null,
+        role,
+      },
+    })
 
+    // Then create role-specific record
+    try {
       if (role === 'BRAND') {
-        await tx.brand.create({
+        await prisma.brand.create({
           data: {
-            userId: newProfile.id,
+            userId: profile.id,
             companyName: roleData.companyName,
             industry: roleData.industry || null,
             website: roleData.website || null,
@@ -102,9 +101,9 @@ export async function POST(request: NextRequest) {
       }
 
       if (role === 'INFLUENCER') {
-        await tx.influencer.create({
+        await prisma.influencer.create({
           data: {
-            userId: newProfile.id,
+            userId: profile.id,
             handle: roleData.handle,
             bio: roleData.bio || null,
             instagramHandle: roleData.instagramHandle || null,
@@ -115,9 +114,11 @@ export async function POST(request: NextRequest) {
           },
         })
       }
-
-      return newProfile
-    })
+    } catch (roleError) {
+      // If role-specific creation fails, clean up the profile
+      await prisma.profile.delete({ where: { id: profile.id } })
+      throw roleError
+    }
 
     const token = await createToken({ userId: profile.id, role: profile.role })
     await setAuthCookie(token)

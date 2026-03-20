@@ -53,35 +53,31 @@ export async function POST(
       )
     }
 
-    // Atomically freeze funds
-    const result = await prisma.$transaction(async (tx) => {
-      await tx.brand.update({
-        where: { id: brand.id },
-        data: {
-          balance: { decrement: collaboration.agreedPrice! },
-          frozenBalance: { increment: collaboration.agreedPrice! },
-        },
-      })
+    // Freeze funds (sequential — no $transaction with driver adapter)
+    await prisma.brand.update({
+      where: { id: brand.id },
+      data: {
+        balance: { decrement: collaboration.agreedPrice! },
+        frozenBalance: { increment: collaboration.agreedPrice! },
+      },
+    })
 
-      const updated = await tx.collaboration.update({
-        where: { id },
-        data: {
-          status: 'AGREED',
-          frozenAt: new Date(),
-        },
-      })
+    const result = await prisma.collaboration.update({
+      where: { id },
+      data: {
+        status: 'AGREED',
+        frozenAt: new Date(),
+      },
+    })
 
-      await tx.transaction.create({
-        data: {
-          userId: brand.userId,
-          type: 'CAMPAIGN_FREEZE',
-          amount: collaboration.agreedPrice!,
-          description: `Funds frozen for collaboration on campaign "${collaboration.campaign.title || 'Untitled'}"`,
-          referenceId: collaboration.id,
-        },
-      })
-
-      return updated
+    await prisma.transaction.create({
+      data: {
+        userId: brand.userId,
+        type: 'CAMPAIGN_FREEZE',
+        amount: collaboration.agreedPrice!,
+        description: `Funds frozen for collaboration on campaign "${collaboration.campaign.title || 'Untitled'}"`,
+        referenceId: collaboration.id,
+      },
     })
 
     return NextResponse.json({ collaboration: result })

@@ -11,7 +11,7 @@ const brandRoutes = ['/dashboard/brand']
 const influencerRoutes = ['/dashboard/influencer']
 
 // Routes that should redirect to dashboard if already logged in
-const authRoutes = ['/auth/login', '/brands/signup', '/influencers/signup']
+const authRoutes = ['/login', '/signup']
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
@@ -26,7 +26,7 @@ export async function middleware(request: NextRequest) {
 
   // Protected route without auth → redirect to login
   if (isProtectedRoute && !user) {
-    const loginUrl = new URL('/auth/login', request.url)
+    const loginUrl = new URL('/login', request.url)
     loginUrl.searchParams.set('redirect', pathname)
     return NextResponse.redirect(loginUrl)
   }
@@ -63,8 +63,7 @@ export const config = {
   matcher: [
     '/dashboard/:path*',
     '/admin/:path*',
-    '/auth/:path*',
-    '/brands/signup',
-    '/influencers/signup',
+    '/login',
+    '/signup',
   ],
 }
