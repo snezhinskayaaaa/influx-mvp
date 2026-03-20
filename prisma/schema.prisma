@@ -1,0 +1,283 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ─── Enums ───────────────────────────────────────────────────────────────────
+
+enum UserRole {
+  INFLUENCER @map("influencer")
+  BRAND      @map("brand")
+  ADMIN      @map("admin")
+
+  @@map("user_role")
+}
+
+enum CampaignStatus {
+  DRAFT     @map("draft")
+  ACTIVE    @map("active")
+  COMPLETED @map("completed")
+  CANCELLED @map("cancelled")
+
+  @@map("campaign_status")
+}
+
+enum InfluencerStatus {
+  PENDING  @map("pending")
+  APPROVED @map("approved")
+  REJECTED @map("rejected")
+
+  @@map("influencer_status")
+}
+
+enum CollaborationStatus {
+  APPLIED      @map("applied")
+  NEGOTIATING  @map("negotiating")
+  AGREED       @map("agreed")
+  IN_PROGRESS  @map("in_progress")
+  COMPLETED    @map("completed")
+  CANCELLED    @map("cancelled")
+
+  @@map("collaboration_status")
+}
+
+enum TransactionType {
+  DEPOSIT           @map("deposit")
+  WITHDRAWAL        @map("withdrawal")
+  CAMPAIGN_FREEZE   @map("campaign_freeze")
+  CAMPAIGN_UNFREEZE @map("campaign_unfreeze")
+  CAMPAIGN_PAYOUT   @map("campaign_payout")
+
+  @@map("transaction_type")
+}
+
+// ─── Models ──────────────────────────────────────────────────────────────────
+
+model Profile {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  email        String   @unique
+  passwordHash String   @map("password_hash")
+  fullName     String?  @map("full_name")
+  role         UserRole @default(INFLUENCER)
+  avatarUrl    String?  @map("avatar_url")
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt    DateTime @updatedAt @map("updated_at") @db.Timestamptz
+
+  influencer       Influencer?
+  brand            Brand?
+  sentMessages     Message[]     @relation("SenderMessages")
+  receivedMessages Message[]     @relation("RecipientMessages")
+  transactions     Transaction[]
+
+  @@map("profiles")
+}
+
+model Influencer {
+  id     String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId String @unique @map("user_id") @db.Uuid
+  handle String @unique
+  bio    String?
+  niche  String[] @default([])
+
+  // Social media stats
+  instagramHandle     String?  @map("instagram_handle")
+  instagramFollowers  Int      @default(0) @map("instagram_followers")
+  instagramEngagement Decimal  @default(0) @map("instagram_engagement") @db.Decimal(5, 2)
+
+  tiktokHandle     String?  @map("tiktok_handle")
+  tiktokFollowers  Int      @default(0) @map("tiktok_followers")
+  tiktokEngagement Decimal  @default(0) @map("tiktok_engagement") @db.Decimal(5, 2)
+
+  youtubeHandle      String?  @map("youtube_handle")
+  youtubeSubscribers Int      @default(0) @map("youtube_subscribers")
+  youtubeEngagement  Decimal  @default(0) @map("youtube_engagement") @db.Decimal(5, 2)
+
+  // Pricing (in cents)
+  pricePerPost  Int? @map("price_per_post")
+  pricePerStory Int? @map("price_per_story")
+  pricePerVideo Int? @map("price_per_video")
+
+  // Portfolio
+  portfolioImages    String[] @default([]) @map("portfolio_images")
+  pastCollaborations String[] @default([]) @map("past_collaborations")
+
+  // Status
+  status     InfluencerStatus @default(PENDING)
+  isVerified Boolean          @default(false) @map("is_verified")
+  isFeatured Boolean          @default(false) @map("is_featured")
+
+  // Metadata
+  location  String?
+  languages String[] @default([])
+
+  // Wallet
+  balance Int @default(0) // earnings balance in cents
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz
+
+  profile        Profile         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  collaborations Collaboration[]
+
+  @@index([status], map: "idx_influencers_status")
+  @@index([isVerified], map: "idx_influencers_verified")
+  @@index([isFeatured], map: "idx_influencers_featured")
+  @@map("influencers")
+}
+
+model Brand {
+  id          String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId      String @unique @map("user_id") @db.Uuid
+  companyName String @map("company_name")
+  industry    String?
+  website     String?
+  description String?
+  logoUrl     String? @map("logo_url")
+
+  // Contact info
+  contactName  String? @map("contact_name")
+  contactEmail String? @map("contact_email")
+
+  // Budget
+  monthlyBudgetRange String? @map("monthly_budget_range")
+
+  // Wallet
+  balance       Int @default(0) // free balance in cents
+  frozenBalance Int @default(0) @map("frozen_balance") // frozen for active collaborations in cents
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz
+
+  profile   Profile    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  campaigns Campaign[]
+
+  @@map("brands")
+}
+
+model Campaign {
+  id      String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  brandId String @map("brand_id") @db.Uuid
+
+  title       String
+  description String?
+
+  // Budget range (in cents)
+  budgetMin              Int @map("budget_min")
+  budgetMax              Int @map("budget_max")
+  desiredInfluencerCount Int @default(1) @map("desired_influencer_count")
+
+  // General deliverables description for the campaign
+  deliverables String[] @default([])
+
+  status CampaignStatus @default(DRAFT)
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz
+
+  brand          Brand           @relation(fields: [brandId], references: [id], onDelete: Cascade)
+  collaborations Collaboration[]
+
+  @@index([brandId], map: "idx_campaigns_brand")
+  @@index([status], map: "idx_campaigns_status")
+  @@map("campaigns")
+}
+
+model Collaboration {
+  id           String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  campaignId   String @map("campaign_id") @db.Uuid
+  influencerId String @map("influencer_id") @db.Uuid
+
+  // Pricing
+  proposedPrice Int  @map("proposed_price") // price proposed by influencer in cents
+  agreedPrice   Int? @map("agreed_price") // final agreed price in cents
+
+  // Status & agreement
+  status           CollaborationStatus @default(APPLIED)
+  brandAgreed      Boolean             @default(false) @map("brand_agreed")
+  influencerAgreed Boolean             @default(false) @map("influencer_agreed")
+
+  // Details
+  deliverables String[] @default([])
+  message      String? // influencer's application message
+
+  // Timestamps
+  frozenAt    DateTime? @map("frozen_at") @db.Timestamptz
+  completedAt DateTime? @map("completed_at") @db.Timestamptz
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt   DateTime  @updatedAt @map("updated_at") @db.Timestamptz
+
+  campaign   Campaign   @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  influencer Influencer @relation(fields: [influencerId], references: [id], onDelete: Cascade)
+
+  @@unique([campaignId, influencerId])
+  @@index([campaignId])
+  @@index([influencerId])
+  @@index([status])
+  @@map("collaborations")
+}
+
+model Transaction {
+  id          String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId      String          @map("user_id") @db.Uuid
+  type        TransactionType
+  amount      Int // amount in cents (always positive)
+  fee         Int             @default(0) // platform fee in cents
+  description String?
+  referenceId String?         @map("reference_id") @db.Uuid
+  createdAt   DateTime        @default(now()) @map("created_at") @db.Timestamptz
+
+  profile Profile @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([type])
+  @@map("transactions")
+}
+
+model PlatformSettings {
+  id                   String  @id @default("default")
+  depositFeePercent    Decimal @default(2.0) @map("deposit_fee_percent") @db.Decimal(5, 2)
+  withdrawalFeePercent Decimal @default(3.0) @map("withdrawal_fee_percent") @db.Decimal(5, 2)
+  updatedAt            DateTime @updatedAt @map("updated_at") @db.Timestamptz
+
+  @@map("platform_settings")
+}
+
+model Message {
+  id          String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  senderId    String  @map("sender_id") @db.Uuid
+  recipientId String  @map("recipient_id") @db.Uuid
+
+  content String
+  isRead  Boolean @default(false) @map("is_read")
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  sender    Profile @relation("SenderMessages", fields: [senderId], references: [id], onDelete: Cascade)
+  recipient Profile @relation("RecipientMessages", fields: [recipientId], references: [id], onDelete: Cascade)
+
+  @@index([recipientId], map: "idx_messages_recipient")
+  @@map("messages")
+}
+
+model Waitlist {
+  id    String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  email String @unique
+
+  fullName String? @map("full_name")
+  role     String?
+
+  // For influencers
+  instagramHandle String? @map("instagram_handle")
+  followerCount   String? @map("follower_count")
+
+  // For brands
+  companyName String? @map("company_name")
+  industry    String?
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  @@map("waitlist")
+}
