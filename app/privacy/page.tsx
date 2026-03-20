@@ -224,8 +224,8 @@ export default function PrivacyPage() {
                 </p>
                 <p>
                   To exercise any of these rights, please contact us at{" "}
-                  <Link href="mailto:privacy@influx.ai" className="text-primary hover:underline">
-                    privacy@influx.ai
+                  <Link href="mailto:aiinflux@proton.me" className="text-primary hover:underline">
+                    aiinflux@proton.me
                   </Link>
                   . We will respond to your request within 30 days.
                 </p>
@@ -279,8 +279,8 @@ export default function PrivacyPage() {
                 </p>
                 <p>
                   If you believe that we have inadvertently collected information from a minor, please contact us immediately at{" "}
-                  <Link href="mailto:privacy@influx.ai" className="text-primary hover:underline">
-                    privacy@influx.ai
+                  <Link href="mailto:aiinflux@proton.me" className="text-primary hover:underline">
+                    aiinflux@proton.me
                   </Link>
                   .
                 </p>
@@ -314,14 +314,14 @@ export default function PrivacyPage() {
                 </p>
                 <p>
                   <strong className="text-foreground">Email:</strong>{" "}
-                  <Link href="mailto:privacy@influx.ai" className="text-primary hover:underline">
-                    privacy@influx.ai
+                  <Link href="mailto:aiinflux@proton.me" className="text-primary hover:underline">
+                    aiinflux@proton.me
                   </Link>
                 </p>
                 <p>
                   For general platform inquiries, you can also reach us at{" "}
-                  <Link href="mailto:support@influx.ai" className="text-primary hover:underline">
-                    support@influx.ai
+                  <Link href="mailto:aiinflux@proton.me" className="text-primary hover:underline">
+                    aiinflux@proton.me
                   </Link>
                   .
                 </p>

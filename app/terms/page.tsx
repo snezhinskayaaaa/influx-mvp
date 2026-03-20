@@ -310,8 +310,8 @@ export default function TermsPage() {
                 </p>
                 <p>
                   <strong className="text-foreground">Email:</strong>{" "}
-                  <Link href="mailto:support@influx.ai" className="text-primary hover:underline">
-                    support@influx.ai
+                  <Link href="mailto:aiinflux@proton.me" className="text-primary hover:underline">
+                    aiinflux@proton.me
                   </Link>
                 </p>
                 <p>
