@@ -77,7 +77,7 @@ function SignupForm() {
       });
       const data = await res.json();
       if (!res.ok) {
-        setError(data.error || "Signup failed");
+        setError(data.debug ? `${data.error}: ${data.debug}` : (data.error || "Signup failed"));
         return;
       }
       if (userType === "brand") {
