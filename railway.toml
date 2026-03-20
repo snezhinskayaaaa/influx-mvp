@@ -3,7 +3,7 @@ builder = "RAILPACK"
 buildCommand = "npx prisma generate && npm run build"
 
 [deploy]
-preDeployCommand = "npx prisma db push --url $DATABASE_URL"
+preDeployCommand = "npx prisma db push --accept-data-loss"
 startCommand = "npm run start"
 healthcheckPath = "/api/health"
 healthcheckTimeout = 300
