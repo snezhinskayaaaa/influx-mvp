@@ -1105,10 +1105,8 @@ export default function BrandDashboard() {
                 </PopoverContent>
               </Popover>
 
-              <Button variant="ghost" size="sm" asChild className="text-sm font-medium text-muted-foreground hover:bg-muted/50 hover:text-foreground">
-                <Link href="/login">
-                  <LogOut className="h-4 w-4" />
-                </Link>
+              <Button variant="ghost" size="sm" className="text-sm font-medium text-muted-foreground hover:bg-muted/50 hover:text-foreground" onClick={async () => { await fetch('/api/auth/logout', { method: 'POST' }); window.location.href = '/login'; }}>
+                <LogOut className="h-4 w-4" />
               </Button>
             </div>
           </div>
