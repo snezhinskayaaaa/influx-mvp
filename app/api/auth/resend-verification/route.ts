@@ -22,7 +22,7 @@ export async function POST() {
     }
 
     const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET!)
-    const token = await new SignJWT({ userId: profile.id })
+    const token = await new SignJWT({ userId: profile.id, purpose: 'email-verification' })
       .setProtectedHeader({ alg: 'HS256' })
       .setExpirationTime('24h')
       .sign(JWT_SECRET)

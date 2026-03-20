@@ -5017,7 +5017,7 @@ export default function BrandDashboard() {
             <div>
               <Label className="text-sm font-medium mb-3 block">Select Campaign</Label>
               <div className="space-y-2 max-h-[300px] overflow-y-auto">
-                {mockCampaigns.map((campaign) => (
+                {campaigns.map((campaign) => (
                   <button
                     key={campaign.id}
                     onClick={() => setSelectedCampaignId(campaign.id)}
