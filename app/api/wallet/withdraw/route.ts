@@ -30,8 +30,8 @@ export async function POST(request: NextRequest) {
 
     const amountCents = Math.round(amount * 100)
 
-    if (influencer.balance < amountCents) {
-      return NextResponse.json({ error: 'Insufficient balance' }, { status: 400 })
+    if (amount > 100000) {
+      return NextResponse.json({ error: 'Maximum withdrawal is $100,000' }, { status: 400 })
     }
 
     const settings = await prisma.platformSettings.findUnique({ where: { id: 'default' } })
@@ -39,26 +39,42 @@ export async function POST(request: NextRequest) {
     const fee = Math.round(amountCents * (feePercent / 100))
     const payout = amountCents - fee
 
-    const result = await prisma.influencer.update({
-      where: { id: influencer.id },
-      data: { balance: { decrement: amountCents } },
-    })
+    // Use conditional update to prevent race condition
+    // Only decrements if balance is sufficient (atomic check-and-update)
+    try {
+      const result = await prisma.influencer.updateMany({
+        where: {
+          id: influencer.id,
+          balance: { gte: amountCents }  // Only update if balance >= amount
+        },
+        data: { balance: { decrement: amountCents } },
+      })
 
-    await prisma.transaction.create({
-      data: {
-        userId: user.userId,
-        type: 'WITHDRAWAL',
-        amount: amountCents,
+      if (result.count === 0) {
+        return NextResponse.json({ error: 'Insufficient balance' }, { status: 400 })
+      }
+
+      // Get updated balance
+      const updated = await prisma.influencer.findUnique({ where: { id: influencer.id } })
+
+      await prisma.transaction.create({
+        data: {
+          userId: user.userId,
+          type: 'WITHDRAWAL',
+          amount: amountCents,
+          fee,
+          description: `Withdrawal of $${amount.toFixed(2)} (fee: $${(fee / 100).toFixed(2)}, payout: $${(payout / 100).toFixed(2)})`,
+        },
+      })
+
+      return NextResponse.json({
+        payout,
         fee,
-        description: `Withdrawal of $${amount.toFixed(2)} (fee: $${(fee / 100).toFixed(2)}, payout: $${(payout / 100).toFixed(2)})`,
-      },
-    })
-
-    return NextResponse.json({
-      payout,
-      fee,
-      remainingBalance: result.balance,
-    })
+        remainingBalance: updated?.balance ?? 0,
+      })
+    } catch (innerError) {
+      throw innerError
+    }
   } catch (error) {
     console.error('POST /api/wallet/withdraw error:', error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })

@@ -46,39 +46,40 @@ export async function POST(
     }
 
     const brand = collaboration.campaign.brand
-    if (brand.balance < collaboration.agreedPrice) {
+
+    // Atomic: only freeze if balance is sufficient
+    const brandUpdate = await prisma.brand.updateMany({
+      where: {
+        id: brand.id,
+        balance: { gte: collaboration.agreedPrice! }
+      },
+      data: {
+        balance: { decrement: collaboration.agreedPrice! },
+        frozenBalance: { increment: collaboration.agreedPrice! },
+      },
+    })
+
+    if (brandUpdate.count === 0) {
       return NextResponse.json(
-        { error: 'Insufficient balance to confirm this collaboration. Please top up your wallet.' },
+        { error: 'Insufficient balance to confirm this collaboration.' },
         { status: 400 },
       )
     }
 
-    // Freeze funds atomically
-    const [_, result, __] = await prisma.$transaction([
-      prisma.brand.update({
-        where: { id: brand.id },
-        data: {
-          balance: { decrement: collaboration.agreedPrice! },
-          frozenBalance: { increment: collaboration.agreedPrice! },
-        },
-      }),
-      prisma.collaboration.update({
-        where: { id },
-        data: {
-          status: 'AGREED',
-          frozenAt: new Date(),
-        },
-      }),
-      prisma.transaction.create({
-        data: {
-          userId: brand.userId,
-          type: 'CAMPAIGN_FREEZE',
-          amount: collaboration.agreedPrice!,
-          description: `Funds frozen for collaboration`,
-          referenceId: collaboration.id,
-        },
-      }),
-    ])
+    const result = await prisma.collaboration.update({
+      where: { id },
+      data: { status: 'AGREED', frozenAt: new Date() },
+    })
+
+    await prisma.transaction.create({
+      data: {
+        userId: brand.userId,
+        type: 'CAMPAIGN_FREEZE',
+        amount: collaboration.agreedPrice!,
+        description: `Funds frozen for collaboration`,
+        referenceId: collaboration.id,
+      },
+    })
 
     return NextResponse.json({ collaboration: result })
   } catch (error) {

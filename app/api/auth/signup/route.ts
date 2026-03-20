@@ -22,11 +22,31 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(email.trim())) {
+      return NextResponse.json(
+        { success: false, error: 'Please enter a valid email address' },
+        { status: 400 }
+      )
+    }
+
+    const cleanEmail = email.trim().toLowerCase()
+
     if (!password || typeof password !== 'string' || password.length < 8) {
       return NextResponse.json(
         { success: false, error: 'Password must be at least 8 characters' },
         { status: 400 }
       )
+    }
+    if (!/[A-Z]/.test(password) || !/[0-9]/.test(password)) {
+      return NextResponse.json(
+        { success: false, error: 'Password must contain at least one uppercase letter and one number' },
+        { status: 400 }
+      )
+    }
+
+    if (fullName && fullName.length > 200) {
+      return NextResponse.json({ success: false, error: 'Name is too long' }, { status: 400 })
     }
 
     if (role !== 'INFLUENCER' && role !== 'BRAND') {
@@ -38,7 +58,7 @@ export async function POST(request: NextRequest) {
 
     // Check for existing email
     const existingProfile = await prisma.profile.findUnique({
-      where: { email },
+      where: { email: cleanEmail },
     })
 
     if (existingProfile) {
@@ -84,7 +104,7 @@ export async function POST(request: NextRequest) {
     // Create profile first
     const profile = await prisma.profile.create({
       data: {
-        email,
+        email: cleanEmail,
         passwordHash,
         fullName: fullName || null,
         role,
@@ -140,7 +160,7 @@ export async function POST(request: NextRequest) {
         .sign(JWT_SECRET)
 
       const { sendVerificationEmail } = await import('@/lib/email')
-      await sendVerificationEmail(email, verifyToken)
+      await sendVerificationEmail(cleanEmail, verifyToken)
     } catch (emailError) {
       console.error('Failed to send verification email:', emailError)
       // Don't fail signup — user can resend later
@@ -153,15 +173,15 @@ export async function POST(request: NextRequest) {
           id: profile.id,
           email: profile.email,
           role: profile.role,
+          emailVerified: profile.emailVerified,
         },
       },
       { status: 201 }
     )
   } catch (error) {
     console.error('Signup error:', error)
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error'
     return NextResponse.json(
-      { success: false, error: `Signup failed: ${errorMessage}` },
+      { success: false, error: 'An unexpected error occurred' },
       { status: 500 }
     )
   }

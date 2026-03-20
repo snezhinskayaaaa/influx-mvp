@@ -1277,7 +1277,7 @@ export default function BrandDashboard() {
                   {filteredInfluencers.map((influencer) => (
                     <Card key={influencer.id} className="p-2 sm:p-4 hover:shadow-lg transition-shadow">
                       <button
-                        onClick={() => {/* TODO: Open profile */}}
+                        onClick={() => alert("Influencer profile view coming soon!")}
                         className="flex items-center gap-1.5 sm:gap-3 mb-1 sm:mb-2 w-full text-left hover:opacity-80 transition-opacity"
                       >
                         <div className="w-9 h-9 sm:w-12 sm:h-12 rounded-full bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center text-base sm:text-xl cursor-pointer shrink-0">
@@ -3191,7 +3191,7 @@ export default function BrandDashboard() {
                             className="p-2 rounded-lg hover:bg-muted transition-colors"
                             onClick={(e) => {
                               e.stopPropagation();
-                              // TODO: Implement edit functionality
+                              alert("Campaign editing coming soon!")
                             }}
                           >
                             <Pencil className="h-4 w-4 text-muted-foreground hover:text-foreground" />
@@ -3201,7 +3201,7 @@ export default function BrandDashboard() {
                             className="p-2 rounded-lg hover:bg-muted transition-colors"
                             onClick={(e) => {
                               e.stopPropagation();
-                              // TODO: Implement pause functionality
+                              alert("Campaign pausing coming soon!")
                             }}
                           >
                             <Pause className="h-4 w-4 text-muted-foreground hover:text-foreground" />
@@ -3211,7 +3211,7 @@ export default function BrandDashboard() {
                             className="p-2 rounded-lg hover:bg-muted transition-colors"
                             onClick={(e) => {
                               e.stopPropagation();
-                              // TODO: Implement delete functionality
+                              alert("Campaign deletion coming soon!")
                             }}
                           >
                             <Trash2 className="h-4 w-4 text-muted-foreground hover:text-foreground" />
@@ -4630,8 +4630,7 @@ export default function BrandDashboard() {
             <Button
               onClick={() => {
                 if (selectedCampaignId) {
-                  // TODO: Send invitation
-                  console.log(`Inviting ${selectedInfluencer?.name} to campaign ${selectedCampaignId}`);
+                  alert("Invitation sent! (Coming soon - will send real invitation)");
                   setShowCollaborateModal(false);
                   setSelectedCampaignId(null);
                   setSelectedInfluencer(null);
@@ -4966,13 +4965,7 @@ export default function BrandDashboard() {
                   className="flex-1 h-11 bg-gradient-to-r from-primary to-secondary hover:opacity-90 text-white"
                   disabled={!counterOfferPrice || parseFloat(counterOfferPrice) <= 0}
                   onClick={() => {
-                    // TODO: Send counter offer to influencer
-                    console.log("Sending counter offer:", {
-                      influencerId: counterOfferInfluencer.id,
-                      originalPrice: counterOfferInfluencer.proposedPrice,
-                      counterPrice: parseFloat(counterOfferPrice),
-                      pricingModel: counterOfferInfluencer.proposedPricingModel
-                    });
+                    alert("Counter offer sent! (Coming soon - will send real counter offer)");
                     setShowCounterOfferModal(false);
                     setCounterOfferPrice("");
                   }}
@@ -5049,8 +5042,7 @@ export default function BrandDashboard() {
               <Button
                 onClick={() => {
                   setShowInsufficientFundsDialog(false);
-                  // Navigate to billing/add funds
-                  // TODO: Implement navigation to billing page
+                  setActiveTab("wallet")
                 }}
                 className="w-full bg-gradient-to-r from-primary to-secondary"
               >

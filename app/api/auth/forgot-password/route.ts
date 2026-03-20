@@ -13,11 +13,18 @@ export async function POST(request: NextRequest) {
 
     const { email } = await request.json()
 
-    if (!email) {
+    if (!email || typeof email !== 'string') {
       return NextResponse.json({ error: 'Email is required' }, { status: 400 })
     }
 
-    const profile = await prisma.profile.findUnique({ where: { email } })
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(email.trim())) {
+      return NextResponse.json({ error: 'Please enter a valid email address' }, { status: 400 })
+    }
+
+    const cleanEmail = email.trim().toLowerCase()
+
+    const profile = await prisma.profile.findUnique({ where: { email: cleanEmail } })
 
     // Always return success even if email not found (prevent email enumeration)
     if (!profile) {
@@ -25,14 +32,14 @@ export async function POST(request: NextRequest) {
     }
 
     const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET!)
-    const token = await new SignJWT({ userId: profile.id, purpose: 'password-reset' })
+    const token = await new SignJWT({ userId: profile.id, purpose: 'password-reset', phash: profile.passwordHash.substring(0, 10) })
       .setProtectedHeader({ alg: 'HS256' })
       .setExpirationTime('1h')
       .sign(JWT_SECRET)
 
     try {
       const { sendPasswordResetEmail } = await import('@/lib/email')
-      await sendPasswordResetEmail(email, token)
+      await sendPasswordResetEmail(cleanEmail, token)
     } catch (emailError) {
       console.error('Failed to send reset email:', emailError)
       // Still return success to prevent enumeration

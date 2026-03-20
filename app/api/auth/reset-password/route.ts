@@ -13,6 +13,9 @@ export async function POST(request: NextRequest) {
     if (newPassword.length < 8) {
       return NextResponse.json({ error: 'Password must be at least 8 characters' }, { status: 400 })
     }
+    if (!/[A-Z]/.test(newPassword) || !/[0-9]/.test(newPassword)) {
+      return NextResponse.json({ error: 'Password must contain at least one uppercase letter and one number' }, { status: 400 })
+    }
 
     const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET!)
     let payload
@@ -25,6 +28,15 @@ export async function POST(request: NextRequest) {
 
     if (!payload.userId || payload.purpose !== 'password-reset') {
       return NextResponse.json({ error: 'Invalid reset token' }, { status: 400 })
+    }
+
+    const profile = await prisma.profile.findUnique({ where: { id: payload.userId as string } })
+    if (!profile) {
+      return NextResponse.json({ error: 'User not found' }, { status: 400 })
+    }
+    // Check token was issued before any password change
+    if (payload.phash !== profile.passwordHash.substring(0, 10)) {
+      return NextResponse.json({ error: 'This reset link has already been used' }, { status: 400 })
     }
 
     const passwordHash = await bcrypt.hash(newPassword, 12)

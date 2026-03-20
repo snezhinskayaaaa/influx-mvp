@@ -101,6 +101,32 @@ export async function PATCH(
     // Either party can cancel
     if (body.status === 'CANCELLED') {
       updateData.status = 'CANCELLED'
+
+      if ((collaboration.status === 'AGREED' || collaboration.status === 'IN_PROGRESS') && collaboration.agreedPrice) {
+        // Unfreeze the brand's funds
+        const campaign = await prisma.campaign.findUnique({
+          where: { id: collaboration.campaignId },
+          include: { brand: true },
+        })
+        if (campaign) {
+          await prisma.brand.update({
+            where: { id: campaign.brand.id },
+            data: {
+              frozenBalance: { decrement: collaboration.agreedPrice },
+              balance: { increment: collaboration.agreedPrice },
+            },
+          })
+          await prisma.transaction.create({
+            data: {
+              userId: campaign.brand.userId,
+              type: 'CAMPAIGN_UNFREEZE',
+              amount: collaboration.agreedPrice,
+              description: 'Funds unfrozen due to collaboration cancellation',
+              referenceId: collaboration.id,
+            },
+          })
+        }
+      }
     }
 
     // Either party or admin can update deliverables

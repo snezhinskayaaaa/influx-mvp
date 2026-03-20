@@ -28,6 +28,10 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Amount must be a positive number' }, { status: 400 })
     }
 
+    if (amount > 100000) {
+      return NextResponse.json({ error: 'Maximum deposit is $100,000' }, { status: 400 })
+    }
+
     const amountCents = Math.round(amount * 100)
     const settings = await prisma.platformSettings.findUnique({ where: { id: 'default' } })
     const feePercent = settings ? Number(settings.depositFeePercent) : 2
