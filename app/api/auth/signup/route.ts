@@ -1,9 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
 import { hashPassword, createToken, setAuthCookie } from '@/lib/auth'
+import { rateLimit } from '@/lib/rate-limit'
 
 export async function POST(request: NextRequest) {
   try {
+    const ip = request.headers.get('x-forwarded-for') || 'unknown'
+    const { success } = rateLimit(`signup:${ip}`, 3, 60000) // 3 signups per minute
+    if (!success) {
+      return NextResponse.json({ error: 'Too many signup attempts. Please wait a minute.' }, { status: 429 })
+    }
+
     const body = await request.json()
     const { email, password, fullName, role, ...roleData } = body
 
@@ -122,6 +129,22 @@ export async function POST(request: NextRequest) {
 
     const token = await createToken({ userId: profile.id, role: profile.role })
     await setAuthCookie(token)
+
+    // Send verification email (non-blocking — don't fail signup if email fails)
+    try {
+      const { SignJWT } = await import('jose')
+      const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET!)
+      const verifyToken = await new SignJWT({ userId: profile.id })
+        .setProtectedHeader({ alg: 'HS256' })
+        .setExpirationTime('24h')
+        .sign(JWT_SECRET)
+
+      const { sendVerificationEmail } = await import('@/lib/email')
+      await sendVerificationEmail(email, verifyToken)
+    } catch (emailError) {
+      console.error('Failed to send verification email:', emailError)
+      // Don't fail signup — user can resend later
+    }
 
     return NextResponse.json(
       {
