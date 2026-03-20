@@ -5042,7 +5042,7 @@ export default function BrandDashboard() {
               <Button
                 onClick={() => {
                   setShowInsufficientFundsDialog(false);
-                  setActiveTab("wallet")
+                  setActiveTab("settings")
                 }}
                 className="w-full bg-gradient-to-r from-primary to-secondary"
               >
