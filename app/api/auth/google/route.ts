@@ -4,11 +4,11 @@ import { createToken, setAuthCookie, hashPassword } from '@/lib/auth'
 
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID
 const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET
-const REDIRECT_URI = `${process.env.NEXT_PUBLIC_APP_URL}/api/auth/google`
-
 export async function GET(request: NextRequest) {
   const url = new URL(request.url)
   const code = url.searchParams.get('code')
+  // Build redirect URI from the actual request URL (works in any environment)
+  const REDIRECT_URI = `${url.origin}/api/auth/google`
   const state = url.searchParams.get('state') // contains userType for signup
 
   if (!code) {
