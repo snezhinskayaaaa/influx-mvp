@@ -4,12 +4,21 @@ import { createToken, setAuthCookie, hashPassword } from '@/lib/auth'
 
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID
 const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET
+
+function getBaseUrl(request: NextRequest): string {
+  // On Railway, the real host comes from x-forwarded-host or host header
+  const forwardedHost = request.headers.get('x-forwarded-host')
+  const host = forwardedHost || request.headers.get('host') || 'localhost:3000'
+  const protocol = request.headers.get('x-forwarded-proto') || 'https'
+  return `${protocol}://${host}`
+}
+
 export async function GET(request: NextRequest) {
   const url = new URL(request.url)
   const code = url.searchParams.get('code')
-  // Build redirect URI from the actual request URL (works in any environment)
-  const REDIRECT_URI = `${url.origin}/api/auth/google`
-  const state = url.searchParams.get('state') // contains userType for signup
+  const state = url.searchParams.get('state')
+  const baseUrl = getBaseUrl(request)
+  const REDIRECT_URI = `${baseUrl}/api/auth/google`
 
   if (!code) {
     return NextResponse.json({ error: 'Authorization code required' }, { status: 400 })
@@ -20,7 +29,6 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    // Exchange code for tokens
     const tokenRes = await fetch('https://oauth2.googleapis.com/token', {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -35,27 +43,24 @@ export async function GET(request: NextRequest) {
 
     const tokens = await tokenRes.json()
     if (!tokens.access_token) {
-      return NextResponse.redirect(new URL('/login?error=google_failed', request.url))
+      console.error('Google token exchange failed:', tokens)
+      return NextResponse.redirect(`${baseUrl}/login?error=google_failed`)
     }
 
-    // Get user info
     const userRes = await fetch('https://www.googleapis.com/oauth2/v2/userinfo', {
       headers: { Authorization: `Bearer ${tokens.access_token}` },
     })
     const googleUser = await userRes.json()
 
     if (!googleUser.email) {
-      return NextResponse.redirect(new URL('/login?error=no_email', request.url))
+      return NextResponse.redirect(`${baseUrl}/login?error=no_email`)
     }
 
     const cleanEmail = googleUser.email.trim().toLowerCase()
 
-    // Check if user exists
     let profile = await prisma.profile.findUnique({ where: { email: cleanEmail } })
 
     if (profile) {
-      // Existing user — log them in
-      // Mark email as verified (Google verified it)
       if (!profile.emailVerified) {
         await prisma.profile.update({
           where: { id: profile.id },
@@ -66,19 +71,16 @@ export async function GET(request: NextRequest) {
       const token = await createToken({ userId: profile.id, role: profile.role })
       await setAuthCookie(token)
 
-      const redirectUrl = profile.role === 'ADMIN' ? '/admin'
+      const redirectPath = profile.role === 'ADMIN' ? '/admin'
         : profile.role === 'BRAND' ? '/dashboard/brand'
         : '/dashboard/influencer'
 
-      return NextResponse.redirect(new URL(redirectUrl, request.url))
+      return NextResponse.redirect(`${baseUrl}${redirectPath}`)
     }
 
-    // New user — create account
-    // Parse state to get userType (brand or creator)
     const userType = state || 'creator'
     const role = userType === 'brand' ? 'BRAND' : 'INFLUENCER'
 
-    // Generate a random password hash (user won't need it — they use Google)
     const randomPassword = crypto.randomUUID() + 'A1!'
     const passwordHash = await hashPassword(randomPassword)
 
@@ -93,7 +95,6 @@ export async function GET(request: NextRequest) {
       },
     })
 
-    // Create role-specific record
     try {
       if (role === 'BRAND') {
         await prisma.brand.create({
@@ -112,7 +113,6 @@ export async function GET(request: NextRequest) {
         })
       }
     } catch (roleError) {
-      // If role-specific creation fails, clean up the profile
       await prisma.profile.delete({ where: { id: profile.id } })
       throw roleError
     }
@@ -120,12 +120,11 @@ export async function GET(request: NextRequest) {
     const token = await createToken({ userId: profile.id, role: profile.role })
     await setAuthCookie(token)
 
-    // Redirect to onboarding for new users
-    const redirectUrl = role === 'BRAND' ? '/onboarding/brand' : '/onboarding/influencer'
-    return NextResponse.redirect(new URL(redirectUrl, request.url))
+    const redirectPath = role === 'BRAND' ? '/onboarding/brand' : '/onboarding/influencer'
+    return NextResponse.redirect(`${baseUrl}${redirectPath}`)
 
   } catch (error) {
     console.error('Google OAuth error:', error)
-    return NextResponse.redirect(new URL('/login?error=google_failed', request.url))
+    return NextResponse.redirect(`${baseUrl}/login?error=google_failed`)
   }
 }
