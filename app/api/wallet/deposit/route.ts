@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
 import { getCurrentUser } from '@/lib/auth'
+import { rateLimit } from '@/lib/rate-limit'
 
 // TODO: Integrate with 0xprocessing.com — currently adds balance directly for testing
 export async function POST(request: NextRequest) {
@@ -8,6 +9,11 @@ export async function POST(request: NextRequest) {
     const user = await getCurrentUser()
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    const { success } = rateLimit(`deposit:${user.userId}`, 5, 60000)
+    if (!success) {
+      return NextResponse.json({ error: 'Too many deposit attempts. Please wait a minute.' }, { status: 429 })
     }
 
     if (user.role !== 'BRAND') {

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
 import { getCurrentUser } from '@/lib/auth'
+import { rateLimit } from '@/lib/rate-limit'
 
 // TODO: Integrate with 0xprocessing.com for actual payout
 export async function POST(request: NextRequest) {
@@ -8,6 +9,11 @@ export async function POST(request: NextRequest) {
     const user = await getCurrentUser()
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    const { success } = rateLimit(`withdraw:${user.userId}`, 3, 60000)
+    if (!success) {
+      return NextResponse.json({ error: 'Too many withdrawal attempts. Please wait a minute.' }, { status: 429 })
     }
 
     if (user.role !== 'INFLUENCER') {
@@ -35,6 +41,9 @@ export async function POST(request: NextRequest) {
 
     if (!amount || typeof amount !== 'number' || amount <= 0) {
       return NextResponse.json({ error: 'Amount must be a positive number' }, { status: 400 })
+    }
+    if (amount < 10) {
+      return NextResponse.json({ error: 'Minimum withdrawal is $10' }, { status: 400 })
     }
 
     const amountCents = Math.round(amount * 100)

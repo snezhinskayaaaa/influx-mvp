@@ -98,12 +98,23 @@ export async function PATCH(
       }
     }
 
-    // Either party can cancel
+    // Either party can cancel — use atomic updateMany to prevent race with complete
     if (body.status === 'CANCELLED') {
-      updateData.status = 'CANCELLED'
+      // Atomically set status to CANCELLED only if it's still in a cancellable state
+      const cancelResult = await prisma.collaboration.updateMany({
+        where: {
+          id,
+          status: { in: ['APPLIED', 'NEGOTIATING', 'AGREED', 'IN_PROGRESS'] },
+        },
+        data: { status: 'CANCELLED' },
+      })
 
+      if (cancelResult.count === 0) {
+        return NextResponse.json({ error: 'Collaboration cannot be cancelled (already completed or cancelled)' }, { status: 400 })
+      }
+
+      // Unfreeze funds if collaboration was in a frozen state
       if ((collaboration.status === 'AGREED' || collaboration.status === 'IN_PROGRESS') && collaboration.agreedPrice) {
-        // Unfreeze the brand's funds
         const campaign = await prisma.campaign.findUnique({
           where: { id: collaboration.campaignId },
           include: { brand: true },
@@ -129,6 +140,9 @@ export async function PATCH(
           ])
         }
       }
+
+      // Remove status from updateData since we already handled it
+      delete updateData.status
     }
 
     // Either party or admin can update deliverables
