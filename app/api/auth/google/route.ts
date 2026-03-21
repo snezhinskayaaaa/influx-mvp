@@ -1,16 +1,28 @@
 import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
-import { createToken, setAuthCookie, hashPassword } from '@/lib/auth'
+import { createToken, hashPassword } from '@/lib/auth'
 
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID
 const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET
+const COOKIE_NAME = 'influx-token'
 
 function getBaseUrl(request: NextRequest): string {
-  // On Railway, the real host comes from x-forwarded-host or host header
   const forwardedHost = request.headers.get('x-forwarded-host')
   const host = forwardedHost || request.headers.get('host') || 'localhost:3000'
   const protocol = request.headers.get('x-forwarded-proto') || 'https'
   return `${protocol}://${host}`
+}
+
+function redirectWithCookie(url: string, token: string, isProduction: boolean): NextResponse {
+  const response = NextResponse.redirect(url)
+  response.cookies.set(COOKIE_NAME, token, {
+    httpOnly: true,
+    secure: isProduction,
+    sameSite: 'lax',
+    maxAge: 60 * 60 * 24 * 7, // 7 days
+    path: '/',
+  })
+  return response
 }
 
 export async function GET(request: NextRequest) {
@@ -19,6 +31,7 @@ export async function GET(request: NextRequest) {
   const state = url.searchParams.get('state')
   const baseUrl = getBaseUrl(request)
   const REDIRECT_URI = `${baseUrl}/api/auth/google`
+  const isProduction = process.env.NODE_ENV === 'production'
 
   if (!code) {
     return NextResponse.json({ error: 'Authorization code required' }, { status: 400 })
@@ -69,13 +82,12 @@ export async function GET(request: NextRequest) {
       }
 
       const token = await createToken({ userId: profile.id, role: profile.role })
-      await setAuthCookie(token)
 
       const redirectPath = profile.role === 'ADMIN' ? '/admin'
         : profile.role === 'BRAND' ? '/dashboard/brand'
         : '/dashboard/influencer'
 
-      return NextResponse.redirect(`${baseUrl}${redirectPath}`)
+      return redirectWithCookie(`${baseUrl}${redirectPath}`, token, isProduction)
     }
 
     const userType = state || 'creator'
@@ -118,10 +130,9 @@ export async function GET(request: NextRequest) {
     }
 
     const token = await createToken({ userId: profile.id, role: profile.role })
-    await setAuthCookie(token)
 
     const redirectPath = role === 'BRAND' ? '/onboarding/brand' : '/onboarding/influencer'
-    return NextResponse.redirect(`${baseUrl}${redirectPath}`)
+    return redirectWithCookie(`${baseUrl}${redirectPath}`, token, isProduction)
 
   } catch (error) {
     console.error('Google OAuth error:', error)
