@@ -47,41 +47,52 @@ export async function POST(
 
     const brand = collaboration.campaign.brand
 
-    // Atomic: only freeze if balance is sufficient
-    const brandUpdate = await prisma.brand.updateMany({
-      where: {
-        id: brand.id,
-        balance: { gte: collaboration.agreedPrice! }
-      },
-      data: {
-        balance: { decrement: collaboration.agreedPrice! },
-        frozenBalance: { increment: collaboration.agreedPrice! },
-      },
-    })
+    // Atomic: freeze balance, update collaboration status, and create audit log
+    try {
+      const result = await prisma.$transaction(async (tx) => {
+        const brandUpdate = await tx.brand.updateMany({
+          where: {
+            id: brand.id,
+            balance: { gte: collaboration.agreedPrice! },
+          },
+          data: {
+            balance: { decrement: collaboration.agreedPrice! },
+            frozenBalance: { increment: collaboration.agreedPrice! },
+          },
+        })
 
-    if (brandUpdate.count === 0) {
-      return NextResponse.json(
-        { error: 'Insufficient balance to confirm this collaboration.' },
-        { status: 400 },
-      )
+        if (brandUpdate.count === 0) {
+          throw new Error('INSUFFICIENT_BALANCE')
+        }
+
+        const updated = await tx.collaboration.update({
+          where: { id },
+          data: { status: 'AGREED', frozenAt: new Date() },
+        })
+
+        await tx.transaction.create({
+          data: {
+            userId: brand.userId,
+            type: 'CAMPAIGN_FREEZE',
+            amount: collaboration.agreedPrice!,
+            description: `Funds frozen for collaboration`,
+            referenceId: collaboration.id,
+          },
+        })
+
+        return updated
+      })
+
+      return NextResponse.json({ collaboration: result })
+    } catch (txError) {
+      if (txError instanceof Error && txError.message === 'INSUFFICIENT_BALANCE') {
+        return NextResponse.json(
+          { error: 'Insufficient balance to confirm this collaboration.' },
+          { status: 400 },
+        )
+      }
+      throw txError
     }
-
-    const result = await prisma.collaboration.update({
-      where: { id },
-      data: { status: 'AGREED', frozenAt: new Date() },
-    })
-
-    await prisma.transaction.create({
-      data: {
-        userId: brand.userId,
-        type: 'CAMPAIGN_FREEZE',
-        amount: collaboration.agreedPrice!,
-        description: `Funds frozen for collaboration`,
-        referenceId: collaboration.id,
-      },
-    })
-
-    return NextResponse.json({ collaboration: result })
   } catch (error) {
     console.error('POST /api/collaborations/[id]/agree error:', error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })

@@ -57,32 +57,32 @@ export async function POST(request: NextRequest) {
     const fee = Math.round(amountCents * (feePercent / 100))
     const payout = amountCents - fee
 
-    // Use conditional update to prevent race condition
-    // Only decrements if balance is sufficient (atomic check-and-update)
+    // Use interactive transaction for atomic balance check + audit log
     try {
-      const result = await prisma.influencer.updateMany({
-        where: {
-          id: influencer.id,
-          balance: { gte: amountCents }  // Only update if balance >= amount
-        },
-        data: { balance: { decrement: amountCents } },
-      })
+      const updated = await prisma.$transaction(async (tx) => {
+        const result = await tx.influencer.updateMany({
+          where: {
+            id: influencer.id,
+            balance: { gte: amountCents },
+          },
+          data: { balance: { decrement: amountCents } },
+        })
 
-      if (result.count === 0) {
-        return NextResponse.json({ error: 'Insufficient balance' }, { status: 400 })
-      }
+        if (result.count === 0) {
+          throw new Error('INSUFFICIENT_BALANCE')
+        }
 
-      // Get updated balance
-      const updated = await prisma.influencer.findUnique({ where: { id: influencer.id } })
+        await tx.transaction.create({
+          data: {
+            userId: user.userId,
+            type: 'WITHDRAWAL',
+            amount: amountCents,
+            fee,
+            description: `Withdrawal of $${amount.toFixed(2)} (fee: $${(fee / 100).toFixed(2)}, payout: $${(payout / 100).toFixed(2)})`,
+          },
+        })
 
-      await prisma.transaction.create({
-        data: {
-          userId: user.userId,
-          type: 'WITHDRAWAL',
-          amount: amountCents,
-          fee,
-          description: `Withdrawal of $${amount.toFixed(2)} (fee: $${(fee / 100).toFixed(2)}, payout: $${(payout / 100).toFixed(2)})`,
-        },
+        return await tx.influencer.findUnique({ where: { id: influencer.id } })
       })
 
       return NextResponse.json({
@@ -91,6 +91,9 @@ export async function POST(request: NextRequest) {
         remainingBalance: updated?.balance ?? 0,
       })
     } catch (innerError) {
+      if (innerError instanceof Error && innerError.message === 'INSUFFICIENT_BALANCE') {
+        return NextResponse.json({ error: 'Insufficient balance' }, { status: 400 })
+      }
       throw innerError
     }
   } catch (error) {

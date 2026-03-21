@@ -53,20 +53,22 @@ export async function POST(request: NextRequest) {
     const fee = Math.round(amountCents * (feePercent / 100))
 
     const netAmount = amountCents - fee
-    const result = await prisma.brand.update({
-      where: { id: brand.id },
-      data: { balance: { increment: netAmount } },
-    })
 
-    await prisma.transaction.create({
-      data: {
-        userId: user.userId,
-        type: 'DEPOSIT',
-        amount: amountCents,
-        fee,
-        description: `Deposit of $${amount.toFixed(2)} (fee: $${(fee / 100).toFixed(2)})`,
-      },
-    })
+    const [result] = await prisma.$transaction([
+      prisma.brand.update({
+        where: { id: brand.id },
+        data: { balance: { increment: netAmount } },
+      }),
+      prisma.transaction.create({
+        data: {
+          userId: user.userId,
+          type: 'DEPOSIT',
+          amount: amountCents,
+          fee,
+          description: `Deposit of $${amount.toFixed(2)} (fee: $${(fee / 100).toFixed(2)})`,
+        },
+      }),
+    ])
 
     return NextResponse.json({
       balance: result.balance,
