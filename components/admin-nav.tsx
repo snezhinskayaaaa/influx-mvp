@@ -72,16 +72,15 @@ export function AdminNav() {
           </div>
 
           <div className="flex items-center gap-3">
-            <Link href="/">
-              <Button
-                variant="ghost"
-                size="sm"
-                className="hidden sm:flex text-sm text-background/60 hover:text-background hover:bg-background/10"
-              >
-                <LogOut className="h-4 w-4 mr-1.5" />
-                Logout
-              </Button>
-            </Link>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="hidden sm:flex text-sm text-background/60 hover:text-background hover:bg-background/10"
+              onClick={async () => { await fetch('/api/auth/logout', { method: 'POST' }); window.location.href = '/login'; }}
+            >
+              <LogOut className="h-4 w-4 mr-1.5" />
+              Logout
+            </Button>
 
             <button
               onClick={() => setMobileOpen(!mobileOpen)}
@@ -124,16 +123,15 @@ export function AdminNav() {
                 </Link>
               );
             })}
-            <Link href="/" onClick={() => setMobileOpen(false)}>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="w-full justify-start text-sm text-background/60 hover:text-background hover:bg-background/10 mt-2"
-              >
-                <LogOut className="h-4 w-4 mr-2" />
-                Logout
-              </Button>
-            </Link>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="w-full justify-start text-sm text-background/60 hover:text-background hover:bg-background/10 mt-2"
+              onClick={async () => { await fetch('/api/auth/logout', { method: 'POST' }); window.location.href = '/login'; }}
+            >
+              <LogOut className="h-4 w-4 mr-2" />
+              Logout
+            </Button>
           </div>
         </div>
       )}

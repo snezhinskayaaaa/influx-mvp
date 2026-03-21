@@ -58,7 +58,13 @@ export async function setAuthCookie(token: string): Promise<void> {
 // Remove auth cookie
 export async function removeAuthCookie(): Promise<void> {
   const cookieStore = await cookies()
-  cookieStore.delete(COOKIE_NAME)
+  cookieStore.set(COOKIE_NAME, '', {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax',
+    maxAge: 0,
+    path: '/',
+  })
 }
 
 // Get current user from cookies (for server components and API routes)
