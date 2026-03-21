@@ -1,8 +1,8 @@
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import { getCurrentUser } from '@/lib/auth'
 import prisma from '@/lib/prisma'
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
     const user = await getCurrentUser()
     if (!user) {
@@ -12,7 +12,12 @@ export async function GET() {
       return NextResponse.json({ error: 'Admin access required' }, { status: 403 })
     }
 
-    const [brands, aggregate] = await Promise.all([
+    const url = new URL(request.url)
+    const page = parseInt(url.searchParams.get('page') || '1')
+    const limit = Math.min(parseInt(url.searchParams.get('limit') || '20'), 100)
+    const skip = (page - 1) * limit
+
+    const [brands, total, aggregate] = await Promise.all([
       prisma.brand.findMany({
         include: {
           profile: {
@@ -27,7 +32,10 @@ export async function GET() {
           },
         },
         orderBy: { createdAt: 'desc' },
+        skip,
+        take: limit,
       }),
+      prisma.brand.count(),
       prisma.brand.aggregate({
         _count: { id: true },
         _sum: { balance: true },
@@ -39,7 +47,11 @@ export async function GET() {
       totalBalance: aggregate._sum.balance ?? 0,
     }
 
-    return NextResponse.json({ brands, stats })
+    return NextResponse.json({
+      brands,
+      stats,
+      pagination: { page, limit, total, totalPages: Math.ceil(total / limit) },
+    })
   } catch (error) {
     console.error('Failed to fetch brands:', error)
     return NextResponse.json(

@@ -37,25 +37,37 @@ export async function GET(request: NextRequest) {
       ]
     }
 
-    const influencers = await prisma.influencer.findMany({
-      where,
-      include: {
-        profile: {
-          select: {
-            email: true,
-            fullName: true,
-          },
-        },
-        _count: {
-          select: {
-            collaborations: true,
-          },
-        },
-      },
-      orderBy: { createdAt: 'desc' },
-    })
+    const page = parseInt(searchParams.get('page') || '1')
+    const limit = Math.min(parseInt(searchParams.get('limit') || '20'), 100)
+    const skip = (page - 1) * limit
 
-    return NextResponse.json({ influencers })
+    const [influencers, total] = await Promise.all([
+      prisma.influencer.findMany({
+        where,
+        include: {
+          profile: {
+            select: {
+              email: true,
+              fullName: true,
+            },
+          },
+          _count: {
+            select: {
+              collaborations: true,
+            },
+          },
+        },
+        orderBy: { createdAt: 'desc' },
+        skip,
+        take: limit,
+      }),
+      prisma.influencer.count({ where }),
+    ])
+
+    return NextResponse.json({
+      influencers,
+      pagination: { page, limit, total, totalPages: Math.ceil(total / limit) },
+    })
   } catch (error) {
     console.error('Failed to fetch influencers:', error)
     return NextResponse.json(

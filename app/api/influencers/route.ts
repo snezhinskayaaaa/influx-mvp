@@ -50,24 +50,36 @@ export async function GET(request: NextRequest) {
 
     const sortOrder = SORT_OPTIONS[sort] ?? SORT_OPTIONS.followers
 
-    const influencers = await prisma.influencer.findMany({
-      where,
-      orderBy: [{ isFeatured: 'desc' }, sortOrder],
-      select: {
-        id: true,
-        handle: true,
-        bio: true,
-        niche: true,
-        instagramFollowers: true,
-        tiktokFollowers: true,
-        instagramEngagement: true,
-        pricePerPost: true,
-        isVerified: true,
-        isFeatured: true,
-      },
-    })
+    const page = parseInt(searchParams.get('page') || '1')
+    const limit = Math.min(parseInt(searchParams.get('limit') || '20'), 100)
+    const skip = (page - 1) * limit
 
-    return NextResponse.json({ influencers }, { status: 200 })
+    const [influencers, total] = await Promise.all([
+      prisma.influencer.findMany({
+        where,
+        orderBy: [{ isFeatured: 'desc' }, sortOrder],
+        select: {
+          id: true,
+          handle: true,
+          bio: true,
+          niche: true,
+          instagramFollowers: true,
+          tiktokFollowers: true,
+          instagramEngagement: true,
+          pricePerPost: true,
+          isVerified: true,
+          isFeatured: true,
+        },
+        skip,
+        take: limit,
+      }),
+      prisma.influencer.count({ where }),
+    ])
+
+    return NextResponse.json({
+      influencers,
+      pagination: { page, limit, total, totalPages: Math.ceil(total / limit) },
+    }, { status: 200 })
   } catch (error) {
     console.error('GET /api/influencers error:', error)
     return NextResponse.json(

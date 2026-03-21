@@ -39,6 +39,13 @@ export async function PATCH(request: NextRequest) {
       )
     }
 
+    if (!/[A-Z]/.test(newPassword) || !/[0-9]/.test(newPassword)) {
+      return NextResponse.json(
+        { success: false, error: 'Password must contain at least one uppercase letter and one number' },
+        { status: 400 }
+      )
+    }
+
     // Find profile
     const profile = await prisma.profile.findUnique({
       where: { id: user.userId },

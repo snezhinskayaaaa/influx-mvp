@@ -1,19 +1,29 @@
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
 import { getCurrentUser } from '@/lib/auth'
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
     const user = await getCurrentUser()
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const transactions = await prisma.transaction.findMany({
-      where: { userId: user.userId },
-      orderBy: { createdAt: 'desc' },
-      take: 20,
-    })
+    const url = new URL(request.url)
+    const page = parseInt(url.searchParams.get('page') || '1')
+    const limit = Math.min(parseInt(url.searchParams.get('limit') || '20'), 100)
+    const skip = (page - 1) * limit
+
+    const transactionWhere = { userId: user.userId }
+    const [transactions, totalTransactions] = await Promise.all([
+      prisma.transaction.findMany({
+        where: transactionWhere,
+        orderBy: { createdAt: 'desc' },
+        skip,
+        take: limit,
+      }),
+      prisma.transaction.count({ where: transactionWhere }),
+    ])
 
     if (user.role === 'BRAND') {
       const brand = await prisma.brand.findUnique({
@@ -31,6 +41,7 @@ export async function GET() {
           totalBalance: brand.balance + brand.frozenBalance,
         },
         transactions,
+        pagination: { page, limit, total: totalTransactions, totalPages: Math.ceil(totalTransactions / limit) },
       })
     }
 
@@ -46,6 +57,7 @@ export async function GET() {
       return NextResponse.json({
         wallet: { balance: influencer.balance },
         transactions,
+        pagination: { page, limit, total: totalTransactions, totalPages: Math.ceil(totalTransactions / limit) },
       })
     }
 

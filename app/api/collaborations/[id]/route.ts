@@ -109,22 +109,24 @@ export async function PATCH(
           include: { brand: true },
         })
         if (campaign) {
-          await prisma.brand.update({
-            where: { id: campaign.brand.id },
-            data: {
-              frozenBalance: { decrement: collaboration.agreedPrice },
-              balance: { increment: collaboration.agreedPrice },
-            },
-          })
-          await prisma.transaction.create({
-            data: {
-              userId: campaign.brand.userId,
-              type: 'CAMPAIGN_UNFREEZE',
-              amount: collaboration.agreedPrice,
-              description: 'Funds unfrozen due to collaboration cancellation',
-              referenceId: collaboration.id,
-            },
-          })
+          await prisma.$transaction([
+            prisma.brand.update({
+              where: { id: campaign.brand.id },
+              data: {
+                frozenBalance: { decrement: collaboration.agreedPrice },
+                balance: { increment: collaboration.agreedPrice },
+              },
+            }),
+            prisma.transaction.create({
+              data: {
+                userId: campaign.brand.userId,
+                type: 'CAMPAIGN_UNFREEZE',
+                amount: collaboration.agreedPrice,
+                description: 'Funds unfrozen due to collaboration cancellation',
+                referenceId: collaboration.id,
+              },
+            }),
+          ])
         }
       }
     }

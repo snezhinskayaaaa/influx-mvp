@@ -2,12 +2,17 @@ import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
 import { getCurrentUser } from '@/lib/auth'
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
     const user = await getCurrentUser()
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
+
+    const url = new URL(request.url)
+    const page = parseInt(url.searchParams.get('page') || '1')
+    const limit = Math.min(parseInt(url.searchParams.get('limit') || '20'), 100)
+    const skip = (page - 1) * limit
 
     if (user.role === 'BRAND') {
       const brand = await prisma.brand.findUnique({
@@ -17,46 +22,72 @@ export async function GET() {
         return NextResponse.json({ error: 'Brand profile not found' }, { status: 404 })
       }
 
-      const campaigns = await prisma.campaign.findMany({
-        where: { brandId: brand.id },
-        include: {
-          collaborations: {
-            select: { id: true, status: true, agreedPrice: true, proposedPrice: true },
+      const where = { brandId: brand.id }
+      const [campaigns, total] = await Promise.all([
+        prisma.campaign.findMany({
+          where,
+          include: {
+            collaborations: {
+              select: { id: true, status: true, agreedPrice: true, proposedPrice: true },
+            },
+            _count: { select: { collaborations: true } },
           },
-          _count: { select: { collaborations: true } },
-        },
-        orderBy: { createdAt: 'desc' },
-      })
+          orderBy: { createdAt: 'desc' },
+          skip,
+          take: limit,
+        }),
+        prisma.campaign.count({ where }),
+      ])
 
-      return NextResponse.json({ campaigns })
+      return NextResponse.json({
+        campaigns,
+        pagination: { page, limit, total, totalPages: Math.ceil(total / limit) },
+      })
     }
 
     if (user.role === 'INFLUENCER') {
-      const campaigns = await prisma.campaign.findMany({
-        where: { status: 'ACTIVE' },
-        include: {
-          brand: { select: { companyName: true, industry: true } },
-          _count: { select: { collaborations: true } },
-        },
-        orderBy: { createdAt: 'desc' },
-      })
+      const where = { status: 'ACTIVE' as const }
+      const [campaigns, total] = await Promise.all([
+        prisma.campaign.findMany({
+          where,
+          include: {
+            brand: { select: { companyName: true, industry: true } },
+            _count: { select: { collaborations: true } },
+          },
+          orderBy: { createdAt: 'desc' },
+          skip,
+          take: limit,
+        }),
+        prisma.campaign.count({ where }),
+      ])
 
-      return NextResponse.json({ campaigns })
+      return NextResponse.json({
+        campaigns,
+        pagination: { page, limit, total, totalPages: Math.ceil(total / limit) },
+      })
     }
 
     if (user.role === 'ADMIN') {
-      const campaigns = await prisma.campaign.findMany({
-        include: {
-          brand: { select: { id: true, companyName: true, industry: true } },
-          collaborations: {
-            select: { id: true, status: true, agreedPrice: true },
+      const [campaigns, total] = await Promise.all([
+        prisma.campaign.findMany({
+          include: {
+            brand: { select: { id: true, companyName: true, industry: true } },
+            collaborations: {
+              select: { id: true, status: true, agreedPrice: true },
+            },
+            _count: { select: { collaborations: true } },
           },
-          _count: { select: { collaborations: true } },
-        },
-        orderBy: { createdAt: 'desc' },
-      })
+          orderBy: { createdAt: 'desc' },
+          skip,
+          take: limit,
+        }),
+        prisma.campaign.count(),
+      ])
 
-      return NextResponse.json({ campaigns })
+      return NextResponse.json({
+        campaigns,
+        pagination: { page, limit, total, totalPages: Math.ceil(total / limit) },
+      })
     }
 
     return NextResponse.json({ error: 'Invalid role' }, { status: 403 })
@@ -75,6 +106,15 @@ export async function POST(request: NextRequest) {
 
     if (user.role !== 'BRAND') {
       return NextResponse.json({ error: 'Only brands can create campaigns' }, { status: 403 })
+    }
+
+    // Check email verification for financial/critical operations
+    const profile = await prisma.profile.findUnique({
+      where: { id: user.userId },
+      select: { emailVerified: true },
+    })
+    if (!profile?.emailVerified) {
+      return NextResponse.json({ error: 'Please verify your email before using this feature' }, { status: 403 })
     }
 
     const brand = await prisma.brand.findUnique({

@@ -2,7 +2,10 @@ import { SignJWT, jwtVerify } from 'jose'
 import bcrypt from 'bcryptjs'
 import { cookies } from 'next/headers'
 
-const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET!)
+if (!process.env.JWT_SECRET || process.env.JWT_SECRET.length < 32) {
+  throw new Error('JWT_SECRET environment variable must be set and at least 32 characters long')
+}
+const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET)
 const COOKIE_NAME = 'influx-token'
 
 // Token payload type

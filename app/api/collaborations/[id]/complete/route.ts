@@ -57,36 +57,35 @@ export async function POST(
       return NextResponse.json({ error: 'Collaboration already completed or not in valid state' }, { status: 400 })
     }
 
-    // Now safely transfer funds
-    await prisma.brand.update({
-      where: { id: collaboration.campaign.brand.id },
-      data: { frozenBalance: { decrement: collaboration.agreedPrice! } },
-    })
-
-    await prisma.influencer.update({
-      where: { id: collaboration.influencer.id },
-      data: { balance: { increment: collaboration.agreedPrice! } },
-    })
-
-    await prisma.transaction.create({
-      data: {
-        userId: collaboration.campaign.brand.userId,
-        type: 'CAMPAIGN_PAYOUT',
-        amount: collaboration.agreedPrice!,
-        description: 'Payment to influencer for collaboration',
-        referenceId: id,
-      },
-    })
-
-    await prisma.transaction.create({
-      data: {
-        userId: collaboration.influencer.userId,
-        type: 'CAMPAIGN_PAYOUT',
-        amount: collaboration.agreedPrice!,
-        description: 'Earnings from collaboration',
-        referenceId: id,
-      },
-    })
+    // Atomically transfer funds
+    await prisma.$transaction([
+      prisma.brand.update({
+        where: { id: collaboration.campaign.brand.id },
+        data: { frozenBalance: { decrement: collaboration.agreedPrice! } },
+      }),
+      prisma.influencer.update({
+        where: { id: collaboration.influencer.id },
+        data: { balance: { increment: collaboration.agreedPrice! } },
+      }),
+      prisma.transaction.create({
+        data: {
+          userId: collaboration.campaign.brand.userId,
+          type: 'CAMPAIGN_PAYOUT',
+          amount: collaboration.agreedPrice!,
+          description: 'Payment to influencer for collaboration',
+          referenceId: id,
+        },
+      }),
+      prisma.transaction.create({
+        data: {
+          userId: collaboration.influencer.userId,
+          type: 'CAMPAIGN_PAYOUT',
+          amount: collaboration.agreedPrice!,
+          description: 'Earnings from collaboration',
+          referenceId: id,
+        },
+      }),
+    ])
 
     const result = await prisma.collaboration.findUnique({ where: { id } })
 

@@ -14,6 +14,15 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Only influencers can withdraw funds' }, { status: 403 })
     }
 
+    // Check email verification for financial/critical operations
+    const profile = await prisma.profile.findUnique({
+      where: { id: user.userId },
+      select: { emailVerified: true },
+    })
+    if (!profile?.emailVerified) {
+      return NextResponse.json({ error: 'Please verify your email before using this feature' }, { status: 403 })
+    }
+
     const influencer = await prisma.influencer.findUnique({
       where: { userId: user.userId },
     })

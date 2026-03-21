@@ -1277,7 +1277,7 @@ export default function BrandDashboard() {
                   {filteredInfluencers.map((influencer) => (
                     <Card key={influencer.id} className="p-2 sm:p-4 hover:shadow-lg transition-shadow">
                       <button
-                        onClick={() => alert("Influencer profile view coming soon!")}
+                        disabled
                         className="flex items-center gap-1.5 sm:gap-3 mb-1 sm:mb-2 w-full text-left hover:opacity-80 transition-opacity"
                       >
                         <div className="w-9 h-9 sm:w-12 sm:h-12 rounded-full bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center text-base sm:text-xl cursor-pointer shrink-0">
@@ -3187,32 +3187,23 @@ export default function BrandDashboard() {
                         {/* Actions Column */}
                         <div className="w-[140px] flex items-center justify-end gap-2" onClick={(e) => e.stopPropagation()}>
                           <button
-                            title="Edit"
+                            title="Coming soon"
+                            disabled
                             className="p-2 rounded-lg hover:bg-muted transition-colors"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              alert("Campaign editing coming soon!")
-                            }}
                           >
                             <Pencil className="h-4 w-4 text-muted-foreground hover:text-foreground" />
                           </button>
                           <button
-                            title="Pause"
+                            title="Coming soon"
+                            disabled
                             className="p-2 rounded-lg hover:bg-muted transition-colors"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              alert("Campaign pausing coming soon!")
-                            }}
                           >
                             <Pause className="h-4 w-4 text-muted-foreground hover:text-foreground" />
                           </button>
                           <button
-                            title="Delete"
+                            title="Coming soon"
+                            disabled
                             className="p-2 rounded-lg hover:bg-muted transition-colors"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              alert("Campaign deletion coming soon!")
-                            }}
                           >
                             <Trash2 className="h-4 w-4 text-muted-foreground hover:text-foreground" />
                           </button>
@@ -4628,15 +4619,7 @@ export default function BrandDashboard() {
             </div>
 
             <Button
-              onClick={() => {
-                if (selectedCampaignId) {
-                  alert("Invitation sent! (Coming soon - will send real invitation)");
-                  setShowCollaborateModal(false);
-                  setSelectedCampaignId(null);
-                  setSelectedInfluencer(null);
-                }
-              }}
-              disabled={!selectedCampaignId}
+              disabled
               className="w-full h-11 bg-gradient-to-r from-primary to-secondary hover:opacity-90"
             >
               Send Invitation
@@ -4963,12 +4946,7 @@ export default function BrandDashboard() {
                 </Button>
                 <Button
                   className="flex-1 h-11 bg-gradient-to-r from-primary to-secondary hover:opacity-90 text-white"
-                  disabled={!counterOfferPrice || parseFloat(counterOfferPrice) <= 0}
-                  onClick={() => {
-                    alert("Counter offer sent! (Coming soon - will send real counter offer)");
-                    setShowCounterOfferModal(false);
-                    setCounterOfferPrice("");
-                  }}
+                  disabled
                 >
                   Send Counter Offer
                 </Button>
