@@ -93,8 +93,24 @@ function SignupForm() {
   };
 
   const handleGoogleSignup = () => {
-    // TODO: Google OAuth will be implemented with proper OAuth flow
-    alert("Google authentication coming soon! Please use email for now.");
+    const clientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
+    if (!clientId) {
+      setError("Google authentication is not configured yet.");
+      return;
+    }
+    const redirectUri = `${window.location.origin}/api/auth/google`;
+    const scope = "openid email profile";
+    const state = userType === "brand" ? "brand" : "creator";
+    const params = new URLSearchParams({
+      client_id: clientId,
+      redirect_uri: redirectUri,
+      response_type: "code",
+      scope,
+      state,
+      access_type: "offline",
+      prompt: "consent",
+    });
+    window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?${params.toString()}`;
   };
 
   return (

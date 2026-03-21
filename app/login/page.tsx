@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -62,9 +62,33 @@ export default function LoginPage() {
     }
   };
 
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const urlError = urlParams.get('error');
+    if (urlError === 'google_failed') {
+      setError('Google sign-in failed. Please try again or use email.');
+    } else if (urlError === 'no_email') {
+      setError('Could not get email from Google. Please use email sign-in.');
+    }
+  }, []);
+
   const handleGoogleLogin = () => {
-    // TODO: Google OAuth will be implemented with proper OAuth flow
-    alert("Google authentication coming soon! Please use email for now.");
+    const clientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
+    if (!clientId) {
+      setError("Google authentication is not configured yet.");
+      return;
+    }
+    const redirectUri = `${window.location.origin}/api/auth/google`;
+    const scope = "openid email profile";
+    const params = new URLSearchParams({
+      client_id: clientId,
+      redirect_uri: redirectUri,
+      response_type: "code",
+      scope,
+      access_type: "offline",
+      prompt: "consent",
+    });
+    window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?${params.toString()}`;
   };
 
   return (
