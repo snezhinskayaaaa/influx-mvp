@@ -876,9 +876,9 @@ export default function Home() {
                   <Linkedin className="h-5 w-5" />
                 </Link>
               </div>
-              <Link href="mailto:aiinflux@proton.me" className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
+              <Link href="mailto:support@aiinflux.io" className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
                 <Mail className="h-4 w-4" />
-                aiinflux@proton.me
+                support@aiinflux.io
               </Link>
             </div>
           </div>

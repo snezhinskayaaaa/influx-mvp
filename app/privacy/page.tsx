@@ -224,8 +224,8 @@ export default function PrivacyPage() {
                 </p>
                 <p>
                   To exercise any of these rights, please contact us at{" "}
-                  <Link href="mailto:aiinflux@proton.me" className="text-primary hover:underline">
-                    aiinflux@proton.me
+                  <Link href="mailto:support@aiinflux.io" className="text-primary hover:underline">
+                    support@aiinflux.io
                   </Link>
                   . We will respond to your request within 30 days.
                 </p>
@@ -279,8 +279,8 @@ export default function PrivacyPage() {
                 </p>
                 <p>
                   If you believe that we have inadvertently collected information from a minor, please contact us immediately at{" "}
-                  <Link href="mailto:aiinflux@proton.me" className="text-primary hover:underline">
-                    aiinflux@proton.me
+                  <Link href="mailto:support@aiinflux.io" className="text-primary hover:underline">
+                    support@aiinflux.io
                   </Link>
                   .
                 </p>
@@ -314,14 +314,14 @@ export default function PrivacyPage() {
                 </p>
                 <p>
                   <strong className="text-foreground">Email:</strong>{" "}
-                  <Link href="mailto:aiinflux@proton.me" className="text-primary hover:underline">
-                    aiinflux@proton.me
+                  <Link href="mailto:support@aiinflux.io" className="text-primary hover:underline">
+                    support@aiinflux.io
                   </Link>
                 </p>
                 <p>
                   For general platform inquiries, you can also reach us at{" "}
-                  <Link href="mailto:aiinflux@proton.me" className="text-primary hover:underline">
-                    aiinflux@proton.me
+                  <Link href="mailto:support@aiinflux.io" className="text-primary hover:underline">
+                    support@aiinflux.io
                   </Link>
                   .
                 </p>
@@ -377,9 +377,9 @@ export default function PrivacyPage() {
                   <Linkedin className="h-5 w-5" />
                 </Link>
               </div>
-              <Link href="mailto:aiinflux@proton.me" className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
+              <Link href="mailto:support@aiinflux.io" className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
                 <Mail className="h-4 w-4" />
-                aiinflux@proton.me
+                support@aiinflux.io
               </Link>
             </div>
           </div>

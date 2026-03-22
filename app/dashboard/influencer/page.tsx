@@ -1997,7 +1997,7 @@ export default function InfluencerDashboard() {
                   <div className="space-y-4">
                     <div>
                       <Label htmlFor="email">Email</Label>
-                      <Input id="email" type="email" defaultValue="luna@influx.ai" />
+                      <Input id="email" type="email" defaultValue="" placeholder="your@email.com" />
                     </div>
                     <div>
                       <Label htmlFor="password">Password</Label>
