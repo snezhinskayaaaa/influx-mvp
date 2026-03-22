@@ -508,7 +508,7 @@ export default function Home() {
               {/* Gaming */}
               <CarouselItem className="pl-2 md:pl-4 basis-[85%] sm:basis-1/2 md:basis-1/3 lg:basis-1/5">
                 <div className="relative overflow-hidden h-64 sm:h-72 rounded-xl border border-border hover:border-primary/50 transition-all cursor-pointer group">
-                  <div className="absolute inset-0 bg-gradient-to-br from-primary/25 to-secondary/25" />
+                  <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?w=400&h=300&fit=crop" alt="Gaming" className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                   <div className="relative h-full flex flex-col justify-end p-4 sm:p-5 bg-gradient-to-t from-black/75 via-black/40 to-transparent">
                     <Badge className="self-start mb-2 sm:mb-3 bg-primary/30 backdrop-blur-sm border-primary/50 text-white text-xs sm:text-sm">
                       Gaming
@@ -523,7 +523,7 @@ export default function Home() {
               {/* Beauty */}
               <CarouselItem className="pl-2 md:pl-4 basis-[85%] sm:basis-1/2 md:basis-1/3 lg:basis-1/5">
                 <div className="relative overflow-hidden h-64 sm:h-72 rounded-xl border border-border hover:border-[#FF6B9D]/50 transition-all cursor-pointer group">
-                  <div className="absolute inset-0 bg-gradient-to-br from-[#FF6B9D]/25 to-[#C44569]/25" />
+                  <img src="https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=400&h=300&fit=crop" alt="Beauty" className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                   <div className="relative h-full flex flex-col justify-end p-4 sm:p-5 bg-gradient-to-t from-black/75 via-black/40 to-transparent">
                     <Badge className="self-start mb-2 sm:mb-3 text-xs sm:text-sm bg-[#FF6B9D]/30 backdrop-blur-sm border-[#FF6B9D]/50 text-white">
                       Beauty
@@ -538,7 +538,7 @@ export default function Home() {
               {/* Fashion */}
               <CarouselItem className="pl-2 md:pl-4 basis-[85%] sm:basis-1/2 md:basis-1/3 lg:basis-1/5">
                 <div className="relative overflow-hidden h-64 sm:h-72 rounded-xl border border-border hover:border-success/50 transition-all cursor-pointer group">
-                  <div className="absolute inset-0 bg-gradient-to-br from-success/25 to-primary/25" />
+                  <img src="https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=400&h=300&fit=crop" alt="Fashion" className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                   <div className="relative h-full flex flex-col justify-end p-4 sm:p-5 bg-gradient-to-t from-black/75 via-black/40 to-transparent">
                     <Badge className="self-start mb-2 sm:mb-3 text-xs sm:text-sm bg-success/30 backdrop-blur-sm border-success/50 text-white">
                       Fashion
@@ -553,7 +553,7 @@ export default function Home() {
               {/* Tech */}
               <CarouselItem className="pl-2 md:pl-4 basis-[85%] sm:basis-1/2 md:basis-1/3 lg:basis-1/5">
                 <div className="relative overflow-hidden h-64 sm:h-72 rounded-xl border border-border hover:border-secondary/50 transition-all cursor-pointer group">
-                  <div className="absolute inset-0 bg-gradient-to-br from-secondary/25 to-success/25" />
+                  <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?w=400&h=300&fit=crop" alt="Tech" className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                   <div className="relative h-full flex flex-col justify-end p-4 sm:p-5 bg-gradient-to-t from-black/75 via-black/40 to-transparent">
                     <Badge className="self-start mb-2 sm:mb-3 text-xs sm:text-sm bg-secondary/30 backdrop-blur-sm border-secondary/50 text-white">
                       Tech
@@ -568,7 +568,7 @@ export default function Home() {
               {/* Fitness */}
               <CarouselItem className="pl-2 md:pl-4 basis-[85%] sm:basis-1/2 md:basis-1/3 lg:basis-1/5">
                 <div className="relative overflow-hidden h-64 sm:h-72 rounded-xl border border-border hover:border-[#00D084]/50 transition-all cursor-pointer group">
-                  <div className="absolute inset-0 bg-gradient-to-br from-[#00D084]/25 to-[#0066FF]/25" />
+                  <img src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=400&h=300&fit=crop" alt="Fitness" className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                   <div className="relative h-full flex flex-col justify-end p-4 sm:p-5 bg-gradient-to-t from-black/75 via-black/40 to-transparent">
                     <Badge className="self-start mb-2 sm:mb-3 text-xs sm:text-sm bg-[#00D084]/30 backdrop-blur-sm border-[#00D084]/50 text-white">
                       Fitness
@@ -583,7 +583,7 @@ export default function Home() {
               {/* Travel */}
               <CarouselItem className="pl-2 md:pl-4 basis-[85%] sm:basis-1/2 md:basis-1/3 lg:basis-1/5">
                 <div className="relative overflow-hidden h-64 sm:h-72 rounded-xl border border-border hover:border-success/50 transition-all cursor-pointer group">
-                  <div className="absolute inset-0 bg-gradient-to-br from-success/25 to-secondary/25" />
+                  <img src="https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=400&h=300&fit=crop" alt="Travel" className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                   <div className="relative h-full flex flex-col justify-end p-4 sm:p-5 bg-gradient-to-t from-black/75 via-black/40 to-transparent">
                     <Badge className="self-start mb-2 sm:mb-3 text-xs sm:text-sm bg-success/30 backdrop-blur-sm border-success/50 text-white">
                       Travel
@@ -598,7 +598,7 @@ export default function Home() {
               {/* Food */}
               <CarouselItem className="pl-2 md:pl-4 basis-[85%] sm:basis-1/2 md:basis-1/3 lg:basis-1/5">
                 <div className="relative overflow-hidden h-64 sm:h-72 rounded-xl border border-border hover:border-[#FF6B35]/50 transition-all cursor-pointer group">
-                  <div className="absolute inset-0 bg-gradient-to-br from-[#FF6B35]/25 to-[#FCD34D]/25" />
+                  <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=400&h=300&fit=crop" alt="Food" className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                   <div className="relative h-full flex flex-col justify-end p-4 sm:p-5 bg-gradient-to-t from-black/75 via-black/40 to-transparent">
                     <Badge className="self-start mb-2 sm:mb-3 text-xs sm:text-sm bg-[#FF6B35]/30 backdrop-blur-sm border-[#FF6B35]/50 text-white">
                       Food
@@ -613,7 +613,7 @@ export default function Home() {
               {/* Lifestyle */}
               <CarouselItem className="pl-2 md:pl-4 basis-[85%] sm:basis-1/2 md:basis-1/3 lg:basis-1/5">
                 <div className="relative overflow-hidden h-64 sm:h-72 rounded-xl border border-border hover:border-primary/50 transition-all cursor-pointer group">
-                  <div className="absolute inset-0 bg-gradient-to-br from-primary/25 to-success/25" />
+                  <img src="https://images.unsplash.com/photo-1511988617509-a57c8a288659?w=400&h=300&fit=crop" alt="Lifestyle" className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                   <div className="relative h-full flex flex-col justify-end p-4 sm:p-5 bg-gradient-to-t from-black/75 via-black/40 to-transparent">
                     <Badge className="self-start mb-2 sm:mb-3 text-xs sm:text-sm bg-primary/30 backdrop-blur-sm border-primary/50 text-white">
                       Lifestyle
