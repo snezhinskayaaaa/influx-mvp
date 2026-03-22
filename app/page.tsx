@@ -538,7 +538,7 @@ export default function Home() {
               {/* Fashion */}
               <CarouselItem className="pl-2 md:pl-4 basis-[85%] sm:basis-1/2 md:basis-1/3 lg:basis-1/5">
                 <div className="relative overflow-hidden h-64 sm:h-72 rounded-xl border border-border hover:border-success/50 transition-all cursor-pointer group">
-                  <img src="https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=400&h=300&fit=crop" alt="Fashion" className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                  <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?w=400&h=300&fit=crop" alt="Fashion" className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                   <div className="relative h-full flex flex-col justify-end p-4 sm:p-5 bg-gradient-to-t from-black/75 via-black/40 to-transparent">
                     <Badge className="self-start mb-2 sm:mb-3 text-xs sm:text-sm bg-success/30 backdrop-blur-sm border-success/50 text-white">
                       Fashion
