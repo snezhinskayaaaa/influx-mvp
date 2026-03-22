@@ -98,47 +98,56 @@ export async function PATCH(
       }
     }
 
-    // Either party can cancel — use atomic updateMany to prevent race with complete
+    // Either party can cancel — fully atomic with unfreeze
     if (body.status === 'CANCELLED') {
-      // Atomically set status to CANCELLED only if it's still in a cancellable state
-      const cancelResult = await prisma.collaboration.updateMany({
-        where: {
-          id,
-          status: { in: ['APPLIED', 'NEGOTIATING', 'AGREED', 'IN_PROGRESS'] },
-        },
-        data: { status: 'CANCELLED' },
-      })
+      try {
+        const needsUnfreeze = (collaboration.status === 'AGREED' || collaboration.status === 'IN_PROGRESS') && collaboration.agreedPrice
 
-      if (cancelResult.count === 0) {
-        return NextResponse.json({ error: 'Collaboration cannot be cancelled (already completed or cancelled)' }, { status: 400 })
-      }
+        await prisma.$transaction(async (tx) => {
+          // Atomic status check + cancel
+          const cancelResult = await tx.collaboration.updateMany({
+            where: {
+              id,
+              status: { in: ['APPLIED', 'NEGOTIATING', 'AGREED', 'IN_PROGRESS'] },
+            },
+            data: { status: 'CANCELLED' },
+          })
 
-      // Unfreeze funds if collaboration was in a frozen state
-      if ((collaboration.status === 'AGREED' || collaboration.status === 'IN_PROGRESS') && collaboration.agreedPrice) {
-        const campaign = await prisma.campaign.findUnique({
-          where: { id: collaboration.campaignId },
-          include: { brand: true },
+          if (cancelResult.count === 0) {
+            throw new Error('CANNOT_CANCEL')
+          }
+
+          // Unfreeze funds if needed
+          if (needsUnfreeze) {
+            const campaign = await tx.campaign.findUnique({
+              where: { id: collaboration.campaignId },
+              include: { brand: true },
+            })
+            if (campaign) {
+              await tx.brand.update({
+                where: { id: campaign.brand.id },
+                data: {
+                  frozenBalance: { decrement: collaboration.agreedPrice! },
+                  balance: { increment: collaboration.agreedPrice! },
+                },
+              })
+              await tx.transaction.create({
+                data: {
+                  userId: campaign.brand.userId,
+                  type: 'CAMPAIGN_UNFREEZE',
+                  amount: collaboration.agreedPrice!,
+                  description: 'Funds unfrozen due to collaboration cancellation',
+                  referenceId: collaboration.id,
+                },
+              })
+            }
+          }
         })
-        if (campaign) {
-          await prisma.$transaction([
-            prisma.brand.update({
-              where: { id: campaign.brand.id },
-              data: {
-                frozenBalance: { decrement: collaboration.agreedPrice },
-                balance: { increment: collaboration.agreedPrice },
-              },
-            }),
-            prisma.transaction.create({
-              data: {
-                userId: campaign.brand.userId,
-                type: 'CAMPAIGN_UNFREEZE',
-                amount: collaboration.agreedPrice,
-                description: 'Funds unfrozen due to collaboration cancellation',
-                referenceId: collaboration.id,
-              },
-            }),
-          ])
+      } catch (cancelError) {
+        if (cancelError instanceof Error && cancelError.message === 'CANNOT_CANCEL') {
+          return NextResponse.json({ error: 'Collaboration cannot be cancelled (already completed or cancelled)' }, { status: 400 })
         }
+        throw cancelError
       }
 
       // Remove status from updateData since we already handled it

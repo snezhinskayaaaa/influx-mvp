@@ -12,6 +12,15 @@ export async function POST(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
+    // Check email verification for financial operations
+    const profile = await prisma.profile.findUnique({
+      where: { id: user.userId },
+      select: { emailVerified: true },
+    })
+    if (!profile?.emailVerified) {
+      return NextResponse.json({ error: 'Please verify your email before using this feature' }, { status: 403 })
+    }
+
     const { id } = await params
 
     const collaboration = await prisma.collaboration.findUnique({
