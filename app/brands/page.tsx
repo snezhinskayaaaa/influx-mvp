@@ -31,7 +31,7 @@ import {
   Building2,
   Mail,
   Instagram,
-  Facebook,
+  Send,
   Twitter,
   Linkedin,
   Crown,
@@ -1060,8 +1060,8 @@ export default function BrandsPage() {
                     <path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5" />
                   </svg>
                 </Link>
-                <Link href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-2xl border-2 border-muted-foreground/30 flex items-center justify-center text-muted-foreground hover:border-primary hover:text-primary transition-all">
-                  <Facebook className="h-5 w-5" />
+                <Link href="https://t.me/aiinflux" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-2xl border-2 border-muted-foreground/30 flex items-center justify-center text-muted-foreground hover:border-primary hover:text-primary transition-all">
+                  <Send className="h-5 w-5" />
                 </Link>
                 <Link href="https://x.com/aiinflux" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-2xl border-2 border-muted-foreground/30 flex items-center justify-center text-muted-foreground hover:border-primary hover:text-primary transition-all">
                   <Twitter className="h-5 w-5" />
