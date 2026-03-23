@@ -40,6 +40,7 @@ import {
   Upload,
   ExternalLink,
   Rocket,
+  Mail,
 } from "lucide-react";
 import {
   Select,
@@ -276,6 +277,8 @@ export default function InfluencerDashboard() {
   const [withdrawCurrency, setWithdrawCurrency] = useState("USDT (TRC20)");
   const [pendingDeposits, setPendingDeposits] = useState(0);
   const [pendingWithdrawals, setPendingWithdrawals] = useState(0);
+  const [showVerifyPopup, setShowVerifyPopup] = useState(false);
+  const [emailVerified, setEmailVerified] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -368,6 +371,20 @@ export default function InfluencerDashboard() {
         console.error('Failed to fetch dashboard data:', error);
         // Keep mock data on error
       }
+
+      // Check email verification
+      try {
+        const profileRes = await fetch('/api/profiles/me');
+        if (profileRes.ok) {
+          const profileData = await profileRes.json();
+          if (profileData.profile && !profileData.profile.emailVerified) {
+            setEmailVerified(false);
+            setShowVerifyPopup(true);
+          }
+        }
+      } catch (e) {
+        console.error('Failed to check profile:', e);
+      }
     };
     fetchData();
   }, []);
@@ -449,6 +466,10 @@ export default function InfluencerDashboard() {
   };
 
   const handleApply = async () => {
+    if (!emailVerified) {
+      setShowVerifyPopup(true);
+      return;
+    }
     if (!applyingCampaign || !proposedPrice) return;
     setApplyLoading(true);
     setApplyError("");
@@ -2207,6 +2228,11 @@ export default function InfluencerDashboard() {
 
             <Button
               onClick={async () => {
+                if (!emailVerified) {
+                  setShowWithdrawModal(false);
+                  setShowVerifyPopup(true);
+                  return;
+                }
                 if (!withdrawAmount || !walletAddress.trim() || !withdrawCurrency) return;
                 try {
                   const res = await fetch('/api/wallet/withdraw', {
@@ -2256,6 +2282,49 @@ export default function InfluencerDashboard() {
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Email Verification Popup */}
+      {showVerifyPopup && !emailVerified && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+          <div className="bg-background border border-border rounded-2xl p-6 sm:p-8 w-full max-w-md mx-4 shadow-2xl">
+            <div className="flex justify-center mb-4">
+              <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
+                <Mail className="h-8 w-8 text-primary" />
+              </div>
+            </div>
+            <h3 className="text-xl font-bold text-center mb-2">Verify Your Email</h3>
+            <p className="text-muted-foreground text-center text-sm mb-4">
+              Please check your inbox and verify your email address. This is required for financial operations like deposits, withdrawals, and campaign management.
+            </p>
+            <div className="space-y-3">
+              <Button
+                className="w-full"
+                onClick={async () => {
+                  try {
+                    await fetch('/api/auth/resend-verification', { method: 'POST' });
+                    alert('Verification email sent! Check your inbox.');
+                  } catch {
+                    alert('Failed to send verification email.');
+                  }
+                }}
+              >
+                <Mail className="h-4 w-4 mr-2" />
+                Resend Verification Email
+              </Button>
+              <Button
+                variant="ghost"
+                className="w-full text-muted-foreground"
+                onClick={() => setShowVerifyPopup(false)}
+              >
+                Skip for now
+              </Button>
+            </div>
+            <p className="text-xs text-muted-foreground text-center mt-4">
+              You can still browse the platform, but deposits and withdrawals require a verified email.
+            </p>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
