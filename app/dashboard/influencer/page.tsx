@@ -50,6 +50,13 @@ import {
 } from "@/components/ui/select";
 import { NetworkLogo } from "@/components/logo";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 interface Campaign {
   id: number | string;
@@ -263,6 +270,12 @@ export default function InfluencerDashboard() {
   const [walletBalance, setWalletBalance] = useState<number | null>(null);
   const [walletPending, setWalletPending] = useState<number | null>(null);
   const [walletTotalEarned, setWalletTotalEarned] = useState<number | null>(null);
+  const [showWithdrawModal, setShowWithdrawModal] = useState(false);
+  const [withdrawAmount, setWithdrawAmount] = useState("");
+  const [walletAddress, setWalletAddress] = useState("");
+  const [withdrawCurrency, setWithdrawCurrency] = useState("USDT (TRC20)");
+  const [pendingDeposits, setPendingDeposits] = useState(0);
+  const [pendingWithdrawals, setPendingWithdrawals] = useState(0);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -336,10 +349,19 @@ export default function InfluencerDashboard() {
             setWalletBalance(Math.round((data.wallet.balance || 0) / 100));
           }
           if (data.transactions) {
-            const payouts = (data.transactions as Record<string, unknown>[])
+            const txs = data.transactions as Array<{ type: string; status: string; amount: number }>;
+            const payouts = txs
               .filter((t) => t.type === 'CAMPAIGN_PAYOUT')
-              .reduce((sum: number, t: Record<string, unknown>) => sum + ((t.amount as number) || 0), 0);
+              .reduce((sum: number, t) => sum + (t.amount || 0), 0);
             setWalletTotalEarned(Math.round(payouts / 100));
+            const deposits = txs
+              .filter((t) => t.type === 'DEPOSIT' && t.status === 'PENDING')
+              .reduce((sum: number, t) => sum + (t.amount || 0), 0);
+            const withdrawals = txs
+              .filter((t) => t.type === 'WITHDRAWAL' && t.status === 'PENDING')
+              .reduce((sum: number, t) => sum + (t.amount || 0), 0);
+            setPendingDeposits(Math.round(deposits / 100));
+            setPendingWithdrawals(Math.round(withdrawals / 100));
           }
         }
       } catch (error) {
@@ -558,8 +580,14 @@ export default function InfluencerDashboard() {
               <div className="text-xs text-muted-foreground space-y-1">
                 <div>Pending: ${walletPending !== null ? walletPending.toLocaleString() : '0'}</div>
                 <div>Total Earned: ${walletTotalEarned !== null ? walletTotalEarned.toLocaleString() : '0'}</div>
+                {pendingDeposits > 0 && (
+                  <div className="text-amber-600">Pending deposit: ${pendingDeposits.toLocaleString()}</div>
+                )}
+                {pendingWithdrawals > 0 && (
+                  <div className="text-amber-600">Pending withdrawal: ${pendingWithdrawals.toLocaleString()}</div>
+                )}
               </div>
-              <Button size="sm" className="w-full mt-3 h-8 text-xs">
+              <Button size="sm" className="w-full mt-3 h-8 text-xs" onClick={() => setShowWithdrawModal(true)}>
                 Withdraw
               </Button>
             </div>
@@ -2118,6 +2146,116 @@ export default function InfluencerDashboard() {
           </div>
         </div>
       )}
+
+      {/* Withdraw Modal */}
+      <Dialog open={showWithdrawModal} onOpenChange={setShowWithdrawModal}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Withdraw Funds</DialogTitle>
+            <DialogDescription>
+              Send funds to your crypto wallet
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-4 py-4">
+            <div>
+              <Label htmlFor="withdraw-amount" className="text-sm font-medium mb-2 block">
+                Amount (USD)
+              </Label>
+              <Input
+                id="withdraw-amount"
+                type="number"
+                placeholder="0.00"
+                value={withdrawAmount}
+                onChange={(e) => setWithdrawAmount(e.target.value)}
+                className="h-11"
+                min="0"
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="withdraw-currency" className="text-sm font-medium mb-2 block">
+                Currency
+              </Label>
+              <Select value={withdrawCurrency} onValueChange={setWithdrawCurrency}>
+                <SelectTrigger className="h-11">
+                  <SelectValue placeholder="Select currency" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="USDT (TRC20)">USDT (TRC20)</SelectItem>
+                  <SelectItem value="USDT (ERC20)">USDT (ERC20)</SelectItem>
+                  <SelectItem value="BTC">BTC</SelectItem>
+                  <SelectItem value="ETH">ETH</SelectItem>
+                  <SelectItem value="USDC (TRC20)">USDC (TRC20)</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div>
+              <Label htmlFor="wallet-address" className="text-sm font-medium mb-2 block">
+                Wallet Address
+              </Label>
+              <Input
+                id="wallet-address"
+                type="text"
+                placeholder="Enter your wallet address"
+                value={walletAddress}
+                onChange={(e) => setWalletAddress(e.target.value)}
+                className="h-11"
+              />
+            </div>
+
+            <Button
+              onClick={async () => {
+                if (!withdrawAmount || !walletAddress.trim() || !withdrawCurrency) return;
+                try {
+                  const res = await fetch('/api/wallet/withdraw', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                      amount: parseFloat(withdrawAmount),
+                      address: walletAddress.trim(),
+                      currency: withdrawCurrency,
+                    }),
+                  });
+                  const data = await res.json();
+                  if (!res.ok) {
+                    alert(data.error || 'Failed to create withdrawal');
+                    return;
+                  }
+                  alert('Withdrawal submitted! Your funds will be sent to your wallet shortly.');
+                  // Refresh wallet data
+                  const walletRes = await fetch('/api/wallet');
+                  if (walletRes.ok) {
+                    const walletData = await walletRes.json();
+                    if (walletData.wallet) {
+                      setWalletBalance(Math.round((walletData.wallet.balance || 0) / 100));
+                    }
+                    if (walletData.transactions) {
+                      const txs = walletData.transactions as Array<{ type: string; status: string; amount: number }>;
+                      const withdrawals = txs
+                        .filter((t) => t.type === 'WITHDRAWAL' && t.status === 'PENDING')
+                        .reduce((sum: number, t) => sum + (t.amount || 0), 0);
+                      setPendingWithdrawals(Math.round(withdrawals / 100));
+                    }
+                  }
+                  setShowWithdrawModal(false);
+                  setWithdrawAmount("");
+                  setWalletAddress("");
+                  setWithdrawCurrency("USDT (TRC20)");
+                } catch (error) {
+                  console.error('Failed to withdraw:', error);
+                  alert('Failed to withdraw. Please try again.');
+                }
+              }}
+              disabled={!withdrawAmount || !walletAddress.trim() || !withdrawCurrency}
+              className="w-full h-11 bg-gradient-to-r from-primary to-secondary hover:opacity-90"
+            >
+              Submit Withdrawal
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

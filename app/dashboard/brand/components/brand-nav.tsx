@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -202,6 +202,32 @@ export function BrandSidebar({
   const [selectedCrypto, setSelectedCrypto] = useState("");
   const [selectedNetwork, setSelectedNetwork] = useState("");
   const [copiedAddress, setCopiedAddress] = useState(false);
+  const [pendingDeposits, setPendingDeposits] = useState(0);
+  const [pendingWithdrawals, setPendingWithdrawals] = useState(0);
+
+  useEffect(() => {
+    const fetchPendingTransactions = async () => {
+      try {
+        const res = await fetch('/api/wallet');
+        if (res.ok) {
+          const data = await res.json();
+          if (data.transactions) {
+            const deposits = (data.transactions as Array<{ type: string; status: string; amount: number }>)
+              .filter((t) => t.type === 'DEPOSIT' && t.status === 'PENDING')
+              .reduce((sum, t) => sum + (t.amount || 0), 0);
+            const withdrawals = (data.transactions as Array<{ type: string; status: string; amount: number }>)
+              .filter((t) => t.type === 'WITHDRAWAL' && t.status === 'PENDING')
+              .reduce((sum, t) => sum + (t.amount || 0), 0);
+            setPendingDeposits(Math.round(deposits / 100));
+            setPendingWithdrawals(Math.round(withdrawals / 100));
+          }
+        }
+      } catch (error) {
+        console.error('Failed to fetch pending transactions:', error);
+      }
+    };
+    fetchPendingTransactions();
+  }, []);
 
   return (
       <aside className="hidden lg:block w-64 border-r bg-muted/30 min-h-[calc(100vh-80px)] sticky top-20">
@@ -220,6 +246,16 @@ export function BrandSidebar({
                 <div className="text-2xl font-bold text-primary text-left">
                   ${balance.toFixed(2)}
                 </div>
+                {(pendingDeposits > 0 || pendingWithdrawals > 0) && (
+                  <div className="text-xs text-muted-foreground mt-1 space-y-0.5">
+                    {pendingDeposits > 0 && (
+                      <div className="text-amber-600">Pending deposit: ${pendingDeposits.toLocaleString()}</div>
+                    )}
+                    {pendingWithdrawals > 0 && (
+                      <div className="text-amber-600">Pending withdrawal: ${pendingWithdrawals.toLocaleString()}</div>
+                    )}
+                  </div>
+                )}
               </button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-md">
@@ -493,23 +529,26 @@ export function BrandSidebar({
                   onClick={async () => {
                     if (topUpAmount && topUpMethod) {
                       const amount = parseFloat(topUpAmount);
-                      // Try to deposit via API
+                      // Build currency string from selected crypto + network
+                      let currency = selectedCrypto.toUpperCase();
+                      if (selectedNetwork) {
+                        currency = `${currency} (${selectedNetwork.toUpperCase()})`;
+                      }
                       try {
                         const res = await fetch('/api/wallet/deposit', {
                           method: 'POST',
                           headers: { 'Content-Type': 'application/json' },
-                          body: JSON.stringify({ amount }),
+                          body: JSON.stringify({ amount, currency }),
                         });
-                        if (res.ok) {
-                          const data = await res.json();
-                          // API returns balance in cents
-                          if (typeof data.balance === 'number') {
-                            setBalance(data.balance / 100);
-                          }
-                        } else {
-                          const data = await res.json().catch(() => ({}));
-                          alert(data.error || "Failed to deposit");
+                        const data = await res.json();
+                        if (!res.ok) {
+                          alert(data.error || 'Failed to create deposit');
                           return;
+                        }
+                        // Redirect to 0xprocessing payment page
+                        if (data.redirectUrl) {
+                          window.open(data.redirectUrl, '_blank');
+                          alert('Payment page opened in a new tab. Your balance will update once the payment is confirmed.');
                         }
                       } catch (error) {
                         console.error('Failed to deposit via API:', error);
@@ -526,7 +565,7 @@ export function BrandSidebar({
                   disabled={!topUpAmount || !topUpMethod || (topUpMethod === "crypto" && (!selectedCrypto || !selectedNetwork))}
                   className="w-full h-11 bg-gradient-to-r from-primary to-secondary hover:opacity-90"
                 >
-                  {topUpMethod === "card" ? "Pay Now" : "I've Sent the Payment"}
+                  {topUpMethod === "card" ? "Pay Now" : "Proceed to Payment"}
                 </Button>
               </div>
             </DialogContent>
