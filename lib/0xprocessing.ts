@@ -20,6 +20,8 @@ export interface CreatePaymentResponse {
 }
 
 export async function createPayment(params: CreatePaymentParams): Promise<CreatePaymentResponse> {
+  const isTestMode = process.env.OX_TEST_MODE === 'true'
+
   const formData = new URLSearchParams({
     AmountUSD: params.amountUSD.toString(),
     Currency: params.currency || 'USDT (TRC20)',
@@ -31,6 +33,7 @@ export async function createPayment(params: CreatePaymentParams): Promise<Create
     SuccessUrl: `${APP_URL}/dashboard/brand?deposit=success`,
     CancelUrl: `${APP_URL}/dashboard/brand?deposit=cancelled`,
     AutoReturn: 'true',
+    ...(isTestMode && { Test: 'true' }),
   })
 
   const res = await fetch(`${BASE_URL}/Payment`, {
