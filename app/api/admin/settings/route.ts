@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getCurrentUser } from '@/lib/auth'
 import prisma from '@/lib/prisma'
+import { jwtVerify } from 'jose'
 
 export async function GET() {
   try {
@@ -47,7 +48,22 @@ export async function PATCH(request: NextRequest) {
     }
 
     const body = await request.json()
-    const { depositFeePercent, withdrawalFeePercent } = body
+    const { depositFeePercent, withdrawalFeePercent, codeToken, code } = body
+
+    // Verify the verification code
+    if (!codeToken || !code) {
+      return NextResponse.json({ error: 'Verification code is required' }, { status: 400 })
+    }
+
+    try {
+      const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET!)
+      const { payload } = await jwtVerify(codeToken, JWT_SECRET)
+      if (payload.purpose !== 'admin-settings-change' || payload.code !== code) {
+        return NextResponse.json({ error: 'Invalid verification code' }, { status: 400 })
+      }
+    } catch {
+      return NextResponse.json({ error: 'Verification code expired or invalid' }, { status: 400 })
+    }
 
     if (depositFeePercent !== undefined) {
       if (typeof depositFeePercent !== 'number' || depositFeePercent < 0 || depositFeePercent > 100) {

@@ -13,6 +13,7 @@ import {
   Loader2,
   CheckCircle2,
   AlertCircle,
+  Shield,
 } from "lucide-react";
 
 const fadeInUp = {
@@ -47,6 +48,11 @@ export default function AdminSettings() {
     type: "success" | "error";
     text: string;
   } | null>(null);
+  const [showCodeModal, setShowCodeModal] = useState(false);
+  const [codeToken, setCodeToken] = useState("");
+  const [verificationCode, setVerificationCode] = useState("");
+  const [codeSending, setCodeSending] = useState(false);
+  const [codeError, setCodeError] = useState("");
 
   useEffect(() => {
     const fetchSettings = async () => {
@@ -69,14 +75,12 @@ export default function AdminSettings() {
 
   const handleSave = async () => {
     setMessage(null);
-    setSaving(true);
 
     const depositFeePercent = parseFloat(depositFee);
     const withdrawalFeePercent = parseFloat(withdrawalFee);
 
     if (isNaN(depositFeePercent) || isNaN(withdrawalFeePercent)) {
       setMessage({ type: "error", text: "Please enter valid numeric values" });
-      setSaving(false);
       return;
     }
 
@@ -90,29 +94,62 @@ export default function AdminSettings() {
         type: "error",
         text: "Fee percentages must be between 0 and 100",
       });
-      setSaving(false);
       return;
     }
+
+    // Send verification code instead of saving directly
+    setCodeSending(true);
+    try {
+      const res = await fetch("/api/admin/settings/send-code", {
+        method: "POST",
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setMessage({
+          type: "error",
+          text: data.error || "Failed to send verification code",
+        });
+        return;
+      }
+      setCodeToken(data.codeToken);
+      setShowCodeModal(true);
+    } catch {
+      setMessage({
+        type: "error",
+        text: "Failed to send verification code",
+      });
+    } finally {
+      setCodeSending(false);
+    }
+  };
+
+  const handleConfirmSave = async () => {
+    setSaving(true);
+    const depositFeePercent = parseFloat(depositFee);
+    const withdrawalFeePercent = parseFloat(withdrawalFee);
 
     try {
       const res = await fetch("/api/admin/settings", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ depositFeePercent, withdrawalFeePercent }),
+        body: JSON.stringify({
+          depositFeePercent,
+          withdrawalFeePercent,
+          codeToken,
+          code: verificationCode,
+        }),
       });
-
-      if (res.ok) {
-        setMessage({ type: "success", text: "Settings saved successfully" });
-      } else {
-        const data = await res.json();
-        setMessage({
-          type: "error",
-          text: data.error || "Failed to save settings",
-        });
+      const data = await res.json();
+      if (!res.ok) {
+        setCodeError(data.error || "Verification failed");
+        return;
       }
-    } catch (error) {
-      console.error("Failed to save settings:", error);
-      setMessage({ type: "error", text: "Failed to save settings" });
+      setShowCodeModal(false);
+      setVerificationCode("");
+      setCodeError("");
+      setMessage({ type: "success", text: "Settings saved successfully" });
+    } catch {
+      setCodeError("Something went wrong");
     } finally {
       setSaving(false);
     }
@@ -230,21 +267,88 @@ export default function AdminSettings() {
 
                 <Button
                   onClick={handleSave}
-                  disabled={saving}
+                  disabled={saving || codeSending}
                   className="bg-primary text-primary-foreground hover:bg-primary/90"
                 >
-                  {saving ? (
+                  {codeSending ? (
                     <Loader2 className="h-4 w-4 animate-spin mr-2" />
                   ) : (
                     <Save className="h-4 w-4 mr-2" />
                   )}
-                  Save Settings
+                  {codeSending ? "Sending Code..." : "Save Settings"}
                 </Button>
               </div>
             </Card>
           </motion.div>
         </motion.div>
       </main>
+
+      {/* Verification Code Modal */}
+      {showCodeModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+          <div className="bg-background border border-border rounded-2xl p-6 w-full max-w-md mx-4 shadow-2xl">
+            <div className="flex justify-center mb-4">
+              <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center">
+                <Shield className="h-7 w-7 text-primary" />
+              </div>
+            </div>
+            <h3 className="text-lg font-bold text-center mb-2">
+              Verify Settings Change
+            </h3>
+            <p className="text-muted-foreground text-center text-sm mb-4">
+              A 6-digit verification code has been sent to your email. Enter it
+              below to confirm the fee changes.
+            </p>
+            <div className="mb-4">
+              <Input
+                type="text"
+                placeholder="000000"
+                value={verificationCode}
+                onChange={(e) => {
+                  setVerificationCode(
+                    e.target.value.replace(/\D/g, "").slice(0, 6)
+                  );
+                  setCodeError("");
+                }}
+                className="text-center text-2xl tracking-[0.5em] font-mono h-14"
+                maxLength={6}
+              />
+            </div>
+            {codeError && (
+              <p className="text-sm text-red-500 text-center mb-4">
+                {codeError}
+              </p>
+            )}
+            <div className="flex gap-3">
+              <Button
+                variant="outline"
+                className="flex-1"
+                onClick={() => {
+                  setShowCodeModal(false);
+                  setVerificationCode("");
+                  setCodeError("");
+                }}
+              >
+                Cancel
+              </Button>
+              <Button
+                className="flex-1"
+                disabled={verificationCode.length !== 6 || saving}
+                onClick={handleConfirmSave}
+              >
+                {saving ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                    Saving...
+                  </>
+                ) : (
+                  "Confirm & Save"
+                )}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
