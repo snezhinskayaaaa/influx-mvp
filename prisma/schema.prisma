@@ -229,12 +229,24 @@ model Transaction {
   fee         Int             @default(0) // platform fee in cents
   description String?
   referenceId String?         @map("reference_id") @db.Uuid
+
+  status          String    @default("confirmed") // pending, confirmed, failed, expired
+  externalId      String?   @map("external_id") // 0xprocessing payment/withdrawal ID
+  externalStatus  String?   @map("external_status") // raw status from provider
+  walletAddress   String?   @map("wallet_address") // crypto address for withdrawals
+  network         String?   // blockchain network
+  currency        String?   // crypto currency code
+  txHash          String?   @map("tx_hash") // on-chain transaction hash
+  confirmedAt     DateTime? @map("confirmed_at") @db.Timestamptz
+  expiresAt       DateTime? @map("expires_at") @db.Timestamptz
+
   createdAt   DateTime        @default(now()) @map("created_at") @db.Timestamptz
 
   profile Profile @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@index([type])
+  @@index([externalId])
   @@map("transactions")
 }
 

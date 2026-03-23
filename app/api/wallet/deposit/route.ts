@@ -2,8 +2,8 @@ import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
 import { getCurrentUser } from '@/lib/auth'
 import { rateLimit } from '@/lib/rate-limit'
+import { createPayment } from '@/lib/0xprocessing'
 
-// TODO: Integrate with 0xprocessing.com — currently adds balance directly for testing
 export async function POST(request: NextRequest) {
   try {
     const user = await getCurrentUser()
@@ -23,7 +23,7 @@ export async function POST(request: NextRequest) {
     // Check email verification for financial/critical operations
     const profile = await prisma.profile.findUnique({
       where: { id: user.userId },
-      select: { emailVerified: true },
+      select: { emailVerified: true, email: true },
     })
     if (!profile?.emailVerified) {
       return NextResponse.json({ error: 'Please verify your email before using this feature' }, { status: 403 })
@@ -37,7 +37,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json()
-    const { amount } = body
+    const { amount, currency } = body
 
     if (!amount || typeof amount !== 'number' || amount <= 0) {
       return NextResponse.json({ error: 'Amount must be a positive number' }, { status: 400 })
@@ -52,29 +52,39 @@ export async function POST(request: NextRequest) {
     const feePercent = settings ? Number(settings.depositFeePercent) : 2
     const fee = Math.round(amountCents * (feePercent / 100))
 
-    const netAmount = amountCents - fee
+    // Create a PENDING transaction — balance is NOT credited yet
+    const transaction = await prisma.transaction.create({
+      data: {
+        userId: user.userId,
+        type: 'DEPOSIT',
+        amount: amountCents,
+        fee,
+        status: 'pending',
+        currency: currency || 'USDT (TRC20)',
+        description: `Deposit of $${amount.toFixed(2)} (fee: $${(fee / 100).toFixed(2)})`,
+      },
+    })
 
-    const [result] = await prisma.$transaction([
-      prisma.brand.update({
-        where: { id: brand.id },
-        data: { balance: { increment: netAmount } },
-      }),
-      prisma.transaction.create({
-        data: {
-          userId: user.userId,
-          type: 'DEPOSIT',
-          amount: amountCents,
-          fee,
-          description: `Deposit of $${amount.toFixed(2)} (fee: $${(fee / 100).toFixed(2)})`,
-        },
-      }),
-    ])
+    // Call 0xProcessing to create a payment
+    const paymentResponse = await createPayment({
+      amountUSD: amount,
+      currency,
+      email: profile.email,
+      clientId: user.userId,
+      billingId: transaction.id,
+    })
+
+    // Update transaction with external ID from payment provider
+    await prisma.transaction.update({
+      where: { id: transaction.id },
+      data: {
+        externalId: paymentResponse.id.toString(),
+      },
+    })
 
     return NextResponse.json({
-      balance: result.balance,
-      deposited: amountCents,
-      fee,
-      netAmount,
+      redirectUrl: paymentResponse.redirectUrl,
+      transactionId: transaction.id,
     })
   } catch (error) {
     console.error('POST /api/wallet/deposit error:', error)

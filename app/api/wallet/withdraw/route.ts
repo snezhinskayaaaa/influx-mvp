@@ -2,8 +2,8 @@ import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
 import { getCurrentUser } from '@/lib/auth'
 import { rateLimit } from '@/lib/rate-limit'
+import { createWithdrawal } from '@/lib/0xprocessing'
 
-// TODO: Integrate with 0xprocessing.com for actual payout
 export async function POST(request: NextRequest) {
   try {
     const user = await getCurrentUser()
@@ -37,7 +37,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json()
-    const { amount } = body
+    const { amount, address, currency } = body
 
     if (!amount || typeof amount !== 'number' || amount <= 0) {
       return NextResponse.json({ error: 'Amount must be a positive number' }, { status: 400 })
@@ -45,21 +45,24 @@ export async function POST(request: NextRequest) {
     if (amount < 10) {
       return NextResponse.json({ error: 'Minimum withdrawal is $10' }, { status: 400 })
     }
-
-    const amountCents = Math.round(amount * 100)
-
     if (amount > 100000) {
       return NextResponse.json({ error: 'Maximum withdrawal is $100,000' }, { status: 400 })
     }
+    if (!address || typeof address !== 'string' || address.trim().length === 0) {
+      return NextResponse.json({ error: 'Wallet address is required' }, { status: 400 })
+    }
+
+    const amountCents = Math.round(amount * 100)
 
     const settings = await prisma.platformSettings.findUnique({ where: { id: 'default' } })
     const feePercent = settings ? Number(settings.withdrawalFeePercent) : 3
     const fee = Math.round(amountCents * (feePercent / 100))
     const payout = amountCents - fee
 
-    // Use interactive transaction for atomic balance check + audit log
+    // Atomic: deduct balance + create PENDING transaction
+    let transaction: { id: string }
     try {
-      const updated = await prisma.$transaction(async (tx) => {
+      transaction = await prisma.$transaction(async (tx) => {
         const result = await tx.influencer.updateMany({
           where: {
             id: influencer.id,
@@ -72,29 +75,70 @@ export async function POST(request: NextRequest) {
           throw new Error('INSUFFICIENT_BALANCE')
         }
 
-        await tx.transaction.create({
+        const txn = await tx.transaction.create({
           data: {
             userId: user.userId,
             type: 'WITHDRAWAL',
             amount: amountCents,
             fee,
+            status: 'pending',
+            walletAddress: address.trim(),
+            currency: currency || 'USDT (TRC20)',
             description: `Withdrawal of $${amount.toFixed(2)} (fee: $${(fee / 100).toFixed(2)}, payout: $${(payout / 100).toFixed(2)})`,
           },
         })
 
-        return await tx.influencer.findUnique({ where: { id: influencer.id } })
-      })
-
-      return NextResponse.json({
-        payout,
-        fee,
-        remainingBalance: updated?.balance ?? 0,
+        return txn
       })
     } catch (innerError) {
       if (innerError instanceof Error && innerError.message === 'INSUFFICIENT_BALANCE') {
         return NextResponse.json({ error: 'Insufficient balance' }, { status: 400 })
       }
       throw innerError
+    }
+
+    // Call 0xProcessing withdrawal API
+    try {
+      const withdrawalResponse = await createWithdrawal({
+        currency: currency || 'USDT (TRC20)',
+        amount: payout / 100, // convert cents to dollars for API
+        address: address.trim(),
+        clientId: user.userId,
+        externalId: transaction.id,
+      })
+
+      // Update transaction with external ID
+      await prisma.transaction.update({
+        where: { id: transaction.id },
+        data: {
+          externalId: withdrawalResponse.id.toString(),
+        },
+      })
+
+      return NextResponse.json({
+        transactionId: transaction.id,
+        status: 'pending',
+      })
+    } catch (apiError) {
+      // If 0xProcessing API fails, refund balance and mark transaction as failed
+      console.error('0xProcessing withdrawal API failed:', apiError)
+
+      await prisma.$transaction([
+        prisma.influencer.update({
+          where: { id: influencer.id },
+          data: { balance: { increment: amountCents } },
+        }),
+        prisma.transaction.update({
+          where: { id: transaction.id },
+          data: {
+            status: 'failed',
+            externalStatus: 'api_error',
+            description: `Withdrawal failed: ${apiError instanceof Error ? apiError.message : 'Unknown error'}`,
+          },
+        }),
+      ])
+
+      return NextResponse.json({ error: 'Withdrawal processing failed. Your balance has been refunded.' }, { status: 502 })
     }
   } catch (error) {
     console.error('POST /api/wallet/withdraw error:', error)
