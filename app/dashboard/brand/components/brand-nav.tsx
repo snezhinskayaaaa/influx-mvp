@@ -529,11 +529,18 @@ export function BrandSidebar({
                   onClick={async () => {
                     if (topUpAmount && topUpMethod) {
                       const amount = parseFloat(topUpAmount);
-                      // Build currency string from selected crypto + network
-                      let currency = selectedCrypto.toUpperCase();
-                      if (selectedNetwork) {
-                        currency = `${currency} (${selectedNetwork.toUpperCase()})`;
-                      }
+                      // Map to 0xProcessing currency format
+                      const currencyMap: Record<string, Record<string, string>> = {
+                        btc: { btc: 'BTC', lightning: 'BTC' },
+                        eth: { erc20: 'ETH', arbitrum: 'ETH (Arbitrum)', optimism: 'ETH (Optimism)' },
+                        usdt: { erc20: 'USDT (ERC20)', trc20: 'USDT (TRC20)', bep20: 'USDT (BEP20)', polygon: 'USDT (Polygon)', arbitrum: 'USDT (Arbitrum)', optimism: 'USDT (Optimism)', solana: 'USDT (Solana)' },
+                        usdc: { erc20: 'USDC (ERC20)', bep20: 'USDC (BEP20)', polygon: 'USDC (Polygon)', arbitrum: 'USDC (Arbitrum)', optimism: 'USDC (Optimism)', solana: 'USDC (Solana)', avalanche: 'USDC (AVAXC)' },
+                        bnb: { bep20: 'BNB', bep2: 'BNB' },
+                        sol: { solana: 'SOL' },
+                        matic: { polygon: 'POL', erc20: 'POL' },
+                        trx: { trc20: 'TRX' },
+                      };
+                      const currency = currencyMap[selectedCrypto]?.[selectedNetwork] || 'USDT (TRC20)';
                       try {
                         const res = await fetch('/api/wallet/deposit', {
                           method: 'POST',
