@@ -18,6 +18,8 @@ import {
   ShieldCheck,
   ShieldX,
   UserCircle,
+  AlertCircle,
+  CheckCircle2,
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 
@@ -177,6 +179,27 @@ export default function AdminDatabase() {
   // Collaborations state
   const [collaborations, setCollaborations] = useState<CollaborationRow[]>([]);
 
+  // Confirmation modal state
+  const [confirmModal, setConfirmModal] = useState<{
+    show: boolean;
+    title: string;
+    message: string;
+    onConfirm: () => void;
+    variant?: "danger" | "warning" | "info";
+  } | null>(null);
+
+  // Toast notification state
+  const [toast, setToast] = useState<{
+    show: boolean;
+    message: string;
+    variant: "success" | "error";
+  } | null>(null);
+
+  const showToast = (message: string, variant: "success" | "error") => {
+    setToast({ show: true, message, variant });
+    setTimeout(() => setToast(null), 3000);
+  };
+
   const fetchUsers = useCallback(async () => {
     try {
       const params = new URLSearchParams({ limit: "200" });
@@ -287,7 +310,7 @@ export default function AdminDatabase() {
         );
       } else {
         const data = await res.json();
-        alert(data.error || "Failed to update user");
+        showToast(data.error || "Failed to update user", "error");
       }
     } catch (error) {
       console.error("Failed to toggle verification:", error);
@@ -296,84 +319,116 @@ export default function AdminDatabase() {
     }
   };
 
-  const deleteUser = async (userId: string, email: string) => {
-    if (!window.confirm(`Are you sure you want to delete user "${email}"? This action cannot be undone and will cascade to all related data.`)) {
-      return;
-    }
-    setActionLoading(userId);
-    try {
-      const res = await fetch(`/api/admin/users/${userId}`, { method: "DELETE" });
-      if (res.ok) {
-        setUsers((prev) => prev.filter((u) => u.id !== userId));
-      } else {
-        const data = await res.json();
-        alert(data.error || "Failed to delete user");
-      }
-    } catch (error) {
-      console.error("Failed to delete user:", error);
-    } finally {
-      setActionLoading(null);
-    }
+  const deleteUser = (userId: string, email: string) => {
+    setConfirmModal({
+      show: true,
+      title: "Delete User",
+      message: `Are you sure you want to delete "${email}"? This action cannot be undone and will cascade to all related data.`,
+      variant: "danger",
+      onConfirm: async () => {
+        setConfirmModal(null);
+        setActionLoading(userId);
+        try {
+          const res = await fetch(`/api/admin/users/${userId}`, { method: "DELETE" });
+          if (res.ok) {
+            setUsers((prev) => prev.filter((u) => u.id !== userId));
+            showToast("User deleted successfully", "success");
+          } else {
+            const data = await res.json();
+            showToast(data.error || "Failed to delete user", "error");
+          }
+        } catch (error) {
+          console.error("Failed to delete user:", error);
+          showToast("Failed to delete user", "error");
+        } finally {
+          setActionLoading(null);
+        }
+      },
+    });
   };
 
-  const deleteBrand = async (brandId: string, userId: string, companyName: string) => {
-    if (!window.confirm(`Are you sure you want to delete brand "${companyName}"? This will also delete the associated user profile and all related data.`)) {
-      return;
-    }
-    setActionLoading(brandId);
-    try {
-      const res = await fetch(`/api/admin/users/${userId}`, { method: "DELETE" });
-      if (res.ok) {
-        setBrands((prev) => prev.filter((b) => b.id !== brandId));
-      } else {
-        const data = await res.json();
-        alert(data.error || "Failed to delete brand");
-      }
-    } catch (error) {
-      console.error("Failed to delete brand:", error);
-    } finally {
-      setActionLoading(null);
-    }
+  const deleteBrand = (brandId: string, userId: string, companyName: string) => {
+    setConfirmModal({
+      show: true,
+      title: "Delete Brand",
+      message: `Are you sure you want to delete brand "${companyName}"? This will also delete the associated user profile and all related data.`,
+      variant: "danger",
+      onConfirm: async () => {
+        setConfirmModal(null);
+        setActionLoading(brandId);
+        try {
+          const res = await fetch(`/api/admin/users/${userId}`, { method: "DELETE" });
+          if (res.ok) {
+            setBrands((prev) => prev.filter((b) => b.id !== brandId));
+            showToast("Brand deleted successfully", "success");
+          } else {
+            const data = await res.json();
+            showToast(data.error || "Failed to delete brand", "error");
+          }
+        } catch (error) {
+          console.error("Failed to delete brand:", error);
+          showToast("Failed to delete brand", "error");
+        } finally {
+          setActionLoading(null);
+        }
+      },
+    });
   };
 
-  const deleteInfluencer = async (influencerId: string, userId: string, handle: string) => {
-    if (!window.confirm(`Are you sure you want to delete influencer "@${handle}"? This will also delete the associated user profile and all related data.`)) {
-      return;
-    }
-    setActionLoading(influencerId);
-    try {
-      const res = await fetch(`/api/admin/users/${userId}`, { method: "DELETE" });
-      if (res.ok) {
-        setInfluencers((prev) => prev.filter((i) => i.id !== influencerId));
-      } else {
-        const data = await res.json();
-        alert(data.error || "Failed to delete influencer");
-      }
-    } catch (error) {
-      console.error("Failed to delete influencer:", error);
-    } finally {
-      setActionLoading(null);
-    }
+  const deleteInfluencer = (influencerId: string, userId: string, handle: string) => {
+    setConfirmModal({
+      show: true,
+      title: "Delete Influencer",
+      message: `Are you sure you want to delete influencer "@${handle}"? This will also delete the associated user profile and all related data.`,
+      variant: "danger",
+      onConfirm: async () => {
+        setConfirmModal(null);
+        setActionLoading(influencerId);
+        try {
+          const res = await fetch(`/api/admin/users/${userId}`, { method: "DELETE" });
+          if (res.ok) {
+            setInfluencers((prev) => prev.filter((i) => i.id !== influencerId));
+            showToast("Influencer deleted successfully", "success");
+          } else {
+            const data = await res.json();
+            showToast(data.error || "Failed to delete influencer", "error");
+          }
+        } catch (error) {
+          console.error("Failed to delete influencer:", error);
+          showToast("Failed to delete influencer", "error");
+        } finally {
+          setActionLoading(null);
+        }
+      },
+    });
   };
 
-  const deleteCampaign = async (campaignId: string, title: string) => {
-    if (!window.confirm(`Are you sure you want to delete campaign "${title}"? This action cannot be undone.`)) {
-      return;
-    }
-    setActionLoading(campaignId);
-    try {
-      const res = await fetch(`/api/admin/campaigns/${campaignId}`, { method: "DELETE" });
-      if (res.ok) {
-        setCampaigns((prev) => prev.filter((c) => c.id !== campaignId));
-      } else {
-        const data = await res.json();
-        alert(data.error || "Failed to delete campaign");
-      }
-    } catch (error) {
-      console.error("Failed to delete campaign:", error);
-    } finally {
-      setActionLoading(null);
-    }
+  const deleteCampaign = (campaignId: string, title: string) => {
+    setConfirmModal({
+      show: true,
+      title: "Delete Campaign",
+      message: `Are you sure you want to delete campaign "${title}"? This action cannot be undone.`,
+      variant: "danger",
+      onConfirm: async () => {
+        setConfirmModal(null);
+        setActionLoading(campaignId);
+        try {
+          const res = await fetch(`/api/admin/campaigns/${campaignId}`, { method: "DELETE" });
+          if (res.ok) {
+            setCampaigns((prev) => prev.filter((c) => c.id !== campaignId));
+            showToast("Campaign deleted successfully", "success");
+          } else {
+            const data = await res.json();
+            showToast(data.error || "Failed to delete campaign", "error");
+          }
+        } catch (error) {
+          console.error("Failed to delete campaign:", error);
+          showToast("Failed to delete campaign", "error");
+        } finally {
+          setActionLoading(null);
+        }
+      },
+    });
   };
 
   const tabs: { key: TabKey; label: string; icon: typeof Users }[] = [
@@ -927,6 +982,60 @@ export default function AdminDatabase() {
           </motion.div>
         </motion.div>
       </main>
+
+      {/* Confirmation Modal */}
+      {confirmModal?.show && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+          <div className="bg-background border border-border rounded-2xl p-6 w-full max-w-md mx-4 shadow-2xl">
+            <div className="flex justify-center mb-4">
+              <div className={`w-14 h-14 rounded-full flex items-center justify-center ${
+                confirmModal.variant === "danger" ? "bg-red-100 text-red-600" :
+                confirmModal.variant === "warning" ? "bg-yellow-100 text-yellow-600" :
+                "bg-blue-100 text-blue-600"
+              }`}>
+                {confirmModal.variant === "danger" ? (
+                  <Trash2 className="h-7 w-7" />
+                ) : (
+                  <AlertCircle className="h-7 w-7" />
+                )}
+              </div>
+            </div>
+            <h3 className="text-lg font-bold text-center mb-2">{confirmModal.title}</h3>
+            <p className="text-muted-foreground text-center text-sm mb-6">{confirmModal.message}</p>
+            <div className="flex gap-3">
+              <Button
+                variant="outline"
+                className="flex-1"
+                onClick={() => setConfirmModal(null)}
+              >
+                Cancel
+              </Button>
+              <Button
+                className={`flex-1 ${confirmModal.variant === "danger" ? "bg-red-600 hover:bg-red-700 text-white" : ""}`}
+                onClick={confirmModal.onConfirm}
+              >
+                Confirm
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Toast Notification */}
+      {toast?.show && (
+        <div className={`fixed bottom-6 right-6 z-50 px-4 py-3 rounded-xl shadow-lg border ${
+          toast.variant === "success" ? "bg-green-50 border-green-200 text-green-800" : "bg-red-50 border-red-200 text-red-800"
+        }`}>
+          <div className="flex items-center gap-2">
+            {toast.variant === "success" ? (
+              <CheckCircle2 className="h-5 w-5 text-green-600" />
+            ) : (
+              <AlertCircle className="h-5 w-5 text-red-600" />
+            )}
+            <p className="text-sm font-medium">{toast.message}</p>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
