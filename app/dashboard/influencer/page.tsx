@@ -2011,13 +2011,17 @@ export default function InfluencerDashboard() {
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="fashion">Fashion & Style</SelectItem>
-                        <SelectItem value="beauty">Beauty & Care</SelectItem>
-                        <SelectItem value="tech">Technology</SelectItem>
-                        <SelectItem value="fitness">Health & Fitness</SelectItem>
-                        <SelectItem value="lifestyle">Lifestyle</SelectItem>
-                        <SelectItem value="food">Food & Beverage</SelectItem>
-                        <SelectItem value="travel">Travel</SelectItem>
+                        <SelectItem value="Fashion & Style">Fashion & Style</SelectItem>
+                        <SelectItem value="Beauty & Care">Beauty & Care</SelectItem>
+                        <SelectItem value="Technology">Technology</SelectItem>
+                        <SelectItem value="Health & Fitness">Health & Fitness</SelectItem>
+                        <SelectItem value="Lifestyle">Lifestyle</SelectItem>
+                        <SelectItem value="Food & Beverage">Food & Beverage</SelectItem>
+                        <SelectItem value="Travel">Travel</SelectItem>
+                        <SelectItem value="Gaming">Gaming</SelectItem>
+                        <SelectItem value="Music">Music</SelectItem>
+                        <SelectItem value="Education">Education</SelectItem>
+                        <SelectItem value="Sports">Sports</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
