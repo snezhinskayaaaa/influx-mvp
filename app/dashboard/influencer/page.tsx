@@ -432,9 +432,9 @@ export default function InfluencerDashboard() {
                 youtubeSubscribers: inf.youtubeSubscribers ? String(inf.youtubeSubscribers) : '',
                 cpmMin: inf.pricePerPost ? String(inf.pricePerPost / 100) : '',
                 cpmMax: '',
-                cpcMin: '',
+                cpcMin: inf.pricePerStory ? String(inf.pricePerStory / 100) : '',
                 cpcMax: '',
-                cpeMin: '',
+                cpeMin: inf.pricePerVideo ? String(inf.pricePerVideo / 100) : '',
                 cpeMax: '',
               })
             }
@@ -2219,6 +2219,8 @@ export default function InfluencerDashboard() {
                               youtubeHandle: profileData.youtube,
                               youtubeSubscribers: profileData.youtubeSubscribers ? parseInt(profileData.youtubeSubscribers) : 0,
                               pricePerPost: profileData.cpmMin ? parseFloat(profileData.cpmMin) : undefined,
+                              pricePerStory: profileData.cpcMin ? parseFloat(profileData.cpcMin) : undefined,
+                              pricePerVideo: profileData.cpeMin ? parseFloat(profileData.cpeMin) : undefined,
                             }),
                           })
                           if (res.ok) {
