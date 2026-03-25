@@ -29,7 +29,7 @@ export async function sendVerificationEmail(email: string, token: string) {
           Please verify your email address to get started.
         </p>
         <a href="${verifyUrl}"
-           style="display: inline-block; background: linear-gradient(to right, #4F46E5, #7C3AED); color: white; padding: 12px 32px; border-radius: 8px; text-decoration: none; font-weight: 600;">
+           style="display: inline-block; background-color: #4F46E5; color: #ffffff; padding: 12px 32px; border-radius: 8px; text-decoration: none; font-weight: 600;">
           Verify Email
         </a>
         <p style="color: #999; font-size: 14px; margin-top: 24px;">
@@ -57,7 +57,7 @@ export async function sendPasswordResetEmail(email: string, token: string) {
           We received a request to reset your password. Click the button below to choose a new one.
         </p>
         <a href="${resetUrl}"
-           style="display: inline-block; background: linear-gradient(to right, #4F46E5, #7C3AED); color: white; padding: 12px 32px; border-radius: 8px; text-decoration: none; font-weight: 600;">
+           style="display: inline-block; background-color: #4F46E5; color: #ffffff; padding: 12px 32px; border-radius: 8px; text-decoration: none; font-weight: 600;">
           Reset Password
         </a>
         <p style="color: #999; font-size: 14px; margin-top: 24px;">
