@@ -20,6 +20,8 @@ import {
   MessageSquare,
   Package,
   BookOpen,
+  CheckCircle2,
+  AlertCircle,
 } from "lucide-react";
 import type { Tab, Campaign } from "./types";
 import { PRICING_MIN_RATES } from "./types";
@@ -31,6 +33,13 @@ interface CreateCampaignTabProps {
 }
 
 export function CreateCampaignTab({ campaigns, setCampaigns, setActiveTab }: CreateCampaignTabProps) {
+  const [toast, setToast] = useState<{ message: string; variant: 'success' | 'error' } | null>(null);
+
+  const showToast = (message: string, variant: 'success' | 'error' = 'success') => {
+    setToast({ message, variant });
+    setTimeout(() => setToast(null), 4000);
+  };
+
   const [campaignTitle, setCampaignTitle] = useState("");
   const [campaignBudgetMin, setCampaignBudgetMin] = useState("");
   const [campaignBudgetMax, setCampaignBudgetMax] = useState("");
@@ -159,12 +168,12 @@ export function CreateCampaignTab({ campaigns, setCampaigns, setActiveTab }: Cre
               setCampaigns([createdCampaign, ...campaigns]);
             } else {
               const errData = await res.json().catch(() => ({}));
-              alert(errData.error || "Failed to create campaign");
+              showToast(errData.error || "Failed to create campaign", 'error');
               return;
             }
           } catch (error) {
             console.error('Failed to create campaign via API:', error);
-            alert("Failed to create campaign. Please try again.");
+            showToast("Failed to create campaign. Please try again.", 'error');
             return;
           }
 
@@ -891,6 +900,22 @@ export function CreateCampaignTab({ campaigns, setCampaigns, setActiveTab }: Cre
           </div>
         </form>
       </Card>
+      {toast && (
+        <div className={`fixed bottom-6 right-6 z-50 px-5 py-3 rounded-xl shadow-lg border backdrop-blur-sm ${
+          toast.variant === 'success'
+            ? 'bg-green-50 border-green-200 text-green-800'
+            : 'bg-red-50 border-red-200 text-red-800'
+        }`}>
+          <div className="flex items-center gap-2">
+            {toast.variant === 'success' ? (
+              <CheckCircle2 className="h-5 w-5 text-green-600 shrink-0" />
+            ) : (
+              <AlertCircle className="h-5 w-5 text-red-600 shrink-0" />
+            )}
+            <p className="text-sm font-medium">{toast.message}</p>
+          </div>
+        </div>
+      )}
     </motion.div>
   );
 }

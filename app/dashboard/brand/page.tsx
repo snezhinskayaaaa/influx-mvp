@@ -31,6 +31,12 @@ import type { Tab, Campaign, Influencer, Notification, CampaignInfluencer } from
 
 export default function BrandDashboard() {
   const [activeTab, setActiveTab] = useState<Tab>("discover");
+  const [toast, setToast] = useState<{ message: string; variant: 'success' | 'error' } | null>(null);
+
+  const showToast = (message: string, variant: 'success' | 'error' = 'success') => {
+    setToast({ message, variant });
+    setTimeout(() => setToast(null), 4000);
+  };
 
   const [companyName, setCompanyName] = useState("Your Company");
   const [companyBio, setCompanyBio] = useState("");
@@ -764,9 +770,9 @@ export default function BrandDashboard() {
                 onClick={async () => {
                   try {
                     await fetch('/api/auth/resend-verification', { method: 'POST' });
-                    alert('Verification email sent! Check your inbox.');
+                    showToast('Verification email sent! Check your inbox.', 'success');
                   } catch {
-                    alert('Failed to send verification email.');
+                    showToast('Failed to send verification email.', 'error');
                   }
                 }}
               >
@@ -784,6 +790,23 @@ export default function BrandDashboard() {
             <p className="text-xs text-muted-foreground text-center mt-4">
               You can still browse the platform, but deposits and withdrawals require a verified email.
             </p>
+          </div>
+        </div>
+      )}
+
+      {toast && (
+        <div className={`fixed bottom-6 right-6 z-50 px-5 py-3 rounded-xl shadow-lg border backdrop-blur-sm ${
+          toast.variant === 'success'
+            ? 'bg-green-50 border-green-200 text-green-800'
+            : 'bg-red-50 border-red-200 text-red-800'
+        }`}>
+          <div className="flex items-center gap-2">
+            {toast.variant === 'success' ? (
+              <CheckCircle2 className="h-5 w-5 text-green-600 shrink-0" />
+            ) : (
+              <AlertCircle className="h-5 w-5 text-red-600 shrink-0" />
+            )}
+            <p className="text-sm font-medium">{toast.message}</p>
           </div>
         </div>
       )}

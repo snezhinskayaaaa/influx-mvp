@@ -41,6 +41,7 @@ import {
   ExternalLink,
   Rocket,
   Mail,
+  AlertCircle,
 } from "lucide-react";
 import {
   Select,
@@ -249,6 +250,12 @@ const mockMyCampaigns: Campaign[] = [
 
 export default function InfluencerDashboard() {
   const [activeTab, setActiveTab] = useState<"discover" | "my-campaigns" | "profile" | "settings">("discover");
+  const [toast, setToast] = useState<{ message: string; variant: 'success' | 'error' } | null>(null);
+
+  const showToast = (message: string, variant: 'success' | 'error' = 'success') => {
+    setToast({ message, variant });
+    setTimeout(() => setToast(null), 4000);
+  };
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [selectedPlatform, setSelectedPlatform] = useState("all");
@@ -2246,10 +2253,10 @@ export default function InfluencerDashboard() {
                   });
                   const data = await res.json();
                   if (!res.ok) {
-                    alert(data.error || 'Failed to create withdrawal');
+                    showToast(data.error || 'Failed to create withdrawal', 'error');
                     return;
                   }
-                  alert('Withdrawal submitted! Your funds will be sent to your wallet shortly.');
+                  showToast('Withdrawal submitted! Your funds will be sent to your wallet shortly.', 'success');
                   // Refresh wallet data
                   const walletRes = await fetch('/api/wallet');
                   if (walletRes.ok) {
@@ -2271,7 +2278,7 @@ export default function InfluencerDashboard() {
                   setWithdrawCurrency("USDT (TRC20)");
                 } catch (error) {
                   console.error('Failed to withdraw:', error);
-                  alert('Failed to withdraw. Please try again.');
+                  showToast('Failed to withdraw. Please try again.', 'error');
                 }
               }}
               disabled={!withdrawAmount || !walletAddress.trim() || !withdrawCurrency}
@@ -2302,9 +2309,9 @@ export default function InfluencerDashboard() {
                 onClick={async () => {
                   try {
                     await fetch('/api/auth/resend-verification', { method: 'POST' });
-                    alert('Verification email sent! Check your inbox.');
+                    showToast('Verification email sent! Check your inbox.', 'success');
                   } catch {
-                    alert('Failed to send verification email.');
+                    showToast('Failed to send verification email.', 'error');
                   }
                 }}
               >
@@ -2322,6 +2329,23 @@ export default function InfluencerDashboard() {
             <p className="text-xs text-muted-foreground text-center mt-4">
               You can still browse the platform, but deposits and withdrawals require a verified email.
             </p>
+          </div>
+        </div>
+      )}
+
+      {toast && (
+        <div className={`fixed bottom-6 right-6 z-50 px-5 py-3 rounded-xl shadow-lg border backdrop-blur-sm ${
+          toast.variant === 'success'
+            ? 'bg-green-50 border-green-200 text-green-800'
+            : 'bg-red-50 border-red-200 text-red-800'
+        }`}>
+          <div className="flex items-center gap-2">
+            {toast.variant === 'success' ? (
+              <CheckCircle2 className="h-5 w-5 text-green-600 shrink-0" />
+            ) : (
+              <AlertCircle className="h-5 w-5 text-red-600 shrink-0" />
+            )}
+            <p className="text-sm font-medium">{toast.message}</p>
           </div>
         </div>
       )}

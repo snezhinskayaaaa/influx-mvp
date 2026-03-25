@@ -61,6 +61,13 @@ export function CampaignsTab({
   balance,
   setShowInsufficientFundsDialog,
 }: CampaignsTabProps) {
+  const [toast, setToast] = useState<{ message: string; variant: 'success' | 'error' } | null>(null);
+
+  const showToast = (message: string, variant: 'success' | 'error' = 'success') => {
+    setToast({ message, variant });
+    setTimeout(() => setToast(null), 4000);
+  };
+
   const [selectedCampaignDetails, setSelectedCampaignDetails] = useState<Campaign | null>(null);
   const [campaignSearchQuery, setCampaignSearchQuery] = useState("");
   const [campaignStatusFilter, setCampaignStatusFilter] = useState<"all" | "active" | "draft">("all");
@@ -1330,7 +1337,7 @@ export function CampaignsTab({
                                 variant="outline"
                                 onClick={() => {
                                   if (!brandFeedbackText.trim()) {
-                                    alert("Please provide feedback before requesting revisions");
+                                    showToast("Please provide feedback before requesting revisions", 'error');
                                     return;
                                   }
 
@@ -2065,6 +2072,22 @@ export function CampaignsTab({
         </>
       )}
         </>
+      )}
+      {toast && (
+        <div className={`fixed bottom-6 right-6 z-50 px-5 py-3 rounded-xl shadow-lg border backdrop-blur-sm ${
+          toast.variant === 'success'
+            ? 'bg-green-50 border-green-200 text-green-800'
+            : 'bg-red-50 border-red-200 text-red-800'
+        }`}>
+          <div className="flex items-center gap-2">
+            {toast.variant === 'success' ? (
+              <CheckCircle2 className="h-5 w-5 text-green-600 shrink-0" />
+            ) : (
+              <AlertCircle className="h-5 w-5 text-red-600 shrink-0" />
+            )}
+            <p className="text-sm font-medium">{toast.message}</p>
+          </div>
+        </div>
       )}
     </motion.div>
   );

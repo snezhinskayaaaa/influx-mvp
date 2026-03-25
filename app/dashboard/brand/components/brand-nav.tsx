@@ -41,6 +41,8 @@ import {
   Bell,
   Check as CheckIcon,
   Copy,
+  CheckCircle2,
+  AlertCircle,
 } from "lucide-react";
 import type { Tab, Notification } from "./types";
 
@@ -196,6 +198,13 @@ export function BrandSidebar({
   balance,
   setBalance,
 }: BrandSidebarProps) {
+  const [toast, setToast] = useState<{ message: string; variant: 'success' | 'error' } | null>(null);
+
+  const showToast = (message: string, variant: 'success' | 'error' = 'success') => {
+    setToast({ message, variant });
+    setTimeout(() => setToast(null), 4000);
+  };
+
   const [showTopUpModal, setShowTopUpModal] = useState(false);
   const [topUpMethod, setTopUpMethod] = useState<"card" | "crypto" | null>(null);
   const [topUpAmount, setTopUpAmount] = useState("");
@@ -549,17 +558,17 @@ export function BrandSidebar({
                         });
                         const data = await res.json();
                         if (!res.ok) {
-                          alert(data.error || 'Failed to create deposit');
+                          showToast(data.error || 'Failed to create deposit', 'error');
                           return;
                         }
                         // Redirect to 0xprocessing payment page
                         if (data.redirectUrl) {
                           window.open(data.redirectUrl, '_blank');
-                          alert('Payment page opened in a new tab. Your balance will update once the payment is confirmed.');
+                          showToast('Payment page opened in a new tab. Your balance will update once the payment is confirmed.', 'success');
                         }
                       } catch (error) {
                         console.error('Failed to deposit via API:', error);
-                        alert("Failed to deposit. Please try again.");
+                        showToast("Failed to deposit. Please try again.", 'error');
                         return;
                       }
                       setShowTopUpModal(false);
@@ -638,6 +647,23 @@ export function BrandSidebar({
             Settings
           </button>
         </nav>
+
+        {toast && (
+          <div className={`fixed bottom-6 right-6 z-50 px-5 py-3 rounded-xl shadow-lg border backdrop-blur-sm ${
+            toast.variant === 'success'
+              ? 'bg-green-50 border-green-200 text-green-800'
+              : 'bg-red-50 border-red-200 text-red-800'
+          }`}>
+            <div className="flex items-center gap-2">
+              {toast.variant === 'success' ? (
+                <CheckCircle2 className="h-5 w-5 text-green-600 shrink-0" />
+              ) : (
+                <AlertCircle className="h-5 w-5 text-red-600 shrink-0" />
+              )}
+              <p className="text-sm font-medium">{toast.message}</p>
+            </div>
+          </div>
+        )}
       </aside>
   );
 }
