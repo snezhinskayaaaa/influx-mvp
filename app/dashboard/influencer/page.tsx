@@ -2218,7 +2218,7 @@ export default function InfluencerDashboard() {
                               tiktokFollowers: profileData.tiktokFollowers ? parseInt(profileData.tiktokFollowers) : 0,
                               youtubeHandle: profileData.youtube,
                               youtubeSubscribers: profileData.youtubeSubscribers ? parseInt(profileData.youtubeSubscribers) : 0,
-                              pricePerPost: profileData.cpmMin ? Math.round(parseFloat(profileData.cpmMin) * 100) : undefined,
+                              pricePerPost: profileData.cpmMin ? parseFloat(profileData.cpmMin) : undefined,
                             }),
                           })
                           if (res.ok) {
