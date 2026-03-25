@@ -2089,7 +2089,39 @@ export default function InfluencerDashboard() {
                         onChange={(e) => setProfileData(p => ({...p, youtubeSubscribers: e.target.value}))}
                         className="h-11 w-28"
                         min="0"
+                        readOnly
                       />
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        className="h-11 px-3 shrink-0 text-xs"
+                        onClick={async () => {
+                          if (!profileData.youtube) {
+                            showToast('Enter a YouTube URL first', 'error')
+                            return
+                          }
+                          showToast('Fetching YouTube stats...', 'success')
+                          try {
+                            const res = await fetch('/api/social/youtube', {
+                              method: 'POST',
+                              headers: { 'Content-Type': 'application/json' },
+                              body: JSON.stringify({ youtubeUrl: profileData.youtube }),
+                            })
+                            const data = await res.json()
+                            if (res.ok) {
+                              setProfileData(p => ({ ...p, youtubeSubscribers: String(data.subscribers) }))
+                              showToast(`Found: ${data.title} — ${data.subscribers.toLocaleString()} subscribers`, 'success')
+                            } else {
+                              showToast(data.error || 'Channel not found', 'error')
+                            }
+                          } catch {
+                            showToast('Failed to fetch YouTube data', 'error')
+                          }
+                        }}
+                      >
+                        Verify
+                      </Button>
                     </div>
                   </div>
 
