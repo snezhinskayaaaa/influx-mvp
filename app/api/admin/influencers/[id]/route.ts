@@ -22,10 +22,13 @@ export async function PATCH(
     const { status, isVerified, isFeatured, instagramFollowers, tiktokFollowers, youtubeSubscribers, twitterFollowers } = body
 
     if (status !== undefined) {
-      const validStatuses: string[] = Object.values(InfluencerStatus)
-      if (!validStatuses.includes(status)) {
+      const statusMap: Record<string, string> = {
+        pending: 'PENDING', approved: 'APPROVED', rejected: 'REJECTED',
+        PENDING: 'PENDING', APPROVED: 'APPROVED', REJECTED: 'REJECTED',
+      }
+      if (!statusMap[status]) {
         return NextResponse.json(
-          { error: `Invalid status. Must be one of: ${validStatuses.join(', ')}` },
+          { error: `Invalid status. Must be one of: pending, approved, rejected` },
           { status: 400 },
         )
       }
@@ -34,7 +37,8 @@ export async function PATCH(
     const updateData: Record<string, unknown> = {}
 
     if (status !== undefined) {
-      updateData.status = status as InfluencerStatus
+      const normalized = status.toUpperCase() as InfluencerStatus
+      updateData.status = normalized
     }
     if (isVerified !== undefined) {
       updateData.isVerified = Boolean(isVerified)
