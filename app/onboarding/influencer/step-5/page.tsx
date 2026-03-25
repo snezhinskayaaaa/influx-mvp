@@ -47,20 +47,19 @@ export default function InfluencerOnboardingStep5() {
         const engagement = parseFloat(localStorage.getItem("influencer_onboarding_engagement") || "0");
         const niches = JSON.parse(localStorage.getItem("influencer_onboarding_niches") || "[]") as string[];
 
+        // Don't guess per-platform followers — set 0, influencer fills in real numbers in their profile
         const followersPerPlatform: Record<string, number> = {};
         const engagementPerPlatform: Record<string, number> = {};
-        const platformCount = platforms.length || 1;
-        const splitFollowers = Math.round(totalFollowers / platformCount);
 
         for (const p of platforms) {
           if (p === "instagram") {
-            followersPerPlatform.instagramFollowers = splitFollowers;
+            followersPerPlatform.instagramFollowers = 0;
             engagementPerPlatform.instagramEngagement = engagement;
           } else if (p === "tiktok") {
-            followersPerPlatform.tiktokFollowers = splitFollowers;
+            followersPerPlatform.tiktokFollowers = 0;
             engagementPerPlatform.tiktokEngagement = engagement;
           } else if (p === "youtube") {
-            followersPerPlatform.youtubeSubscribers = splitFollowers;
+            followersPerPlatform.youtubeSubscribers = 0;
             engagementPerPlatform.youtubeEngagement = engagement;
           }
         }
