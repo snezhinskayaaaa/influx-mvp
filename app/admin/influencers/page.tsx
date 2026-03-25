@@ -54,6 +54,8 @@ interface Influencer {
   tiktokFollowers: number;
   youtubeHandle?: string;
   youtubeSubscribers: number;
+  twitterHandle?: string;
+  twitterFollowers: number;
   followers: number;
   status: string;
   isVerified: boolean;
@@ -84,6 +86,7 @@ export default function AdminInfluencers() {
   const [editIG, setEditIG] = useState('');
   const [editTT, setEditTT] = useState('');
   const [editYT, setEditYT] = useState('');
+  const [editTW, setEditTW] = useState('');
   const [savingFollowers, setSavingFollowers] = useState(false);
 
   const fetchInfluencers = useCallback(async () => {
@@ -162,6 +165,7 @@ export default function AdminInfluencers() {
       instagram: ["https://www.instagram.com/", "https://instagram.com/", "http://www.instagram.com/", "http://instagram.com/"],
       tiktok: ["https://www.tiktok.com/", "https://tiktok.com/", "http://www.tiktok.com/", "http://tiktok.com/"],
       youtube: ["https://www.youtube.com/", "https://youtube.com/", "http://www.youtube.com/", "http://youtube.com/"],
+      twitter: ["https://x.com/", "https://twitter.com/", "http://x.com/", "http://twitter.com/"],
     };
     let cleaned = url.trim();
     const platformPrefixes = prefixes[platform] || [];
@@ -526,6 +530,26 @@ export default function AdminInfluencers() {
                       </div>
                     </a>
                   )}
+                  {selectedInfluencer.twitterHandle && (
+                    <a
+                      href={selectedInfluencer.twitterHandle.startsWith("http") ? selectedInfluencer.twitterHandle : `https://x.com/${selectedInfluencer.twitterHandle.replace(/^@/, "")}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center justify-between rounded-lg border border-border p-3 hover:bg-muted/30 transition-colors group"
+                    >
+                      <div className="flex items-center gap-2.5">
+                        <div className="w-8 h-8 rounded-lg bg-foreground flex items-center justify-center">
+                          <svg className="h-4 w-4 text-background" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                        </div>
+                        <span className="text-sm font-medium text-foreground group-hover:text-primary transition-colors">
+                          @{extractUsername(selectedInfluencer.twitterHandle, "twitter")}
+                        </span>
+                      </div>
+                      {selectedInfluencer.twitterFollowers > 0 && (
+                        <Badge className="bg-muted text-foreground border-border text-xs">{selectedInfluencer.twitterFollowers.toLocaleString()}</Badge>
+                      )}
+                    </a>
+                  )}
                 </div>
               </div>
 
@@ -539,6 +563,7 @@ export default function AdminInfluencers() {
                       setEditIG(String(selectedInfluencer.instagramFollowers || 0));
                       setEditTT(String(selectedInfluencer.tiktokFollowers || 0));
                       setEditYT(String(selectedInfluencer.youtubeSubscribers || 0));
+                      setEditTW(String(selectedInfluencer.twitterFollowers || 0));
                     }}>
                       Edit
                     </Button>
@@ -555,10 +580,11 @@ export default function AdminInfluencers() {
                               instagramFollowers: parseInt(editIG) || 0,
                               tiktokFollowers: parseInt(editTT) || 0,
                               youtubeSubscribers: parseInt(editYT) || 0,
+                              twitterFollowers: parseInt(editTW) || 0,
                             }),
                           });
                           if (res.ok) {
-                            const updated = { ...selectedInfluencer, instagramFollowers: parseInt(editIG) || 0, tiktokFollowers: parseInt(editTT) || 0, youtubeSubscribers: parseInt(editYT) || 0 };
+                            const updated = { ...selectedInfluencer, instagramFollowers: parseInt(editIG) || 0, tiktokFollowers: parseInt(editTT) || 0, youtubeSubscribers: parseInt(editYT) || 0, twitterFollowers: parseInt(editTW) || 0 };
                             setSelectedInfluencer(updated);
                             setInfluencers(prev => prev.map(i => i.id === updated.id ? { ...i, ...updated } : i));
                             setEditingFollowers(false);
@@ -572,7 +598,7 @@ export default function AdminInfluencers() {
                   )}
                 </div>
                 {editingFollowers ? (
-                  <div className="grid grid-cols-3 gap-2">
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                     <div className="rounded-lg border border-border p-2">
                       <p className="text-[10px] text-muted-foreground mb-1">Instagram</p>
                       <Input type="number" value={editIG} onChange={(e) => setEditIG(e.target.value)} className="h-8 text-sm" min="0" />
@@ -585,9 +611,13 @@ export default function AdminInfluencers() {
                       <p className="text-[10px] text-muted-foreground mb-1">YouTube</p>
                       <Input type="number" value={editYT} onChange={(e) => setEditYT(e.target.value)} className="h-8 text-sm" min="0" />
                     </div>
+                    <div className="rounded-lg border border-border p-2">
+                      <p className="text-[10px] text-muted-foreground mb-1">X/Twitter</p>
+                      <Input type="number" value={editTW} onChange={(e) => setEditTW(e.target.value)} className="h-8 text-sm" min="0" />
+                    </div>
                   </div>
                 ) : (
-                  <div className="grid grid-cols-3 gap-2">
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                     <div className="rounded-lg border border-border p-2 text-center">
                       <p className="text-[10px] text-muted-foreground mb-0.5">Instagram</p>
                       <p className="text-sm font-semibold">{(selectedInfluencer.instagramFollowers || 0).toLocaleString()}</p>
@@ -599,6 +629,10 @@ export default function AdminInfluencers() {
                     <div className="rounded-lg border border-border p-2 text-center">
                       <p className="text-[10px] text-muted-foreground mb-0.5">YouTube</p>
                       <p className="text-sm font-semibold">{(selectedInfluencer.youtubeSubscribers || 0).toLocaleString()}</p>
+                    </div>
+                    <div className="rounded-lg border border-border p-2 text-center">
+                      <p className="text-[10px] text-muted-foreground mb-0.5">X/Twitter</p>
+                      <p className="text-sm font-semibold">{(selectedInfluencer.twitterFollowers || 0).toLocaleString()}</p>
                     </div>
                   </div>
                 )}

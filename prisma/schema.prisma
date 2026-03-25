@@ -97,6 +97,9 @@ model Influencer {
   youtubeSubscribers Int      @default(0) @map("youtube_subscribers")
   youtubeEngagement  Decimal  @default(0) @map("youtube_engagement") @db.Decimal(5, 2)
 
+  twitterHandle      String?  @map("twitter_handle")
+  twitterFollowers   Int      @default(0) @map("twitter_followers")
+
   // Pricing (in cents) — legacy fields, kept for compatibility
   pricePerPost  Int? @map("price_per_post")
   pricePerStory Int? @map("price_per_story")

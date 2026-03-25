@@ -40,6 +40,7 @@ const STRING_FIELDS = [
   'instagramHandle',
   'tiktokHandle',
   'youtubeHandle',
+  'twitterHandle',
 ] as const
 
 const ARRAY_FIELDS = [
@@ -52,6 +53,7 @@ const INT_FIELDS = [
   'instagramFollowers',
   'tiktokFollowers',
   'youtubeSubscribers',
+  'twitterFollowers',
 ] as const
 
 const ENGAGEMENT_FIELDS = [
