@@ -297,6 +297,7 @@ export default function InfluencerDashboard() {
     tiktok: string
     tiktokFollowers: string
     twitter: string
+    twitterFollowers: string
     youtube: string
     youtubeSubscribers: string
     cpmMin: string
@@ -314,6 +315,7 @@ export default function InfluencerDashboard() {
     tiktok: '',
     tiktokFollowers: '',
     twitter: '',
+    twitterFollowers: '',
     youtube: '',
     youtubeSubscribers: '',
     cpmMin: '',
@@ -428,6 +430,7 @@ export default function InfluencerDashboard() {
                 tiktok: inf.tiktokHandle || '',
                 tiktokFollowers: inf.tiktokFollowers ? String(inf.tiktokFollowers) : '',
                 twitter: '',
+                twitterFollowers: '',
                 youtube: inf.youtubeHandle || '',
                 youtubeSubscribers: inf.youtubeSubscribers ? String(inf.youtubeSubscribers) : '',
                 cpmMin: inf.cpmMin ? String(inf.cpmMin / 100) : '',
@@ -2062,13 +2065,23 @@ export default function InfluencerDashboard() {
                       />
                     </div>
 
-                    <div className="relative">
-                      <Twitter className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <div className="flex gap-2">
+                      <div className="relative flex-1">
+                        <Twitter className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                        <Input
+                          placeholder="X URL or @handle"
+                          value={profileData.twitter}
+                          onChange={(e) => setProfileData(p => ({...p, twitter: e.target.value}))}
+                          className="pl-10 h-11"
+                        />
+                      </div>
                       <Input
-                        placeholder="X URL or @handle"
-                        value={profileData.twitter}
-                        onChange={(e) => setProfileData(p => ({...p, twitter: e.target.value}))}
-                        className="pl-10 h-11"
+                        type="number"
+                        placeholder="Followers"
+                        value={profileData.twitterFollowers || ''}
+                        onChange={(e) => setProfileData(p => ({...p, twitterFollowers: e.target.value}))}
+                        className="h-11 w-28"
+                        min="0"
                       />
                     </div>
 
