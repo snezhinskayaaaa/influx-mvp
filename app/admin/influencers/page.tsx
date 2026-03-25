@@ -53,6 +53,7 @@ interface Influencer {
   tiktokHandle?: string;
   tiktokFollowers: number;
   youtubeHandle?: string;
+  youtubeSubscribers: number;
   followers: number;
   status: string;
   isVerified: boolean;
