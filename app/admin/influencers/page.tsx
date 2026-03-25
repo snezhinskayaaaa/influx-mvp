@@ -368,25 +368,23 @@ export default function AdminInfluencers() {
                 </div>
               )}
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-2">
                 {selectedInfluencer.instagramHandle && (
                   <div>
                     <p className="font-medium text-muted-foreground mb-1">Instagram</p>
-                    <p>@{selectedInfluencer.instagramHandle}</p>
-                    <p className="text-muted-foreground">{(selectedInfluencer.instagramFollowers || 0).toLocaleString()} followers</p>
+                    <a href={selectedInfluencer.instagramHandle.startsWith('http') ? selectedInfluencer.instagramHandle : `https://instagram.com/${selectedInfluencer.instagramHandle}`} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline break-all text-sm">{selectedInfluencer.instagramHandle}</a>
                   </div>
                 )}
                 {selectedInfluencer.tiktokHandle && (
                   <div>
                     <p className="font-medium text-muted-foreground mb-1">TikTok</p>
-                    <p>@{selectedInfluencer.tiktokHandle}</p>
-                    <p className="text-muted-foreground">{(selectedInfluencer.tiktokFollowers || 0).toLocaleString()} followers</p>
+                    <a href={selectedInfluencer.tiktokHandle.startsWith('http') ? selectedInfluencer.tiktokHandle : `https://tiktok.com/@${selectedInfluencer.tiktokHandle}`} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline break-all text-sm">{selectedInfluencer.tiktokHandle}</a>
                   </div>
                 )}
                 {selectedInfluencer.youtubeHandle && (
                   <div>
                     <p className="font-medium text-muted-foreground mb-1">YouTube</p>
-                    <p>@{selectedInfluencer.youtubeHandle}</p>
+                    <a href={selectedInfluencer.youtubeHandle.startsWith('http') ? selectedInfluencer.youtubeHandle : `https://youtube.com/@${selectedInfluencer.youtubeHandle}`} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline break-all text-sm">{selectedInfluencer.youtubeHandle}</a>
                   </div>
                 )}
               </div>
