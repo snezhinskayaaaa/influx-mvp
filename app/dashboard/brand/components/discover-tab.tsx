@@ -13,11 +13,22 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { motion } from "framer-motion";
 import {
   Search,
   Filter,
   CheckCircle2,
+  MapPin,
+  Globe,
+  Instagram,
+  X,
 } from "lucide-react";
 import type { Influencer } from "./types";
 
@@ -35,6 +46,8 @@ export function DiscoverTab({ influencers, onCollaborate }: DiscoverTabProps) {
   const [selectedEthnicity, setSelectedEthnicity] = useState("all");
   const [selectedAge, setSelectedAge] = useState("all");
   const [showFilters, setShowFilters] = useState(false);
+  const [selectedInfluencer, setSelectedInfluencer] = useState<Influencer | null>(null);
+  const [showDetailModal, setShowDetailModal] = useState(false);
 
   const filteredInfluencers = influencers.filter((influencer) => {
     const matchesSearch = influencer.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -75,6 +88,31 @@ export function DiscoverTab({ influencers, onCollaborate }: DiscoverTabProps) {
 
     return matchesSearch && matchesCategory && matchesFollowers && matchesEngagement && matchesGender && matchesEthnicity && matchesAge;
   });
+
+  const handleCardClick = (influencer: Influencer) => {
+    setSelectedInfluencer(influencer);
+    setShowDetailModal(true);
+  };
+
+  const renderAvatar = (influencer: Influencer, sizeClass: string, textClass: string) => {
+    if (influencer.avatarUrl) {
+      return (
+        <div className={`${sizeClass} rounded-full overflow-hidden shrink-0`}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={influencer.avatarUrl}
+            alt={influencer.name}
+            className="w-full h-full object-cover"
+          />
+        </div>
+      );
+    }
+    return (
+      <div className={`${sizeClass} rounded-full bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center ${textClass} font-semibold shrink-0`}>
+        {influencer.avatar}
+      </div>
+    );
+  };
 
   return (
     <motion.div
@@ -263,12 +301,10 @@ export function DiscoverTab({ influencers, onCollaborate }: DiscoverTabProps) {
         {filteredInfluencers.map((influencer) => (
           <Card key={influencer.id} className="p-2 sm:p-4 hover:shadow-lg transition-shadow">
             <button
-              disabled
+              onClick={() => handleCardClick(influencer)}
               className="flex items-center gap-1.5 sm:gap-3 mb-1 sm:mb-2 w-full text-left hover:opacity-80 transition-opacity"
             >
-              <div className="w-9 h-9 sm:w-12 sm:h-12 rounded-full bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center text-base sm:text-xl cursor-pointer shrink-0">
-                {influencer.avatar}
-              </div>
+              {renderAvatar(influencer, "w-9 h-9 sm:w-12 sm:h-12", "text-base sm:text-xl")}
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-1 leading-none">
                   <h3 className="font-semibold text-xs sm:text-sm truncate cursor-pointer">{influencer.name}</h3>
@@ -280,9 +316,19 @@ export function DiscoverTab({ influencers, onCollaborate }: DiscoverTabProps) {
               </div>
             </button>
 
-            <Badge className="mb-1 sm:mb-2 bg-secondary/10 text-secondary border-secondary/30 text-[9px] sm:text-[10px] py-0 px-1.5 h-4 sm:h-5">
-              {influencer.category}
-            </Badge>
+            {influencer.bio && (
+              <p className="text-[10px] sm:text-xs text-muted-foreground mb-1 sm:mb-2 line-clamp-2">
+                {influencer.bio}
+              </p>
+            )}
+
+            <div className="flex flex-wrap gap-1 mb-1 sm:mb-2">
+              {(influencer.niche && influencer.niche.length > 0 ? influencer.niche : [influencer.category]).map((tag) => (
+                <Badge key={tag} className="bg-secondary/10 text-secondary border-secondary/30 text-[9px] sm:text-[10px] py-0 px-1.5 h-4 sm:h-5">
+                  {tag}
+                </Badge>
+              ))}
+            </div>
 
             <div className="grid grid-cols-2 gap-1.5 sm:gap-2 mb-1 sm:mb-2">
               <div className="leading-none">
@@ -311,6 +357,185 @@ export function DiscoverTab({ influencers, onCollaborate }: DiscoverTabProps) {
           </Card>
         ))}
       </div>
+
+      {/* Influencer Detail Modal */}
+      <Dialog open={showDetailModal} onOpenChange={setShowDetailModal}>
+        <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-3">
+              {selectedInfluencer && renderAvatar(selectedInfluencer, "w-14 h-14", "text-2xl")}
+              <div>
+                <div className="flex items-center gap-1.5">
+                  <span className="text-lg font-bold">{selectedInfluencer?.name}</span>
+                  {selectedInfluencer?.verified && (
+                    <CheckCircle2 className="h-4 w-4 text-primary" />
+                  )}
+                </div>
+                <div className="text-sm text-muted-foreground font-normal">{selectedInfluencer?.username}</div>
+              </div>
+            </DialogTitle>
+            <DialogDescription>
+              Influencer profile and rates
+            </DialogDescription>
+          </DialogHeader>
+
+          {selectedInfluencer && (
+            <div className="space-y-4 mt-2">
+              {/* Bio */}
+              {selectedInfluencer.bio && (
+                <div>
+                  <div className="text-xs font-medium text-muted-foreground mb-1">Bio</div>
+                  <p className="text-sm">{selectedInfluencer.bio}</p>
+                </div>
+              )}
+
+              {/* Niche Tags */}
+              {selectedInfluencer.niche && selectedInfluencer.niche.length > 0 && (
+                <div className="flex flex-wrap gap-1.5">
+                  {selectedInfluencer.niche.map((tag) => (
+                    <Badge key={tag} className="bg-secondary/10 text-secondary border-secondary/30 text-xs">
+                      {tag}
+                    </Badge>
+                  ))}
+                </div>
+              )}
+
+              {/* Location & Languages */}
+              {(selectedInfluencer.location || (selectedInfluencer.languages && selectedInfluencer.languages.length > 0)) && (
+                <div className="flex flex-wrap gap-3 text-sm text-muted-foreground">
+                  {selectedInfluencer.location && (
+                    <span className="flex items-center gap-1">
+                      <MapPin className="h-3.5 w-3.5" />
+                      {selectedInfluencer.location}
+                    </span>
+                  )}
+                  {selectedInfluencer.languages && selectedInfluencer.languages.length > 0 && (
+                    <span className="flex items-center gap-1">
+                      <Globe className="h-3.5 w-3.5" />
+                      {selectedInfluencer.languages.join(", ")}
+                    </span>
+                  )}
+                </div>
+              )}
+
+              {/* Stats */}
+              <div className="grid grid-cols-2 gap-3">
+                <div className="p-3 rounded-lg bg-muted/30 border">
+                  <div className="text-xs text-muted-foreground mb-0.5">Total Followers</div>
+                  <div className="font-bold text-lg">{selectedInfluencer.followers}</div>
+                  <div className="text-[10px] text-muted-foreground mt-1 space-y-0.5">
+                    {(selectedInfluencer.instagramFollowers ?? 0) > 0 && (
+                      <div>Instagram: {(selectedInfluencer.instagramFollowers ?? 0).toLocaleString()}</div>
+                    )}
+                    {(selectedInfluencer.tiktokFollowers ?? 0) > 0 && (
+                      <div>TikTok: {(selectedInfluencer.tiktokFollowers ?? 0).toLocaleString()}</div>
+                    )}
+                  </div>
+                </div>
+                <div className="p-3 rounded-lg bg-muted/30 border">
+                  <div className="text-xs text-muted-foreground mb-0.5">Engagement Rate</div>
+                  <div className="font-bold text-lg text-primary">{selectedInfluencer.engagement}</div>
+                </div>
+              </div>
+
+              {/* Social Handles */}
+              {(selectedInfluencer.instagramHandle || selectedInfluencer.tiktokHandle || selectedInfluencer.youtubeHandle || selectedInfluencer.twitterHandle) && (
+                <div>
+                  <div className="text-xs font-medium text-muted-foreground mb-2">Social Profiles</div>
+                  <div className="flex flex-wrap gap-2">
+                    {selectedInfluencer.instagramHandle && (
+                      <a
+                        href={`https://instagram.com/${selectedInfluencer.instagramHandle}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-1.5 text-xs px-2.5 py-1.5 rounded-lg bg-muted/50 border hover:bg-primary/10 hover:text-primary hover:border-primary/30 transition-colors"
+                      >
+                        <Instagram className="h-3.5 w-3.5" />
+                        @{selectedInfluencer.instagramHandle}
+                      </a>
+                    )}
+                    {selectedInfluencer.tiktokHandle && (
+                      <a
+                        href={`https://tiktok.com/@${selectedInfluencer.tiktokHandle}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-1.5 text-xs px-2.5 py-1.5 rounded-lg bg-muted/50 border hover:bg-primary/10 hover:text-primary hover:border-primary/30 transition-colors"
+                      >
+                        TikTok @{selectedInfluencer.tiktokHandle}
+                      </a>
+                    )}
+                    {selectedInfluencer.youtubeHandle && (
+                      <a
+                        href={`https://youtube.com/@${selectedInfluencer.youtubeHandle}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-1.5 text-xs px-2.5 py-1.5 rounded-lg bg-muted/50 border hover:bg-primary/10 hover:text-primary hover:border-primary/30 transition-colors"
+                      >
+                        YouTube @{selectedInfluencer.youtubeHandle}
+                      </a>
+                    )}
+                    {selectedInfluencer.twitterHandle && (
+                      <a
+                        href={`https://twitter.com/${selectedInfluencer.twitterHandle}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-1.5 text-xs px-2.5 py-1.5 rounded-lg bg-muted/50 border hover:bg-primary/10 hover:text-primary hover:border-primary/30 transition-colors"
+                      >
+                        <X className="h-3.5 w-3.5" />
+                        @{selectedInfluencer.twitterHandle}
+                      </a>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* Pricing */}
+              <div>
+                <div className="text-xs font-medium text-muted-foreground mb-2">Pricing</div>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                  {selectedInfluencer.pricingCPM && (
+                    <div className="p-3 rounded-lg bg-primary/5 border border-primary/20">
+                      <div className="text-[10px] text-muted-foreground mb-0.5">CPM</div>
+                      <div className="font-bold text-sm">{selectedInfluencer.pricingCPM}</div>
+                      <div className="text-[10px] text-muted-foreground">per 1K views</div>
+                    </div>
+                  )}
+                  {selectedInfluencer.pricingCPC && (
+                    <div className="p-3 rounded-lg bg-primary/5 border border-primary/20">
+                      <div className="text-[10px] text-muted-foreground mb-0.5">CPC</div>
+                      <div className="font-bold text-sm">{selectedInfluencer.pricingCPC}</div>
+                      <div className="text-[10px] text-muted-foreground">per click</div>
+                    </div>
+                  )}
+                  {selectedInfluencer.pricingCPE && (
+                    <div className="p-3 rounded-lg bg-primary/5 border border-primary/20">
+                      <div className="text-[10px] text-muted-foreground mb-0.5">CPE</div>
+                      <div className="font-bold text-sm">{selectedInfluencer.pricingCPE}</div>
+                      <div className="text-[10px] text-muted-foreground">per engagement</div>
+                    </div>
+                  )}
+                  {!selectedInfluencer.pricingCPM && !selectedInfluencer.pricingCPC && !selectedInfluencer.pricingCPE && (
+                    <div className="p-3 rounded-lg bg-muted/30 border col-span-full">
+                      <div className="text-sm text-muted-foreground">Rate: {selectedInfluencer.rate}</div>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Collaborate Button */}
+              <Button
+                className="w-full h-11 bg-gradient-to-r from-primary to-secondary hover:opacity-90 text-white"
+                onClick={() => {
+                  setShowDetailModal(false);
+                  onCollaborate(selectedInfluencer);
+                }}
+              >
+                Invite to Campaign
+              </Button>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </motion.div>
   );
 }

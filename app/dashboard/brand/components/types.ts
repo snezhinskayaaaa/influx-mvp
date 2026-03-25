@@ -14,6 +14,7 @@ export interface Influencer {
   name: string;
   username: string;
   avatar: string;
+  avatarUrl?: string;
   followers: string;
   engagement: string;
   category: string;
@@ -22,9 +23,19 @@ export interface Influencer {
   gender: string;
   ethnicity: string;
   age: string;
+  bio?: string;
+  niche?: string[];
   pricingCPM?: string;
   pricingCPC?: string;
   pricingCPE?: string;
+  instagramHandle?: string;
+  tiktokHandle?: string;
+  youtubeHandle?: string;
+  twitterHandle?: string;
+  location?: string;
+  languages?: string[];
+  instagramFollowers?: number;
+  tiktokFollowers?: number;
 }
 
 export interface ContentRevision {

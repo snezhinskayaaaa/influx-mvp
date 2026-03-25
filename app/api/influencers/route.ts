@@ -75,6 +75,18 @@ export async function GET(request: NextRequest) {
           cpeMax: true,
           isVerified: true,
           isFeatured: true,
+          instagramHandle: true,
+          tiktokHandle: true,
+          youtubeHandle: true,
+          twitterHandle: true,
+          location: true,
+          languages: true,
+          portfolioImages: true,
+          profile: {
+            select: {
+              avatarUrl: true,
+            },
+          },
         },
         skip,
         take: limit,

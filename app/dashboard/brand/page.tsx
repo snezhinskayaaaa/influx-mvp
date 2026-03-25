@@ -123,31 +123,83 @@ export default function BrandDashboard() {
           if (data.influencers && data.influencers.length > 0) {
             const transformedInfluencers: Influencer[] = data.influencers.map((inf: Record<string, unknown>) => {
               const igFollowers = (inf.instagramFollowers as number) || 0;
+              const tkFollowers = (inf.tiktokFollowers as number) || 0;
               let followersStr: string;
-              if (igFollowers >= 1_000_000) {
-                followersStr = `${(igFollowers / 1_000_000).toFixed(1)}M`;
-              } else if (igFollowers >= 1_000) {
-                followersStr = `${(igFollowers / 1_000).toFixed(0)}K`;
+              const totalFollowers = igFollowers + tkFollowers;
+              if (totalFollowers >= 1_000_000) {
+                followersStr = `${(totalFollowers / 1_000_000).toFixed(1)}M`;
+              } else if (totalFollowers >= 1_000) {
+                followersStr = `${(totalFollowers / 1_000).toFixed(0)}K`;
               } else {
-                followersStr = String(igFollowers);
+                followersStr = String(totalFollowers);
               }
 
               const engagement = inf.instagramEngagement != null ? Number(inf.instagramEngagement) : 0;
+
+              // Build CPM/CPC/CPE rate strings from cents
+              const cpmMin = (inf.cpmMin as number) || 0;
+              const cpmMax = (inf.cpmMax as number) || 0;
+              const cpcMin = (inf.cpcMin as number) || 0;
+              const cpcMax = (inf.cpcMax as number) || 0;
+              const cpeMin = (inf.cpeMin as number) || 0;
+              const cpeMax = (inf.cpeMax as number) || 0;
+
+              const formatRange = (min: number, max: number) => {
+                if (min && max) return `$${(min / 100).toFixed(2)} - $${(max / 100).toFixed(2)}`;
+                if (min) return `$${(min / 100).toFixed(2)}`;
+                if (max) return `$${(max / 100).toFixed(2)}`;
+                return undefined;
+              };
+
+              const pricingCPM = formatRange(cpmMin, cpmMax);
+              const pricingCPC = formatRange(cpcMin, cpcMax);
+              const pricingCPE = formatRange(cpeMin, cpeMax);
+
+              // Determine primary rate display
               const pricePerPost = (inf.pricePerPost as number) || 0;
+              let rateStr: string;
+              if (pricingCPM) {
+                rateStr = pricingCPM;
+              } else if (pricePerPost) {
+                rateStr = `$${(pricePerPost / 100).toFixed(0)}`;
+              } else {
+                rateStr = 'N/A';
+              }
+
+              // Extract avatarUrl from profile relation
+              const profile = inf.profile as Record<string, unknown> | null;
+              const avatarUrl = profile?.avatarUrl as string | undefined;
+
+              const handle = (inf.handle as string) || '';
+              const nicheArr = Array.isArray(inf.niche) ? (inf.niche as string[]) : [];
 
               return {
                 id: inf.id,
-                name: (inf.handle as string) || '',
-                username: `@${(inf.handle as string) || ''}`,
-                avatar: '🌟',
+                name: handle,
+                username: `@${handle}`,
+                avatar: handle ? handle.charAt(0).toUpperCase() : '?',
+                avatarUrl: avatarUrl || undefined,
                 followers: followersStr,
                 engagement: `${engagement.toFixed(1)}%`,
-                category: Array.isArray(inf.niche) && (inf.niche as string[]).length > 0 ? (inf.niche as string[])[0] : 'Other',
-                rate: `$${(pricePerPost / 100).toFixed(0)}`,
+                category: nicheArr.length > 0 ? nicheArr[0] : 'Other',
+                rate: rateStr,
                 verified: (inf.isVerified as boolean) || false,
                 gender: 'Unknown',
                 ethnicity: 'Unknown',
                 age: 'Unknown',
+                bio: (inf.bio as string) || undefined,
+                niche: nicheArr,
+                pricingCPM,
+                pricingCPC,
+                pricingCPE,
+                instagramHandle: (inf.instagramHandle as string) || undefined,
+                tiktokHandle: (inf.tiktokHandle as string) || undefined,
+                youtubeHandle: (inf.youtubeHandle as string) || undefined,
+                twitterHandle: (inf.twitterHandle as string) || undefined,
+                location: (inf.location as string) || undefined,
+                languages: Array.isArray(inf.languages) ? (inf.languages as string[]) : undefined,
+                instagramFollowers: igFollowers,
+                tiktokFollowers: tkFollowers,
               } as Influencer;
             });
             setInfluencers(transformedInfluencers);
