@@ -1217,7 +1217,7 @@ export default function InfluencerDashboard() {
                                 {selectedCampaignDetails.platforms.map((platform) => (
                                   <Badge key={platform} variant="outline" className="capitalize">
                                     {platform === "Instagram" && <Instagram className="h-3 w-3 mr-1" />}
-                                    {platform === "TikTok" && <TrendingUp className="h-3 w-3 mr-1" />}
+                                    {platform === "TikTok" && <svg className="h-3 w-3 mr-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5" /></svg>}
                                     {platform === "YouTube" && <Youtube className="h-3 w-3 mr-1" />}
                                     {platform === "Twitter" && <Twitter className="h-3 w-3 mr-1" />}
                                     {platform}
@@ -2047,7 +2047,9 @@ export default function InfluencerDashboard() {
 
                     <div className="flex gap-2">
                       <div className="relative flex-1">
-                        <TrendingUp className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                        <svg className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5" />
+                        </svg>
                         <Input
                           placeholder="TikTok URL or @handle"
                           value={profileData.tiktok}

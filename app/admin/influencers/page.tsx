@@ -58,6 +58,17 @@ interface Influencer {
   isVerified: boolean;
   isFeatured: boolean;
   createdAt: string;
+  profile?: {
+    email?: string;
+    fullName?: string;
+    avatarUrl?: string;
+  };
+  cpmMin?: number;
+  cpmMax?: number;
+  cpcMin?: number;
+  cpcMax?: number;
+  cpeMin?: number;
+  cpeMax?: number;
 }
 
 export default function AdminInfluencers() {
@@ -74,11 +85,19 @@ export default function AdminInfluencers() {
       const res = await fetch("/api/admin/influencers");
       const data = await res.json();
       // Map nested profile.email to flat email
-      const mapped = (data.influencers || []).map((inf: Record<string, unknown>) => ({
-        ...inf,
-        email: (inf.profile as Record<string, unknown>)?.email || '',
-        fullName: (inf.profile as Record<string, unknown>)?.fullName || '',
-      }));
+      const mapped = (data.influencers || []).map((inf: Record<string, unknown>) => {
+        const profile = inf.profile as Record<string, unknown> | undefined;
+        return {
+          ...inf,
+          email: profile?.email || '',
+          fullName: profile?.fullName || '',
+          profile: profile ? {
+            email: profile.email as string | undefined,
+            fullName: profile.fullName as string | undefined,
+            avatarUrl: profile.avatarUrl as string | undefined,
+          } : undefined,
+        };
+      });
       setInfluencers(mapped);
     } catch (error) {
       console.error("Failed to fetch influencers:", error);
@@ -130,6 +149,38 @@ export default function AdminInfluencers() {
       inf.email?.toLowerCase().includes(search.toLowerCase());
     return matchesTab && matchesSearch;
   });
+
+  const extractUsername = (url: string, platform: string): string => {
+    if (!url) return "";
+    const prefixes: Record<string, string[]> = {
+      instagram: ["https://www.instagram.com/", "https://instagram.com/", "http://www.instagram.com/", "http://instagram.com/"],
+      tiktok: ["https://www.tiktok.com/", "https://tiktok.com/", "http://www.tiktok.com/", "http://tiktok.com/"],
+      youtube: ["https://www.youtube.com/", "https://youtube.com/", "http://www.youtube.com/", "http://youtube.com/"],
+    };
+    let cleaned = url.trim();
+    const platformPrefixes = prefixes[platform] || [];
+    for (const prefix of platformPrefixes) {
+      if (cleaned.toLowerCase().startsWith(prefix)) {
+        cleaned = cleaned.slice(prefix.length);
+        break;
+      }
+    }
+    cleaned = cleaned.split("?")[0].replace(/\/$/, "");
+    if (cleaned.startsWith("@")) {
+      cleaned = cleaned.slice(1);
+    }
+    return cleaned;
+  };
+
+  const formatCents = (min?: number, max?: number): string | null => {
+    if (!min && !max) return null;
+    const fmtMin = min ? `$${(min / 100).toFixed(2)}` : null;
+    const fmtMax = max ? `$${(max / 100).toFixed(2)}` : null;
+    if (fmtMin && fmtMax) return `${fmtMin} — ${fmtMax}`;
+    if (fmtMin) return `from ${fmtMin}`;
+    if (fmtMax) return `up to ${fmtMax}`;
+    return null;
+  };
 
   const tabCounts = {
     all: influencers.length,
@@ -237,10 +288,14 @@ export default function AdminInfluencers() {
                       onClick={() => setSelectedInfluencer(inf)}
                     >
                       <div className="sm:col-span-3 flex items-center gap-3">
-                        <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-                          <span className="text-sm font-semibold text-primary">
-                            {inf.handle?.charAt(0)?.toUpperCase() || "?"}
-                          </span>
+                        <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center shrink-0 overflow-hidden">
+                          {inf.profile?.avatarUrl ? (
+                            <img src={inf.profile.avatarUrl} alt={inf.handle} className="w-full h-full object-cover" />
+                          ) : (
+                            <span className="text-sm font-semibold text-primary">
+                              {inf.handle?.charAt(0)?.toUpperCase() || "?"}
+                            </span>
+                          )}
                         </div>
                         <div>
                           <p className="text-sm font-medium text-foreground">
@@ -328,39 +383,66 @@ export default function AdminInfluencers() {
       </main>
 
       {/* Profile Detail Modal */}
-      {selectedInfluencer && (
+      {selectedInfluencer && (() => {
+        const displayHandle = selectedInfluencer.handle?.startsWith("@")
+          ? selectedInfluencer.handle
+          : `@${selectedInfluencer.handle}`;
+        const avatarUrl = selectedInfluencer.profile?.avatarUrl;
+        const cpmRate = formatCents(selectedInfluencer.cpmMin, selectedInfluencer.cpmMax);
+        const cpcRate = formatCents(selectedInfluencer.cpcMin, selectedInfluencer.cpcMax);
+        const cpeRate = formatCents(selectedInfluencer.cpeMin, selectedInfluencer.cpeMax);
+        const hasRates = cpmRate || cpcRate || cpeRate;
+
+        return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm" onClick={() => setSelectedInfluencer(null)}>
           <div className="bg-background border border-border rounded-2xl p-6 w-full max-w-lg mx-4 shadow-2xl max-h-[80vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
-            <div className="flex items-center justify-between mb-4">
+            {/* Close button */}
+            <div className="flex items-center justify-between mb-5">
               <h3 className="text-lg font-bold">Influencer Profile</h3>
               <Button variant="ghost" size="sm" onClick={() => setSelectedInfluencer(null)}>
                 <XCircle className="h-5 w-5" />
               </Button>
             </div>
 
-            <div className="flex items-center gap-4 mb-4 pb-4 border-b">
-              <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center">
-                <span className="text-xl font-bold text-primary">{selectedInfluencer.handle?.charAt(0)?.toUpperCase()}</span>
+            {/* Header: Avatar + Info */}
+            <div className="flex items-center gap-4 mb-5 pb-5 border-b border-border/50">
+              <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center shrink-0 overflow-hidden">
+                {avatarUrl ? (
+                  <img src={avatarUrl} alt={selectedInfluencer.handle} className="w-full h-full object-cover" />
+                ) : (
+                  <span className="text-2xl font-bold text-primary">{selectedInfluencer.handle?.charAt(0)?.toUpperCase()}</span>
+                )}
               </div>
-              <div>
-                <p className="font-semibold text-lg">@{selectedInfluencer.handle}</p>
-                <p className="text-sm text-muted-foreground">{selectedInfluencer.email}</p>
-                {selectedInfluencer.fullName && <p className="text-sm text-muted-foreground">{selectedInfluencer.fullName}</p>}
+              <div className="min-w-0">
+                <p className="font-semibold text-lg truncate">{displayHandle}</p>
+                {selectedInfluencer.fullName && (
+                  <p className="text-sm text-muted-foreground">{selectedInfluencer.fullName}</p>
+                )}
+                <p className="text-sm text-muted-foreground truncate">{selectedInfluencer.email}</p>
+              </div>
+              <div className="ml-auto">
+                <Badge className={
+                  selectedInfluencer.status === "approved" ? "bg-green-500/10 text-green-600 border-green-500/20" :
+                  selectedInfluencer.status === "pending" ? "bg-yellow-500/10 text-yellow-600 border-yellow-500/20" :
+                  "bg-red-500/10 text-red-600 border-red-500/20"
+                }>{selectedInfluencer.status}</Badge>
               </div>
             </div>
 
-            <div className="space-y-3 text-sm">
+            <div className="space-y-4 text-sm">
+              {/* Bio */}
               {selectedInfluencer.bio && (
                 <div>
                   <p className="font-medium text-muted-foreground mb-1">Bio</p>
-                  <p>{selectedInfluencer.bio}</p>
+                  <p className="text-foreground">{selectedInfluencer.bio}</p>
                 </div>
               )}
 
+              {/* Niche */}
               {selectedInfluencer.niche && selectedInfluencer.niche.length > 0 && (
                 <div>
-                  <p className="font-medium text-muted-foreground mb-1">Niche</p>
-                  <div className="flex gap-1 flex-wrap">
+                  <p className="font-medium text-muted-foreground mb-1.5">Niche</p>
+                  <div className="flex gap-1.5 flex-wrap">
                     {selectedInfluencer.niche.map((n: string) => (
                       <Badge key={n} className="bg-primary/10 text-primary border-primary/20">{n}</Badge>
                     ))}
@@ -368,67 +450,111 @@ export default function AdminInfluencers() {
                 </div>
               )}
 
+              {/* Social Media */}
               <div>
                 <p className="font-medium text-muted-foreground mb-2">Social Media</p>
                 <div className="space-y-2">
                   {selectedInfluencer.instagramHandle && (
-                    <div className="flex items-center justify-between rounded-lg border border-border p-3">
-                      <div className="flex items-center gap-2">
-                        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
-                          <span className="text-white text-xs font-bold">IG</span>
+                    <a
+                      href={selectedInfluencer.instagramHandle.startsWith("http") ? selectedInfluencer.instagramHandle : `https://instagram.com/${selectedInfluencer.instagramHandle.replace(/^@/, "")}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center justify-between rounded-lg border border-border p-3 hover:bg-muted/30 transition-colors group"
+                    >
+                      <div className="flex items-center gap-2.5">
+                        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500 via-pink-500 to-orange-400 flex items-center justify-center">
+                          <svg className="h-4 w-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
+                            <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+                            <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
+                          </svg>
                         </div>
-                        <a href={selectedInfluencer.instagramHandle.startsWith('http') ? selectedInfluencer.instagramHandle : `https://instagram.com/${selectedInfluencer.instagramHandle}`} target="_blank" rel="noopener noreferrer" className="text-sm font-medium text-primary hover:underline">
-                          {selectedInfluencer.instagramHandle.includes('instagram.com/') ? selectedInfluencer.instagramHandle.split('instagram.com/')[1]?.split('?')[0] || selectedInfluencer.instagramHandle : selectedInfluencer.instagramHandle}
-                        </a>
+                        <span className="text-sm font-medium text-foreground group-hover:text-primary transition-colors">
+                          @{extractUsername(selectedInfluencer.instagramHandle, "instagram")}
+                        </span>
                       </div>
                       {selectedInfluencer.instagramFollowers > 0 && (
-                        <Badge className="bg-muted text-foreground border-border">{selectedInfluencer.instagramFollowers.toLocaleString()} followers</Badge>
+                        <Badge className="bg-muted text-foreground border-border text-xs">{selectedInfluencer.instagramFollowers.toLocaleString()}</Badge>
                       )}
-                    </div>
+                    </a>
                   )}
                   {selectedInfluencer.tiktokHandle && (
-                    <div className="flex items-center justify-between rounded-lg border border-border p-3">
-                      <div className="flex items-center gap-2">
+                    <a
+                      href={selectedInfluencer.tiktokHandle.startsWith("http") ? selectedInfluencer.tiktokHandle : `https://tiktok.com/@${selectedInfluencer.tiktokHandle.replace(/^@/, "")}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center justify-between rounded-lg border border-border p-3 hover:bg-muted/30 transition-colors group"
+                    >
+                      <div className="flex items-center gap-2.5">
                         <div className="w-8 h-8 rounded-lg bg-black flex items-center justify-center">
-                          <span className="text-white text-xs font-bold">TT</span>
+                          <svg className="h-4 w-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5" />
+                          </svg>
                         </div>
-                        <a href={selectedInfluencer.tiktokHandle.startsWith('http') ? selectedInfluencer.tiktokHandle : `https://tiktok.com/@${selectedInfluencer.tiktokHandle}`} target="_blank" rel="noopener noreferrer" className="text-sm font-medium text-primary hover:underline">
-                          {selectedInfluencer.tiktokHandle.includes('tiktok.com/') ? selectedInfluencer.tiktokHandle.split('tiktok.com/')[1]?.split('?')[0] || selectedInfluencer.tiktokHandle : selectedInfluencer.tiktokHandle}
-                        </a>
+                        <span className="text-sm font-medium text-foreground group-hover:text-primary transition-colors">
+                          @{extractUsername(selectedInfluencer.tiktokHandle, "tiktok")}
+                        </span>
                       </div>
                       {selectedInfluencer.tiktokFollowers > 0 && (
-                        <Badge className="bg-muted text-foreground border-border">{selectedInfluencer.tiktokFollowers.toLocaleString()} followers</Badge>
+                        <Badge className="bg-muted text-foreground border-border text-xs">{selectedInfluencer.tiktokFollowers.toLocaleString()}</Badge>
                       )}
-                    </div>
+                    </a>
                   )}
                   {selectedInfluencer.youtubeHandle && (
-                    <div className="flex items-center justify-between rounded-lg border border-border p-3">
-                      <div className="flex items-center gap-2">
+                    <a
+                      href={selectedInfluencer.youtubeHandle.startsWith("http") ? selectedInfluencer.youtubeHandle : `https://youtube.com/@${selectedInfluencer.youtubeHandle.replace(/^@/, "")}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center justify-between rounded-lg border border-border p-3 hover:bg-muted/30 transition-colors group"
+                    >
+                      <div className="flex items-center gap-2.5">
                         <div className="w-8 h-8 rounded-lg bg-red-600 flex items-center justify-center">
-                          <span className="text-white text-xs font-bold">YT</span>
+                          <svg className="h-4 w-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M2.5 17a24.12 24.12 0 0 1 0-10 2 2 0 0 1 1.4-1.4 49.56 49.56 0 0 1 16.2 0A2 2 0 0 1 21.5 7a24.12 24.12 0 0 1 0 10 2 2 0 0 1-1.4 1.4 49.55 49.55 0 0 1-16.2 0A2 2 0 0 1 2.5 17" />
+                            <path d="m10 15 5-3-5-3z" />
+                          </svg>
                         </div>
-                        <a href={selectedInfluencer.youtubeHandle.startsWith('http') ? selectedInfluencer.youtubeHandle : `https://youtube.com/@${selectedInfluencer.youtubeHandle}`} target="_blank" rel="noopener noreferrer" className="text-sm font-medium text-primary hover:underline">
-                          {selectedInfluencer.youtubeHandle.includes('youtube.com/') ? selectedInfluencer.youtubeHandle.split('youtube.com/')[1]?.split('?')[0] || selectedInfluencer.youtubeHandle : selectedInfluencer.youtubeHandle}
-                        </a>
+                        <span className="text-sm font-medium text-foreground group-hover:text-primary transition-colors">
+                          @{extractUsername(selectedInfluencer.youtubeHandle, "youtube")}
+                        </span>
                       </div>
-                    </div>
+                    </a>
                   )}
                 </div>
               </div>
 
-              <div className="flex items-center gap-2 pt-2">
-                <p className="font-medium text-muted-foreground">Status:</p>
-                <Badge className={
-                  selectedInfluencer.status === "approved" ? "bg-green-500/10 text-green-600 border-green-500/20" :
-                  selectedInfluencer.status === "pending" ? "bg-yellow-500/10 text-yellow-600 border-yellow-500/20" :
-                  "bg-red-500/10 text-red-600 border-red-500/20"
-                }>{selectedInfluencer.status}</Badge>
-              </div>
+              {/* CPM/CPC/CPE Rates */}
+              {hasRates && (
+                <div>
+                  <p className="font-medium text-muted-foreground mb-2">Pricing Rates</p>
+                  <div className="grid grid-cols-3 gap-2">
+                    {cpmRate && (
+                      <div className="rounded-lg border border-border p-3 text-center">
+                        <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider mb-1">CPM</p>
+                        <p className="text-sm font-semibold text-foreground">{cpmRate}</p>
+                      </div>
+                    )}
+                    {cpcRate && (
+                      <div className="rounded-lg border border-border p-3 text-center">
+                        <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider mb-1">CPC</p>
+                        <p className="text-sm font-semibold text-foreground">{cpcRate}</p>
+                      </div>
+                    )}
+                    {cpeRate && (
+                      <div className="rounded-lg border border-border p-3 text-center">
+                        <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider mb-1">CPE</p>
+                        <p className="text-sm font-semibold text-foreground">{cpeRate}</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
 
-              <p className="text-muted-foreground">Registered: {new Date(selectedInfluencer.createdAt).toLocaleDateString()}</p>
+              <p className="text-xs text-muted-foreground">Registered {new Date(selectedInfluencer.createdAt).toLocaleDateString()}</p>
             </div>
 
-            <div className="flex gap-2 mt-6 pt-4 border-t">
+            {/* Action buttons */}
+            <div className="flex gap-2 mt-6 pt-4 border-t border-border/50">
               {selectedInfluencer.status !== "approved" && (
                 <Button
                   className="flex-1 bg-green-600 hover:bg-green-700 text-white"
@@ -457,7 +583,8 @@ export default function AdminInfluencers() {
             </div>
           </div>
         </div>
-      )}
+        );
+      })()}
     </div>
   );
 }
