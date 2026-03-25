@@ -97,10 +97,18 @@ model Influencer {
   youtubeSubscribers Int      @default(0) @map("youtube_subscribers")
   youtubeEngagement  Decimal  @default(0) @map("youtube_engagement") @db.Decimal(5, 2)
 
-  // Pricing (in cents)
+  // Pricing (in cents) — legacy fields, kept for compatibility
   pricePerPost  Int? @map("price_per_post")
   pricePerStory Int? @map("price_per_story")
   pricePerVideo Int? @map("price_per_video")
+
+  // CPM/CPC/CPE pricing model (in cents)
+  cpmMin Int? @map("cpm_min") // Cost per 1000 views — min rate
+  cpmMax Int? @map("cpm_max") // Cost per 1000 views — max rate
+  cpcMin Int? @map("cpc_min") // Cost per click — min rate
+  cpcMax Int? @map("cpc_max") // Cost per click — max rate
+  cpeMin Int? @map("cpe_min") // Cost per engagement — min rate
+  cpeMax Int? @map("cpe_max") // Cost per engagement — max rate
 
   // Portfolio
   portfolioImages    String[] @default([]) @map("portfolio_images")

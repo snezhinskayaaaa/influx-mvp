@@ -64,6 +64,12 @@ const PRICE_FIELDS = [
   'pricePerPost',
   'pricePerStory',
   'pricePerVideo',
+  'cpmMin',
+  'cpmMax',
+  'cpcMin',
+  'cpcMax',
+  'cpeMin',
+  'cpeMax',
 ] as const
 
 export async function PATCH(request: NextRequest) {

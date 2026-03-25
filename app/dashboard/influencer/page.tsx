@@ -430,12 +430,12 @@ export default function InfluencerDashboard() {
                 twitter: '',
                 youtube: inf.youtubeHandle || '',
                 youtubeSubscribers: inf.youtubeSubscribers ? String(inf.youtubeSubscribers) : '',
-                cpmMin: inf.pricePerPost ? String(inf.pricePerPost / 100) : '',
-                cpmMax: '',
-                cpcMin: inf.pricePerStory ? String(inf.pricePerStory / 100) : '',
-                cpcMax: '',
-                cpeMin: inf.pricePerVideo ? String(inf.pricePerVideo / 100) : '',
-                cpeMax: '',
+                cpmMin: inf.cpmMin ? String(inf.cpmMin / 100) : '',
+                cpmMax: inf.cpmMax ? String(inf.cpmMax / 100) : '',
+                cpcMin: inf.cpcMin ? String(inf.cpcMin / 100) : '',
+                cpcMax: inf.cpcMax ? String(inf.cpcMax / 100) : '',
+                cpeMin: inf.cpeMin ? String(inf.cpeMin / 100) : '',
+                cpeMax: inf.cpeMax ? String(inf.cpeMax / 100) : '',
               })
             }
           }
@@ -2093,106 +2093,55 @@ export default function InfluencerDashboard() {
                     </div>
                   </div>
 
-                  <div className="space-y-3 pt-2">
-                    <Label className="text-sm font-medium">Pricing Range (USD)</Label>
-                    <p className="text-xs text-muted-foreground">Set your minimum and maximum rates for different pricing models</p>
+                  <div className="space-y-4 pt-2">
+                    <Label className="text-sm font-medium">Pricing Rates (USD)</Label>
+                    <p className="text-xs text-muted-foreground">Set your rate ranges. Brands see these when browsing your profile. You&apos;ll set exact rates when applying to campaigns.</p>
 
-                    <div className="grid grid-cols-1 gap-4">
-                      <div>
-                        <Label className="text-xs font-medium mb-2 block">
-                          CPM (Cost Per 1000 Views)
-                        </Label>
+                    <div className="grid grid-cols-1 gap-5">
+                      <div className="rounded-lg border border-border p-4">
+                        <Label className="text-xs font-semibold mb-1 block">CPM — Cost Per 1,000 Views</Label>
+                        <p className="text-xs text-muted-foreground mb-3">What you charge per 1,000 views/impressions on your content</p>
                         <div className="flex items-center gap-3">
                           <div className="relative flex-1">
                             <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                            <Input
-                              type="number"
-                              placeholder="Min"
-                              value={profileData.cpmMin}
-                              onChange={(e) => setProfileData(p => ({...p, cpmMin: e.target.value}))}
-                              className="pl-10 h-11"
-                              min="0"
-                              step="0.01"
-                            />
+                            <Input type="number" placeholder="Min" value={profileData.cpmMin} onChange={(e) => setProfileData(p => ({...p, cpmMin: e.target.value}))} className="pl-10 h-11" min="0" step="0.01" />
                           </div>
-                          <span className="text-muted-foreground">-</span>
+                          <span className="text-muted-foreground font-medium">—</span>
                           <div className="relative flex-1">
                             <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                            <Input
-                              type="number"
-                              placeholder="Max"
-                              value={profileData.cpmMax}
-                              onChange={(e) => setProfileData(p => ({...p, cpmMax: e.target.value}))}
-                              className="pl-10 h-11"
-                              min="0"
-                              step="0.01"
-                            />
+                            <Input type="number" placeholder="Max" value={profileData.cpmMax} onChange={(e) => setProfileData(p => ({...p, cpmMax: e.target.value}))} className="pl-10 h-11" min="0" step="0.01" />
                           </div>
                         </div>
                       </div>
 
-                      <div>
-                        <Label className="text-xs font-medium mb-2 block">
-                          CPC (Cost Per Click)
-                        </Label>
+                      <div className="rounded-lg border border-border p-4">
+                        <Label className="text-xs font-semibold mb-1 block">CPC — Cost Per Click</Label>
+                        <p className="text-xs text-muted-foreground mb-3">What you charge per click on links in your content</p>
                         <div className="flex items-center gap-3">
                           <div className="relative flex-1">
                             <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                            <Input
-                              type="number"
-                              placeholder="Min"
-                              value={profileData.cpcMin}
-                              onChange={(e) => setProfileData(p => ({...p, cpcMin: e.target.value}))}
-                              className="pl-10 h-11"
-                              min="0"
-                              step="0.01"
-                            />
+                            <Input type="number" placeholder="Min" value={profileData.cpcMin} onChange={(e) => setProfileData(p => ({...p, cpcMin: e.target.value}))} className="pl-10 h-11" min="0" step="0.01" />
                           </div>
-                          <span className="text-muted-foreground">-</span>
+                          <span className="text-muted-foreground font-medium">—</span>
                           <div className="relative flex-1">
                             <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                            <Input
-                              type="number"
-                              placeholder="Max"
-                              value={profileData.cpcMax}
-                              onChange={(e) => setProfileData(p => ({...p, cpcMax: e.target.value}))}
-                              className="pl-10 h-11"
-                              min="0"
-                              step="0.01"
-                            />
+                            <Input type="number" placeholder="Max" value={profileData.cpcMax} onChange={(e) => setProfileData(p => ({...p, cpcMax: e.target.value}))} className="pl-10 h-11" min="0" step="0.01" />
                           </div>
                         </div>
                       </div>
 
-                      <div>
-                        <Label className="text-xs font-medium mb-2 block">
-                          CPE (Cost Per Engagement)
-                        </Label>
+                      <div className="rounded-lg border border-border p-4">
+                        <Label className="text-xs font-semibold mb-1 block">CPE — Cost Per Engagement</Label>
+                        <p className="text-xs text-muted-foreground mb-3">What you charge per engagement (like, comment, share, save)</p>
                         <div className="flex items-center gap-3">
                           <div className="relative flex-1">
                             <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                            <Input
-                              type="number"
-                              placeholder="Min"
-                              value={profileData.cpeMin}
-                              onChange={(e) => setProfileData(p => ({...p, cpeMin: e.target.value}))}
-                              className="pl-10 h-11"
-                              min="0"
-                              step="0.01"
-                            />
+                            <Input type="number" placeholder="Min" value={profileData.cpeMin} onChange={(e) => setProfileData(p => ({...p, cpeMin: e.target.value}))} className="pl-10 h-11" min="0" step="0.01" />
                           </div>
-                          <span className="text-muted-foreground">-</span>
+                          <span className="text-muted-foreground font-medium">—</span>
                           <div className="relative flex-1">
                             <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                            <Input
-                              type="number"
-                              placeholder="Max"
-                              value={profileData.cpeMax}
-                              onChange={(e) => setProfileData(p => ({...p, cpeMax: e.target.value}))}
-                              className="pl-10 h-11"
-                              min="0"
-                              step="0.01"
-                            />
+                            <Input type="number" placeholder="Max" value={profileData.cpeMax} onChange={(e) => setProfileData(p => ({...p, cpeMax: e.target.value}))} className="pl-10 h-11" min="0" step="0.01" />
                           </div>
                         </div>
                       </div>
@@ -2218,9 +2167,12 @@ export default function InfluencerDashboard() {
                               tiktokFollowers: profileData.tiktokFollowers ? parseInt(profileData.tiktokFollowers) : 0,
                               youtubeHandle: profileData.youtube,
                               youtubeSubscribers: profileData.youtubeSubscribers ? parseInt(profileData.youtubeSubscribers) : 0,
-                              pricePerPost: profileData.cpmMin ? parseFloat(profileData.cpmMin) : undefined,
-                              pricePerStory: profileData.cpcMin ? parseFloat(profileData.cpcMin) : undefined,
-                              pricePerVideo: profileData.cpeMin ? parseFloat(profileData.cpeMin) : undefined,
+                              cpmMin: profileData.cpmMin ? parseFloat(profileData.cpmMin) : undefined,
+                              cpmMax: profileData.cpmMax ? parseFloat(profileData.cpmMax) : undefined,
+                              cpcMin: profileData.cpcMin ? parseFloat(profileData.cpcMin) : undefined,
+                              cpcMax: profileData.cpcMax ? parseFloat(profileData.cpcMax) : undefined,
+                              cpeMin: profileData.cpeMin ? parseFloat(profileData.cpeMin) : undefined,
+                              cpeMax: profileData.cpeMax ? parseFloat(profileData.cpeMax) : undefined,
                             }),
                           })
                           if (res.ok) {
