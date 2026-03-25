@@ -2210,11 +2210,16 @@ export default function InfluencerDashboard() {
                   <SelectValue placeholder="Select currency" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="USDT (TRC20)">USDT (TRC20)</SelectItem>
-                  <SelectItem value="USDT (ERC20)">USDT (ERC20)</SelectItem>
-                  <SelectItem value="BTC">BTC</SelectItem>
-                  <SelectItem value="ETH">ETH</SelectItem>
-                  <SelectItem value="USDC (TRC20)">USDC (TRC20)</SelectItem>
+                  <SelectItem value="USDT (TRC20)">USDT — Tron (TRC20)</SelectItem>
+                  <SelectItem value="USDT (ERC20)">USDT — Ethereum (ERC20)</SelectItem>
+                  <SelectItem value="USDT (BEP20)">USDT — BSC (BEP20)</SelectItem>
+                  <SelectItem value="USDC (ERC20)">USDC — Ethereum (ERC20)</SelectItem>
+                  <SelectItem value="USDC (TRC20)">USDC — Tron (TRC20)</SelectItem>
+                  <SelectItem value="BTC">Bitcoin (BTC)</SelectItem>
+                  <SelectItem value="ETH">Ethereum (ETH)</SelectItem>
+                  <SelectItem value="SOL">Solana (SOL)</SelectItem>
+                  <SelectItem value="TRX">Tron (TRX)</SelectItem>
+                  <SelectItem value="BNB">BNB (BSC)</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -2231,6 +2236,17 @@ export default function InfluencerDashboard() {
                 onChange={(e) => setWalletAddress(e.target.value)}
                 className="h-11"
               />
+              <p className="text-xs text-muted-foreground mt-1.5">
+                Make sure the address matches the selected network. Sending to the wrong network may result in permanent loss.
+              </p>
+            </div>
+
+            <div className="rounded-lg bg-muted/50 p-3 text-xs text-muted-foreground space-y-1">
+              <p>Minimum withdrawal: <span className="font-medium text-foreground">$10.00</span></p>
+              <p>Withdrawal fee: <span className="font-medium text-foreground">3%</span></p>
+              {withdrawAmount && parseFloat(withdrawAmount) >= 10 && (
+                <p>You will receive: <span className="font-medium text-foreground">${(parseFloat(withdrawAmount) * 0.97).toFixed(2)}</span></p>
+              )}
             </div>
 
             <Button
