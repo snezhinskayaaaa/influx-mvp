@@ -53,7 +53,6 @@ export async function getYouTubeStats(youtubeUrl: string): Promise<YouTubeChanne
     console.error('YouTube: could not parse URL:', youtubeUrl)
     return null
   }
-  console.log('YouTube: parsed identifier:', identifier)
 
   try {
     // Try multiple methods to find the channel
@@ -68,12 +67,10 @@ export async function getYouTubeStats(youtubeUrl: string): Promise<YouTubeChanne
     } else if (identifier.type === 'handle') {
       // Try forHandle first (YouTube v3 direct handle lookup — requires @)
       const handleWithAt = identifier.value.startsWith('@') ? identifier.value : `@${identifier.value}`
-      console.log('YouTube: trying forHandle with:', handleWithAt)
       const handleRes = await fetch(
         `https://www.googleapis.com/youtube/v3/channels?part=statistics,snippet&forHandle=${encodeURIComponent(handleWithAt)}&key=${YOUTUBE_API_KEY}`
       )
       data = await handleRes.json()
-      console.log('YouTube forHandle response:', JSON.stringify(data).substring(0, 200))
 
       // If forHandle didn't work, try forUsername
       if (!((data as any))?.items?.length) {
