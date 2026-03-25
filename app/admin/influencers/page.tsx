@@ -98,6 +98,7 @@ export default function AdminInfluencers() {
         const profile = inf.profile as Record<string, unknown> | undefined;
         return {
           ...inf,
+          status: typeof inf.status === 'string' ? inf.status.charAt(0).toUpperCase() + inf.status.slice(1).toLowerCase() : inf.status,
           email: profile?.email || '',
           fullName: profile?.fullName || '',
           profile: profile ? {
@@ -151,7 +152,7 @@ export default function AdminInfluencers() {
   ];
 
   const filtered = influencers.filter((inf) => {
-    const matchesTab = activeTab === "all" || inf.status === activeTab;
+    const matchesTab = activeTab === "all" || inf.status?.toLowerCase() === activeTab;
     const matchesSearch =
       !search ||
       inf.handle?.toLowerCase().includes(search.toLowerCase()) ||
@@ -194,9 +195,9 @@ export default function AdminInfluencers() {
 
   const tabCounts = {
     all: influencers.length,
-    pending: influencers.filter((i) => i.status === "pending").length,
-    approved: influencers.filter((i) => i.status === "approved").length,
-    rejected: influencers.filter((i) => i.status === "rejected").length,
+    pending: influencers.filter((i) => i.status?.toLowerCase() === "pending").length,
+    approved: influencers.filter((i) => i.status?.toLowerCase() === "approved").length,
+    rejected: influencers.filter((i) => i.status?.toLowerCase() === "rejected").length,
   };
 
   if (loading) {
@@ -334,9 +335,9 @@ export default function AdminInfluencers() {
                       <div className="sm:col-span-2">
                         <Badge
                           className={
-                            inf.status === "approved"
+                            inf.status === "Approved"
                               ? "bg-green-500/10 text-green-600 border-green-500/20"
-                              : inf.status === "pending"
+                              : inf.status === "Pending"
                                 ? "bg-yellow-500/10 text-yellow-600 border-yellow-500/20"
                                 : "bg-red-500/10 text-red-600 border-red-500/20"
                           }
@@ -346,14 +347,14 @@ export default function AdminInfluencers() {
                       </div>
 
                       <div className="sm:col-span-2 flex items-center justify-end gap-2">
-                        {inf.status !== "approved" && (
+                        {inf.status !== "Approved" && (
                           <Button
                             size="sm"
                             variant="outline"
                             className="text-green-600 border-green-500/30 hover:bg-green-500/10 text-xs"
                             disabled={updatingId === inf.id}
                             onClick={() =>
-                              updateInfluencer(inf.id, { status: "approved" })
+                              updateInfluencer(inf.id, { status: "Approved" })
                             }
                           >
                             {updatingId === inf.id ? (
@@ -364,14 +365,14 @@ export default function AdminInfluencers() {
                             Approve
                           </Button>
                         )}
-                        {inf.status !== "rejected" && (
+                        {inf.status !== "Rejected" && (
                           <Button
                             size="sm"
                             variant="outline"
                             className="text-red-600 border-red-500/30 hover:bg-red-500/10 text-xs"
                             disabled={updatingId === inf.id}
                             onClick={() =>
-                              updateInfluencer(inf.id, { status: "rejected" })
+                              updateInfluencer(inf.id, { status: "Rejected" })
                             }
                           >
                             {updatingId === inf.id ? (
@@ -432,8 +433,8 @@ export default function AdminInfluencers() {
               </div>
               <div className="ml-auto">
                 <Badge className={
-                  selectedInfluencer.status === "approved" ? "bg-green-500/10 text-green-600 border-green-500/20" :
-                  selectedInfluencer.status === "pending" ? "bg-yellow-500/10 text-yellow-600 border-yellow-500/20" :
+                  selectedInfluencer.status === "Approved" ? "bg-green-500/10 text-green-600 border-green-500/20" :
+                  selectedInfluencer.status === "Pending" ? "bg-yellow-500/10 text-yellow-600 border-yellow-500/20" :
                   "bg-red-500/10 text-red-600 border-red-500/20"
                 }>{selectedInfluencer.status}</Badge>
               </div>
@@ -670,25 +671,25 @@ export default function AdminInfluencers() {
 
             {/* Action buttons */}
             <div className="flex gap-2 mt-6 pt-4 border-t border-border/50">
-              {selectedInfluencer.status !== "approved" && (
+              {selectedInfluencer.status !== "Approved" && (
                 <Button
                   className="flex-1 bg-green-600 hover:bg-green-700 text-white"
                   onClick={() => {
-                    updateInfluencer(selectedInfluencer.id, { status: "approved" });
-                    setSelectedInfluencer({ ...selectedInfluencer, status: "approved" });
+                    updateInfluencer(selectedInfluencer.id, { status: "Approved" });
+                    setSelectedInfluencer({ ...selectedInfluencer, status: "Approved" });
                   }}
                 >
                   <CheckCircle2 className="h-4 w-4 mr-2" />
                   Approve
                 </Button>
               )}
-              {selectedInfluencer.status !== "rejected" && (
+              {selectedInfluencer.status !== "Rejected" && (
                 <Button
                   variant="outline"
                   className="flex-1 text-red-600 border-red-500/30 hover:bg-red-500/10"
                   onClick={() => {
-                    updateInfluencer(selectedInfluencer.id, { status: "rejected" });
-                    setSelectedInfluencer({ ...selectedInfluencer, status: "rejected" });
+                    updateInfluencer(selectedInfluencer.id, { status: "Rejected" });
+                    setSelectedInfluencer({ ...selectedInfluencer, status: "Rejected" });
                   }}
                 >
                   <XCircle className="h-4 w-4 mr-2" />
