@@ -293,9 +293,12 @@ export default function InfluencerDashboard() {
     bio: string
     category: string
     instagram: string
+    instagramFollowers: string
     tiktok: string
+    tiktokFollowers: string
     twitter: string
     youtube: string
+    youtubeSubscribers: string
     cpmMin: string
     cpmMax: string
     cpcMin: string
@@ -307,9 +310,12 @@ export default function InfluencerDashboard() {
     bio: '',
     category: '',
     instagram: '',
+    instagramFollowers: '',
     tiktok: '',
+    tiktokFollowers: '',
     twitter: '',
     youtube: '',
+    youtubeSubscribers: '',
     cpmMin: '',
     cpmMax: '',
     cpcMin: '',
@@ -418,9 +424,12 @@ export default function InfluencerDashboard() {
                 bio: inf.bio || '',
                 category: inf.niche?.[0] || '',
                 instagram: inf.instagramHandle || '',
+                instagramFollowers: inf.instagramFollowers ? String(inf.instagramFollowers) : '',
                 tiktok: inf.tiktokHandle || '',
+                tiktokFollowers: inf.tiktokFollowers ? String(inf.tiktokFollowers) : '',
                 twitter: '',
                 youtube: inf.youtubeHandle || '',
+                youtubeSubscribers: inf.youtubeSubscribers ? String(inf.youtubeSubscribers) : '',
                 cpmMin: inf.pricePerPost ? String(inf.pricePerPost / 100) : '',
                 cpmMax: '',
                 cpcMin: '',
@@ -2013,43 +2022,73 @@ export default function InfluencerDashboard() {
                   <div className="space-y-3">
                     <Label className="text-sm font-medium">Social Media</Label>
 
-                    <div className="relative">
-                      <Instagram className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <div className="flex gap-2">
+                      <div className="relative flex-1">
+                        <Instagram className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                        <Input
+                          placeholder="Instagram URL or @handle"
+                          value={profileData.instagram}
+                          onChange={(e) => setProfileData(p => ({...p, instagram: e.target.value}))}
+                          className="pl-10 h-11"
+                        />
+                      </div>
                       <Input
-                        placeholder="Instagram URL"
-                        value={profileData.instagram}
-                        onChange={(e) => setProfileData(p => ({...p, instagram: e.target.value}))}
-                        className="pl-10 h-11"
+                        type="number"
+                        placeholder="Followers"
+                        value={profileData.instagramFollowers}
+                        onChange={(e) => setProfileData(p => ({...p, instagramFollowers: e.target.value}))}
+                        className="h-11 w-28"
+                        min="0"
                       />
                     </div>
 
-                    <div className="relative">
-                      <TrendingUp className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <div className="flex gap-2">
+                      <div className="relative flex-1">
+                        <TrendingUp className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                        <Input
+                          placeholder="TikTok URL or @handle"
+                          value={profileData.tiktok}
+                          onChange={(e) => setProfileData(p => ({...p, tiktok: e.target.value}))}
+                          className="pl-10 h-11"
+                        />
+                      </div>
                       <Input
-                        placeholder="TikTok URL"
-                        value={profileData.tiktok}
-                        onChange={(e) => setProfileData(p => ({...p, tiktok: e.target.value}))}
-                        className="pl-10 h-11"
+                        type="number"
+                        placeholder="Followers"
+                        value={profileData.tiktokFollowers}
+                        onChange={(e) => setProfileData(p => ({...p, tiktokFollowers: e.target.value}))}
+                        className="h-11 w-28"
+                        min="0"
                       />
                     </div>
 
                     <div className="relative">
                       <Twitter className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                       <Input
-                        placeholder="X URL"
+                        placeholder="X URL or @handle"
                         value={profileData.twitter}
                         onChange={(e) => setProfileData(p => ({...p, twitter: e.target.value}))}
                         className="pl-10 h-11"
                       />
                     </div>
 
-                    <div className="relative">
-                      <Youtube className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <div className="flex gap-2">
+                      <div className="relative flex-1">
+                        <Youtube className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                        <Input
+                          placeholder="YouTube URL or @channel"
+                          value={profileData.youtube}
+                          onChange={(e) => setProfileData(p => ({...p, youtube: e.target.value}))}
+                          className="pl-10 h-11"
+                        />
+                      </div>
                       <Input
-                        placeholder="YouTube URL"
-                        value={profileData.youtube}
-                        onChange={(e) => setProfileData(p => ({...p, youtube: e.target.value}))}
-                        className="pl-10 h-11"
+                        type="number"
+                        placeholder="Subscribers"
+                        value={profileData.youtubeSubscribers}
+                        onChange={(e) => setProfileData(p => ({...p, youtubeSubscribers: e.target.value}))}
+                        className="h-11 w-28"
+                        min="0"
                       />
                     </div>
                   </div>
@@ -2174,8 +2213,11 @@ export default function InfluencerDashboard() {
                               bio: profileData.bio,
                               niche: profileData.category ? [profileData.category] : [],
                               instagramHandle: profileData.instagram,
+                              instagramFollowers: profileData.instagramFollowers ? parseInt(profileData.instagramFollowers) : 0,
                               tiktokHandle: profileData.tiktok,
+                              tiktokFollowers: profileData.tiktokFollowers ? parseInt(profileData.tiktokFollowers) : 0,
                               youtubeHandle: profileData.youtube,
+                              youtubeSubscribers: profileData.youtubeSubscribers ? parseInt(profileData.youtubeSubscribers) : 0,
                               pricePerPost: profileData.cpmMin ? Math.round(parseFloat(profileData.cpmMin) * 100) : undefined,
                             }),
                           })
