@@ -49,7 +49,11 @@ export async function getYouTubeStats(youtubeUrl: string): Promise<YouTubeChanne
   }
 
   const identifier = extractYouTubeIdentifier(youtubeUrl)
-  if (!identifier) return null
+  if (!identifier) {
+    console.error('YouTube: could not parse URL:', youtubeUrl)
+    return null
+  }
+  console.log('YouTube: parsed identifier:', identifier)
 
   try {
     // Try multiple methods to find the channel

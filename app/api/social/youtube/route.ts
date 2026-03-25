@@ -19,7 +19,7 @@ export async function POST(request: NextRequest) {
     const stats = await getYouTubeStats(youtubeUrl)
 
     if (!stats) {
-      return NextResponse.json({ error: 'Could not find YouTube channel. Check the URL.' }, { status: 404 })
+      return NextResponse.json({ error: `Could not find YouTube channel for "${youtubeUrl}". Make sure the URL is correct and the channel exists.` }, { status: 404 })
     }
 
     // Auto-update subscriber count in DB if user is an influencer
