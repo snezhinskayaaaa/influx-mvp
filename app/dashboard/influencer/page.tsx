@@ -287,6 +287,35 @@ export default function InfluencerDashboard() {
   const [showVerifyPopup, setShowVerifyPopup] = useState(false);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [emailVerified, setEmailVerified] = useState(true);
+  const [profileData, setProfileData] = useState<{
+    displayName: string
+    bio: string
+    category: string
+    instagram: string
+    tiktok: string
+    twitter: string
+    youtube: string
+    cpmMin: string
+    cpmMax: string
+    cpcMin: string
+    cpcMax: string
+    cpeMin: string
+    cpeMax: string
+  }>({
+    displayName: '',
+    bio: '',
+    category: '',
+    instagram: '',
+    tiktok: '',
+    twitter: '',
+    youtube: '',
+    cpmMin: '',
+    cpmMax: '',
+    cpcMin: '',
+    cpcMax: '',
+    cpeMin: '',
+    cpeMax: '',
+  })
 
   useEffect(() => {
     const fetchData = async () => {
@@ -374,6 +403,33 @@ export default function InfluencerDashboard() {
             setPendingDeposits(Math.round(deposits / 100));
             setPendingWithdrawals(Math.round(withdrawals / 100));
           }
+        }
+        // Fetch influencer profile
+        try {
+          const influencerRes = await fetch('/api/influencers/me')
+          if (influencerRes.ok) {
+            const data = await influencerRes.json()
+            const inf = data.influencer
+            if (inf) {
+              setProfileData({
+                displayName: inf.handle || '',
+                bio: inf.bio || '',
+                category: inf.niche?.[0] || '',
+                instagram: inf.instagramHandle || '',
+                tiktok: inf.tiktokHandle || '',
+                twitter: '',
+                youtube: inf.youtubeHandle || '',
+                cpmMin: inf.pricePerPost ? String(inf.pricePerPost / 100) : '',
+                cpmMax: '',
+                cpcMin: '',
+                cpcMax: '',
+                cpeMin: '',
+                cpeMax: '',
+              })
+            }
+          }
+        } catch (e) {
+          console.error('Failed to fetch influencer profile:', e)
         }
       } catch (error) {
         console.error('Failed to fetch dashboard data:', error);
@@ -1887,7 +1943,8 @@ export default function InfluencerDashboard() {
                     <Input
                       id="display-name"
                       placeholder="Your Name"
-                      defaultValue="Luna Virtual"
+                      value={profileData.displayName}
+                      onChange={(e) => setProfileData(p => ({...p, displayName: e.target.value}))}
                       className="h-11"
                     />
                   </div>
@@ -1899,7 +1956,8 @@ export default function InfluencerDashboard() {
                     <Textarea
                       id="bio"
                       placeholder="Tell brands about yourself, your niche, and what makes your content unique..."
-                      defaultValue="AI influencer creating authentic content for fashion and lifestyle brands"
+                      value={profileData.bio}
+                      onChange={(e) => setProfileData(p => ({...p, bio: e.target.value}))}
                       rows={5}
                       className="resize-none"
                     />
@@ -1909,7 +1967,7 @@ export default function InfluencerDashboard() {
                     <Label htmlFor="category" className="text-sm font-medium mb-2 block">
                       Primary Category
                     </Label>
-                    <Select defaultValue="fashion">
+                    <Select value={profileData.category} onValueChange={(val) => setProfileData(p => ({...p, category: val}))}>
                       <SelectTrigger className="h-11">
                         <SelectValue />
                       </SelectTrigger>
@@ -1932,7 +1990,8 @@ export default function InfluencerDashboard() {
                       <Instagram className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                       <Input
                         placeholder="Instagram URL"
-                        defaultValue="https://instagram.com/lunavirtual"
+                        value={profileData.instagram}
+                        onChange={(e) => setProfileData(p => ({...p, instagram: e.target.value}))}
                         className="pl-10 h-11"
                       />
                     </div>
@@ -1941,6 +2000,8 @@ export default function InfluencerDashboard() {
                       <TrendingUp className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                       <Input
                         placeholder="TikTok URL"
+                        value={profileData.tiktok}
+                        onChange={(e) => setProfileData(p => ({...p, tiktok: e.target.value}))}
                         className="pl-10 h-11"
                       />
                     </div>
@@ -1949,6 +2010,8 @@ export default function InfluencerDashboard() {
                       <Twitter className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                       <Input
                         placeholder="X URL"
+                        value={profileData.twitter}
+                        onChange={(e) => setProfileData(p => ({...p, twitter: e.target.value}))}
                         className="pl-10 h-11"
                       />
                     </div>
@@ -1957,6 +2020,8 @@ export default function InfluencerDashboard() {
                       <Youtube className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                       <Input
                         placeholder="YouTube URL"
+                        value={profileData.youtube}
+                        onChange={(e) => setProfileData(p => ({...p, youtube: e.target.value}))}
                         className="pl-10 h-11"
                       />
                     </div>
@@ -1977,7 +2042,8 @@ export default function InfluencerDashboard() {
                             <Input
                               type="number"
                               placeholder="Min"
-                              defaultValue="10"
+                              value={profileData.cpmMin}
+                              onChange={(e) => setProfileData(p => ({...p, cpmMin: e.target.value}))}
                               className="pl-10 h-11"
                               min="0"
                               step="0.01"
@@ -1989,7 +2055,8 @@ export default function InfluencerDashboard() {
                             <Input
                               type="number"
                               placeholder="Max"
-                              defaultValue="20"
+                              value={profileData.cpmMax}
+                              onChange={(e) => setProfileData(p => ({...p, cpmMax: e.target.value}))}
                               className="pl-10 h-11"
                               min="0"
                               step="0.01"
@@ -2008,7 +2075,8 @@ export default function InfluencerDashboard() {
                             <Input
                               type="number"
                               placeholder="Min"
-                              defaultValue="0.30"
+                              value={profileData.cpcMin}
+                              onChange={(e) => setProfileData(p => ({...p, cpcMin: e.target.value}))}
                               className="pl-10 h-11"
                               min="0"
                               step="0.01"
@@ -2020,7 +2088,8 @@ export default function InfluencerDashboard() {
                             <Input
                               type="number"
                               placeholder="Max"
-                              defaultValue="0.70"
+                              value={profileData.cpcMax}
+                              onChange={(e) => setProfileData(p => ({...p, cpcMax: e.target.value}))}
                               className="pl-10 h-11"
                               min="0"
                               step="0.01"
@@ -2039,7 +2108,8 @@ export default function InfluencerDashboard() {
                             <Input
                               type="number"
                               placeholder="Min"
-                              defaultValue="0.50"
+                              value={profileData.cpeMin}
+                              onChange={(e) => setProfileData(p => ({...p, cpeMin: e.target.value}))}
                               className="pl-10 h-11"
                               min="0"
                               step="0.01"
@@ -2051,7 +2121,8 @@ export default function InfluencerDashboard() {
                             <Input
                               type="number"
                               placeholder="Max"
-                              defaultValue="1.00"
+                              value={profileData.cpeMax}
+                              onChange={(e) => setProfileData(p => ({...p, cpeMax: e.target.value}))}
                               className="pl-10 h-11"
                               min="0"
                               step="0.01"
@@ -2063,7 +2134,35 @@ export default function InfluencerDashboard() {
                   </div>
 
                   <div className="flex gap-3 pt-4">
-                    <Button className="flex-1 h-11 bg-gradient-to-r from-primary to-secondary hover:opacity-90">
+                    <Button
+                      type="button"
+                      className="flex-1 h-11 bg-gradient-to-r from-primary to-secondary hover:opacity-90"
+                      onClick={async () => {
+                        try {
+                          const res = await fetch('/api/influencers/me', {
+                            method: 'PATCH',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                              handle: profileData.displayName,
+                              bio: profileData.bio,
+                              niche: profileData.category ? [profileData.category] : [],
+                              instagramHandle: profileData.instagram,
+                              tiktokHandle: profileData.tiktok,
+                              youtubeHandle: profileData.youtube,
+                              pricePerPost: profileData.cpmMin ? Math.round(parseFloat(profileData.cpmMin) * 100) : undefined,
+                            }),
+                          })
+                          if (res.ok) {
+                            showToast('Profile saved!', 'success')
+                          } else {
+                            const data = await res.json()
+                            showToast(data.error || 'Failed to save profile', 'error')
+                          }
+                        } catch {
+                          showToast('Failed to save profile', 'error')
+                        }
+                      }}
+                    >
                       <Save className="h-4 w-4 mr-2" />
                       Save Profile
                     </Button>
