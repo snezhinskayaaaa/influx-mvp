@@ -45,6 +45,14 @@ interface Influencer {
   id: number;
   handle: string;
   email: string;
+  fullName: string;
+  bio?: string;
+  niche?: string[];
+  instagramHandle?: string;
+  instagramFollowers: number;
+  tiktokHandle?: string;
+  tiktokFollowers: number;
+  youtubeHandle?: string;
   followers: number;
   status: string;
   isVerified: boolean;
@@ -59,11 +67,19 @@ export default function AdminInfluencers() {
   const [search, setSearch] = useState("");
   const [updatingId, setUpdatingId] = useState<number | null>(null);
 
+  const [selectedInfluencer, setSelectedInfluencer] = useState<Influencer | null>(null);
+
   const fetchInfluencers = useCallback(async () => {
     try {
       const res = await fetch("/api/admin/influencers");
       const data = await res.json();
-      setInfluencers(data.influencers || []);
+      // Map nested profile.email to flat email
+      const mapped = (data.influencers || []).map((inf: Record<string, unknown>) => ({
+        ...inf,
+        email: (inf.profile as Record<string, unknown>)?.email || '',
+        fullName: (inf.profile as Record<string, unknown>)?.fullName || '',
+      }));
+      setInfluencers(mapped);
     } catch (error) {
       console.error("Failed to fetch influencers:", error);
     } finally {
@@ -217,7 +233,8 @@ export default function AdminInfluencers() {
                   filtered.map((inf) => (
                     <div
                       key={inf.id}
-                      className="grid grid-cols-1 sm:grid-cols-12 gap-2 sm:gap-4 p-4 items-center hover:bg-muted/20 transition-colors"
+                      className="grid grid-cols-1 sm:grid-cols-12 gap-2 sm:gap-4 p-4 items-center hover:bg-muted/20 transition-colors cursor-pointer"
+                      onClick={() => setSelectedInfluencer(inf)}
                     >
                       <div className="sm:col-span-3 flex items-center gap-3">
                         <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
@@ -309,6 +326,113 @@ export default function AdminInfluencers() {
           </motion.div>
         </motion.div>
       </main>
+
+      {/* Profile Detail Modal */}
+      {selectedInfluencer && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm" onClick={() => setSelectedInfluencer(null)}>
+          <div className="bg-background border border-border rounded-2xl p-6 w-full max-w-lg mx-4 shadow-2xl max-h-[80vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-bold">Influencer Profile</h3>
+              <Button variant="ghost" size="sm" onClick={() => setSelectedInfluencer(null)}>
+                <XCircle className="h-5 w-5" />
+              </Button>
+            </div>
+
+            <div className="flex items-center gap-4 mb-4 pb-4 border-b">
+              <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center">
+                <span className="text-xl font-bold text-primary">{selectedInfluencer.handle?.charAt(0)?.toUpperCase()}</span>
+              </div>
+              <div>
+                <p className="font-semibold text-lg">@{selectedInfluencer.handle}</p>
+                <p className="text-sm text-muted-foreground">{selectedInfluencer.email}</p>
+                {selectedInfluencer.fullName && <p className="text-sm text-muted-foreground">{selectedInfluencer.fullName}</p>}
+              </div>
+            </div>
+
+            <div className="space-y-3 text-sm">
+              {selectedInfluencer.bio && (
+                <div>
+                  <p className="font-medium text-muted-foreground mb-1">Bio</p>
+                  <p>{selectedInfluencer.bio}</p>
+                </div>
+              )}
+
+              {selectedInfluencer.niche && selectedInfluencer.niche.length > 0 && (
+                <div>
+                  <p className="font-medium text-muted-foreground mb-1">Niche</p>
+                  <div className="flex gap-1 flex-wrap">
+                    {selectedInfluencer.niche.map((n: string) => (
+                      <Badge key={n} className="bg-primary/10 text-primary border-primary/20">{n}</Badge>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              <div className="grid grid-cols-2 gap-3">
+                {selectedInfluencer.instagramHandle && (
+                  <div>
+                    <p className="font-medium text-muted-foreground mb-1">Instagram</p>
+                    <p>@{selectedInfluencer.instagramHandle}</p>
+                    <p className="text-muted-foreground">{(selectedInfluencer.instagramFollowers || 0).toLocaleString()} followers</p>
+                  </div>
+                )}
+                {selectedInfluencer.tiktokHandle && (
+                  <div>
+                    <p className="font-medium text-muted-foreground mb-1">TikTok</p>
+                    <p>@{selectedInfluencer.tiktokHandle}</p>
+                    <p className="text-muted-foreground">{(selectedInfluencer.tiktokFollowers || 0).toLocaleString()} followers</p>
+                  </div>
+                )}
+                {selectedInfluencer.youtubeHandle && (
+                  <div>
+                    <p className="font-medium text-muted-foreground mb-1">YouTube</p>
+                    <p>@{selectedInfluencer.youtubeHandle}</p>
+                  </div>
+                )}
+              </div>
+
+              <div className="flex items-center gap-2 pt-2">
+                <p className="font-medium text-muted-foreground">Status:</p>
+                <Badge className={
+                  selectedInfluencer.status === "approved" ? "bg-green-500/10 text-green-600 border-green-500/20" :
+                  selectedInfluencer.status === "pending" ? "bg-yellow-500/10 text-yellow-600 border-yellow-500/20" :
+                  "bg-red-500/10 text-red-600 border-red-500/20"
+                }>{selectedInfluencer.status}</Badge>
+              </div>
+
+              <p className="text-muted-foreground">Registered: {new Date(selectedInfluencer.createdAt).toLocaleDateString()}</p>
+            </div>
+
+            <div className="flex gap-2 mt-6 pt-4 border-t">
+              {selectedInfluencer.status !== "approved" && (
+                <Button
+                  className="flex-1 bg-green-600 hover:bg-green-700 text-white"
+                  onClick={() => {
+                    updateInfluencer(selectedInfluencer.id, { status: "approved" });
+                    setSelectedInfluencer({ ...selectedInfluencer, status: "approved" });
+                  }}
+                >
+                  <CheckCircle2 className="h-4 w-4 mr-2" />
+                  Approve
+                </Button>
+              )}
+              {selectedInfluencer.status !== "rejected" && (
+                <Button
+                  variant="outline"
+                  className="flex-1 text-red-600 border-red-500/30 hover:bg-red-500/10"
+                  onClick={() => {
+                    updateInfluencer(selectedInfluencer.id, { status: "rejected" });
+                    setSelectedInfluencer({ ...selectedInfluencer, status: "rejected" });
+                  }}
+                >
+                  <XCircle className="h-4 w-4 mr-2" />
+                  Reject
+                </Button>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
