@@ -79,6 +79,11 @@ export default function AdminInfluencers() {
   const [updatingId, setUpdatingId] = useState<number | null>(null);
 
   const [selectedInfluencer, setSelectedInfluencer] = useState<Influencer | null>(null);
+  const [editingFollowers, setEditingFollowers] = useState(false);
+  const [editIG, setEditIG] = useState('');
+  const [editTT, setEditTT] = useState('');
+  const [editYT, setEditYT] = useState('');
+  const [savingFollowers, setSavingFollowers] = useState(false);
 
   const fetchInfluencers = useCallback(async () => {
     try {
@@ -521,6 +526,81 @@ export default function AdminInfluencers() {
                     </a>
                   )}
                 </div>
+              </div>
+
+              {/* Edit Followers */}
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <p className="font-medium text-muted-foreground">Follower Counts</p>
+                  {!editingFollowers ? (
+                    <Button variant="ghost" size="sm" className="text-xs h-7" onClick={() => {
+                      setEditingFollowers(true);
+                      setEditIG(String(selectedInfluencer.instagramFollowers || 0));
+                      setEditTT(String(selectedInfluencer.tiktokFollowers || 0));
+                      setEditYT(String(selectedInfluencer.youtubeSubscribers || 0));
+                    }}>
+                      Edit
+                    </Button>
+                  ) : (
+                    <div className="flex gap-1">
+                      <Button variant="ghost" size="sm" className="text-xs h-7" onClick={() => setEditingFollowers(false)}>Cancel</Button>
+                      <Button size="sm" className="text-xs h-7" disabled={savingFollowers} onClick={async () => {
+                        setSavingFollowers(true);
+                        try {
+                          const res = await fetch(`/api/admin/influencers/${selectedInfluencer.id}`, {
+                            method: 'PATCH',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                              instagramFollowers: parseInt(editIG) || 0,
+                              tiktokFollowers: parseInt(editTT) || 0,
+                              youtubeSubscribers: parseInt(editYT) || 0,
+                            }),
+                          });
+                          if (res.ok) {
+                            const updated = { ...selectedInfluencer, instagramFollowers: parseInt(editIG) || 0, tiktokFollowers: parseInt(editTT) || 0, youtubeSubscribers: parseInt(editYT) || 0 };
+                            setSelectedInfluencer(updated);
+                            setInfluencers(prev => prev.map(i => i.id === updated.id ? { ...i, ...updated } : i));
+                            setEditingFollowers(false);
+                          }
+                        } catch (e) { console.error(e); }
+                        finally { setSavingFollowers(false); }
+                      }}>
+                        {savingFollowers ? 'Saving...' : 'Save'}
+                      </Button>
+                    </div>
+                  )}
+                </div>
+                {editingFollowers ? (
+                  <div className="grid grid-cols-3 gap-2">
+                    <div className="rounded-lg border border-border p-2">
+                      <p className="text-[10px] text-muted-foreground mb-1">Instagram</p>
+                      <Input type="number" value={editIG} onChange={(e) => setEditIG(e.target.value)} className="h-8 text-sm" min="0" />
+                    </div>
+                    <div className="rounded-lg border border-border p-2">
+                      <p className="text-[10px] text-muted-foreground mb-1">TikTok</p>
+                      <Input type="number" value={editTT} onChange={(e) => setEditTT(e.target.value)} className="h-8 text-sm" min="0" />
+                    </div>
+                    <div className="rounded-lg border border-border p-2">
+                      <p className="text-[10px] text-muted-foreground mb-1">YouTube</p>
+                      <Input type="number" value={editYT} onChange={(e) => setEditYT(e.target.value)} className="h-8 text-sm" min="0" />
+                    </div>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-3 gap-2">
+                    <div className="rounded-lg border border-border p-2 text-center">
+                      <p className="text-[10px] text-muted-foreground mb-0.5">Instagram</p>
+                      <p className="text-sm font-semibold">{(selectedInfluencer.instagramFollowers || 0).toLocaleString()}</p>
+                    </div>
+                    <div className="rounded-lg border border-border p-2 text-center">
+                      <p className="text-[10px] text-muted-foreground mb-0.5">TikTok</p>
+                      <p className="text-sm font-semibold">{(selectedInfluencer.tiktokFollowers || 0).toLocaleString()}</p>
+                    </div>
+                    <div className="rounded-lg border border-border p-2 text-center">
+                      <p className="text-[10px] text-muted-foreground mb-0.5">YouTube</p>
+                      <p className="text-sm font-semibold">{(selectedInfluencer.youtubeSubscribers || 0).toLocaleString()}</p>
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* CPM/CPC/CPE Rates */}

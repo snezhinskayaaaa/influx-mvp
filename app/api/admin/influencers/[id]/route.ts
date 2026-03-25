@@ -19,7 +19,7 @@ export async function PATCH(
     const { id } = await params
 
     const body = await request.json()
-    const { status, isVerified, isFeatured } = body
+    const { status, isVerified, isFeatured, instagramFollowers, tiktokFollowers, youtubeSubscribers } = body
 
     if (status !== undefined) {
       const validStatuses: string[] = Object.values(InfluencerStatus)
@@ -41,6 +41,15 @@ export async function PATCH(
     }
     if (isFeatured !== undefined) {
       updateData.isFeatured = Boolean(isFeatured)
+    }
+    if (instagramFollowers !== undefined) {
+      updateData.instagramFollowers = parseInt(String(instagramFollowers)) || 0
+    }
+    if (tiktokFollowers !== undefined) {
+      updateData.tiktokFollowers = parseInt(String(tiktokFollowers)) || 0
+    }
+    if (youtubeSubscribers !== undefined) {
+      updateData.youtubeSubscribers = parseInt(String(youtubeSubscribers)) || 0
     }
 
     if (Object.keys(updateData).length === 0) {
