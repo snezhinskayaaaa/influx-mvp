@@ -368,25 +368,52 @@ export default function AdminInfluencers() {
                 </div>
               )}
 
-              <div className="space-y-2">
-                {selectedInfluencer.instagramHandle && (
-                  <div>
-                    <p className="font-medium text-muted-foreground mb-1">Instagram</p>
-                    <a href={selectedInfluencer.instagramHandle.startsWith('http') ? selectedInfluencer.instagramHandle : `https://instagram.com/${selectedInfluencer.instagramHandle}`} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline break-all text-sm">{selectedInfluencer.instagramHandle}</a>
-                  </div>
-                )}
-                {selectedInfluencer.tiktokHandle && (
-                  <div>
-                    <p className="font-medium text-muted-foreground mb-1">TikTok</p>
-                    <a href={selectedInfluencer.tiktokHandle.startsWith('http') ? selectedInfluencer.tiktokHandle : `https://tiktok.com/@${selectedInfluencer.tiktokHandle}`} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline break-all text-sm">{selectedInfluencer.tiktokHandle}</a>
-                  </div>
-                )}
-                {selectedInfluencer.youtubeHandle && (
-                  <div>
-                    <p className="font-medium text-muted-foreground mb-1">YouTube</p>
-                    <a href={selectedInfluencer.youtubeHandle.startsWith('http') ? selectedInfluencer.youtubeHandle : `https://youtube.com/@${selectedInfluencer.youtubeHandle}`} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline break-all text-sm">{selectedInfluencer.youtubeHandle}</a>
-                  </div>
-                )}
+              <div>
+                <p className="font-medium text-muted-foreground mb-2">Social Media</p>
+                <div className="space-y-2">
+                  {selectedInfluencer.instagramHandle && (
+                    <div className="flex items-center justify-between rounded-lg border border-border p-3">
+                      <div className="flex items-center gap-2">
+                        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
+                          <span className="text-white text-xs font-bold">IG</span>
+                        </div>
+                        <a href={selectedInfluencer.instagramHandle.startsWith('http') ? selectedInfluencer.instagramHandle : `https://instagram.com/${selectedInfluencer.instagramHandle}`} target="_blank" rel="noopener noreferrer" className="text-sm font-medium text-primary hover:underline">
+                          {selectedInfluencer.instagramHandle.includes('instagram.com/') ? selectedInfluencer.instagramHandle.split('instagram.com/')[1]?.split('?')[0] || selectedInfluencer.instagramHandle : selectedInfluencer.instagramHandle}
+                        </a>
+                      </div>
+                      {selectedInfluencer.instagramFollowers > 0 && (
+                        <Badge className="bg-muted text-foreground border-border">{selectedInfluencer.instagramFollowers.toLocaleString()} followers</Badge>
+                      )}
+                    </div>
+                  )}
+                  {selectedInfluencer.tiktokHandle && (
+                    <div className="flex items-center justify-between rounded-lg border border-border p-3">
+                      <div className="flex items-center gap-2">
+                        <div className="w-8 h-8 rounded-lg bg-black flex items-center justify-center">
+                          <span className="text-white text-xs font-bold">TT</span>
+                        </div>
+                        <a href={selectedInfluencer.tiktokHandle.startsWith('http') ? selectedInfluencer.tiktokHandle : `https://tiktok.com/@${selectedInfluencer.tiktokHandle}`} target="_blank" rel="noopener noreferrer" className="text-sm font-medium text-primary hover:underline">
+                          {selectedInfluencer.tiktokHandle.includes('tiktok.com/') ? selectedInfluencer.tiktokHandle.split('tiktok.com/')[1]?.split('?')[0] || selectedInfluencer.tiktokHandle : selectedInfluencer.tiktokHandle}
+                        </a>
+                      </div>
+                      {selectedInfluencer.tiktokFollowers > 0 && (
+                        <Badge className="bg-muted text-foreground border-border">{selectedInfluencer.tiktokFollowers.toLocaleString()} followers</Badge>
+                      )}
+                    </div>
+                  )}
+                  {selectedInfluencer.youtubeHandle && (
+                    <div className="flex items-center justify-between rounded-lg border border-border p-3">
+                      <div className="flex items-center gap-2">
+                        <div className="w-8 h-8 rounded-lg bg-red-600 flex items-center justify-center">
+                          <span className="text-white text-xs font-bold">YT</span>
+                        </div>
+                        <a href={selectedInfluencer.youtubeHandle.startsWith('http') ? selectedInfluencer.youtubeHandle : `https://youtube.com/@${selectedInfluencer.youtubeHandle}`} target="_blank" rel="noopener noreferrer" className="text-sm font-medium text-primary hover:underline">
+                          {selectedInfluencer.youtubeHandle.includes('youtube.com/') ? selectedInfluencer.youtubeHandle.split('youtube.com/')[1]?.split('?')[0] || selectedInfluencer.youtubeHandle : selectedInfluencer.youtubeHandle}
+                        </a>
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
 
               <div className="flex items-center gap-2 pt-2">
