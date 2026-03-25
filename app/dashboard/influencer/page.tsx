@@ -285,6 +285,7 @@ export default function InfluencerDashboard() {
   const [pendingDeposits, setPendingDeposits] = useState(0);
   const [pendingWithdrawals, setPendingWithdrawals] = useState(0);
   const [showVerifyPopup, setShowVerifyPopup] = useState(false);
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [emailVerified, setEmailVerified] = useState(true);
 
   useEffect(() => {
@@ -384,9 +385,14 @@ export default function InfluencerDashboard() {
         const profileRes = await fetch('/api/profiles/me');
         if (profileRes.ok) {
           const profileData = await profileRes.json();
-          if (profileData.profile && !profileData.profile.emailVerified) {
-            setEmailVerified(false);
-            setShowVerifyPopup(true);
+          if (profileData.profile) {
+            if (!profileData.profile.emailVerified) {
+              setEmailVerified(false);
+              setShowVerifyPopup(true);
+            }
+            if (profileData.profile.avatarUrl) {
+              setAvatarUrl(profileData.profile.avatarUrl);
+            }
           }
         }
       } catch (e) {
@@ -1823,11 +1829,50 @@ export default function InfluencerDashboard() {
               <Card className="p-6 sm:p-8">
                 <form className="space-y-5">
                   <div className="flex items-center gap-4 pb-5 border-b">
-                    <div className="w-20 h-20 rounded-full bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center">
-                      <User className="h-10 w-10 text-primary" />
+                    <div className="w-20 h-20 rounded-full bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center overflow-hidden">
+                      {avatarUrl ? (
+                        <img src={avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
+                      ) : (
+                        <User className="h-10 w-10 text-primary" />
+                      )}
                     </div>
                     <div>
-                      <Button type="button" size="sm" variant="outline">
+                      <input
+                        type="file"
+                        id="avatar-upload"
+                        accept="image/jpeg,image/png,image/svg+xml,image/webp"
+                        className="hidden"
+                        onChange={async (e) => {
+                          const file = e.target.files?.[0]
+                          if (!file) return
+                          if (file.size > 2 * 1024 * 1024) {
+                            showToast('Image too large. Maximum 2MB.', 'error')
+                            return
+                          }
+                          const reader = new FileReader()
+                          reader.onload = async () => {
+                            const base64 = reader.result as string
+                            try {
+                              const res = await fetch('/api/profiles/avatar', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ avatar: base64 }),
+                              })
+                              if (res.ok) {
+                                setAvatarUrl(base64)
+                                showToast('Avatar updated!', 'success')
+                              } else {
+                                const data = await res.json()
+                                showToast(data.error || 'Failed to upload avatar', 'error')
+                              }
+                            } catch {
+                              showToast('Failed to upload avatar', 'error')
+                            }
+                          }
+                          reader.readAsDataURL(file)
+                        }}
+                      />
+                      <Button type="button" size="sm" variant="outline" onClick={() => document.getElementById('avatar-upload')?.click()}>
                         <Camera className="h-4 w-4 mr-2" />
                         Upload Avatar
                       </Button>
