@@ -12,7 +12,7 @@ function getResend(): Resend {
   return _resend
 }
 
-const FROM_EMAIL = process.env.FROM_EMAIL || 'onboarding@resend.dev'
+const FROM_EMAIL = process.env.FROM_EMAIL || 'Influx <noreply@aiinflux.io>'
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
 
 export async function sendVerificationEmail(email: string, token: string) {
