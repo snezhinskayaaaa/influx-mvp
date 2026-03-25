@@ -52,46 +52,60 @@ export async function getYouTubeStats(youtubeUrl: string): Promise<YouTubeChanne
   if (!identifier) return null
 
   try {
-    let channelId = identifier.value
+    // Try multiple methods to find the channel
+    let data: Record<string, unknown> | null = null
 
-    // If we have a handle or username, we need to resolve it to a channel ID first
-    if (identifier.type === 'handle') {
-      const searchRes = await fetch(
-        `https://www.googleapis.com/youtube/v3/search?part=snippet&type=channel&q=${encodeURIComponent(identifier.value)}&maxResults=1&key=${YOUTUBE_API_KEY}`
+    if (identifier.type === 'id') {
+      // Direct channel ID lookup
+      const res = await fetch(
+        `https://www.googleapis.com/youtube/v3/channels?part=statistics,snippet&id=${identifier.value}&key=${YOUTUBE_API_KEY}`
       )
-      const searchData = await searchRes.json()
-      if (searchData.items?.[0]?.snippet?.channelId) {
-        channelId = searchData.items[0].snippet.channelId
-      } else {
-        return null
+      data = await res.json()
+    } else if (identifier.type === 'handle') {
+      // Try forHandle first (YouTube v3 direct handle lookup)
+      const handleRes = await fetch(
+        `https://www.googleapis.com/youtube/v3/channels?part=statistics,snippet&forHandle=${encodeURIComponent(identifier.value)}&key=${YOUTUBE_API_KEY}`
+      )
+      data = await handleRes.json()
+
+      // If forHandle didn't work, try forUsername
+      if (!(data as Record<string, unknown[]>)?.items?.length) {
+        const userRes = await fetch(
+          `https://www.googleapis.com/youtube/v3/channels?part=statistics,snippet&forUsername=${encodeURIComponent(identifier.value)}&key=${YOUTUBE_API_KEY}`
+        )
+        data = await userRes.json()
+      }
+
+      // Last resort: search
+      if (!(data as Record<string, unknown[]>)?.items?.length) {
+        const searchRes = await fetch(
+          `https://www.googleapis.com/youtube/v3/search?part=snippet&type=channel&q=${encodeURIComponent(identifier.value)}&maxResults=1&key=${YOUTUBE_API_KEY}`
+        )
+        const searchData = await searchRes.json()
+        if (searchData.items?.[0]?.snippet?.channelId) {
+          const channelRes = await fetch(
+            `https://www.googleapis.com/youtube/v3/channels?part=statistics,snippet&id=${searchData.items[0].snippet.channelId}&key=${YOUTUBE_API_KEY}`
+          )
+          data = await channelRes.json()
+        }
       }
     } else if (identifier.type === 'username') {
-      const userRes = await fetch(
-        `https://www.googleapis.com/youtube/v3/channels?part=id&forUsername=${encodeURIComponent(identifier.value)}&key=${YOUTUBE_API_KEY}`
+      const res = await fetch(
+        `https://www.googleapis.com/youtube/v3/channels?part=statistics,snippet&forUsername=${encodeURIComponent(identifier.value)}&key=${YOUTUBE_API_KEY}`
       )
-      const userData = await userRes.json()
-      if (userData.items?.[0]?.id) {
-        channelId = userData.items[0].id
-      } else {
-        return null
-      }
+      data = await res.json()
     }
 
-    // Fetch channel statistics
-    const res = await fetch(
-      `https://www.googleapis.com/youtube/v3/channels?part=statistics,snippet&id=${channelId}&key=${YOUTUBE_API_KEY}`
-    )
-    const data = await res.json()
+    if (!(data as Record<string, unknown[]>)?.items?.[0]) return null
 
-    if (!data.items?.[0]) return null
-
-    const channel = data.items[0]
+    const items = (data as Record<string, unknown[]>).items as Record<string, Record<string, string>>[]
+    const channel = items[0]
     return {
-      subscriberCount: parseInt(channel.statistics.subscriberCount) || 0,
-      viewCount: parseInt(channel.statistics.viewCount) || 0,
-      videoCount: parseInt(channel.statistics.videoCount) || 0,
-      title: channel.snippet.title || '',
-      thumbnail: channel.snippet.thumbnails?.default?.url || '',
+      subscriberCount: parseInt(channel.statistics?.subscriberCount) || 0,
+      viewCount: parseInt(channel.statistics?.viewCount) || 0,
+      videoCount: parseInt(channel.statistics?.videoCount) || 0,
+      title: channel.snippet?.title || '',
+      thumbnail: (channel.snippet?.thumbnails as Record<string, Record<string, string>>)?.default?.url || '',
     }
   } catch (error) {
     console.error('YouTube API error:', error)
