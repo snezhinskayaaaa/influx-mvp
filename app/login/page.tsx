@@ -80,11 +80,18 @@ export default function LoginPage() {
     }
     const redirectUri = `${window.location.origin}/api/auth/google`;
     const scope = "openid email profile";
+    const nonce = crypto.randomUUID();
+    const state = JSON.stringify({ role: "creator", nonce });
+
+    // Store nonce in cookie for CSRF verification on callback
+    document.cookie = `oauth-nonce=${nonce}; path=/; max-age=600; SameSite=Lax`;
+
     const params = new URLSearchParams({
       client_id: clientId,
       redirect_uri: redirectUri,
       response_type: "code",
       scope,
+      state,
       access_type: "offline",
       prompt: "consent",
     });

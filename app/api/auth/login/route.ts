@@ -28,6 +28,12 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       )
     }
+    if (password.length > 128) {
+      return NextResponse.json(
+        { success: false, error: 'Password must not exceed 128 characters' },
+        { status: 400 }
+      )
+    }
 
     // Normalize email
     const cleanEmail = email.trim().toLowerCase()

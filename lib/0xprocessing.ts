@@ -106,7 +106,11 @@ export function verifyDepositSignature(payload: {
 }): boolean {
   const input = `${payload.PaymentId}:${payload.MerchantId}:${payload.Email}:${payload.Currency}:${WEBHOOK_PASSWORD}`
   const expected = crypto.createHash('md5').update(input).digest('hex')
-  return expected === payload.Signature
+  const actual = payload.Signature || ''
+  // Use timing-safe comparison to prevent timing attacks
+  const isValid = expected.length === actual.length &&
+    crypto.timingSafeEqual(Buffer.from(expected), Buffer.from(actual))
+  return isValid
 }
 
 export function verifyWithdrawalSignature(payload: {
@@ -118,7 +122,11 @@ export function verifyWithdrawalSignature(payload: {
 }): boolean {
   const input = `${payload.ID}:${payload.MerchantID}:${payload.Address}:${payload.Currency}:${WEBHOOK_PASSWORD}`
   const expected = crypto.createHash('md5').update(input).digest('hex')
-  return expected === payload.Signature
+  const actual = payload.Signature || ''
+  // Use timing-safe comparison to prevent timing attacks
+  const isValid = expected.length === actual.length &&
+    crypto.timingSafeEqual(Buffer.from(expected), Buffer.from(actual))
+  return isValid
 }
 
 export async function getSupportedCoins() {

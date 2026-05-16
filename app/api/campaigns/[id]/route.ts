@@ -81,7 +81,13 @@ export async function PATCH(
     if (body.title !== undefined) updateData.title = body.title.trim()
     if (body.description !== undefined) updateData.description = body.description || null
     if (body.desiredInfluencerCount !== undefined) updateData.desiredInfluencerCount = body.desiredInfluencerCount
-    if (body.status !== undefined) updateData.status = body.status
+    if (body.status !== undefined) {
+      const validStatuses = ['ACTIVE', 'COMPLETED', 'CANCELLED'] as const
+      if (!validStatuses.includes(body.status)) {
+        return NextResponse.json({ error: 'Invalid status. Must be ACTIVE, COMPLETED, or CANCELLED' }, { status: 400 })
+      }
+      updateData.status = body.status
+    }
     if (body.budgetMin !== undefined) updateData.budgetMin = Math.round(body.budgetMin * 100)
     if (body.budgetMax !== undefined) updateData.budgetMax = Math.round(body.budgetMax * 100)
 

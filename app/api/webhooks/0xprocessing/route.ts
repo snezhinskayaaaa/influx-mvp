@@ -6,8 +6,11 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
 
-    // Ignore test webhooks in production
+    // Ignore test webhooks — log a warning in production
     if (body.Test === true) {
+      if (process.env.NODE_ENV === 'production') {
+        console.warn('Test webhook received in production, ignoring')
+      }
       return NextResponse.json({ ok: true })
     }
 

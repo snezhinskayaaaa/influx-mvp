@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
 import { createToken, hashPassword } from '@/lib/auth'
+import { OAUTH_NONCE_COOKIE } from '@/lib/google-oauth'
 
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID
 const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET
@@ -22,6 +23,8 @@ function redirectWithCookie(url: string, token: string, isProduction: boolean): 
     maxAge: 60 * 60 * 24 * 7, // 7 days
     path: '/',
   })
+  // Clear OAuth nonce cookie after use
+  response.cookies.delete(OAUTH_NONCE_COOKIE)
   return response
 }
 
@@ -35,6 +38,19 @@ export async function GET(request: NextRequest) {
 
   if (!code) {
     return NextResponse.json({ error: 'Authorization code required' }, { status: 400 })
+  }
+
+  // Verify OAuth CSRF nonce
+  let parsedState: { role?: string; nonce?: string } = {}
+  try {
+    parsedState = state ? JSON.parse(state) : {}
+  } catch {
+    return NextResponse.redirect(`${baseUrl}/login?error=google_failed`)
+  }
+
+  const nonceCookie = request.cookies.get(OAUTH_NONCE_COOKIE)?.value
+  if (!parsedState.nonce || !nonceCookie || parsedState.nonce !== nonceCookie) {
+    return NextResponse.redirect(`${baseUrl}/login?error=google_failed`)
   }
 
   if (!GOOGLE_CLIENT_ID || !GOOGLE_CLIENT_SECRET) {
@@ -90,7 +106,7 @@ export async function GET(request: NextRequest) {
       return redirectWithCookie(`${baseUrl}${redirectPath}`, token, isProduction)
     }
 
-    const userType = state || 'creator'
+    const userType = parsedState.role || 'creator'
     const role = userType === 'brand' ? 'BRAND' : 'INFLUENCER'
 
     const randomPassword = crypto.randomUUID() + 'A1!'

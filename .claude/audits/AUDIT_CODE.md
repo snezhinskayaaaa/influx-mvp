@@ -1,347 +1,352 @@
-# Code Quality Audit
+# UI/UX Audit — influx-mvp
 
 ---
 agent: code-auditor
 status: COMPLETE
-timestamp: 2026-03-20T12:00:00Z
-duration: 45 seconds
-findings: 18
-files_scanned: 34
+timestamp: 2025-07-10T12:00:00Z
+duration: 180
+findings: 38
+files_scanned: 70
 any_count: 0
-console_log_count: 4
+console_log_count: 86
 errors: []
 skipped_checks: []
 ---
 
 ## Summary
+
 | Category | Count |
 |----------|-------|
-| Type Safety | 3 |
-| Complexity | 3 |
-| Maintainability | 3 |
-| Consistency | 5 |
-| Code Hygiene | 4 |
-
-## Metrics
-| Metric | Value | Target | Status |
-|--------|-------|--------|--------|
-| `any` usage | 0 | < 5 | PASS |
-| console.log count | 4 | 0 | FAIL |
-| TODO/FIXME count | 11 | < 20 | PASS |
-| Files > 500 lines | 4 | 0 | FAIL |
-| Functions > 50 lines | 3+ | 0 | FAIL |
+| Broken Links / Routes | 0 |
+| Stub / Non-functional Buttons | 8 |
+| Form / API Route Mismatches | 0 |
+| Navigation Issues | 0 |
+| Auth Flow Issues | 1 |
+| Dashboard Data Issues | 0 |
+| Admin Data Issues | 0 |
+| Carousel / Animation Issues | 0 |
+| Missing Error Handling | 3 |
+| Validation Inconsistency | 3 |
+| Console.log in Production | 86 |
+| God Files (>500 lines) | 14 |
 
 ---
 
-## Critical
+## 1. Links / href — Route Existence Check
 
-### CODE-001: `$transaction` Incompatible with PrismaPg Driver Adapter (Interactive Transactions)
-**File:** `/Users/snezhinskayaaaa/Projects/influx-mvp/lib/prisma.ts` (lines 23-25)
-**Affects:** `/Users/snezhinskayaaaa/Projects/influx-mvp/app/api/auth/signup/route.ts:79`, `/Users/snezhinskayaaaa/Projects/influx-mvp/app/api/collaborations/[id]/agree/route.ts:57`, `/Users/snezhinskayaaaa/Projects/influx-mvp/app/api/collaborations/[id]/complete/route.ts:45`, `/Users/snezhinskayaaaa/Projects/influx-mvp/app/api/wallet/deposit/route.ts:34`, `/Users/snezhinskayaaaa/Projects/influx-mvp/app/api/wallet/withdraw/route.ts:40`
-**Severity:** CRITICAL
-**Issue:** The PrismaPg driver adapter (used here with `new PrismaPg(pool)`) does NOT support interactive transactions (`prisma.$transaction(async (tx) => { ... })`). Interactive transactions require a direct database connection managed by the Prisma engine, which driver adapters bypass. The signup route uses `$transaction` at line 79, which will throw at runtime. This is the root cause of the "An unexpected error occurred" on signup.
-**Fix:** Replace interactive transactions with sequential transactions (array form) where possible, or remove the driver adapter and use Prisma's built-in connection with `DATABASE_URL` in the schema `datasource` block:
+**Result: ALL internal links point to existing routes.** No broken links found.
 
-Option A -- Remove the driver adapter entirely (recommended for simplicity):
-```prisma
-// schema.prisma
-datasource db {
-  provider  = "postgresql"
-  url       = env("DATABASE_URL")
-}
-```
-```typescript
-// lib/prisma.ts
-import { PrismaClient } from '@prisma/client'
+Every `<Link href="...">` and `router.push("...")` target was cross-referenced against the 32 `page.tsx` files and 38 API `route.ts` files.
 
-const globalForPrisma = globalThis as unknown as {
-  prisma: PrismaClient | undefined
-}
+### Internal page routes verified (all exist):
+- `/` — `app/page.tsx`
+- `/brands` — `app/brands/page.tsx`
+- `/influencers` — `app/influencers/page.tsx`
+- `/pricing` — `app/pricing/page.tsx`
+- `/signup` (with query params `?type=brand`, `?type=creator`, `?type=influencer`, `?plan=free`, `?plan=pro`) — `app/signup/page.tsx`
+- `/login` — `app/login/page.tsx`
+- `/forgot-password` — `app/forgot-password/page.tsx`
+- `/reset-password` (with `?token=`) — `app/reset-password/page.tsx`
+- `/verify-email` (with `?token=`) — `app/verify-email/page.tsx`
+- `/terms` — `app/terms/page.tsx`
+- `/privacy` — `app/privacy/page.tsx`
+- `/admin` — `app/admin/page.tsx`
+- `/admin/influencers` — `app/admin/influencers/page.tsx`
+- `/admin/brands` — `app/admin/brands/page.tsx`
+- `/admin/campaigns` — `app/admin/campaigns/page.tsx`
+- `/admin/database` — `app/admin/database/page.tsx`
+- `/admin/settings` — `app/admin/settings/page.tsx`
+- `/dashboard/brand` — `app/dashboard/brand/page.tsx`
+- `/dashboard/influencer` — `app/dashboard/influencer/page.tsx`
+- `/onboarding/brand` (and step-2 through step-6, business-type, video-type) — all exist
+- `/onboarding/influencer` (and step-2 through step-5) — all exist
 
-function createPrismaClient(): PrismaClient {
-  if (!process.env.DATABASE_URL) {
-    return new Proxy({} as PrismaClient, {
-      get(_target, prop) {
-        if (prop === 'then' || prop === 'catch' || typeof prop === 'symbol') return undefined
-        return () => Promise.resolve(null)
-      },
-    })
-  }
-  return new PrismaClient()
-}
+### External links (all valid patterns):
+- `https://www.instagram.com/influx.connect/`
+- `https://www.tiktok.com/@aiinflux`
+- `https://t.me/aiinflux`
+- `https://x.com/aiinflux`
+- `https://linkedin.com` (generic, not company-specific -- consider updating to a real company page)
+- `mailto:support@aiinflux.io`
 
-const prisma = globalForPrisma.prisma ?? createPrismaClient()
-if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma
-export default prisma
-```
-
-Option B -- Keep the adapter but convert to sequential (non-interactive) transactions where you can, and restructure signup to not need a transaction (create profile first, then role record; if the role record fails, delete the profile in a catch block).
-
-### CODE-002: Signup Profile ID Generation Conflicts with Schema Default
-**File:** `/Users/snezhinskayaaaa/Projects/influx-mvp/app/api/auth/signup/route.ts`, line 76
-**Severity:** CRITICAL
-**Issue:** Line 76 generates a UUID with `crypto.randomUUID()` and passes it as `id: profileId` in the `profile.create` call (line 82). The schema defines `id` with `@default(dbgenerated("gen_random_uuid()"))`. When using the PrismaPg adapter, `gen_random_uuid()` is a PostgreSQL function. Manually providing a JS-generated UUID might work, but it creates a mismatch: the Brand/Influencer `id` field also relies on `gen_random_uuid()` which the adapter sends as a raw SQL default. With driver adapters, `dbgenerated()` defaults may or may not be sent depending on Prisma version behavior. This is fragile at best. If the adapter is removed (per CODE-001), the JS-generated UUID is unnecessary and should be omitted to let the database generate it.
-**Fix:** Remove the manual UUID generation and let the database handle it:
-```typescript
-// Remove: const profileId = crypto.randomUUID()
-const newProfile = await tx.profile.create({
-  data: {
-    // Remove: id: profileId,
-    email,
-    passwordHash,
-    fullName: fullName || null,
-    role,
-  },
-})
-```
-
-### CODE-003: Schema `datasource` Missing `url` Property
-**File:** `/Users/snezhinskayaaaa/Projects/influx-mvp/prisma/schema.prisma`, lines 5-7
-**Severity:** CRITICAL
-**Issue:** The datasource block has no `url` property:
-```prisma
-datasource db {
-  provider = "postgresql"
-}
-```
-While this works when using a driver adapter (the adapter provides the connection), it breaks `prisma db push` and `prisma migrate` because those CLI commands need the URL directly. The Railway deploy command `npx prisma db push --url $DATABASE_URL` works around this, but local development (`npm run db:push`) will fail without the `--url` flag. More critically, if the adapter is removed (per CODE-001 fix), this will break completely at runtime.
-**Fix:**
-```prisma
-datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
-}
-```
+### Minor note:
+- `https://linkedin.com` is a generic URL, not pointing to any specific company page. Low priority.
 
 ---
 
-## High
+## 2. Buttons with onClick — Stub Detection
 
-### CODE-004: Middleware Auth Routes Mismatch Actual Routes
-**File:** `/Users/snezhinskayaaaa/Projects/influx-mvp/middleware.ts`, lines 14, 62-69
-**Severity:** HIGH
-**Issue:** The `authRoutes` array (routes that redirect logged-in users away from auth pages) contains `'/auth/login'`, `'/brands/signup'`, `'/influencers/signup'`. But the actual login page is at `/login` (not `/auth/login`) and the signup page is at `/signup` (not `/brands/signup` or `/influencers/signup`). The matcher config also only matches `/auth/:path*`, `/brands/signup`, `/influencers/signup` but NOT `/login` or `/signup`. This means:
-1. Logged-in users visiting `/login` or `/signup` are NOT redirected to their dashboard.
-2. The middleware never runs for the actual login/signup routes.
-**Fix:**
-```typescript
-const authRoutes = ['/login', '/signup']
+### STUB-001: "Send Invitation" button (CRITICAL)
+- **File:** `app/dashboard/brand/page.tsx:412-417`
+- **Issue:** Button is permanently `disabled` with no onClick handler. Users cannot send invitations to influencers.
+- **Impact:** Core brand workflow is non-functional.
 
-export const config = {
-  matcher: [
-    '/dashboard/:path*',
-    '/admin/:path*',
-    '/login',
-    '/signup',
-  ],
-}
-```
+### STUB-002: "Send Counter Offer" button (CRITICAL)
+- **File:** `app/dashboard/brand/page.tsx:738-743`
+- **Issue:** Button is permanently `disabled` with no onClick handler. Brands cannot negotiate prices.
+- **Impact:** Price negotiation workflow is completely broken.
 
-### CODE-005: Deposit Fee Charged but Not Deducted from Credited Amount
-**File:** `/Users/snezhinskayaaaa/Projects/influx-mvp/app/api/wallet/deposit/route.ts`, lines 31-46
-**Severity:** HIGH
-**Issue:** A 2% deposit fee is calculated (`fee = Math.round(amountCents * 0.02)`) but the full `amountCents` is credited to the brand's balance (line 37: `balance: { increment: amountCents }`). The fee is recorded in the transaction description but never actually collected -- the brand gets the full amount. The response says `totalCharged: amountCents + fee` implying the user pays more, but the brand's balance increases by the full deposit amount, not `amountCents - fee`.
-**Fix:** Either credit `amountCents - fee` (fee deducted from deposit) or actually charge `amountCents + fee` from the payment processor. For now, at minimum:
-```typescript
-const credited = amountCents - fee
-const updated = await tx.brand.update({
-  where: { id: brand.id },
-  data: { balance: { increment: credited } },
-})
-```
+### STUB-003: Campaign Edit/Pause/Delete buttons (MEDIUM)
+- **File:** `app/dashboard/brand/components/campaigns-tab.tsx:1936-1956`
+- **Issue:** Three buttons (Pencil, Pause, Trash2) are all `disabled` with `title="Coming soon"`. No functionality.
+- **Impact:** Brands cannot manage existing campaigns.
 
-### CODE-006: Fee Percentages Hardcoded Instead of Using PlatformSettings
-**Files:** `/Users/snezhinskayaaaa/Projects/influx-mvp/app/api/wallet/deposit/route.ts:32`, `/Users/snezhinskayaaaa/Projects/influx-mvp/app/api/wallet/withdraw/route.ts:37`
-**Severity:** HIGH
-**Issue:** Deposit fee is hardcoded as 2% and withdrawal fee as 3%, while a `PlatformSettings` model exists with `depositFeePercent` and `withdrawalFeePercent` that admins can update. The admin settings endpoint lets admins change these values, but the actual deposit/withdraw routes ignore them entirely.
-**Fix:** Fetch `PlatformSettings` before calculating fees:
-```typescript
-const settings = await prisma.platformSettings.findUnique({ where: { id: 'default' } })
-const feePercent = (settings?.depositFeePercent ?? 2) / 100
-const fee = Math.round(amountCents * Number(feePercent))
-```
+### STUB-004: "Update Account" button — Influencer Settings (HIGH)
+- **File:** `app/dashboard/influencer/page.tsx:2282`
+- **Issue:** `<Button>Update Account</Button>` has NO onClick handler. The email and password fields above it (lines 2276-2281) use `defaultValue=""` and are not wired to any state or API call. This entire settings section is a non-functional shell.
+- **Impact:** Influencers cannot change email or password from the settings tab.
 
-### CODE-007: Influencer Price Fields Stored in Cents but Displayed Without Conversion Context
-**File:** `/Users/snezhinskayaaaa/Projects/influx-mvp/app/api/influencers/me/route.ts`, lines 108-115
-**Severity:** HIGH
-**Issue:** The PATCH endpoint for influencer price fields (`pricePerPost`, `pricePerStory`, `pricePerVideo`) converts dollars to cents: `Math.round(dollars * 100)`. However, the GET endpoint returns the raw cents value. The brand dashboard at line 894 correctly divides by 100: `(pricePerPost / 100).toFixed(0)`. But the influencer dashboard and other consumers have no documentation about this convention, leading to inconsistency risk. Setting a price of `0` when the input is invalid (line 113) silently corrupts data instead of returning a validation error.
-**Fix:** Return a validation error for invalid price inputs instead of silently setting 0:
-```typescript
-for (const field of PRICE_FIELDS) {
-  if (field in body) {
-    const dollars = parseFloat(body[field])
-    if (!Number.isFinite(dollars) || dollars < 0) {
-      return NextResponse.json(
-        { error: `${field} must be a valid non-negative number` },
-        { status: 400 }
-      )
-    }
-    updateData[field] = Math.round(dollars * 100)
-  }
-}
-```
+### STUB-005: "Manage Payment Methods" button — Influencer Settings (MEDIUM)
+- **File:** `app/dashboard/influencer/page.tsx:2335`
+- **Issue:** `<Button variant="outline">Manage Payment Methods</Button>` has no onClick handler. Does nothing.
+
+### STUB-006: "Save" button on campaign cards (LOW)
+- **File:** `app/dashboard/influencer/page.tsx:1019-1022`
+- **Issue:** Heart/Save button has no onClick handler. Does nothing on click.
+
+### STUB-007: Notification checkboxes — Influencer Settings (LOW)
+- **File:** `app/dashboard/influencer/page.tsx:2296-2315`
+- **Issue:** Three `<input type="checkbox" defaultChecked />` elements are not connected to any state or API. Toggling them has no effect.
+
+### STUB-008: Card payment option (LOW — properly labeled)
+- **File:** `app/dashboard/brand/components/brand-nav.tsx:313-322`
+- **Issue:** Card payment button is disabled with "Coming Soon" badge. Properly communicated to users.
+
+### All other buttons verified as functional:
+- All logout buttons call `/api/auth/logout` POST then redirect to `/login`
+- All form submit buttons are wired to API calls
+- All onboarding navigation buttons use `router.push()`
+- FAQ accordion buttons on pricing page work correctly
+- Carousel prev/next buttons use embla-carousel API
 
 ---
 
-## Medium
+## 3. Forms — API Route Verification
 
-### CODE-008: Google OAuth Handlers Redirect Without Authentication
-**File:** `/Users/snezhinskayaaaa/Projects/influx-mvp/app/signup/page.tsx`, lines 95-105
-**File:** `/Users/snezhinskayaaaa/Projects/influx-mvp/app/login/page.tsx`, lines 65-71
-**Severity:** MEDIUM
-**Issue:** The `handleGoogleSignup` and `handleGoogleLogin` functions log to console and redirect to onboarding/dashboard without any actual authentication. A user clicking "Continue with Google" will be redirected to protected routes without a valid auth cookie, then bounced by middleware (if middleware were configured correctly per CODE-004, which it currently is not). This creates a confusing UX.
-**Fix:** Either disable the Google buttons entirely until OAuth is implemented, or show a "Coming soon" toast instead of silently redirecting:
-```typescript
-const handleGoogleSignup = () => {
-  setError("Google sign-in coming soon. Please use email signup.");
-};
-```
+**Result: ALL forms POST to existing API routes.** No mismatches found.
 
-### CODE-009: Campaign Creation Does Not Freeze Budget from Brand Balance
-**File:** `/Users/snezhinskayaaaa/Projects/influx-mvp/app/api/campaigns/route.ts`, lines 103-131
-**Severity:** MEDIUM
-**Issue:** Line 106 checks that `brand.balance < budgetMinCents` but never actually deducts or freezes any funds. The campaign is created at `ACTIVE` status with a budget range, but the brand's balance is untouched. A brand with $100 balance could create 10 campaigns each with $100 budget, over-committing their funds.
-**Fix:** Either freeze `budgetMinCents` from the brand's balance when creating a campaign, or remove the balance check entirely and only enforce balance checks when a collaboration agreement is finalized (which is what the agree endpoint does).
-
-### CODE-010: Campaign GET for Influencers Shows Only ACTIVE Campaigns
-**File:** `/Users/snezhinskayaaaa/Projects/influx-mvp/app/api/campaigns/route.ts`, line 36
-**Severity:** MEDIUM
-**Issue:** The campaigns GET endpoint for influencers filters by `status: 'ACTIVE'`. But the Prisma schema uses `@map("active")` on the enum value, and Prisma expects the TypeScript-side enum name `ACTIVE`, not the database value. However, since Prisma handles the mapping internally, passing the string `'ACTIVE'` should work. The real issue is that influencers cannot see campaigns they previously applied to if those campaigns are now `COMPLETED` or `DRAFT`. Their collaboration history is only visible via the collaborations endpoint.
-**Fix:** This is a design consideration. If intended, add a comment. If not, include additional statuses or separate the "browse" and "my campaigns" views.
-
-### CODE-011: Admin Influencer Status Filter Uses Enum Values Directly
-**File:** `/Users/snezhinskayaaaa/Projects/influx-mvp/app/api/admin/influencers/route.ts`, lines 22-31
-**Severity:** MEDIUM
-**Issue:** The status query parameter is validated against `Object.values(InfluencerStatus)`, which returns the TypeScript enum values (`PENDING`, `APPROVED`, `REJECTED`). The admin UI would need to send uppercase values. If the admin UI sends lowercase values (matching the database `@map` values like `pending`), the validation will reject them. This is correct behavior for Prisma, but could confuse API consumers who inspect the database directly.
-**Fix:** Document the expected API format or add case-insensitive matching.
-
-### CODE-012: Inconsistent API Response Shapes
-**Files:** Multiple API routes
-**Severity:** MEDIUM
-**Issue:** API routes use inconsistent response envelope patterns:
-- Signup/login: `{ success: true, user: {...} }` or `{ success: false, error: '...' }`
-- Brands/me: `{ brand: {...} }` or `{ error: '...' }` (no `success` field)
-- Campaigns: `{ campaigns: [...] }` or `{ error: '...' }` (no `success` field)
-- Wallet: `{ wallet: {...}, transactions: [...] }` (no `success` field)
-
-The auth routes include `success: boolean` but all other routes omit it. This forces frontend code to check both `res.ok` and sometimes `data.success`.
-**Fix:** Standardize all responses to either always include `success` or never include it (rely on HTTP status codes only). Pick one pattern and apply consistently.
+| Form | Method | API Route | Exists |
+|------|--------|-----------|--------|
+| Login | POST | `/api/auth/login` | YES |
+| Signup | POST | `/api/auth/signup` | YES |
+| Forgot Password | POST | `/api/auth/forgot-password` | YES |
+| Reset Password | POST | `/api/auth/reset-password` | YES |
+| Create Campaign | POST | `/api/campaigns` | YES |
+| Apply to Campaign | POST | `/api/collaborations` | YES |
+| Save Influencer Profile | PATCH | `/api/influencers/me` | YES |
+| Upload Avatar | POST | `/api/profiles/avatar` | YES |
+| YouTube Verify | POST | `/api/social/youtube` | YES |
+| Wallet Deposit | POST | `/api/wallet/deposit` | YES |
+| Wallet Withdraw | POST | `/api/wallet/withdraw` | YES |
+| Admin Settings Save | PATCH | `/api/admin/settings` | YES |
+| Admin Send Code | POST | `/api/admin/settings/send-code` | YES |
+| Resend Verification | POST | `/api/auth/resend-verification` | YES |
 
 ---
 
-## Low
+## 4. Navigation — Menu Items Verification
 
-### CODE-013: God Files -- Dashboard Pages Exceed 500 Lines Significantly
-**Files:**
-- `/Users/snezhinskayaaaa/Projects/influx-mvp/app/dashboard/brand/page.tsx` -- 5504 lines
-- `/Users/snezhinskayaaaa/Projects/influx-mvp/app/dashboard/influencer/page.tsx` -- 1998 lines
-- `/Users/snezhinskayaaaa/Projects/influx-mvp/app/influencers/page.tsx` -- 1126 lines
-- `/Users/snezhinskayaaaa/Projects/influx-mvp/app/brands/page.tsx` -- 1082 lines
-**Severity:** LOW
-**Issue:** The brand dashboard at 5504 lines is extremely large. It contains multiple tabs (discover, campaigns, profile, create-campaign, settings), each with substantial UI. This makes the file nearly impossible to navigate, test, or maintain. The influencer dashboard is similarly oversized at 1998 lines.
-**Fix:** Split each tab into its own component file:
-```
-app/dashboard/brand/
-  page.tsx                    (layout + tab routing, ~100 lines)
-  components/
-    DiscoverTab.tsx
-    CampaignsTab.tsx
-    ProfileTab.tsx
-    CreateCampaignTab.tsx
-    SettingsTab.tsx
-    WalletDialog.tsx
-```
+**Result: ALL navigation menu items point to valid routes.**
 
-### CODE-014: Console.log Statements in Production Code
-**Count:** 4 occurrences
-**Files:**
-- `/Users/snezhinskayaaaa/Projects/influx-mvp/app/signup/page.tsx:97` -- `console.log("Google signup as:", userType)`
-- `/Users/snezhinskayaaaa/Projects/influx-mvp/app/login/page.tsx:67` -- `console.log("Google login")`
-- `/Users/snezhinskayaaaa/Projects/influx-mvp/app/dashboard/brand/page.tsx:5071` -- `console.log(inviting influencer...)`
-- `/Users/snezhinskayaaaa/Projects/influx-mvp/app/dashboard/brand/page.tsx:5407` -- `console.log("Sending counter offer:", ...)`
-**Severity:** LOW
-**Fix:** Remove all console.log statements from production code.
+### Public Navigation (`components/navigation.tsx`):
+- `/` (logo) -- EXISTS
+- `/brands` ("Browse Talent") -- EXISTS
+- `/influencers` ("Monetize Content") -- EXISTS
+- `/pricing` -- EXISTS
+- `/signup` ("Get Started") -- EXISTS
 
-### CODE-015: TODO/FIXME Accumulation
-**Count:** 11 items across the codebase
-**Notable:**
-- `/Users/snezhinskayaaaa/Projects/influx-mvp/app/signup/page.tsx:96` -- `TODO: Implement Google OAuth`
-- `/Users/snezhinskayaaaa/Projects/influx-mvp/app/login/page.tsx:66` -- `TODO: Implement Google OAuth`
-- `/Users/snezhinskayaaaa/Projects/influx-mvp/app/api/wallet/deposit/route.ts:5` -- `TODO: Integrate with 0xprocessing.com`
-- `/Users/snezhinskayaaaa/Projects/influx-mvp/app/api/wallet/withdraw/route.ts:5` -- `TODO: Integrate with 0xprocessing.com`
-- `/Users/snezhinskayaaaa/Projects/influx-mvp/app/dashboard/brand/page.tsx` -- 7 TODOs for unimplemented features
-**Severity:** LOW
-**Fix:** Convert to GitHub issues for tracking or implement the features.
+### Admin Navigation (`components/admin-nav.tsx`):
+- `/admin` ("Dashboard") -- EXISTS
+- `/admin/influencers` -- EXISTS
+- `/admin/brands` -- EXISTS
+- `/admin/campaigns` -- EXISTS
+- `/admin/database` -- EXISTS
+- `/admin/settings` -- EXISTS
 
-### CODE-016: Build-Time Proxy in Prisma Client Is Fragile
-**File:** `/Users/snezhinskayaaaa/Projects/influx-mvp/lib/prisma.ts`, lines 13-21
-**Severity:** LOW
-**Issue:** When `DATABASE_URL` is not set (build time), a Proxy is returned that silently returns `null` for any method call. This masks potential issues where code accidentally runs Prisma operations during build/SSG. If a page accidentally uses a server component that queries the database, it will silently return null data instead of failing loudly.
-**Fix:** Consider throwing an error for non-build contexts, or using a more explicit build-detection mechanism:
-```typescript
-if (!url) {
-  if (process.env.NEXT_PHASE === 'phase-production-build') {
-    // Return proxy only during build
-    return new Proxy({} as PrismaClient, { ... })
-  }
-  throw new Error('DATABASE_URL is required')
-}
-```
+### Brand Dashboard Navigation (`app/dashboard/brand/components/brand-nav.tsx`):
+- Tab-based navigation (discover, campaigns, create-campaign, profile, settings) -- all tabs exist in the component
 
-### CODE-017: Unsafe Type Assertion in Token Verification
-**File:** `/Users/snezhinskayaaaa/Projects/influx-mvp/lib/auth.ts`, line 27
-**File:** `/Users/snezhinskayaaaa/Projects/influx-mvp/lib/auth-edge.ts`, line 13
-**Severity:** LOW
-**Issue:** Both files use `payload as unknown as TokenPayload` which is a double type assertion that bypasses TypeScript's type checking entirely. If the JWT payload structure changes or is tampered with, there is no runtime validation that it actually contains `userId` and `role` fields.
-**Fix:** Add runtime validation:
-```typescript
-export async function verifyToken(token: string): Promise<TokenPayload | null> {
-  try {
-    const { payload } = await jwtVerify(token, JWT_SECRET)
-    if (typeof payload.userId !== 'string' || typeof payload.role !== 'string') {
-      return null
-    }
-    if (!['INFLUENCER', 'BRAND', 'ADMIN'].includes(payload.role as string)) {
-      return null
-    }
-    return { userId: payload.userId as string, role: payload.role as TokenPayload['role'] }
-  } catch {
-    return null
-  }
-}
-```
-
-### CODE-018: Fallback JWT Secret in Production
-**File:** `/Users/snezhinskayaaaa/Projects/influx-mvp/lib/auth.ts`, line 5
-**File:** `/Users/snezhinskayaaaa/Projects/influx-mvp/lib/auth-edge.ts`, line 3
-**Severity:** LOW (from code-quality perspective; security impact is out of scope for this audit)
-**Issue:** `process.env.JWT_SECRET || 'fallback-secret-change-in-production'` provides a default secret. From a code quality standpoint, this fallback should throw an error at startup if `JWT_SECRET` is not configured, rather than silently using a weak default.
-**Fix:**
-```typescript
-const secret = process.env.JWT_SECRET
-if (!secret) throw new Error('JWT_SECRET environment variable is required')
-const JWT_SECRET = new TextEncoder().encode(secret)
-```
+### Influencer Dashboard Navigation (`app/dashboard/influencer/page.tsx`):
+- Tab-based navigation (discover, my-campaigns, profile, settings) -- all tabs exist in the component
 
 ---
 
-## Checklist
+## 5. Auth Flow
 
-### Must Fix (CRITICAL -- blocks signup)
-- [ ] Remove PrismaPg adapter or convert all `$transaction` calls to non-interactive form (CODE-001)
-- [ ] Add `url = env("DATABASE_URL")` to schema datasource (CODE-003)
-- [ ] Remove manual UUID generation in signup (CODE-002)
+**Result: Auth flow is correctly implemented with one notable gap.**
 
-### Should Fix (HIGH -- incorrect behavior)
-- [ ] Fix middleware authRoutes and matcher to match actual `/login` and `/signup` paths (CODE-004)
-- [ ] Fix deposit fee not being deducted from credited amount (CODE-005)
-- [ ] Use PlatformSettings for fee percentages (CODE-006)
-- [ ] Validate price inputs instead of silently setting 0 (CODE-007)
+### Working correctly:
+- **Login:** POST `/api/auth/login` -> JWT cookie set -> role-based redirect (ADMIN -> `/admin`, BRAND -> `/dashboard/brand`, INFLUENCER -> `/dashboard/influencer`)
+- **Signup:** POST `/api/auth/signup` -> JWT cookie set -> redirect to onboarding (brand or influencer)
+- **Logout:** POST `/api/auth/logout` -> cookie removed -> redirect to `/login`
+- **Google OAuth:** Redirect to Google -> callback at `/api/auth/google` -> cookie set -> redirect
+- **Forgot Password:** POST `/api/auth/forgot-password` -> email with token -> POST `/api/auth/reset-password`
+- **Email Verification:** Token in URL -> POST `/api/auth/verify-email`
+- **Middleware:** Protects `/dashboard`, `/admin`, `/onboarding` routes; redirects logged-in users away from `/login`, `/signup`; role-based access control on admin/brand/influencer routes
 
-### Recommended (MEDIUM/LOW -- quality improvements)
-- [ ] Disable Google OAuth buttons until implemented (CODE-008)
-- [ ] Standardize API response envelope format (CODE-012)
-- [ ] Split god files into smaller components (CODE-013)
-- [ ] Remove console.log statements (CODE-014)
-- [ ] Add runtime validation for JWT payloads (CODE-017)
-- [ ] Throw on missing JWT_SECRET instead of using fallback (CODE-018)
+### AUTH-001: Login page does not use `redirect` query param (LOW)
+- **File:** `app/login/page.tsx:55-57`
+- **Issue:** The middleware sets a `redirect` query parameter when unauthenticated users hit protected routes (middleware.ts:30), but the login page ignores it. After login, users always go to their role-based dashboard, not to the page they originally tried to access.
+- **Impact:** Users lose their navigation context after being forced to log in.
+
+---
+
+## 6. Dashboard Pages — Real API vs Mock Data
+
+**Result: ALL dashboard pages fetch from real API routes. No mock/hardcoded data for dynamic content.**
+
+### Brand Dashboard (`app/dashboard/brand/page.tsx`):
+- Campaigns: `GET /api/campaigns` (real)
+- Influencers: `GET /api/influencers` (real)
+- Wallet: `GET /api/wallet` (real)
+- Brand profile: `GET /api/brands/me` (real)
+- Collaborations: `GET /api/collaborations` (real)
+- User profile: `GET /api/profiles/me` (real)
+
+### Influencer Dashboard (`app/dashboard/influencer/page.tsx`):
+- Campaigns: `GET /api/campaigns` (real)
+- Collaborations: `GET /api/collaborations` (real)
+- Wallet: `GET /api/wallet` (real)
+- Influencer profile: `GET /api/influencers/me` (real)
+- User profile: `GET /api/profiles/me` (real)
+
+---
+
+## 7. Admin Pages — Real API vs Mock Data
+
+**Result: ALL admin pages fetch from real API routes.**
+
+- Admin dashboard (`app/admin/page.tsx`): Fetches from `/api/admin/influencers`, `/api/admin/brands`, `/api/admin/campaigns`
+- Admin influencers (`app/admin/influencers/page.tsx`): Fetches from `/api/admin/influencers`, updates via `/api/admin/influencers/[id]`
+- Admin brands (`app/admin/brands/page.tsx`): Fetches from `/api/admin/brands`
+- Admin campaigns (`app/admin/campaigns/page.tsx`): Fetches from `/api/admin/campaigns`
+- Admin database (`app/admin/database/page.tsx`): Fetches from `/api/admin/users`, `/api/admin/brands`, `/api/admin/influencers`, `/api/admin/transactions`, `/api/admin/campaigns`, `/api/admin/collaborations`
+- Admin settings (`app/admin/settings/page.tsx`): Fetches from `/api/admin/settings`
+
+---
+
+## 8. Carousel / Animations
+
+**Result: No broken carousels or animations detected.**
+
+- Homepage (`app/page.tsx`): Uses `embla-carousel-react` with `embla-carousel-autoplay` plugin. Two carousels with proper `CarouselPrevious`/`CarouselNext` controls. Autoplay configured with `delay: 3000, stopOnInteraction: false`.
+- Brands page (`app/brands/page.tsx:278`): Custom dot-based carousel with `setActiveIndex` -- manual implementation, not embla-based.
+- All `framer-motion` animations use standard `fadeInUp` variants. No broken animation patterns detected.
+
+---
+
+## 9. Missing Error Handling on Fetch Calls
+
+### ERR-001: Logout buttons have no error handling (MEDIUM)
+- **Files:**
+  - `components/admin-nav.tsx:81`
+  - `components/admin-nav.tsx:132`
+  - `app/dashboard/influencer/page.tsx:658`
+  - `app/dashboard/brand/components/brand-nav.tsx:174`
+- **Issue:** All logout buttons use:
+  ```typescript
+  await fetch('/api/auth/logout', { method: 'POST' }); window.location.href = '/login';
+  ```
+  No try/catch. If the fetch fails (network error), the redirect still happens, which is arguably acceptable behavior. But if the cookie isn't cleared, the user may still appear logged in on next visit.
+
+### ERR-002: Resend verification email lacks error handling in brand dashboard (LOW)
+- **File:** `app/dashboard/brand/page.tsx:823-828`
+- **Issue:** Has try/catch but doesn't check `res.ok`. If the server returns a non-200 status, it still silently succeeds.
+
+### ERR-003: Admin influencer followers save has minimal error handling (LOW)
+- **File:** `app/admin/influencers/page.tsx:576-593`
+- **Issue:** Catch block only does `console.error(e)` with no user feedback.
+
+---
+
+## 10. Client-Server Validation Consistency
+
+### VAL-001: Password complexity rules missing on client (HIGH)
+- **Client (signup):** `app/signup/page.tsx:279` only enforces `minLength={8}` via HTML attribute. No check for uppercase letter or digit.
+- **Server (signup):** `app/api/auth/signup/route.ts:41` requires `[A-Z]` and `[0-9]`.
+- **Impact:** Users can submit a password like "abcdefgh" from the client, only to get a server error. Poor UX.
+
+### VAL-002: Password complexity rules missing on reset-password client (HIGH)
+- **Client (reset-password):** `app/reset-password/page.tsx:50` checks `newPassword.length < 8` but does NOT check for uppercase or digit.
+- **Server (reset-password):** `app/api/auth/reset-password/route.ts:16-17` requires `[A-Z]` and `[0-9]`.
+- **Impact:** Same issue -- user submits, gets an opaque server error.
+
+### VAL-003: Influencer withdrawal fee hardcoded at 3% (MEDIUM)
+- **Client:** `app/dashboard/influencer/page.tsx:2466-2468` hardcodes "Withdrawal fee: 3%" and calculates `amount * 0.97`.
+- **Server:** `app/api/admin/settings/route.ts` allows admins to change `withdrawalFeePercent` dynamically.
+- **Impact:** If admin changes the fee, the client will show wrong amounts.
+
+---
+
+## 11. Console.log Statements
+
+**Total: 86 occurrences across the codebase.**
+
+### Client-side console statements (should be removed for production): 28
+
+| File | Count | Examples |
+|------|-------|---------|
+| `app/dashboard/brand/page.tsx` | 6 | `console.error('Failed to fetch campaigns:', error)` etc. |
+| `app/dashboard/influencer/page.tsx` | 5 | `console.error('Failed to fetch dashboard data:', error)` etc. |
+| `app/admin/database/page.tsx` | 10 | `console.error('Failed to fetch users:', error)` etc. |
+| `app/admin/influencers/page.tsx` | 3 | `console.error('Failed to fetch/update influencers')` etc. |
+| `app/admin/brands/page.tsx` | 1 | `console.error('Failed to fetch brands:', error)` |
+| `app/admin/campaigns/page.tsx` | 1 | `console.error('Failed to fetch campaigns:', error)` |
+| `app/admin/page.tsx` | 1 | `console.error('Failed to fetch admin data:', error)` |
+| `app/admin/settings/page.tsx` | 1 | `console.error('Failed to fetch settings:', error)` |
+| `app/dashboard/brand/components/create-campaign-tab.tsx` | 1 | `console.error('Failed to create campaign')` |
+| `app/dashboard/brand/components/brand-nav.tsx` | 2 | `console.error('Failed to fetch/deposit')` |
+| `app/onboarding/brand/step-6/page.tsx` | 1 | `console.error('Brand onboarding error:', err)` |
+| `app/onboarding/influencer/step-5/page.tsx` | 1 | `console.error('Influencer onboarding error:', err)` |
+
+### Server-side console statements (acceptable for logging, but should use structured logger): 58
+
+All API routes use `console.error()` for error logging. These are functional but should be replaced with a proper logging library (e.g., pino, winston) for production to enable log levels, structured output, and log aggregation.
+
+---
+
+## God Files (>500 lines)
+
+These files exceed recommended size limits and should be split:
+
+| File | Lines | Severity |
+|------|-------|----------|
+| `app/dashboard/influencer/page.tsx` | **2,590** | CRITICAL |
+| `app/dashboard/brand/components/campaigns-tab.tsx` | **2,094** | CRITICAL |
+| `app/influencers/page.tsx` | **1,132** | HIGH |
+| `app/brands/page.tsx` | **1,088** | HIGH |
+| `app/admin/database/page.tsx` | **1,041** | HIGH |
+| `app/dashboard/brand/components/create-campaign-tab.tsx` | **921** | HIGH |
+| `app/page.tsx` | **894** | HIGH |
+| `app/dashboard/brand/page.tsx` | **868** | HIGH |
+| `app/pricing/page.tsx` | **865** | HIGH |
+| `app/dashboard/brand/components/brand-nav.tsx` | **730** | MEDIUM |
+| `app/admin/influencers/page.tsx` | **706** | MEDIUM |
+| `app/dashboard/brand/components/discover-tab.tsx` | **541** | MEDIUM |
+
+The influencer dashboard at 2,590 lines is a single monolithic component handling discover, my-campaigns, profile, settings, modals, wallet, and withdrawal -- all in one file.
+
+---
+
+## Action Items by Priority
+
+### CRITICAL (must fix before production)
+1. **STUB-001/002:** Implement "Send Invitation" and "Send Counter Offer" -- these are core brand workflows that currently do nothing
+2. **STUB-004:** Wire up influencer settings "Update Account" form to `/api/auth/password` PATCH endpoint
+3. **VAL-001/002:** Add client-side password validation matching server rules (uppercase + digit required)
+
+### HIGH (should fix)
+4. **AUTH-001:** Use the `redirect` query param from middleware after login
+5. **VAL-003:** Fetch withdrawal fee from API instead of hardcoding 3%
+6. Split `app/dashboard/influencer/page.tsx` (2,590 lines) into sub-components
+
+### MEDIUM (recommended)
+7. **ERR-001:** Add try/catch to logout buttons
+8. **STUB-003/005:** Implement or clearly label campaign edit/pause/delete and payment methods as "Coming Soon"
+9. Replace `console.error` in client code with a toast/UI feedback mechanism
+10. Replace `console.error` in API routes with a structured logging library
+
+### LOW (nice to have)
+11. Update `https://linkedin.com` to actual company LinkedIn page
+12. Remove stub notification checkboxes or wire them up
+13. Wire up the "Save" heart button on campaign cards

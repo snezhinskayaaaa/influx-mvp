@@ -38,6 +38,12 @@ export async function PATCH(request: NextRequest) {
         { status: 400 }
       )
     }
+    if (newPassword.length > 128) {
+      return NextResponse.json(
+        { success: false, error: 'Password must not exceed 128 characters' },
+        { status: 400 }
+      )
+    }
 
     if (!/[A-Z]/.test(newPassword) || !/[0-9]/.test(newPassword)) {
       return NextResponse.json(

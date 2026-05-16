@@ -38,6 +38,12 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       )
     }
+    if (password.length > 128) {
+      return NextResponse.json(
+        { success: false, error: 'Password must not exceed 128 characters' },
+        { status: 400 }
+      )
+    }
     if (!/[A-Z]/.test(password) || !/[0-9]/.test(password)) {
       return NextResponse.json(
         { success: false, error: 'Password must contain at least one uppercase letter and one number' },

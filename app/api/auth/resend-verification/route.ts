@@ -1,14 +1,21 @@
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
 import { getCurrentUser } from '@/lib/auth'
 import { sendVerificationEmail } from '@/lib/email'
 import { SignJWT } from 'jose'
+import { rateLimit } from '@/lib/rate-limit'
 
-export async function POST() {
+export async function POST(request: NextRequest) {
   try {
     const user = await getCurrentUser()
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    const ip = request.headers.get('x-forwarded-for') || 'unknown'
+    const { success } = rateLimit(`resend-verification:${ip}`, 3, 60000)
+    if (!success) {
+      return NextResponse.json({ error: 'Too many requests. Please wait a minute.' }, { status: 429 })
     }
 
     const profile = await prisma.profile.findUnique({

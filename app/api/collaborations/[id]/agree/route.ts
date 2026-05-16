@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
 import { getCurrentUser } from '@/lib/auth'
+import { rateLimit } from '@/lib/rate-limit'
 
 export async function POST(
   request: NextRequest,
@@ -10,6 +11,11 @@ export async function POST(
     const user = await getCurrentUser()
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    const { success } = rateLimit(`collab-agree:${user.userId}`, 5, 60000)
+    if (!success) {
+      return NextResponse.json({ error: 'Too many requests. Please wait a minute.' }, { status: 429 })
     }
 
     // Check email verification for financial operations

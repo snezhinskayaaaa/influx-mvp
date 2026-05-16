@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
 import { getCurrentUser } from '@/lib/auth'
+import { rateLimit } from '@/lib/rate-limit'
 
 export async function GET(request: NextRequest) {
   try {
@@ -104,6 +105,11 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
+    const { success } = rateLimit(`campaign-create:${user.userId}`, 10, 60000)
+    if (!success) {
+      return NextResponse.json({ error: 'Too many requests. Please wait a minute.' }, { status: 429 })
+    }
+
     if (user.role !== 'BRAND') {
       return NextResponse.json({ error: 'Only brands can create campaigns' }, { status: 403 })
     }
@@ -149,12 +155,8 @@ export async function POST(request: NextRequest) {
     const budgetMinCents = Math.round(budgetMin * 100)
     const budgetMaxCents = Math.round(budgetMax * 100)
 
-    if (brand.balance < budgetMinCents) {
-      return NextResponse.json(
-        { error: 'Insufficient balance. Please top up your wallet.' },
-        { status: 400 },
-      )
-    }
+    // Balance is checked atomically at the collaboration agree step when funds are frozen,
+    // not here at campaign creation time, to avoid race conditions.
 
     let parsedDeliverables: string[] = []
     if (typeof deliverables === 'string') {

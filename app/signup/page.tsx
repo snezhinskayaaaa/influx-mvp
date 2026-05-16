@@ -100,7 +100,13 @@ function SignupForm() {
     }
     const redirectUri = `${window.location.origin}/api/auth/google`;
     const scope = "openid email profile";
-    const state = userType === "brand" ? "brand" : "creator";
+    const nonce = crypto.randomUUID();
+    const role = userType === "brand" ? "brand" : "creator";
+    const state = JSON.stringify({ role, nonce });
+
+    // Store nonce in cookie for CSRF verification on callback
+    document.cookie = `oauth-nonce=${nonce}; path=/; max-age=600; SameSite=Lax`;
+
     const params = new URLSearchParams({
       client_id: clientId,
       redirect_uri: redirectUri,

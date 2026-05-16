@@ -81,6 +81,9 @@ export async function PATCH(
     // Brand can set agreedPrice and brandAgreed, and accept application (NEGOTIATING)
     if (isBrandOwner || isAdmin) {
       if (body.agreedPrice !== undefined) {
+        if (typeof body.agreedPrice !== 'number' || body.agreedPrice <= 0 || body.agreedPrice > 1000000) {
+          return NextResponse.json({ error: 'Agreed price must be a positive number up to 1,000,000' }, { status: 400 })
+        }
         updateData.agreedPrice = Math.round(body.agreedPrice * 100)
       }
       if (body.brandAgreed !== undefined) {

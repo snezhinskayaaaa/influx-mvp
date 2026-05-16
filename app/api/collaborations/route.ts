@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
 import { getCurrentUser } from '@/lib/auth'
+import { rateLimit } from '@/lib/rate-limit'
 
 export async function GET(request: NextRequest) {
   try {
@@ -107,6 +108,11 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
+    const { success } = rateLimit(`collab-apply:${user.userId}`, 10, 60000)
+    if (!success) {
+      return NextResponse.json({ error: 'Too many requests. Please wait a minute.' }, { status: 429 })
+    }
+
     if (user.role !== 'INFLUENCER') {
       return NextResponse.json({ error: 'Only influencers can apply to campaigns' }, { status: 403 })
     }
@@ -137,8 +143,8 @@ export async function POST(request: NextRequest) {
     if (!campaignId) {
       return NextResponse.json({ error: 'Campaign ID is required' }, { status: 400 })
     }
-    if (!proposedPrice || typeof proposedPrice !== 'number' || proposedPrice <= 0) {
-      return NextResponse.json({ error: 'Proposed price must be a positive number' }, { status: 400 })
+    if (!proposedPrice || typeof proposedPrice !== 'number' || proposedPrice <= 0 || proposedPrice > 1000000) {
+      return NextResponse.json({ error: 'Proposed price must be a positive number up to 1,000,000' }, { status: 400 })
     }
 
     const campaign = await prisma.campaign.findUnique({ where: { id: campaignId } })
