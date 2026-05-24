@@ -33,7 +33,7 @@ export async function GET(request: NextRequest) {
   const code = url.searchParams.get('code')
   const state = url.searchParams.get('state')
   const baseUrl = getBaseUrl(request)
-  const REDIRECT_URI = `${baseUrl}/api/auth/google`
+  const REDIRECT_URI = `${process.env.NEXT_PUBLIC_APP_URL || baseUrl}/api/auth/google`
   const isProduction = process.env.NODE_ENV === 'production'
 
   if (!code) {

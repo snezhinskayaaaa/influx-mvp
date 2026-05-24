@@ -84,7 +84,7 @@ export default function LoginPage() {
     const state = JSON.stringify({ role: "creator", nonce });
 
     // Store nonce in cookie for CSRF verification on callback
-    document.cookie = `oauth-nonce=${nonce}; path=/; max-age=600; SameSite=Lax`;
+    document.cookie = `oauth-nonce=${nonce}; path=/; max-age=600; SameSite=Lax; Secure`;
 
     const params = new URLSearchParams({
       client_id: clientId,
