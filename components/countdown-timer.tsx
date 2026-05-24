@@ -12,7 +12,7 @@ export function CountdownTimer({
   targetDate,
   className = ""
 }: CountdownTimerProps) {
-  const target = useMemo(() => targetDate || new Date("2026-04-10T23:59:59"), [targetDate]);
+  const target = useMemo(() => targetDate || new Date("2026-07-01T23:59:59"), [targetDate]);
 
   const [timeLeft, setTimeLeft] = useState({
     days: 0,
