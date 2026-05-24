@@ -297,7 +297,7 @@ function SignupForm() {
                   </button>
                 </div>
                 <p className="text-[10px] sm:text-xs text-muted-foreground">
-                  Must be at least 8 characters
+                  Must be at least 8 characters, with one uppercase letter and one number
                 </p>
               </div>
 
