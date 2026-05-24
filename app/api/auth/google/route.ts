@@ -50,6 +50,7 @@ export async function GET(request: NextRequest) {
 
   const nonceCookie = request.cookies.get(OAUTH_NONCE_COOKIE)?.value
   if (!parsedState.nonce || !nonceCookie || parsedState.nonce !== nonceCookie) {
+    console.error('OAuth nonce mismatch:', { hasNonce: !!parsedState.nonce, hasCookie: !!nonceCookie, match: parsedState.nonce === nonceCookie })
     return NextResponse.redirect(`${baseUrl}/login?error=google_failed`)
   }
 
