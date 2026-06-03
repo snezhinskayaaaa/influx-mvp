@@ -27,6 +27,6 @@ jobs:
       - run: npm run build
         env:
           DATABASE_URL: "postgresql://fake:fake@localhost:5432/fake"
-          JWT_SECRET: "ci-test-secret-not-real"
+          JWT_SECRET: "ci-test-secret-not-real-needs-32-chars-minimum-here"
           RESEND_API_KEY: "re_fake_ci"
           NEXT_PUBLIC_APP_URL: "https://aiinflux.io"
