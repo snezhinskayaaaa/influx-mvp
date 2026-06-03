@@ -45,7 +45,7 @@ export default function BrandDashboard() {
   const [twitterUrl, setTwitterUrl] = useState("");
   const [youtubeUrl, setYoutubeUrl] = useState("");
   const [linkedinUrl, setLinkedinUrl] = useState("");
-  const [companyCountry, setCompanyCountry] = useState("United States");
+  const [companyCountry] = useState("United States");
   const [companyIndustry, setCompanyIndustry] = useState("Fashion & Style");
 
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
@@ -56,14 +56,14 @@ export default function BrandDashboard() {
   const [selectedCampaignId, setSelectedCampaignId] = useState<number | null>(null);
 
   const [influencers, setInfluencers] = useState<Influencer[]>([]);
-  const [collaborations, setCollaborations] = useState<any[]>([]);
+  const [, setCollaborations] = useState<Record<string, unknown>[]>([]);
 
   const [notifications, setNotifications] = useState<Notification[]>([]);
 
   const [showInfluencerDetails, setShowInfluencerDetails] = useState(false);
-  const [selectedInfluencerDetails, setSelectedInfluencerDetails] = useState<CampaignInfluencer | null>(null);
+  const [selectedInfluencerDetails] = useState<CampaignInfluencer | null>(null);
   const [showCounterOfferModal, setShowCounterOfferModal] = useState(false);
-  const [counterOfferInfluencer, setCounterOfferInfluencer] = useState<CampaignInfluencer | null>(null);
+  const [counterOfferInfluencer] = useState<CampaignInfluencer | null>(null);
   const [counterOfferPrice, setCounterOfferPrice] = useState("");
   const [showInsufficientFundsDialog, setShowInsufficientFundsDialog] = useState(false);
   const [showVerifyPopup, setShowVerifyPopup] = useState(false);

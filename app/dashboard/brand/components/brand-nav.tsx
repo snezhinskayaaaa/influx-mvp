@@ -196,7 +196,6 @@ export function BrandSidebar({
   activeTab,
   setActiveTab,
   balance,
-  setBalance,
 }: BrandSidebarProps) {
   const [toast, setToast] = useState<{ message: string; variant: 'success' | 'error' } | null>(null);
 

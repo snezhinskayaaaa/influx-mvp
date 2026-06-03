@@ -19,7 +19,7 @@ const fadeInUp = {
     y: 0,
     transition: {
       duration: 0.5,
-      ease: [0.25, 0.4, 0.25, 1] as any,
+      ease: [0.25, 0.4, 0.25, 1] as [number, number, number, number],
     },
   },
 };
@@ -75,7 +75,7 @@ export default function PrivacyPage() {
             <motion.div variants={fadeInUp}>
               <div className="space-y-4 text-muted-foreground leading-relaxed">
                 <p>
-                  INFLUXconnect ("Company," "we," "us," or "our") is committed to protecting the privacy of our users. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our AI influencer marketplace platform ("Platform"). Please read this policy carefully. By using the Platform, you consent to the practices described herein.
+                  INFLUXconnect (&quot;Company,&quot; &quot;we,&quot; &quot;us,&quot; or &quot;our&quot;) is committed to protecting the privacy of our users. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our AI influencer marketplace platform (&quot;Platform&quot;). Please read this policy carefully. By using the Platform, you consent to the practices described herein.
                 </p>
               </div>
             </motion.div>
@@ -140,7 +140,7 @@ export default function PrivacyPage() {
                   We use the information we collect for the following purposes:
                 </p>
                 <ul className="list-disc pl-6 space-y-2">
-                  <li><strong className="text-foreground">Platform Operation:</strong> To provide, maintain, and improve the Platform's functionality, including account management, campaign facilitation, and payment processing.</li>
+                  <li><strong className="text-foreground">Platform Operation:</strong> To provide, maintain, and improve the Platform&apos;s functionality, including account management, campaign facilitation, and payment processing.</li>
                   <li><strong className="text-foreground">Personalization:</strong> To tailor your experience, including recommending relevant campaigns, influencers, or content based on your profile and activity.</li>
                   <li><strong className="text-foreground">Communication:</strong> To send you important updates about your account, campaigns, transactions, and Platform changes. You may opt out of promotional communications at any time.</li>
                   <li><strong className="text-foreground">Security and Fraud Prevention:</strong> To detect, investigate, and prevent fraudulent transactions, unauthorized access, and other malicious activities.</li>
@@ -259,7 +259,7 @@ export default function PrivacyPage() {
                   The Platform integrates with and relies on the following third-party services:
                 </p>
                 <ul className="list-disc pl-6 space-y-2">
-                  <li><strong className="text-foreground">Railway:</strong> Our infrastructure and hosting provider. Data is processed and stored on Railway's secure servers.</li>
+                  <li><strong className="text-foreground">Railway:</strong> Our infrastructure and hosting provider. Data is processed and stored on Railway&apos;s secure servers.</li>
                   <li><strong className="text-foreground">PostgreSQL:</strong> Our database management system, used to store structured application data securely.</li>
                   <li><strong className="text-foreground">Payment Processors:</strong> Third-party cryptocurrency payment processors handle wallet deposits and withdrawals.</li>
                   <li><strong className="text-foreground">Analytics Providers:</strong> We use analytics services to understand Platform usage and improve our offerings.</li>
@@ -272,7 +272,7 @@ export default function PrivacyPage() {
 
             {/* 9. Children's Privacy */}
             <motion.div variants={fadeInUp}>
-              <h2 className="text-2xl font-bold mb-4 text-foreground">9. Children's Privacy</h2>
+              <h2 className="text-2xl font-bold mb-4 text-foreground">9. Children&apos;s Privacy</h2>
               <div className="space-y-4 text-muted-foreground leading-relaxed">
                 <p>
                   The Platform is intended for users who are at least 18 years of age. We do not knowingly collect personal information from individuals under 18. If we become aware that a user is under 18, we will promptly delete their account and all associated data.
@@ -295,7 +295,7 @@ export default function PrivacyPage() {
                   We may update this Privacy Policy from time to time to reflect changes in our practices, technologies, legal requirements, or other factors. When we make material changes, we will:
                 </p>
                 <ul className="list-disc pl-6 space-y-2">
-                  <li>Update the "Last updated" date at the top of this page</li>
+                  <li>Update the &quot;Last updated&quot; date at the top of this page</li>
                   <li>Notify you via email or an in-platform notification at least 30 days before the changes take effect</li>
                   <li>Where required by law, obtain your consent to the updated policy</li>
                 </ul>

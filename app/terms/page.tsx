@@ -19,7 +19,7 @@ const fadeInUp = {
     y: 0,
     transition: {
       duration: 0.5,
-      ease: [0.25, 0.4, 0.25, 1] as any,
+      ease: [0.25, 0.4, 0.25, 1] as [number, number, number, number],
     },
   },
 };
@@ -76,10 +76,10 @@ export default function TermsPage() {
               <h2 className="text-2xl font-bold mb-4 text-foreground">1. Acceptance of Terms</h2>
               <div className="space-y-4 text-muted-foreground leading-relaxed">
                 <p>
-                  By accessing or using the INFLUXconnect platform ("Platform"), you agree to be bound by these Terms of Service ("Terms"). If you do not agree to these Terms, you may not access or use the Platform.
+                  By accessing or using the INFLUXconnect platform (&quot;Platform&quot;), you agree to be bound by these Terms of Service (&quot;Terms&quot;). If you do not agree to these Terms, you may not access or use the Platform.
                 </p>
                 <p>
-                  These Terms constitute a legally binding agreement between you and INFLUXconnect ("Company," "we," "us," or "our"). By creating an account, you represent that you are at least 18 years of age and have the legal capacity to enter into this agreement.
+                  These Terms constitute a legally binding agreement between you and INFLUXconnect (&quot;Company,&quot; &quot;we,&quot; &quot;us,&quot; or &quot;our&quot;). By creating an account, you represent that you are at least 18 years of age and have the legal capacity to enter into this agreement.
                 </p>
                 <p>
                   We reserve the right to modify these Terms at any time. Material changes will be communicated via email or an in-platform notification at least 30 days before taking effect. Your continued use of the Platform after such changes constitutes acceptance of the updated Terms.
@@ -142,13 +142,13 @@ export default function TermsPage() {
                 </p>
                 <ul className="list-disc pl-6 space-y-2">
                   <li>Creating fake engagement metrics, inflating follower counts, or misrepresenting campaign performance</li>
-                  <li>Circumventing the Platform's payment system by arranging off-platform transactions for services discovered through INFLUXconnect</li>
+                  <li>Circumventing the Platform&apos;s payment system by arranging off-platform transactions for services discovered through INFLUXconnect</li>
                   <li>Uploading, distributing, or promoting content that is illegal, defamatory, harassing, or infringes on the intellectual property rights of others</li>
                   <li>Using the Platform to distribute spam, malware, or any other harmful content</li>
                   <li>Impersonating another person, entity, or brand without authorization</li>
                   <li>Attempting to access, tamper with, or use non-public areas of the Platform, its systems, or its technical delivery mechanisms</li>
                   <li>Using automated means (bots, scrapers, crawlers) to access or collect data from the Platform without prior written consent</li>
-                  <li>Engaging in any activity that disrupts, damages, or interferes with the Platform's operation</li>
+                  <li>Engaging in any activity that disrupts, damages, or interferes with the Platform&apos;s operation</li>
                 </ul>
                 <p>
                   Violation of these rules may result in immediate account suspension or termination, forfeiture of pending earnings, and potential legal action.
@@ -166,7 +166,7 @@ export default function TermsPage() {
                 <ul className="list-disc pl-6 space-y-2">
                   <li><strong className="text-foreground">Campaign Budget:</strong> The brand deposits the agreed campaign budget into their Platform wallet. Funds are allocated to the campaign and held securely until milestones are completed.</li>
                   <li><strong className="text-foreground">Deliverables:</strong> The influencer agrees to produce and deliver content as specified in the campaign brief, including format, timeline, and platform requirements.</li>
-                  <li><strong className="text-foreground">Payment Release:</strong> Upon successful completion and approval of deliverables, the campaign payment is released to the influencer's Platform wallet.</li>
+                  <li><strong className="text-foreground">Payment Release:</strong> Upon successful completion and approval of deliverables, the campaign payment is released to the influencer&apos;s Platform wallet.</li>
                   <li><strong className="text-foreground">Platform Commission:</strong> INFLUXconnect collects a commission on transactions as outlined in Section 6.</li>
                 </ul>
                 <p>
@@ -187,7 +187,7 @@ export default function TermsPage() {
                   <li><strong className="text-foreground">Influencer Withdrawal Fee:</strong> A 3% fee is applied when influencers withdraw earnings from their Platform wallet (Founding Member rate). The standard rate is 6%. This fee includes applicable network and processing costs.</li>
                 </ul>
                 <p>
-                  Founding Members who join during the launch month, complete their first transaction, and provide feedback will have the reduced rates (2% / 3%) locked permanently. All other users will be subject to standard rates, which may be adjusted with 30 days' prior notice.
+                  Founding Members who join during the launch month, complete their first transaction, and provide feedback will have the reduced rates (2% / 3%) locked permanently. All other users will be subject to standard rates, which may be adjusted with 30 days&apos; prior notice.
                 </p>
                 <p>
                   Subscription plans (Creator Pro, Brand Pro) are billed separately and do not affect transaction-based commission fees.
@@ -221,7 +221,7 @@ export default function TermsPage() {
               <h2 className="text-2xl font-bold mb-4 text-foreground">8. Payment Terms</h2>
               <div className="space-y-4 text-muted-foreground leading-relaxed">
                 <p>
-                  All campaign payments are processed through the Platform's wallet system. Brands must deposit sufficient funds into their wallet before launching a campaign. Payments are held securely and released to influencers upon successful delivery and approval of campaign deliverables.
+                  All campaign payments are processed through the Platform&apos;s wallet system. Brands must deposit sufficient funds into their wallet before launching a campaign. Payments are held securely and released to influencers upon successful delivery and approval of campaign deliverables.
                 </p>
                 <p>
                   Withdrawals are processed within 3-5 business days, subject to identity verification and compliance checks. We accept cryptocurrency payments (USDC, USDT) via secure processing. Minimum withdrawal amounts and any applicable limits are displayed within your account dashboard.
@@ -241,7 +241,7 @@ export default function TermsPage() {
                 </p>
                 <ul className="list-disc pl-6 space-y-2">
                   <li><strong className="text-foreground">Transparency:</strong> AI influencers must be clearly identified as virtual or AI-generated personas. Deceptive practices intended to mislead audiences into believing an AI influencer is a real person are strictly prohibited.</li>
-                  <li><strong className="text-foreground">Authenticity:</strong> Content must be original or properly licensed. Using another creator's likeness, style, or content without permission is prohibited.</li>
+                  <li><strong className="text-foreground">Authenticity:</strong> Content must be original or properly licensed. Using another creator&apos;s likeness, style, or content without permission is prohibited.</li>
                   <li><strong className="text-foreground">Compliance:</strong> All content must comply with applicable advertising regulations, including FTC guidelines for sponsored content and endorsement disclosures.</li>
                   <li><strong className="text-foreground">Quality Standards:</strong> Content delivered for campaigns must meet the specifications outlined in the campaign brief and maintain professional quality standards.</li>
                   <li><strong className="text-foreground">Prohibited Content:</strong> Content that is explicit, violent, discriminatory, promotes illegal activities, or targets vulnerable populations is strictly prohibited.</li>

@@ -71,7 +71,7 @@ export default function AdminDashboard() {
   const [influencers, setInfluencers] = useState<Influencer[]>([]);
   const [brands, setBrands] = useState<Brand[]>([]);
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
-  const [brandStats, setBrandStats] = useState<Record<string, number>>({});
+  const [, setBrandStats] = useState<Record<string, number>>({});
   const [campaignStats, setCampaignStats] = useState<Record<string, number>>(
     {}
   );

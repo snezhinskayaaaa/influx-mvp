@@ -6,7 +6,6 @@ import { NetworkLogo } from "@/components/logo";
 import { AlertCircle, RefreshCw } from "lucide-react";
 
 export default function Error({
-  error,
   reset,
 }: {
   error: Error & { digest?: string };

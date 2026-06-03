@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -13,7 +14,6 @@ import {
   Wallet,
   Search,
   TrendingUp,
-  Users,
   Calendar,
   DollarSign,
   Settings,
@@ -22,7 +22,6 @@ import {
   LogOut,
   ChevronDown,
   Filter,
-  X,
   Eye,
   Heart,
   CheckCircle2,
@@ -100,153 +99,7 @@ interface Campaign {
   };
 }
 
-const mockDiscoverCampaigns: Campaign[] = [
-  {
-    id: 1,
-    title: "Summer Fashion Collection Launch",
-    brand: "StyleCo",
-    brandAvatar: "👗",
-    category: "Fashion & Style",
-    budget: 5000,
-    pricingModel: "CPM",
-    description: "Promote our new summer collection with authentic styling content",
-    requirements: ["Fashion niche", "10k+ followers", "High engagement rate"],
-    platforms: ["Instagram", "TikTok"],
-    deadline: "2026-04-15",
-    status: "open",
-  },
-  {
-    id: 2,
-    title: "Tech Product Review Campaign",
-    brand: "TechNova",
-    brandAvatar: "💻",
-    category: "Technology",
-    budget: 8000,
-    pricingModel: "CPE",
-    description: "Create detailed review content for our latest gadget",
-    requirements: ["Tech reviews", "Authentic voice", "Video content"],
-    platforms: ["YouTube", "Instagram"],
-    deadline: "2026-04-20",
-    status: "open",
-  },
-  {
-    id: 3,
-    title: "Fitness App Launch",
-    brand: "FitLife",
-    brandAvatar: "💪",
-    category: "Health & Fitness",
-    budget: 3000,
-    pricingModel: "CPE",
-    description: "Drive app downloads with workout transformation content",
-    requirements: ["Fitness content", "Genuine results", "Story-driven"],
-    platforms: ["Instagram", "TikTok"],
-    deadline: "2026-04-10",
-    status: "applied",
-  },
-  {
-    id: 4,
-    title: "Beauty Product Line Promotion",
-    brand: "GlowBeauty",
-    brandAvatar: "✨",
-    category: "Beauty & Care",
-    budget: 4500,
-    pricingModel: "CPM",
-    description: "Showcase our new skincare line with before/after content",
-    requirements: ["Beauty niche", "Skincare focus", "Authentic reviews"],
-    platforms: ["Instagram", "YouTube"],
-    deadline: "2026-04-25",
-    status: "open",
-  },
-];
 
-const mockMyCampaigns: Campaign[] = [
-  {
-    id: 3,
-    title: "Fitness App Launch",
-    brand: "FitLife",
-    brandAvatar: "💪",
-    category: "Health & Fitness",
-    budget: 3000,
-    pricingModel: "CPE",
-    description: "Drive app downloads with workout transformation content",
-    requirements: ["Fitness content", "Genuine results", "Story-driven"],
-    platforms: ["Instagram", "TikTok"],
-    deadline: "2026-04-10",
-    status: "applied",
-    startDate: "2026-03-15",
-    endDate: "2026-04-10",
-    goal: "engagement",
-    targetEngagements: "15000",
-    productName: "FitLife Pro App",
-    productLink: "https://fitlife.com/app",
-    brandTag: "@fitlife",
-    hashtags: "#FitLife #FitnessGoals #WorkoutMotivation",
-    detailedRequirements: "Create authentic workout transformation content showing the app features. Include before/after progress and highlight key app functionalities.",
-    influencerApprovedTerms: false,
-    brandApprovedTerms: false,
-  },
-  {
-    id: 5,
-    title: "Eco-Friendly Products Campaign",
-    brand: "GreenEarth",
-    brandAvatar: "🌱",
-    category: "Lifestyle",
-    budget: 6000,
-    pricingModel: "CPM",
-    description: "Promote sustainable living products",
-    requirements: ["Eco-conscious content", "Lifestyle niche"],
-    platforms: ["Instagram"],
-    deadline: "2026-05-01",
-    status: "approved",
-    startDate: "2026-03-20",
-    endDate: "2026-05-01",
-    goal: "brand-awareness",
-    targetViews: "100000",
-    productName: "GreenEarth Eco Pack",
-    productLink: "https://greenearth.com/products",
-    brandTag: "@greenearth",
-    hashtags: "#EcoFriendly #SustainableLiving #GreenEarth",
-    detailedRequirements: "Showcase our eco-friendly products in your daily routine. Focus on sustainability benefits and lifestyle integration.",
-    influencerApprovedTerms: true,
-    brandApprovedTerms: true,
-    brandTerms: "Content must align with eco-conscious values. Product packaging must be visible.",
-  },
-  {
-    id: 6,
-    title: "Travel Gear Review",
-    brand: "Wanderlust",
-    brandAvatar: "✈️",
-    category: "Travel",
-    budget: 7000,
-    pricingModel: "CPE",
-    description: "Create content featuring our travel accessories",
-    requirements: ["Travel content", "Adventure focus"],
-    platforms: ["YouTube", "Instagram"],
-    deadline: "2026-03-20",
-    status: "active",
-    startDate: "2026-02-15",
-    endDate: "2026-03-20",
-    goal: "conversions",
-    targetEngagements: "20000",
-    productName: "Wanderlust Travel Backpack",
-    productPrice: "149",
-    productLink: "https://wanderlust.com/backpack",
-    brandTag: "@wanderlust",
-    hashtags: "#Wanderlust #TravelGear #Adventure",
-    detailedRequirements: "Create engaging review content showing the backpack in real travel scenarios. Highlight durability and features.",
-    influencerApprovedTerms: true,
-    brandApprovedTerms: true,
-    contentApproved: true,
-    currentContentUrl: "https://drive.google.com/file/d/sample123",
-    publishedUrl: "https://youtube.com/watch?v=sample123",
-    publicMetrics: {
-      views: 85000,
-      likes: 4200,
-      comments: 340,
-      shares: 180,
-    },
-  },
-];
 
 export default function InfluencerDashboard() {
   const [activeTab, setActiveTab] = useState<"discover" | "my-campaigns" | "profile" | "settings">("discover");
@@ -262,7 +115,6 @@ export default function InfluencerDashboard() {
   const [selectedBudget, setSelectedBudget] = useState("all");
   const [showFilters, setShowFilters] = useState(false);
   const [selectedCampaignDetails, setSelectedCampaignDetails] = useState<Campaign | null>(null);
-  const [currentPipelineStage, setCurrentPipelineStage] = useState(1);
   const [isCampaignDetailsExpanded, setIsCampaignDetailsExpanded] = useState(false);
   const [contentLinkInput, setContentLinkInput] = useState("");
   const [publishedLinkInput, setPublishedLinkInput] = useState("");
@@ -276,7 +128,7 @@ export default function InfluencerDashboard() {
   const [discoverCampaigns, setDiscoverCampaigns] = useState<Campaign[]>([]);
   const [myCampaigns, setMyCampaigns] = useState<Campaign[]>([]);
   const [walletBalance, setWalletBalance] = useState<number | null>(null);
-  const [walletPending, setWalletPending] = useState<number | null>(null);
+  const [walletPending] = useState<number | null>(null);
   const [walletTotalEarned, setWalletTotalEarned] = useState<number | null>(null);
   const [showWithdrawModal, setShowWithdrawModal] = useState(false);
   const [withdrawAmount, setWithdrawAmount] = useState("");
@@ -518,18 +370,7 @@ export default function InfluencerDashboard() {
     return matchesSearch && matchesCategory && matchesPlatform && matchesBudget;
   });
 
-  const getPricingLabel = (model: string) => {
-    switch (model) {
-      case "CPM":
-        return "Cost Per 1000 Views";
-      case "CPC":
-        return "Cost Per Click";
-      case "CPE":
-        return "Cost Per Engagement";
-      default:
-        return model;
-    }
-  };
+
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -1926,7 +1767,7 @@ export default function InfluencerDashboard() {
                   <div className="flex items-center gap-4 pb-5 border-b">
                     <div className="w-20 h-20 rounded-full bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center overflow-hidden">
                       {avatarUrl ? (
-                        <img src={avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
+                        <Image src={avatarUrl} alt="Avatar" width={80} height={80} className="w-full h-full object-cover" />
                       ) : (
                         <User className="h-10 w-10 text-primary" />
                       )}

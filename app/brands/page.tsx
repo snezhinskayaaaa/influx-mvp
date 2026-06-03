@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { Navigation } from "@/components/navigation";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -18,16 +19,12 @@ import {
   DollarSign,
   Shield,
   FileText,
-  Eye,
   Lock,
   CreditCard,
   ArrowDownCircle,
   CheckSquare,
-  Wallet,
   Rocket,
   BarChart3,
-  CircleDollarSign,
-  MoveRight,
   Building2,
   Mail,
   Instagram,
@@ -36,7 +33,6 @@ import {
   Linkedin,
   Crown,
   Flame,
-  Clock,
   Award,
   Check
 } from "lucide-react";
@@ -50,7 +46,7 @@ const fadeInUp = {
     scale: 1,
     transition: {
       duration: 0.8,
-      ease: [0.22, 1, 0.36, 1] as any,
+      ease: [0.22, 1, 0.36, 1] as [number, number, number, number],
     },
   },
 };
@@ -161,8 +157,6 @@ export default function BrandsPage() {
     }
 
     const isCenter = position === 0;
-    const isAdjacent = Math.abs(position) === 1;
-    const distance = Math.abs(position);
 
     if (isCenter) {
       return {
@@ -251,9 +245,11 @@ export default function BrandsPage() {
                     style={getCardPosition(index)}
                   >
                     <div className="w-full h-56 lg:h-96 rounded-xl overflow-hidden mb-3 lg:mb-4 bg-muted">
-                      <img
+                      <Image
                         src={profile.image}
                         alt={profile.name}
+                        width={400}
+                        height={384}
                         className="w-full h-full object-cover"
                       />
                     </div>
@@ -981,7 +977,7 @@ export default function BrandsPage() {
 
               {/* What's Included */}
               <div className="pt-4 border-t">
-                <h4 className="text-base font-semibold mb-4">What's Included in Service Fee:</h4>
+                <h4 className="text-base font-semibold mb-4">What&apos;s Included in Service Fee:</h4>
                 <div className="grid sm:grid-cols-2 gap-3">
                   <div className="flex items-start gap-2">
                     <Check className="h-5 w-5 text-primary shrink-0 mt-0.5" />

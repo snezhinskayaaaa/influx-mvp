@@ -30,13 +30,12 @@ function VerifyEmailContent() {
   const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
-    if (!token) {
-      setStatus("error");
-      setErrorMessage("No verification token provided.");
-      return;
-    }
-
     const verifyEmail = async () => {
+      if (!token) {
+        setStatus("error");
+        setErrorMessage("No verification token provided.");
+        return;
+      }
       try {
         const res = await fetch("/api/auth/verify-email", {
           method: "POST",

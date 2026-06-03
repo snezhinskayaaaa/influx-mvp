@@ -73,7 +73,7 @@ export async function getYouTubeStats(youtubeUrl: string): Promise<YouTubeChanne
       data = await handleRes.json()
 
       // If forHandle didn't work, try forUsername
-      if (!((data as any))?.items?.length) {
+      if (!(data as Record<string, unknown[]>)?.items?.length) {
         const userRes = await fetch(
           `https://www.googleapis.com/youtube/v3/channels?part=statistics,snippet&forUsername=${encodeURIComponent(identifier.value)}&key=${YOUTUBE_API_KEY}`
         )
@@ -81,7 +81,7 @@ export async function getYouTubeStats(youtubeUrl: string): Promise<YouTubeChanne
       }
 
       // Last resort: search
-      if (!((data as any))?.items?.length) {
+      if (!(data as Record<string, unknown[]>)?.items?.length) {
         const searchRes = await fetch(
           `https://www.googleapis.com/youtube/v3/search?part=snippet&type=channel&q=${encodeURIComponent(identifier.value)}&maxResults=1&key=${YOUTUBE_API_KEY}`
         )
@@ -100,9 +100,9 @@ export async function getYouTubeStats(youtubeUrl: string): Promise<YouTubeChanne
       data = await res.json()
     }
 
-    if (!((data as any))?.items?.[0]) return null
+    if (!(data as Record<string, unknown[]>)?.items?.[0]) return null
 
-    const items = (data as any).items as any[]
+    const items = (data as Record<string, Record<string, Record<string, string>>[]>).items
     const channel = items[0]
     return {
       subscriberCount: parseInt(channel.statistics?.subscriberCount) || 0,

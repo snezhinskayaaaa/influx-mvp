@@ -22,7 +22,6 @@ import {
   Instagram,
   Twitter,
   Plus,
-  BarChart3,
   Save,
   CheckCircle2,
   Clock,

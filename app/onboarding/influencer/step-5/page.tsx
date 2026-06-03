@@ -43,7 +43,6 @@ export default function InfluencerOnboardingStep5() {
       setIsSubmitting(true);
       try {
         const platforms = JSON.parse(localStorage.getItem("influencer_onboarding_platforms") || "[]") as string[];
-        const totalFollowers = parseInt(localStorage.getItem("influencer_onboarding_followers") || "0", 10);
         const engagement = parseFloat(localStorage.getItem("influencer_onboarding_engagement") || "0");
         const niches = JSON.parse(localStorage.getItem("influencer_onboarding_niches") || "[]") as string[];
 

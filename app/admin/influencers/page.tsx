@@ -15,6 +15,7 @@ import {
   Search,
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import Image from "next/image";
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 50 },
@@ -301,7 +302,7 @@ export default function AdminInfluencers() {
                       <div className="sm:col-span-3 flex items-center gap-3">
                         <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center shrink-0 overflow-hidden">
                           {inf.profile?.avatarUrl ? (
-                            <img src={inf.profile.avatarUrl} alt={inf.handle} className="w-full h-full object-cover" />
+                            <Image src={inf.profile.avatarUrl} alt={inf.handle} width={36} height={36} className="w-full h-full object-cover" />
                           ) : (
                             <span className="text-sm font-semibold text-primary">
                               {inf.handle?.charAt(0)?.toUpperCase() || "?"}
@@ -419,7 +420,7 @@ export default function AdminInfluencers() {
             <div className="flex items-center gap-4 mb-5 pb-5 border-b border-border/50">
               <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center shrink-0 overflow-hidden">
                 {avatarUrl ? (
-                  <img src={avatarUrl} alt={selectedInfluencer.handle} className="w-full h-full object-cover" />
+                  <Image src={avatarUrl} alt={selectedInfluencer.handle} width={64} height={64} className="w-full h-full object-cover" />
                 ) : (
                   <span className="text-2xl font-bold text-primary">{selectedInfluencer.handle?.charAt(0)?.toUpperCase()}</span>
                 )}

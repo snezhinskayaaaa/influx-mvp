@@ -14,36 +14,28 @@ export function CountdownTimer({
 }: CountdownTimerProps) {
   const target = useMemo(() => targetDate || new Date("2026-07-01T23:59:59"), [targetDate]);
 
-  const [timeLeft, setTimeLeft] = useState({
-    days: 0,
-    hours: 0,
-    minutes: 0,
-    seconds: 0
-  });
+  const calculateTimeLeft = useMemo(() => () => {
+    const difference = target.getTime() - new Date().getTime();
+    if (difference > 0) {
+      return {
+        days: Math.floor(difference / (1000 * 60 * 60 * 24)),
+        hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
+        minutes: Math.floor((difference / 1000 / 60) % 60),
+        seconds: Math.floor((difference / 1000) % 60)
+      };
+    }
+    return { days: 0, hours: 0, minutes: 0, seconds: 0 };
+  }, [target]);
+
+  const [timeLeft, setTimeLeft] = useState(calculateTimeLeft);
 
   useEffect(() => {
-    const calculateTimeLeft = () => {
-      const difference = target.getTime() - new Date().getTime();
-
-      if (difference > 0) {
-        return {
-          days: Math.floor(difference / (1000 * 60 * 60 * 24)),
-          hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
-          minutes: Math.floor((difference / 1000 / 60) % 60),
-          seconds: Math.floor((difference / 1000) % 60)
-        };
-      } else {
-        return { days: 0, hours: 0, minutes: 0, seconds: 0 };
-      }
-    };
-
-    setTimeLeft(calculateTimeLeft());
     const timer = setInterval(() => {
       setTimeLeft(calculateTimeLeft());
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [target]);
+  }, [calculateTimeLeft]);
 
   return (
     <div className={`inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-muted/50 backdrop-blur-sm border-2 border-border ${className}`}>

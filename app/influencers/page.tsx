@@ -6,7 +6,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { NetworkLogo } from "@/components/logo";
 import { CountdownTimer } from "@/components/countdown-timer";
-import { motion, useAnimationControls } from "framer-motion";
+import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
 import {
   ArrowRight,
@@ -17,7 +17,6 @@ import {
   DollarSign,
   Shield,
   FileText,
-  Eye,
   Lock,
   CreditCard,
   BarChart3,
@@ -47,7 +46,7 @@ const fadeInUp = {
     scale: 1,
     transition: {
       duration: 0.8,
-      ease: [0.22, 1, 0.36, 1] as any,
+      ease: [0.22, 1, 0.36, 1] as [number, number, number, number],
     },
   },
 };
@@ -1025,7 +1024,7 @@ export default function InfluencersPage() {
 
               {/* What's Included */}
               <div className="pt-4 border-t">
-                <h4 className="text-base font-semibold mb-4">What's Included in Withdrawal Fee:</h4>
+                <h4 className="text-base font-semibold mb-4">What&apos;s Included in Withdrawal Fee:</h4>
                 <div className="grid sm:grid-cols-2 gap-3">
                   <div className="flex items-start gap-2">
                     <Check className="h-5 w-5 text-secondary shrink-0 mt-0.5" />

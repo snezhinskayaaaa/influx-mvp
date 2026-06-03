@@ -22,10 +22,8 @@ import {
   Send,
   Twitter,
   Linkedin,
-  DollarSign,
   Crown,
   Flame,
-  Clock,
   MessageSquare,
 } from "lucide-react";
 
@@ -36,7 +34,7 @@ const fadeInUp = {
     y: 0,
     transition: {
       duration: 0.5,
-      ease: [0.25, 0.4, 0.25, 1] as any,
+      ease: [0.25, 0.4, 0.25, 1] as [number, number, number, number],
     },
   },
 };
@@ -78,7 +76,7 @@ export default function PricingPage() {
                 Choose your plan
               </h1>
               <p className="text-base text-muted-foreground sm:text-xl max-w-xl mx-auto mb-6 sm:mb-10">
-                Whether you're a brand looking for AI talent or a creator ready to monetize, we have the perfect plan for you.
+                Whether you&apos;re a brand looking for AI talent or a creator ready to monetize, we have the perfect plan for you.
               </p>
 
               {/* Toggle */}
