@@ -100,10 +100,11 @@ export async function getYouTubeStats(youtubeUrl: string): Promise<YouTubeChanne
       data = await res.json()
     }
 
-    if (!(data as Record<string, unknown[]>)?.items?.[0]) return null
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const result = data as any
+    if (!result?.items?.[0]) return null
 
-    const items = (data as Record<string, Record<string, Record<string, string>>[]>).items
-    const channel = items[0]
+    const channel = result.items[0]
     return {
       subscriberCount: parseInt(channel.statistics?.subscriberCount) || 0,
       viewCount: parseInt(channel.statistics?.viewCount) || 0,
