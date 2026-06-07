@@ -61,6 +61,15 @@ export async function POST(
           throw new Error('INVALID_STATUS')
         }
 
+        // Guard against frozenBalance underflow
+        const brand = await tx.brand.findUniqueOrThrow({
+          where: { id: collaboration.campaign.brand.id },
+          select: { frozenBalance: true },
+        })
+        if (brand.frozenBalance < collaboration.agreedPrice!) {
+          throw new Error('INSUFFICIENT_FROZEN_BALANCE')
+        }
+
         // Transfer funds
         await tx.brand.update({
           where: { id: collaboration.campaign.brand.id },
@@ -99,6 +108,9 @@ export async function POST(
     } catch (innerError) {
       if (innerError instanceof Error && innerError.message === 'INVALID_STATUS') {
         return NextResponse.json({ error: 'Collaboration already completed or not in valid state' }, { status: 400 })
+      }
+      if (innerError instanceof Error && innerError.message === 'INSUFFICIENT_FROZEN_BALANCE') {
+        return NextResponse.json({ error: 'Insufficient frozen balance to complete payout' }, { status: 400 })
       }
       throw innerError
     }

@@ -52,6 +52,15 @@ export async function POST(request: NextRequest) {
     }
 
     if (body.Status === 'Success') {
+      // Validate that the webhook-reported amount matches the stored transaction amount
+      const reportedAmount = parseFloat(body.AmountUSD || body.Amount || '0')
+      const expectedAmount = transaction.amount / 100 // stored in cents
+      if (Math.abs(reportedAmount - expectedAmount) > 0.01) {
+        console.error('Deposit amount mismatch', { reportedAmount, expectedAmount, transactionId: transaction.id })
+        // Return 200 to prevent retries, but do not credit
+        return NextResponse.json({ ok: true })
+      }
+
       const netAmount = transaction.amount - transaction.fee
 
       // Find brand by userId from transaction
@@ -106,7 +115,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ ok: true })
   } catch (error) {
     console.error('Deposit webhook error:', error)
-    // Return 200 even on error to prevent webhook retries that could cause duplicate processing
-    return NextResponse.json({ ok: true })
+    // Return 500 on unexpected errors so 0xProcessing retries the webhook
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }

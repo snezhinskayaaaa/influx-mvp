@@ -2,9 +2,16 @@ import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
 import { jwtVerify } from 'jose'
 import bcrypt from 'bcryptjs'
+import { rateLimit } from '@/lib/rate-limit'
 
 export async function POST(request: NextRequest) {
   try {
+    const ip = request.headers.get('x-forwarded-for') || 'unknown'
+    const { success } = rateLimit(`reset-password:${ip}`, 3, 900000) // 3 attempts per 15 minutes
+    if (!success) {
+      return NextResponse.json({ error: 'Too many requests. Please wait a few minutes.' }, { status: 429 })
+    }
+
     const { token, newPassword } = await request.json()
 
     if (!token || !newPassword) {
@@ -37,8 +44,8 @@ export async function POST(request: NextRequest) {
     if (!profile) {
       return NextResponse.json({ error: 'User not found' }, { status: 400 })
     }
-    // Check token was issued before any password change
-    if (payload.phash !== profile.passwordHash.substring(0, 10)) {
+    // Check token was issued before any password change (updatedAt changes on password update)
+    if (payload.iat && profile.updatedAt.getTime() / 1000 > payload.iat) {
       return NextResponse.json({ error: 'This reset link has already been used' }, { status: 400 })
     }
 

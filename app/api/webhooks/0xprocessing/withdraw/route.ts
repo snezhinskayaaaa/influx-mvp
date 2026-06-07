@@ -102,6 +102,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ ok: true })
   } catch (error) {
     console.error('Withdrawal webhook error:', error)
-    return NextResponse.json({ ok: true })
+    // Return 500 on unexpected errors so 0xProcessing retries the webhook
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }

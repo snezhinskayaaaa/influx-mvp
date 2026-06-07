@@ -32,8 +32,9 @@ export async function POST(request: NextRequest) {
     }
 
     const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET!)
-    const token = await new SignJWT({ userId: profile.id, purpose: 'password-reset', phash: profile.passwordHash.substring(0, 10) })
+    const token = await new SignJWT({ userId: profile.id, purpose: 'password-reset' })
       .setProtectedHeader({ alg: 'HS256' })
+      .setIssuedAt()
       .setExpirationTime('1h')
       .sign(JWT_SECRET)
 
