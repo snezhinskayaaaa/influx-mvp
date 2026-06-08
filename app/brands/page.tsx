@@ -244,13 +244,12 @@ export default function BrandsPage() {
                     className="absolute w-48 lg:w-72 p-3 lg:p-6 border-2 transition-all duration-700 ease-in-out shadow-xl"
                     style={getCardPosition(index)}
                   >
-                    <div className="w-full h-56 lg:h-96 rounded-xl overflow-hidden mb-3 lg:mb-4 bg-muted">
+                    <div className="relative w-full h-56 lg:h-96 rounded-xl overflow-hidden mb-3 lg:mb-4 bg-muted">
                       <Image
                         src={profile.image}
                         alt={profile.name}
-                        width={400}
-                        height={384}
-                        className="w-full h-full object-cover"
+                        fill
+                        className="object-cover"
                       />
                     </div>
                     <div className="space-y-1 lg:space-y-2">
