@@ -120,7 +120,7 @@ export default function BrandsPage() {
         const res = await fetch("/api/influencers");
         if (!res.ok) return;
         const data = await res.json();
-        if (data.influencers && data.influencers.length > 0) {
+        if (data.influencers && data.influencers.length >= 3) {
           const mapped: InfluencerProfile[] = data.influencers.slice(0, 6).map(
             (inf: { id: string; handle: string; niche: string[]; instagramFollowers: number }, idx: number) => ({
               id: inf.id,
