@@ -137,6 +137,9 @@ export default function InfluencerDashboard() {
   const [pendingDeposits, setPendingDeposits] = useState(0);
   const [pendingWithdrawals, setPendingWithdrawals] = useState(0);
   const [showVerifyPopup, setShowVerifyPopup] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deleteConfirmText, setDeleteConfirmText] = useState('');
+  const [deleteLoading, setDeleteLoading] = useState(false);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [emailVerified, setEmailVerified] = useState(true);
   const [influencerStatus, setInfluencerStatus] = useState<string>('PENDING');
@@ -2159,7 +2162,7 @@ export default function InfluencerDashboard() {
 
                 <Card className="p-6 border-destructive/20">
                   <h3 className="text-lg font-semibold mb-4 text-destructive">Danger Zone</h3>
-                  <Button variant="destructive" size="sm">
+                  <Button variant="destructive" size="sm" onClick={() => setShowDeleteModal(true)}>
                     Delete Account
                   </Button>
                   <p className="text-xs text-muted-foreground mt-2">This action cannot be undone</p>
@@ -2394,6 +2397,64 @@ export default function InfluencerDashboard() {
             <p className="text-xs text-muted-foreground text-center mt-4">
               You can still browse the platform, but deposits and withdrawals require a verified email.
             </p>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Account Modal */}
+      {showDeleteModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+          <div className="bg-background border border-border rounded-2xl p-6 w-full max-w-md mx-4 shadow-2xl">
+            <h3 className="text-lg font-bold mb-2 text-destructive">Delete Account</h3>
+            <p className="text-sm text-muted-foreground mb-4">
+              This action is permanent and cannot be undone. All your data will be deleted.
+            </p>
+            <div className="mb-4">
+              <label className="text-sm font-medium mb-1 block">Type &quot;DELETE&quot; to confirm</label>
+              <input
+                type="text"
+                value={deleteConfirmText}
+                onChange={(e) => setDeleteConfirmText(e.target.value)}
+                placeholder='Type "DELETE" to confirm'
+                className="w-full px-3 py-2 rounded-lg border border-border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-destructive"
+              />
+            </div>
+            <div className="flex gap-3">
+              <Button
+                variant="outline"
+                className="flex-1"
+                onClick={() => { setShowDeleteModal(false); setDeleteConfirmText(''); }}
+              >
+                Cancel
+              </Button>
+              <Button
+                variant="destructive"
+                className="flex-1"
+                disabled={deleteConfirmText !== 'DELETE' || deleteLoading}
+                onClick={async () => {
+                  setDeleteLoading(true);
+                  try {
+                    const res = await fetch('/api/auth/delete-account', {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({ confirmation: deleteConfirmText }),
+                    });
+                    if (res.ok) {
+                      window.location.href = '/';
+                    } else {
+                      const data = await res.json();
+                      showToast(data.error || 'Failed to delete account', 'error');
+                      setDeleteLoading(false);
+                    }
+                  } catch {
+                    showToast('Failed to delete account', 'error');
+                    setDeleteLoading(false);
+                  }
+                }}
+              >
+                {deleteLoading ? 'Deleting...' : 'Delete Account'}
+              </Button>
+            </div>
           </div>
         </div>
       )}
