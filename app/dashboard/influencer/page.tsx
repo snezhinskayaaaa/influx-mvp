@@ -2157,26 +2157,6 @@ export default function InfluencerDashboard() {
                   </div>
                 </Card>
 
-                <Card className="p-6">
-                  <h3 className="text-lg font-semibold mb-4">Payment Settings</h3>
-                  <div className="space-y-4">
-                    <div>
-                      <Label htmlFor="payment-method">Payment Method</Label>
-                      <Select defaultValue="bank">
-                        <SelectTrigger id="payment-method">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="bank">Bank Transfer</SelectItem>
-                          <SelectItem value="paypal">PayPal</SelectItem>
-                          <SelectItem value="crypto">Cryptocurrency</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <Button variant="outline">Manage Payment Methods</Button>
-                  </div>
-                </Card>
-
                 <Card className="p-6 border-destructive/20">
                   <h3 className="text-lg font-semibold mb-4 text-destructive">Danger Zone</h3>
                   <Button variant="destructive" size="sm">
