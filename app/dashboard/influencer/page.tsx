@@ -2176,6 +2176,14 @@ export default function InfluencerDashboard() {
                     <Button variant="outline">Manage Payment Methods</Button>
                   </div>
                 </Card>
+
+                <Card className="p-6 border-destructive/20">
+                  <h3 className="text-lg font-semibold mb-4 text-destructive">Danger Zone</h3>
+                  <Button variant="destructive" size="sm">
+                    Delete Account
+                  </Button>
+                  <p className="text-xs text-muted-foreground mt-2">This action cannot be undone</p>
+                </Card>
               </div>
             </motion.div>
           )}
