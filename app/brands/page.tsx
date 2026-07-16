@@ -63,42 +63,42 @@ const mockInfluencerProfiles: InfluencerProfile[] = [
   {
     id: 1,
     name: "Luna AI",
-    niche: "Fashion & Lifestyle",
+    niche: "DeFi & Trading · AI Influencer",
     followers: "250K",
     image: "/influencer-1.png"
   },
   {
     id: 2,
     name: "Ava Digital",
-    niche: "Beauty & Wellness",
+    niche: "NFT & Culture · AI Influencer",
     followers: "180K",
     image: "/influencer-2.png"
   },
   {
     id: 3,
     name: "Nova Tech",
-    niche: "Tech & Gaming",
+    niche: "L2 & Infra · Crypto KOL",
     followers: "320K",
     image: "/influencer-3.png"
   },
   {
     id: 4,
-    name: "Stella Fit",
-    niche: "Fitness & Health",
+    name: "Chain Signal",
+    niche: "GameFi · Web3 Creator",
     followers: "195K",
     image: "/influencer-4.png"
   },
   {
     id: 5,
     name: "Maya Vibe",
-    niche: "Music & Arts",
+    niche: "Memecoins · Anon KOL",
     followers: "275K",
     image: "/influencer-5.png"
   },
   {
     id: 6,
     name: "Iris Creative",
-    niche: "Design & Creative",
+    niche: "AI x Crypto · AI Influencer",
     followers: "210K",
     image: "/influencer-6.png"
   }
@@ -188,26 +188,22 @@ export default function BrandsPage() {
               <div className="inline-flex items-center gap-2 px-4 sm:px-5 py-2 rounded-full bg-primary/10 border border-primary/20 backdrop-blur-sm mb-6">
                 <Sparkles className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-primary" />
                 <span className="text-xs sm:text-sm font-medium text-primary">
-                  For Brands & Advertisers
+                  FOR WEB3 PROJECTS
                 </span>
               </div>
 
               <h1 className="text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
-                AI Influencer Hub for Brands
+                Influencer campaigns for Web3 projects
               </h1>
 
               <p className="mt-6 text-lg text-muted-foreground sm:text-xl leading-relaxed">
-                Discover. Connect. Collaborate.
-              </p>
-
-              <p className="text-lg text-muted-foreground sm:text-xl leading-relaxed">
-                Grow your brand with AI Influencers
+                Discover creators. Fund in crypto. Launch in minutes. Escrow protects every deal.
               </p>
 
               <div className="mt-10">
                 <Button size="lg" asChild className="w-full sm:w-64 bg-primary/10 hover:bg-primary/15 backdrop-blur-sm border-2 border-primary/30 h-14 text-base transition-all">
                   <Link href="/signup?type=brand" className="flex items-center justify-center">
-                    <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent font-medium">Explore Marketplace</span>
+                    <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent font-medium">Explore the marketplace</span>
                   </Link>
                 </Button>
               </div>
@@ -286,12 +282,12 @@ export default function BrandsPage() {
 
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4">
               <span className="bg-gradient-to-r from-primary via-amber-500 to-secondary bg-clip-text text-transparent">
-                Be a Founding Brand
+                Be a Founding Project
               </span>
             </h2>
 
             <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto mb-6">
-              Launch your first campaign during our opening month and secure the lowest platform fees forever
+              Launch your first campaign during our opening month and secure the lowest platform fees forever for your project
             </p>
 
             {/* Countdown */}
@@ -337,7 +333,7 @@ export default function BrandsPage() {
                   <div className="flex items-start gap-3">
                     <Crown className="h-5 w-5 text-amber-500 shrink-0 mt-1" />
                     <div>
-                      <p className="font-semibold text-sm mb-1">Founding Brand Status</p>
+                      <p className="font-semibold text-sm mb-1">Founding Project Status</p>
                       <p className="text-xs text-muted-foreground">Complete your first campaign + leave feedback = Lock 2% rate forever</p>
                     </div>
                   </div>
@@ -353,7 +349,7 @@ export default function BrandsPage() {
 
               {/* Right: Benefits */}
               <div>
-                <h3 className="text-xl font-bold mb-6">What You Get as a Founding Brand</h3>
+                <h3 className="text-xl font-bold mb-6">What You Get as a Founding Project</h3>
                 <div className="space-y-4">
                   <div className="flex items-start gap-3 p-3 rounded-lg hover:bg-muted/30 transition-colors">
                     <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
@@ -410,7 +406,7 @@ export default function BrandsPage() {
 
             {/* How to Qualify */}
             <div className="pt-8 border-t border-border/50">
-              <h4 className="font-bold text-center mb-6">How to Become a Founding Brand</h4>
+              <h4 className="font-bold text-center mb-6">How to Become a Founding Project</h4>
               <div className="grid sm:grid-cols-3 gap-4">
                 <div className="bg-muted/30 p-5 rounded-xl border border-border/50 text-center">
                   <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center text-base font-bold text-primary mb-4 mx-auto">1</div>
@@ -436,7 +432,7 @@ export default function BrandsPage() {
             <Button asChild size="lg" className="bg-gradient-to-r from-primary to-secondary text-white hover:opacity-90 transition-all h-16 text-lg px-12 rounded-2xl shadow-2xl">
               <Link href="/signup?type=brand" className="flex items-center justify-center">
                 <Crown className="mr-2 h-6 w-6" />
-                Become a Founding Brand
+                Become a Founding Project
                 <ArrowRight className="ml-2 h-6 w-6" />
               </Link>
             </Button>
@@ -483,7 +479,7 @@ export default function BrandsPage() {
               Why Choose Influx
             </Badge>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4">
-              Built for Results
+              Built for crypto growth
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
               The only platform where you pay for actual performance, not promises
@@ -495,9 +491,9 @@ export default function BrandsPage() {
               <div className="w-12 h-12 lg:w-16 lg:h-16 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-3 lg:mb-4">
                 <Target className="h-6 w-6 lg:h-8 lg:w-8 text-primary" />
               </div>
-              <h3 className="text-base lg:text-xl font-semibold mb-2 lg:mb-3">Precision Targeting</h3>
+              <h3 className="text-base lg:text-xl font-semibold mb-2 lg:mb-3">Web3-native targeting</h3>
               <p className="text-muted-foreground text-xs lg:text-sm">
-                Find AI influencers whose audience perfectly matches your target demographic
+                Match with creators whose holders and community fit your token and narrative.
               </p>
             </Card>
 
@@ -517,7 +513,7 @@ export default function BrandsPage() {
               </div>
               <h3 className="text-base lg:text-xl font-semibold mb-2 lg:mb-3">Fast Deployment</h3>
               <p className="text-muted-foreground text-xs lg:text-sm">
-                Launch campaigns quickly with AI influencers ready to collaborate
+                Launch in days, not weeks of DM back-and-forth.
               </p>
             </Card>
 
@@ -525,9 +521,9 @@ export default function BrandsPage() {
               <div className="w-12 h-12 lg:w-16 lg:h-16 rounded-2xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center mx-auto mb-3 lg:mb-4">
                 <DollarSign className="h-6 w-6 lg:h-8 lg:w-8 text-primary-foreground" />
               </div>
-              <h3 className="text-base lg:text-xl font-semibold mb-2 lg:mb-3">Pay for Results</h3>
+              <h3 className="text-base lg:text-xl font-semibold mb-2 lg:mb-3">Pay in stablecoins</h3>
               <p className="text-muted-foreground text-xs lg:text-sm">
-                Only pay for actual performance - impressions, clicks, conversions. No wasted budget.
+                Fund campaigns from your treasury in USDC/USDT. Budgets are dollar-denominated — no FX surprises, no bank delays, no chargebacks.
               </p>
             </Card>
           </div>
@@ -561,9 +557,9 @@ export default function BrandsPage() {
               <div className="inline-flex items-center justify-center w-10 h-10 lg:w-12 lg:h-12 rounded-full bg-primary/10 text-primary font-bold text-base lg:text-lg mb-2 lg:mb-4">
                 1
               </div>
-              <h3 className="text-sm lg:text-lg font-semibold mb-1 lg:mb-2">Deposit Funds</h3>
+              <h3 className="text-sm lg:text-lg font-semibold mb-1 lg:mb-2">Fund in crypto</h3>
               <p className="text-xs lg:text-sm text-muted-foreground">
-                Add funds to your account. Money is held securely in escrow.
+                Deposit USDC/USDT. Funds held securely in escrow.
               </p>
 
               {/* Arrow */}
@@ -580,9 +576,9 @@ export default function BrandsPage() {
               <div className="inline-flex items-center justify-center w-10 h-10 lg:w-12 lg:h-12 rounded-full bg-primary/10 text-primary font-bold text-base lg:text-lg mb-2 lg:mb-4">
                 2
               </div>
-              <h3 className="text-sm lg:text-lg font-semibold mb-1 lg:mb-2">Launch Campaign</h3>
+              <h3 className="text-sm lg:text-lg font-semibold mb-1 lg:mb-2">Launch campaign</h3>
               <p className="text-xs lg:text-sm text-muted-foreground">
-                Match with AI influencers and begin your campaign.
+                Match with creators and begin your campaign.
               </p>
 
               {/* Arrow */}
@@ -599,7 +595,7 @@ export default function BrandsPage() {
               <div className="inline-flex items-center justify-center w-10 h-10 lg:w-12 lg:h-12 rounded-full bg-primary/10 text-primary font-bold text-base lg:text-lg mb-2 lg:mb-4">
                 3
               </div>
-              <h3 className="text-sm lg:text-lg font-semibold mb-1 lg:mb-2">Track Progress</h3>
+              <h3 className="text-sm lg:text-lg font-semibold mb-1 lg:mb-2">Track progress</h3>
               <p className="text-xs lg:text-sm text-muted-foreground">
                 Monitor milestones and approve deliverables in real-time.
               </p>
@@ -618,7 +614,7 @@ export default function BrandsPage() {
               <div className="inline-flex items-center justify-center w-10 h-10 lg:w-12 lg:h-12 rounded-full bg-primary/10 text-primary font-bold text-base lg:text-lg mb-2 lg:mb-4">
                 4
               </div>
-              <h3 className="text-sm lg:text-lg font-semibold mb-1 lg:mb-2">Auto Payment</h3>
+              <h3 className="text-sm lg:text-lg font-semibold mb-1 lg:mb-2">Auto payment</h3>
               <p className="text-xs lg:text-sm text-muted-foreground">
                 Funds release automatically as milestones complete.
               </p>
@@ -654,7 +650,7 @@ export default function BrandsPage() {
               Choose Your Plan
             </h2>
             <p className="text-sm lg:text-lg text-muted-foreground max-w-2xl mx-auto">
-              Start free or unlock premium features with Brand Pro
+              Start free or unlock premium features with Project Pro
             </p>
           </div>
 

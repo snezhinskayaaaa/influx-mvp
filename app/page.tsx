@@ -24,7 +24,6 @@ import {
   Users,
   MessageSquare,
   ArrowRight,
-  MapPin,
   Heart,
   Target,
   Instagram,
@@ -38,7 +37,16 @@ import {
   Crown,
   Flame,
   Award,
-  Check
+  Check,
+  Coins,
+  Image as ImageIcon,
+  Gamepad2,
+  Layers,
+  ArrowLeftRight,
+  Rocket,
+  MessageCircle,
+  Globe,
+  Handshake,
 } from "lucide-react";
 
 const fadeInUp = {
@@ -96,24 +104,27 @@ export default function Home() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center max-w-7xl mx-auto">
             {/* Left Column - Text Content */}
             <div className="text-left">
+              <Badge className="mb-4 bg-primary/10 text-primary border-primary/30 text-xs font-semibold tracking-wider">
+                FOR WEB3 PROJECTS
+              </Badge>
               <h1 className="text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
-                AI Influencers and brands{" "}
+                Influencer marketing,{" "}
                 <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-                  connected
+                  built for Web3
                 </span>
               </h1>
               <p className="mt-6 text-lg text-muted-foreground sm:text-xl leading-relaxed">
-                Influx helps brands and virtual talents to find each other and launch campaigns on the same platform. Explore the first marketplace of AI influencers.
+                The crypto-native platform where DeFi, NFT, GameFi, L2s and exchanges find influencers, launch campaigns, and pay in crypto. Escrow protects both sides — no more risky DMs and manual deals.
               </p>
               <div className="mt-10 flex flex-col sm:flex-row items-start gap-4">
                 <Button size="lg" asChild className="w-full sm:w-64 bg-primary/10 hover:bg-primary/15 backdrop-blur-sm border-2 border-primary/30 h-14 text-base transition-all">
                   <Link href="/brands" className="flex items-center justify-center">
-                    <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent font-medium">For brands</span>
+                    <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent font-medium">Launch a campaign</span>
                   </Link>
                 </Button>
                 <Button size="lg" variant="outline" asChild className="w-full sm:w-64 h-14 text-base border-muted-foreground/30 text-muted-foreground hover:bg-muted hover:text-foreground transition-all">
                   <Link href="/influencers" className="flex items-center justify-center">
-                    Join as Influencer
+                    Join as a creator
                   </Link>
                 </Button>
               </div>
@@ -133,7 +144,16 @@ export default function Home() {
         </div>
       </motion.section>
 
-      {/* Find the Perfect Match Section */}
+      {/* Trust Bar */}
+      <div className="bg-muted/50 border-y border-border/50 py-4">
+        <div className="container px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+          <p className="text-center text-xs sm:text-sm text-muted-foreground">
+            Budget in dollars, pay in stablecoins (USDC/USDT) &middot; Milestone-based escrow &middot; AI influencers + crypto KOLs &middot; No banks, no fiat friction
+          </p>
+        </div>
+      </div>
+
+      {/* Built for crypto-native campaigns */}
       <motion.section
         initial="hidden"
         whileInView="visible"
@@ -144,10 +164,10 @@ export default function Home() {
         <div className="container px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
           <div className="text-center mb-8 sm:mb-12">
             <h2 className="text-2xl sm:text-4xl font-bold tracking-tight lg:text-5xl mb-3 sm:mb-4">
-              Find the perfect match
+              Built for crypto-native campaigns
             </h2>
             <p className="text-sm sm:text-lg text-muted-foreground max-w-3xl mx-auto px-4">
-              Discover the perfect influencers with advanced filtering and search capabilities designed to match your exact campaign requirements.
+              Find influencers who actually move Web3 audiences — filtered by the signals that matter in crypto.
             </p>
           </div>
 
@@ -158,54 +178,54 @@ export default function Home() {
             viewport={{ once: true, margin: "-50px" }}
             className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6"
           >
-            {/* Demographics */}
-            <motion.div variants={cardVariant}>
-              <Card className="p-3 sm:p-4 lg:p-6 bg-muted/30 border border-primary/30 hover:border-primary/50 transition-all hover:shadow-lg h-full">
-              <div className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 rounded-lg sm:rounded-xl bg-primary/10 flex items-center justify-center mb-2 sm:mb-3 lg:mb-4">
-                <Users className="h-4 w-4 sm:h-5 sm:w-5 lg:h-6 lg:w-6 text-primary" />
-              </div>
-              <h3 className="text-sm sm:text-base lg:text-lg font-semibold mb-1 sm:mb-2">Demographics</h3>
-              <p className="text-xs sm:text-sm text-muted-foreground leading-snug">
-                Filter by gender, age range, and audience demographics to match your target market
-              </p>
-              </Card>
-            </motion.div>
-
-            {/* Location */}
-            <motion.div variants={cardVariant}>
-              <Card className="p-3 sm:p-4 lg:p-6 bg-muted/30 border border-secondary/30 hover:border-secondary/50 transition-all hover:shadow-lg h-full">
-              <div className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 rounded-lg sm:rounded-xl bg-secondary/10 flex items-center justify-center mb-2 sm:mb-3 lg:mb-4">
-                <MapPin className="h-4 w-4 sm:h-5 sm:w-5 lg:h-6 lg:w-6 text-secondary" />
-              </div>
-              <h3 className="text-sm sm:text-base lg:text-lg font-semibold mb-1 sm:mb-2">Location</h3>
-              <p className="text-xs sm:text-sm text-muted-foreground leading-snug">
-                Search influencers by geographic location and regional audience reach
-              </p>
-              </Card>
-            </motion.div>
-
-            {/* Engagement Rate */}
-            <motion.div variants={cardVariant}>
-              <Card className="p-3 sm:p-4 lg:p-6 bg-muted/30 border border-success/30 hover:border-success/50 transition-all hover:shadow-lg h-full">
-              <div className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 rounded-lg sm:rounded-xl bg-success/10 flex items-center justify-center mb-2 sm:mb-3 lg:mb-4">
-                <Heart className="h-4 w-4 sm:h-5 sm:w-5 lg:h-6 lg:w-6 text-success" />
-              </div>
-              <h3 className="text-sm sm:text-base lg:text-lg font-semibold mb-1 sm:mb-2">Engagement Rate</h3>
-              <p className="text-xs sm:text-sm text-muted-foreground leading-snug">
-                Find influencers with proven engagement metrics and authentic audience connections
-              </p>
-              </Card>
-            </motion.div>
-
-            {/* Niche & Category */}
+            {/* Web3 Niche */}
             <motion.div variants={cardVariant}>
               <Card className="p-3 sm:p-4 lg:p-6 bg-muted/30 border border-primary/30 hover:border-primary/50 transition-all hover:shadow-lg h-full">
               <div className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 rounded-lg sm:rounded-xl bg-primary/10 flex items-center justify-center mb-2 sm:mb-3 lg:mb-4">
                 <Target className="h-4 w-4 sm:h-5 sm:w-5 lg:h-6 lg:w-6 text-primary" />
               </div>
-              <h3 className="text-sm sm:text-base lg:text-lg font-semibold mb-1 sm:mb-2">Niche & Category</h3>
+              <h3 className="text-sm sm:text-base lg:text-lg font-semibold mb-1 sm:mb-2">Web3 Niche</h3>
               <p className="text-xs sm:text-sm text-muted-foreground leading-snug">
-                Browse by content category, industry niche, and brand alignment scores
+                DeFi, NFT, GameFi, L2 &amp; infra, CEX/DEX, memecoins — match by the vertical your project lives in.
+              </p>
+              </Card>
+            </motion.div>
+
+            {/* Audience Chain */}
+            <motion.div variants={cardVariant}>
+              <Card className="p-3 sm:p-4 lg:p-6 bg-muted/30 border border-secondary/30 hover:border-secondary/50 transition-all hover:shadow-lg h-full">
+              <div className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 rounded-lg sm:rounded-xl bg-secondary/10 flex items-center justify-center mb-2 sm:mb-3 lg:mb-4">
+                <Globe className="h-4 w-4 sm:h-5 sm:w-5 lg:h-6 lg:w-6 text-secondary" />
+              </div>
+              <h3 className="text-sm sm:text-base lg:text-lg font-semibold mb-1 sm:mb-2">Audience Chain</h3>
+              <p className="text-xs sm:text-sm text-muted-foreground leading-snug">
+                Reach holders and users on the chains you care about — from Ethereum and Solana to your L2.
+              </p>
+              </Card>
+            </motion.div>
+
+            {/* Engagement, not vanity */}
+            <motion.div variants={cardVariant}>
+              <Card className="p-3 sm:p-4 lg:p-6 bg-muted/30 border border-success/30 hover:border-success/50 transition-all hover:shadow-lg h-full">
+              <div className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 rounded-lg sm:rounded-xl bg-success/10 flex items-center justify-center mb-2 sm:mb-3 lg:mb-4">
+                <Heart className="h-4 w-4 sm:h-5 sm:w-5 lg:h-6 lg:w-6 text-success" />
+              </div>
+              <h3 className="text-sm sm:text-base lg:text-lg font-semibold mb-1 sm:mb-2">Engagement, not vanity</h3>
+              <p className="text-xs sm:text-sm text-muted-foreground leading-snug">
+                Filter by real engagement and authentic community, not just follower counts.
+              </p>
+              </Card>
+            </motion.div>
+
+            {/* Influencer Type */}
+            <motion.div variants={cardVariant}>
+              <Card className="p-3 sm:p-4 lg:p-6 bg-muted/30 border border-primary/30 hover:border-primary/50 transition-all hover:shadow-lg h-full">
+              <div className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 rounded-lg sm:rounded-xl bg-primary/10 flex items-center justify-center mb-2 sm:mb-3 lg:mb-4">
+                <Users className="h-4 w-4 sm:h-5 sm:w-5 lg:h-6 lg:w-6 text-primary" />
+              </div>
+              <h3 className="text-sm sm:text-base lg:text-lg font-semibold mb-1 sm:mb-2">Influencer Type</h3>
+              <p className="text-xs sm:text-sm text-muted-foreground leading-snug">
+                AI influencers, crypto KOLs, anon accounts, or Web3 video creators — your call.
               </p>
               </Card>
             </motion.div>
@@ -238,7 +258,7 @@ export default function Home() {
             viewport={{ once: true, margin: "-50px" }}
             className="flex overflow-x-auto gap-4 pb-4 md:grid md:grid-cols-2 md:gap-8 md:overflow-visible snap-x snap-mandatory md:snap-none max-w-4xl mx-auto"
           >
-            {/* For Brands */}
+            {/* For Projects */}
             <motion.div variants={cardVariant} className="min-w-[300px] md:min-w-0 snap-center">
               <Card className="p-4 sm:p-6 lg:p-8 bg-gradient-to-br from-primary/5 to-primary/10 border border-primary/30 hover:border-primary/40 transition-all hover:shadow-lg h-full flex flex-col">
               <div className="mb-4 sm:mb-6">
@@ -246,14 +266,14 @@ export default function Home() {
                   <Building2 className="h-5 w-5 sm:h-6 sm:w-6 lg:h-7 lg:w-7 text-primary" />
                 </div>
               </div>
-              <h3 className="text-lg sm:text-xl lg:text-2xl font-semibold mb-3 sm:mb-4">For Brands</h3>
+              <h3 className="text-lg sm:text-xl lg:text-2xl font-semibold mb-3 sm:mb-4">For Projects</h3>
               <p className="text-xs sm:text-sm lg:text-base text-muted-foreground mb-4 sm:mb-6 leading-relaxed">
-                Define your budget, campaign deliverables, timelines, and quality standards. Choose influencers who meet your criteria and negotiate terms that work for your business.
+                Define your budget in crypto, set deliverables and timelines, pick creators who fit your narrative, and negotiate terms that work.
               </p>
               <ul className="space-y-2 sm:space-y-3 mb-6 flex-1">
                 <li className="flex items-start gap-2 sm:gap-3">
                   <CheckCircle2 className="h-4 w-4 sm:h-5 sm:w-5 text-primary shrink-0 mt-0.5" />
-                  <span className="text-xs sm:text-sm text-muted-foreground">Set custom budgets and payment terms</span>
+                  <span className="text-xs sm:text-sm text-muted-foreground">Fund campaigns in USDC/USDT</span>
                 </li>
                 <li className="flex items-start gap-2 sm:gap-3">
                   <CheckCircle2 className="h-4 w-4 sm:h-5 sm:w-5 text-primary shrink-0 mt-0.5" />
@@ -266,14 +286,14 @@ export default function Home() {
               </ul>
               <Button asChild variant="outline" className="w-full border-primary/40 text-primary hover:bg-primary/10">
                 <Link href="/brands">
-                  Start as brand
+                  Start as project
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
               </Button>
               </Card>
             </motion.div>
 
-            {/* For Influencers */}
+            {/* For Creators */}
             <motion.div variants={cardVariant} className="min-w-[300px] md:min-w-0 snap-center">
               <Card className="p-4 sm:p-6 lg:p-8 bg-gradient-to-br from-secondary/5 to-secondary/10 border border-secondary/30 hover:border-secondary/40 transition-all hover:shadow-lg h-full flex flex-col">
               <div className="mb-4 sm:mb-6">
@@ -281,14 +301,14 @@ export default function Home() {
                   <Sparkles className="h-5 w-5 sm:h-6 sm:w-6 lg:h-7 lg:w-7 text-secondary" />
                 </div>
               </div>
-              <h3 className="text-lg sm:text-xl lg:text-2xl font-semibold mb-3 sm:mb-4">For AI Influencers</h3>
+              <h3 className="text-lg sm:text-xl lg:text-2xl font-semibold mb-3 sm:mb-4">For Creators</h3>
               <p className="text-xs sm:text-sm lg:text-base text-muted-foreground mb-4 sm:mb-6 leading-relaxed">
-                You&apos;re in control. Set your rates, specify your services, and choose campaigns that align with your brand. Accept only partnerships that feel right to you.
+                You&apos;re in control. Set your rates, choose the projects that fit your audience, and get paid in crypto — automatically.
               </p>
               <ul className="space-y-2 sm:space-y-3 mb-6 flex-1">
                 <li className="flex items-start gap-2 sm:gap-3">
                   <CheckCircle2 className="h-4 w-4 sm:h-5 sm:w-5 text-secondary shrink-0 mt-0.5" />
-                  <span className="text-xs sm:text-sm text-muted-foreground">Set your own pricing</span>
+                  <span className="text-xs sm:text-sm text-muted-foreground">Set your own rates</span>
                 </li>
                 <li className="flex items-start gap-2 sm:gap-3">
                   <CheckCircle2 className="h-4 w-4 sm:h-5 sm:w-5 text-secondary shrink-0 mt-0.5" />
@@ -296,12 +316,12 @@ export default function Home() {
                 </li>
                 <li className="flex items-start gap-2 sm:gap-3">
                   <CheckCircle2 className="h-4 w-4 sm:h-5 sm:w-5 text-secondary shrink-0 mt-0.5" />
-                  <span className="text-xs sm:text-sm text-muted-foreground">Define collaboration terms</span>
+                  <span className="text-xs sm:text-sm text-muted-foreground">Get paid in crypto, on time</span>
                 </li>
               </ul>
               <Button asChild variant="outline" className="w-full border-secondary/40 text-secondary hover:bg-secondary/10">
                 <Link href="/influencers">
-                  Join as influencer
+                  Join as creator
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
               </Button>
@@ -325,7 +345,7 @@ export default function Home() {
               Multi-channel marketing
             </h2>
             <p className="text-base sm:text-lg text-muted-foreground lg:text-xl leading-relaxed px-4">
-              Reach your target audience wherever they are. AI influencers deliver consistently high engagement rates across all major platforms, often outperforming traditional influencers with authentic, always-on content creation.
+              Reach your audience where Web3 actually lives — from Crypto Twitter to Telegram, YouTube and streams.
             </p>
           </div>
 
@@ -337,32 +357,57 @@ export default function Home() {
             className="w-full max-w-6xl mx-auto px-2 sm:px-0"
           >
             <CarouselContent className="-ml-2 sm:-ml-4">
-              {/* Instagram */}
+              {/* X (Twitter) */}
               <CarouselItem className="pl-2 sm:pl-4 basis-1/2 md:basis-1/2 lg:basis-1/3">
-                <Card className="p-4 sm:p-6 md:p-8 bg-muted/50 border-2 hover:border-[#E4405F]/50 transition-all hover:shadow-lg group h-full flex flex-col">
+                <Card className="p-4 sm:p-6 md:p-8 bg-muted/50 border-2 hover:border-[#000000]/50 transition-all hover:shadow-lg group h-full flex flex-col">
                   <div className="mb-3 sm:mb-4 md:mb-6">
-                    <div className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-xl sm:rounded-2xl bg-gradient-to-br from-[#833AB4] via-[#E4405F] to-[#FCAF45] flex items-center justify-center group-hover:scale-110 transition-transform">
-                      <Instagram className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8 text-white" />
+                    <div className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-xl sm:rounded-2xl bg-[#000000] flex items-center justify-center group-hover:scale-110 transition-transform">
+                      <Twitter className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8 text-white" />
                     </div>
                   </div>
-                  <h3 className="text-lg sm:text-xl md:text-2xl font-semibold mb-2 sm:mb-3 md:mb-4">Instagram</h3>
+                  <h3 className="text-lg sm:text-xl md:text-2xl font-semibold mb-2 sm:mb-3 md:mb-4">X (Twitter)</h3>
                   <p className="text-xs sm:text-sm md:text-base text-muted-foreground mb-3 sm:mb-4 flex-1">
-                    Perfect for visual storytelling and brand aesthetics. AI influencers maintain consistent posting schedules with 24/7 engagement, achieving up to 3x higher interaction rates than human creators.
+                    The home of Crypto Twitter. Threads, alpha, and real-time takes that move markets and communities.
                   </p>
-                  <ul className="space-y-1 sm:space-y-2 mt-auto">
-                    <li className="flex items-start gap-1.5 sm:gap-2">
-                      <CheckCircle2 className="h-4 w-4 sm:h-5 sm:w-5 text-[#E4405F] shrink-0 mt-0.5" />
-                      <span className="text-xs sm:text-sm text-muted-foreground">Stories, Reels & Posts</span>
+                  <ul className="space-y-2 mt-auto">
+                    <li className="flex items-start gap-2">
+                      <CheckCircle2 className="h-4 w-4 sm:h-5 sm:w-5 text-foreground shrink-0 mt-0.5" />
+                      <span className="text-xs sm:text-sm text-muted-foreground">Posts &amp; Threads</span>
                     </li>
                     <li className="flex items-start gap-2">
-                      <CheckCircle2 className="h-5 w-5 text-[#E4405F] shrink-0 mt-0.5" />
-                      <span className="text-sm text-muted-foreground">Always-on engagement</span>
+                      <CheckCircle2 className="h-4 w-4 sm:h-5 sm:w-5 text-foreground shrink-0 mt-0.5" />
+                      <span className="text-xs sm:text-sm text-muted-foreground">Real-time engagement</span>
                     </li>
                   </ul>
                 </Card>
               </CarouselItem>
 
-              {/* TikTok */}
+              {/* Telegram */}
+              <CarouselItem className="pl-2 sm:pl-4 basis-1/2 md:basis-1/2 lg:basis-1/3">
+                <Card className="p-4 sm:p-6 md:p-8 bg-muted/50 border-2 hover:border-[#0088cc]/50 transition-all hover:shadow-lg group h-full flex flex-col">
+                  <div className="mb-3 sm:mb-4 md:mb-6">
+                    <div className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-xl sm:rounded-2xl bg-[#0088cc] flex items-center justify-center group-hover:scale-110 transition-transform">
+                      <MessageCircle className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8 text-white" />
+                    </div>
+                  </div>
+                  <h3 className="text-lg sm:text-xl md:text-2xl font-semibold mb-2 sm:mb-3 md:mb-4">Telegram</h3>
+                  <p className="text-xs sm:text-sm md:text-base text-muted-foreground mb-3 sm:mb-4 flex-1">
+                    Announcements, AMAs, and community drops delivered straight to the channels your holders live in.
+                  </p>
+                  <ul className="space-y-2 mt-auto">
+                    <li className="flex items-start gap-2">
+                      <CheckCircle2 className="h-4 w-4 sm:h-5 sm:w-5 text-[#0088cc] shrink-0 mt-0.5" />
+                      <span className="text-xs sm:text-sm text-muted-foreground">Channels &amp; groups</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <CheckCircle2 className="h-4 w-4 sm:h-5 sm:w-5 text-[#0088cc] shrink-0 mt-0.5" />
+                      <span className="text-xs sm:text-sm text-muted-foreground">AMAs &amp; announcements</span>
+                    </li>
+                  </ul>
+                </Card>
+              </CarouselItem>
+
+              {/* YouTube */}
               <CarouselItem className="pl-2 sm:pl-4 basis-1/2 md:basis-1/2 lg:basis-1/3">
                 <Card className="p-4 sm:p-6 md:p-8 bg-muted/50 border-2 hover:border-success/50 transition-all hover:shadow-lg group h-full flex flex-col">
                   <div className="mb-3 sm:mb-4 md:mb-6">
@@ -437,26 +482,26 @@ export default function Home() {
                 </Card>
               </CarouselItem>
 
-              {/* X (Twitter) */}
+              {/* Instagram */}
               <CarouselItem className="pl-2 sm:pl-4 basis-1/2 md:basis-1/2 lg:basis-1/3">
-                <Card className="p-4 sm:p-6 md:p-8 bg-muted/50 border-2 hover:border-[#000000]/50 transition-all hover:shadow-lg group h-full flex flex-col">
+                <Card className="p-4 sm:p-6 md:p-8 bg-muted/50 border-2 hover:border-[#E4405F]/50 transition-all hover:shadow-lg group h-full flex flex-col">
                   <div className="mb-3 sm:mb-4 md:mb-6">
-                    <div className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-xl sm:rounded-2xl bg-[#000000] flex items-center justify-center group-hover:scale-110 transition-transform">
-                      <span className="text-white text-2xl sm:text-3xl md:text-4xl font-bold">𝕏</span>
+                    <div className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-xl sm:rounded-2xl bg-gradient-to-br from-[#833AB4] via-[#E4405F] to-[#FCAF45] flex items-center justify-center group-hover:scale-110 transition-transform">
+                      <Instagram className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8 text-white" />
                     </div>
                   </div>
-                  <h3 className="text-lg sm:text-xl md:text-2xl font-semibold mb-2 sm:mb-3 md:mb-4">X</h3>
+                  <h3 className="text-lg sm:text-xl md:text-2xl font-semibold mb-2 sm:mb-3 md:mb-4">Instagram</h3>
                   <p className="text-xs sm:text-sm md:text-base text-muted-foreground mb-3 sm:mb-4 flex-1">
-                    Real-time conversations at scale. AI influencers engage audiences with timely commentary, trending topics, and authentic interactions that drive brand awareness and community growth.
+                    Perfect for visual storytelling and brand aesthetics. AI influencers maintain consistent posting schedules with 24/7 engagement, achieving up to 3x higher interaction rates than human creators.
                   </p>
-                  <ul className="space-y-2 mt-auto">
-                    <li className="flex items-start gap-2">
-                      <CheckCircle2 className="h-4 w-4 sm:h-5 sm:w-5 text-foreground shrink-0 mt-0.5" />
-                      <span className="text-xs sm:text-sm text-muted-foreground">Posts & Threads</span>
+                  <ul className="space-y-1 sm:space-y-2 mt-auto">
+                    <li className="flex items-start gap-1.5 sm:gap-2">
+                      <CheckCircle2 className="h-4 w-4 sm:h-5 sm:w-5 text-[#E4405F] shrink-0 mt-0.5" />
+                      <span className="text-xs sm:text-sm text-muted-foreground">Stories, Reels &amp; Posts</span>
                     </li>
                     <li className="flex items-start gap-2">
-                      <CheckCircle2 className="h-4 w-4 sm:h-5 sm:w-5 text-foreground shrink-0 mt-0.5" />
-                      <span className="text-xs sm:text-sm text-muted-foreground">Real-time engagement</span>
+                      <CheckCircle2 className="h-5 w-5 text-[#E4405F] shrink-0 mt-0.5" />
+                      <span className="text-sm text-muted-foreground">Always-on engagement</span>
                     </li>
                   </ul>
                 </Card>
@@ -468,7 +513,7 @@ export default function Home() {
         </div>
       </motion.section>
 
-      {/* Choose a Niche Section */}
+      {/* Choose your Web3 vertical */}
       <motion.section
         initial="hidden"
         whileInView="visible"
@@ -479,10 +524,10 @@ export default function Home() {
         <div className="container px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-4xl mx-auto mb-12 sm:mb-16">
             <h2 className="text-3xl sm:text-4xl font-bold tracking-tight lg:text-5xl mb-4 sm:mb-6">
-              Choose a niche to meet in
+              Choose your Web3 vertical
             </h2>
             <p className="text-base sm:text-lg text-muted-foreground lg:text-xl leading-relaxed px-4">
-              Connect with AI influencers across diverse industries and find the perfect match for your brand.
+              Connect with influencers who speak the language of your corner of crypto.
             </p>
           </div>
 
@@ -499,121 +544,137 @@ export default function Home() {
             className="w-full max-w-7xl mx-auto px-4 sm:px-0"
           >
             <CarouselContent className="-ml-2 md:-ml-4">
-              {/* Gaming */}
-              <CarouselItem className="pl-2 md:pl-4 basis-[85%] sm:basis-1/2 md:basis-1/3 lg:basis-1/5">
+              {/* DeFi */}
+              <CarouselItem className="pl-2 md:pl-4 basis-[85%] sm:basis-1/2 md:basis-1/3 lg:basis-1/4">
                 <div className="relative overflow-hidden h-64 sm:h-72 rounded-xl border border-border hover:border-primary/50 transition-all cursor-pointer group">
-                  <Image src="https://images.unsplash.com/photo-1542751371-adc38448a05e?w=400&h=300&fit=crop" alt="Gaming" fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
+                  <div className="absolute inset-0 bg-gradient-to-br from-primary/30 via-primary/10 to-secondary/20 flex items-center justify-center">
+                    <Coins className="h-16 w-16 text-primary/40" />
+                  </div>
                   <div className="relative h-full flex flex-col justify-end p-4 sm:p-5 bg-gradient-to-t from-black/75 via-black/40 to-transparent">
                     <Badge className="self-start mb-2 sm:mb-3 bg-primary/30 backdrop-blur-sm border-primary/50 text-white text-xs sm:text-sm">
-                      Gaming
+                      DeFi
                     </Badge>
                     <p className="text-white/90 text-xs sm:text-sm leading-relaxed">
-                      Engage millions of passionate players
+                      Protocols, yield, stablecoins &amp; perps
                     </p>
                   </div>
                 </div>
               </CarouselItem>
 
-              {/* Beauty */}
-              <CarouselItem className="pl-2 md:pl-4 basis-[85%] sm:basis-1/2 md:basis-1/3 lg:basis-1/5">
+              {/* NFT */}
+              <CarouselItem className="pl-2 md:pl-4 basis-[85%] sm:basis-1/2 md:basis-1/3 lg:basis-1/4">
                 <div className="relative overflow-hidden h-64 sm:h-72 rounded-xl border border-border hover:border-[#FF6B9D]/50 transition-all cursor-pointer group">
-                  <Image src="https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=400&h=300&fit=crop" alt="Beauty" fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
+                  <div className="absolute inset-0 bg-gradient-to-br from-[#FF6B9D]/30 via-[#FF6B9D]/10 to-secondary/20 flex items-center justify-center">
+                    <ImageIcon className="h-16 w-16 text-[#FF6B9D]/40" />
+                  </div>
                   <div className="relative h-full flex flex-col justify-end p-4 sm:p-5 bg-gradient-to-t from-black/75 via-black/40 to-transparent">
                     <Badge className="self-start mb-2 sm:mb-3 text-xs sm:text-sm bg-[#FF6B9D]/30 backdrop-blur-sm border-[#FF6B9D]/50 text-white">
-                      Beauty
+                      NFT
                     </Badge>
                     <p className="text-white/90 text-xs sm:text-sm leading-relaxed">
-                      Inspire with authentic beauty content
+                      Collections, art &amp; digital culture
                     </p>
                   </div>
                 </div>
               </CarouselItem>
 
-              {/* Fashion */}
-              <CarouselItem className="pl-2 md:pl-4 basis-[85%] sm:basis-1/2 md:basis-1/3 lg:basis-1/5">
+              {/* GameFi */}
+              <CarouselItem className="pl-2 md:pl-4 basis-[85%] sm:basis-1/2 md:basis-1/3 lg:basis-1/4">
                 <div className="relative overflow-hidden h-64 sm:h-72 rounded-xl border border-border hover:border-success/50 transition-all cursor-pointer group">
-                  <Image src="https://images.unsplash.com/photo-1483985988355-763728e1935b?w=400&h=300&fit=crop" alt="Fashion" fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
+                  <div className="absolute inset-0 bg-gradient-to-br from-success/30 via-success/10 to-primary/20 flex items-center justify-center">
+                    <Gamepad2 className="h-16 w-16 text-success/40" />
+                  </div>
                   <div className="relative h-full flex flex-col justify-end p-4 sm:p-5 bg-gradient-to-t from-black/75 via-black/40 to-transparent">
                     <Badge className="self-start mb-2 sm:mb-3 text-xs sm:text-sm bg-success/30 backdrop-blur-sm border-success/50 text-white">
-                      Fashion
+                      GameFi
                     </Badge>
                     <p className="text-white/90 text-xs sm:text-sm leading-relaxed">
-                      Set trends with style leaders
+                      Web3 games &amp; play-to-earn economies
                     </p>
                   </div>
                 </div>
               </CarouselItem>
 
-              {/* Tech */}
-              <CarouselItem className="pl-2 md:pl-4 basis-[85%] sm:basis-1/2 md:basis-1/3 lg:basis-1/5">
+              {/* Layer 1 / Layer 2 */}
+              <CarouselItem className="pl-2 md:pl-4 basis-[85%] sm:basis-1/2 md:basis-1/3 lg:basis-1/4">
                 <div className="relative overflow-hidden h-64 sm:h-72 rounded-xl border border-border hover:border-secondary/50 transition-all cursor-pointer group">
-                  <Image src="https://images.unsplash.com/photo-1518770660439-4636190af475?w=400&h=300&fit=crop" alt="Tech" fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
+                  <div className="absolute inset-0 bg-gradient-to-br from-secondary/30 via-secondary/10 to-primary/20 flex items-center justify-center">
+                    <Layers className="h-16 w-16 text-secondary/40" />
+                  </div>
                   <div className="relative h-full flex flex-col justify-end p-4 sm:p-5 bg-gradient-to-t from-black/75 via-black/40 to-transparent">
                     <Badge className="self-start mb-2 sm:mb-3 text-xs sm:text-sm bg-secondary/30 backdrop-blur-sm border-secondary/50 text-white">
-                      Tech
+                      Layer 1 / Layer 2
                     </Badge>
                     <p className="text-white/90 text-xs sm:text-sm leading-relaxed">
-                      Shape the future of innovation
+                      Chains, rollups &amp; infrastructure
                     </p>
                   </div>
                 </div>
               </CarouselItem>
 
-              {/* Fitness */}
-              <CarouselItem className="pl-2 md:pl-4 basis-[85%] sm:basis-1/2 md:basis-1/3 lg:basis-1/5">
+              {/* Exchanges */}
+              <CarouselItem className="pl-2 md:pl-4 basis-[85%] sm:basis-1/2 md:basis-1/3 lg:basis-1/4">
                 <div className="relative overflow-hidden h-64 sm:h-72 rounded-xl border border-border hover:border-[#00D084]/50 transition-all cursor-pointer group">
-                  <Image src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=400&h=300&fit=crop" alt="Fitness" fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
+                  <div className="absolute inset-0 bg-gradient-to-br from-[#00D084]/30 via-[#00D084]/10 to-primary/20 flex items-center justify-center">
+                    <ArrowLeftRight className="h-16 w-16 text-[#00D084]/40" />
+                  </div>
                   <div className="relative h-full flex flex-col justify-end p-4 sm:p-5 bg-gradient-to-t from-black/75 via-black/40 to-transparent">
                     <Badge className="self-start mb-2 sm:mb-3 text-xs sm:text-sm bg-[#00D084]/30 backdrop-blur-sm border-[#00D084]/50 text-white">
-                      Fitness
+                      Exchanges
                     </Badge>
                     <p className="text-white/90 text-xs sm:text-sm leading-relaxed">
-                      Inspire healthy lifestyle journeys
+                      CEX, DEX &amp; trading platforms
                     </p>
                   </div>
                 </div>
               </CarouselItem>
 
-              {/* Travel */}
-              <CarouselItem className="pl-2 md:pl-4 basis-[85%] sm:basis-1/2 md:basis-1/3 lg:basis-1/5">
-                <div className="relative overflow-hidden h-64 sm:h-72 rounded-xl border border-border hover:border-success/50 transition-all cursor-pointer group">
-                  <Image src="https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=400&h=300&fit=crop" alt="Travel" fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
-                  <div className="relative h-full flex flex-col justify-end p-4 sm:p-5 bg-gradient-to-t from-black/75 via-black/40 to-transparent">
-                    <Badge className="self-start mb-2 sm:mb-3 text-xs sm:text-sm bg-success/30 backdrop-blur-sm border-success/50 text-white">
-                      Travel
-                    </Badge>
-                    <p className="text-white/90 text-xs sm:text-sm leading-relaxed">
-                      Bring destinations to life
-                    </p>
-                  </div>
-                </div>
-              </CarouselItem>
-
-              {/* Food */}
-              <CarouselItem className="pl-2 md:pl-4 basis-[85%] sm:basis-1/2 md:basis-1/3 lg:basis-1/5">
+              {/* Memecoins */}
+              <CarouselItem className="pl-2 md:pl-4 basis-[85%] sm:basis-1/2 md:basis-1/3 lg:basis-1/4">
                 <div className="relative overflow-hidden h-64 sm:h-72 rounded-xl border border-border hover:border-[#FF6B35]/50 transition-all cursor-pointer group">
-                  <Image src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=400&h=300&fit=crop" alt="Food" fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
+                  <div className="absolute inset-0 bg-gradient-to-br from-[#FF6B35]/30 via-[#FF6B35]/10 to-secondary/20 flex items-center justify-center">
+                    <Rocket className="h-16 w-16 text-[#FF6B35]/40" />
+                  </div>
                   <div className="relative h-full flex flex-col justify-end p-4 sm:p-5 bg-gradient-to-t from-black/75 via-black/40 to-transparent">
                     <Badge className="self-start mb-2 sm:mb-3 text-xs sm:text-sm bg-[#FF6B35]/30 backdrop-blur-sm border-[#FF6B35]/50 text-white">
-                      Food
+                      Memecoins
                     </Badge>
                     <p className="text-white/90 text-xs sm:text-sm leading-relaxed">
-                      Create mouthwatering experiences
+                      Community-driven, viral-first tokens
                     </p>
                   </div>
                 </div>
               </CarouselItem>
 
-              {/* Lifestyle */}
-              <CarouselItem className="pl-2 md:pl-4 basis-[85%] sm:basis-1/2 md:basis-1/3 lg:basis-1/5">
+              {/* DAOs & Social */}
+              <CarouselItem className="pl-2 md:pl-4 basis-[85%] sm:basis-1/2 md:basis-1/3 lg:basis-1/4">
                 <div className="relative overflow-hidden h-64 sm:h-72 rounded-xl border border-border hover:border-primary/50 transition-all cursor-pointer group">
-                  <Image src="https://images.unsplash.com/photo-1511988617509-a57c8a288659?w=400&h=300&fit=crop" alt="Lifestyle" fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
+                  <div className="absolute inset-0 bg-gradient-to-br from-primary/30 via-primary/10 to-[#FF6B9D]/20 flex items-center justify-center">
+                    <Users className="h-16 w-16 text-primary/40" />
+                  </div>
                   <div className="relative h-full flex flex-col justify-end p-4 sm:p-5 bg-gradient-to-t from-black/75 via-black/40 to-transparent">
                     <Badge className="self-start mb-2 sm:mb-3 text-xs sm:text-sm bg-primary/30 backdrop-blur-sm border-primary/50 text-white">
-                      Lifestyle
+                      DAOs &amp; Social
                     </Badge>
                     <p className="text-white/90 text-xs sm:text-sm leading-relaxed">
-                      Connect through relatable stories
+                      Governance, communities &amp; social tokens
+                    </p>
+                  </div>
+                </div>
+              </CarouselItem>
+
+              {/* AI x Crypto */}
+              <CarouselItem className="pl-2 md:pl-4 basis-[85%] sm:basis-1/2 md:basis-1/3 lg:basis-1/4">
+                <div className="relative overflow-hidden h-64 sm:h-72 rounded-xl border border-border hover:border-secondary/50 transition-all cursor-pointer group">
+                  <div className="absolute inset-0 bg-gradient-to-br from-secondary/30 via-secondary/10 to-primary/20 flex items-center justify-center">
+                    <Sparkles className="h-16 w-16 text-secondary/40" />
+                  </div>
+                  <div className="relative h-full flex flex-col justify-end p-4 sm:p-5 bg-gradient-to-t from-black/75 via-black/40 to-transparent">
+                    <Badge className="self-start mb-2 sm:mb-3 text-xs sm:text-sm bg-secondary/30 backdrop-blur-sm border-secondary/50 text-white">
+                      AI x Crypto
+                    </Badge>
+                    <p className="text-white/90 text-xs sm:text-sm leading-relaxed">
+                      The intersection where AI influencers shine
                     </p>
                   </div>
                 </div>
@@ -625,7 +686,34 @@ export default function Home() {
         </div>
       </motion.section>
 
-      {/* Founding Members Program - Limited Time Offer */}
+      {/* Managed on day one */}
+      <motion.section
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: "-100px" }}
+        variants={fadeInUp}
+        className="py-16 sm:py-24 lg:py-32 bg-muted/30"
+      >
+        <div className="container px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto text-center">
+          <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-6">
+            <Handshake className="h-7 w-7 text-primary" />
+          </div>
+          <h2 className="text-3xl sm:text-4xl font-bold tracking-tight lg:text-5xl mb-4 sm:mb-6">
+            We&apos;ll shortlist your first campaign
+          </h2>
+          <p className="text-base sm:text-lg text-muted-foreground lg:text-xl leading-relaxed mb-8 max-w-2xl mx-auto">
+            New to influencer marketing? Our team helps crypto-native projects hand-pick the right creators, structure the deal, and launch — then you go self-serve whenever you&apos;re ready.
+          </p>
+          <Button asChild size="lg" className="bg-gradient-to-r from-primary to-secondary text-white hover:opacity-90 transition-all h-14 text-base px-10 rounded-2xl shadow-xl">
+            <Link href="/signup?type=brand">
+              Talk to us
+              <ArrowRight className="ml-2 h-5 w-5" />
+            </Link>
+          </Button>
+        </div>
+      </motion.section>
+
+      {/* Founding Projects Program - Limited Time Offer */}
       <motion.section
         initial="hidden"
         whileInView="visible"
@@ -649,12 +737,15 @@ export default function Home() {
 
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4">
               <span className="bg-gradient-to-r from-primary via-amber-500 to-secondary bg-clip-text text-transparent">
-                Founding Members Program
+                Founding Projects Program
               </span>
             </h2>
 
-            <p className="text-base sm:text-lg text-muted-foreground max-w-3xl mx-auto mb-6">
+            <p className="text-base sm:text-lg text-muted-foreground max-w-3xl mx-auto mb-4">
               Join in the first month and lock in the lowest rates forever
+            </p>
+            <p className="text-sm text-muted-foreground max-w-2xl mx-auto mb-6">
+              Built for early-stage Web3 teams who want a repeatable growth channel, not one-off DM deals.
             </p>
 
             {/* Countdown Timer */}
@@ -664,14 +755,14 @@ export default function Home() {
           {/* Main Offer Card */}
           <Card className="p-6 sm:p-8 lg:p-10 bg-gradient-to-br from-primary/10 via-background to-secondary/10 backdrop-blur-xl border-2 border-primary/30 shadow-2xl mb-8">
             <div className="grid md:grid-cols-2 gap-8 lg:gap-12">
-              {/* For Brands */}
+              {/* For Projects */}
               <div className="space-y-6">
                 <div className="flex items-start gap-4">
                   <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center shrink-0">
                     <Building2 className="h-6 w-6 text-primary" />
                   </div>
                   <div>
-                    <h3 className="text-xl font-bold mb-2">For Brands</h3>
+                    <h3 className="text-xl font-bold mb-2">For Projects</h3>
                     <p className="text-sm text-muted-foreground">Launch pricing for early adopters</p>
                   </div>
                 </div>
@@ -694,7 +785,7 @@ export default function Home() {
                   <div className="flex items-start gap-3">
                     <Crown className="h-5 w-5 text-amber-500 shrink-0 mt-0.5" />
                     <div>
-                      <p className="font-medium text-sm">Founding Member Status</p>
+                      <p className="font-medium text-sm">Founding Project Status</p>
                       <p className="text-xs text-muted-foreground">Leave feedback → Lock 2% rate forever</p>
                     </div>
                   </div>
@@ -738,7 +829,7 @@ export default function Home() {
                   <div className="flex items-start gap-3">
                     <Crown className="h-5 w-5 text-amber-500 shrink-0 mt-0.5" />
                     <div>
-                      <p className="font-medium text-sm">Founding Member Status</p>
+                      <p className="font-medium text-sm">Founding Project Status</p>
                       <p className="text-xs text-muted-foreground">Leave feedback → Lock 3% rate forever</p>
                     </div>
                   </div>
@@ -758,9 +849,9 @@ export default function Home() {
               <div className="flex items-start gap-4 mb-6">
                 <MessageSquare className="h-6 w-6 text-primary shrink-0" />
                 <div>
-                  <h4 className="font-semibold mb-2">How to Become a Founding Member</h4>
+                  <h4 className="font-semibold mb-2">How to Become a Founding Project</h4>
                   <p className="text-sm text-muted-foreground mb-4">
-                    Complete your first transaction (campaign for brands, withdrawal for creators) within the first month and leave honest feedback. Your rates will be locked forever at 2%/3%.
+                    Complete your first transaction (campaign for projects, withdrawal for creators) within the first month and leave honest feedback. Your rates will be locked forever at 2%/3%.
                   </p>
                 </div>
               </div>
@@ -795,7 +886,7 @@ export default function Home() {
               <div className="flex items-center justify-center gap-8">
                 <div className="text-center">
                   <div className="text-3xl font-bold text-primary mb-1">5%</div>
-                  <div className="text-xs text-muted-foreground">Founding Members</div>
+                  <div className="text-xs text-muted-foreground">Founding Projects</div>
                   <div className="text-xs font-medium text-primary">(2% + 3%)</div>
                 </div>
                 <div className="text-2xl text-muted-foreground">→</div>
@@ -806,7 +897,7 @@ export default function Home() {
                 </div>
               </div>
               <p className="text-center text-xs text-muted-foreground mt-4">
-                Save <span className="font-bold text-primary">5% on every transaction</span> as a Founding Member
+                Save <span className="font-bold text-primary">5% on every transaction</span> as a Founding Project
               </p>
             </div>
           </Card>
@@ -816,7 +907,7 @@ export default function Home() {
             <Button asChild size="lg" className="bg-gradient-to-r from-primary to-secondary text-white hover:opacity-90 transition-all h-14 text-base px-10 rounded-2xl shadow-xl">
               <Link href="/signup">
                 <Crown className="mr-2 h-5 w-5" />
-                Join as Founding Member
+                Become a Founding Project
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Link>
             </Button>

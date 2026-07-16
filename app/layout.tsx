@@ -9,8 +9,8 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Influx.AI - The First Marketplace for AI Influencers",
-  description: "Connect with verified virtual talent. Launch campaigns in minutes. The first AI influencer marketplace.",
+  title: "Influx — Crypto-Native Influencer Marketing for Web3",
+  description: "The platform where Web3 projects run influencer campaigns and pay in crypto. AI influencers, crypto KOLs, and Web3 creators — with escrow protection built in.",
 };
 
 export default function RootLayout({

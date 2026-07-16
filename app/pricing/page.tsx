@@ -73,10 +73,10 @@ export default function PricingPage() {
                 Simple, Transparent Pricing
               </Badge>
               <h1 className="text-3xl font-bold tracking-tight sm:text-5xl lg:text-6xl mb-4 sm:mb-6">
-                Choose your plan
+                Simple, crypto-native pricing
               </h1>
               <p className="text-base text-muted-foreground sm:text-xl max-w-xl mx-auto mb-6 sm:mb-10">
-                Whether you&apos;re a brand looking for AI talent or a creator ready to monetize, we have the perfect plan for you.
+                Whether you&apos;re a Web3 project looking for creators or a KOL ready to get paid in crypto — pick your plan.
               </p>
 
               {/* Toggle */}
@@ -89,7 +89,7 @@ export default function PricingPage() {
                       : "text-muted-foreground hover:text-foreground"
                   }`}
                 >
-                  For Brands
+                  For Projects
                 </button>
                 <button
                   onClick={() => setUserType("creators")}
@@ -130,7 +130,7 @@ export default function PricingPage() {
 
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4">
               <span className="bg-gradient-to-r from-primary via-amber-500 to-secondary bg-clip-text text-transparent">
-                Founding Members Program
+                Founding Projects Program
               </span>
             </h2>
 
@@ -152,7 +152,7 @@ export default function PricingPage() {
                     <Building2 className="h-6 w-6 text-primary" />
                   </div>
                   <div>
-                    <h3 className="text-xl font-bold mb-2">For Brands</h3>
+                    <h3 className="text-xl font-bold mb-2">For Projects</h3>
                     <p className="text-sm text-muted-foreground">Launch pricing for early adopters</p>
                   </div>
                 </div>
@@ -241,7 +241,7 @@ export default function PricingPage() {
                 <div>
                   <h4 className="font-semibold mb-2">How to Become a Founding Member</h4>
                   <p className="text-sm text-muted-foreground mb-4">
-                    Complete your first transaction (campaign for brands, withdrawal for creators) within the first month and leave honest feedback. Your rates will be locked forever at 2%/3%.
+                    Complete your first transaction (campaign for projects, withdrawal for creators) within the first month and leave honest feedback. Your rates will be locked forever at 2%/3%.
                   </p>
                 </div>
               </div>
@@ -329,7 +329,7 @@ export default function PricingPage() {
                       <span className="text-sm md:text-base text-muted-foreground">/month</span>
                     </div>
                     <p className="text-sm text-muted-foreground">
-                      Start monetizing your AI influence
+                      Start monetizing your crypto influence
                     </p>
                   </div>
 
@@ -464,7 +464,7 @@ export default function PricingPage() {
 
                     <div className="flex items-start gap-2.5 md:gap-3">
                       <Check className="h-4 w-4 md:h-5 md:w-5 text-primary shrink-0 mt-0.5" />
-                      <span className="text-sm">Access to all AI influencers</span>
+                      <span className="text-sm">Access to all creators</span>
                     </div>
                     <div className="flex items-start gap-2.5 md:gap-3">
                       <Check className="h-4 w-4 md:h-5 md:w-5 text-primary shrink-0 mt-0.5" />
@@ -598,7 +598,7 @@ export default function PricingPage() {
                 className="overflow-hidden"
               >
                 <p className="pb-4 text-sm text-muted-foreground">
-                  Founding Members are our first users who join during the launch month. By completing your first transaction and leaving feedback, you lock in the lowest rates forever (2% for brands, 3% for creators). After the first month, rates increase to 4% and 5% respectively.
+                  Founding Members are our first users who join during the launch month. By completing your first transaction and leaving feedback, you lock in the lowest rates forever (2% for projects, 3% for creators). After the first month, rates increase to 4% and 5% respectively.
                 </p>
               </motion.div>
             </div>
@@ -626,7 +626,7 @@ export default function PricingPage() {
                 className="overflow-hidden"
               >
                 <p className="pb-4 text-sm text-muted-foreground">
-                  Join during the first month, complete your first transaction (campaign deposit for brands, withdrawal for creators), and leave honest feedback about your experience. Your locked rates will apply to all future transactions forever.
+                  Join during the first month, complete your first transaction (campaign deposit for projects, withdrawal for creators), and leave honest feedback about your experience. Your locked rates will apply to all future transactions forever.
                 </p>
               </motion.div>
             </div>
@@ -710,7 +710,7 @@ export default function PricingPage() {
                 className="overflow-hidden"
               >
                 <p className="pb-4 text-sm text-muted-foreground">
-                  Brands get a 14-day free trial of Brand Pro. Creators can try Pro for $1 for the first month. No credit card required for brand trials.
+                  Projects get a 14-day free trial of Project Pro. Creators can try Pro for $1 for the first month. No credit card required for project trials.
                 </p>
               </motion.div>
             </div>
@@ -738,7 +738,7 @@ export default function PricingPage() {
                 className="overflow-hidden"
               >
                 <p className="pb-4 text-sm text-muted-foreground">
-                  We accept cryptocurrency (USDC, USDT) via secure crypto payment processing. All transactions are protected through our escrow system.
+                  We&apos;re stablecoin-native. Fund campaigns and get paid in USDC/USDT across supported chains, all protected by escrow. Because everything is in stablecoins, budgets stay dollar-denominated — no crypto price volatility, no fiat or bank transfers required.
                 </p>
               </motion.div>
             </div>
@@ -766,7 +766,7 @@ export default function PricingPage() {
                 className="overflow-hidden"
               >
                 <p className="pb-4 text-sm text-muted-foreground">
-                  Funds are held securely until campaign milestones are met. Brands are protected until content is delivered, and creators are guaranteed payment upon completion. Milestone-based releases ensure fair compensation.
+                  Funds are held securely until campaign milestones are met. Projects are protected until content is delivered, and creators are guaranteed payment upon completion. Milestone-based releases ensure fair compensation.
                 </p>
               </motion.div>
             </div>
@@ -795,6 +795,34 @@ export default function PricingPage() {
               >
                 <p className="pb-4 text-sm text-muted-foreground">
                   Yes! You can change your plan at any time. Upgrades take effect immediately, while downgrades take effect at the end of your current billing period.
+                </p>
+              </motion.div>
+            </div>
+
+            {/* FAQ 9 */}
+            <div>
+              <button
+                onClick={() => setOpenFaq(openFaq === 8 ? null : 8)}
+                className="w-full py-4 text-left flex items-center justify-between hover:bg-muted/30 transition-colors"
+              >
+                <h3 className="font-semibold text-base">Do I need to be a crypto project to use Influx?</h3>
+                <ChevronDown
+                  className={`h-5 w-5 text-muted-foreground transition-transform shrink-0 ml-4 ${
+                    openFaq === 8 ? "rotate-180" : ""
+                  }`}
+                />
+              </button>
+              <motion.div
+                initial={false}
+                animate={{
+                  height: openFaq === 8 ? "auto" : 0,
+                  opacity: openFaq === 8 ? 1 : 0,
+                }}
+                transition={{ duration: 0.3, ease: "easeInOut" }}
+                className="overflow-hidden"
+              >
+                <p className="pb-4 text-sm text-muted-foreground">
+                  Influx is built for Web3 — DeFi, NFT, GameFi, L2s and exchanges. Any project comfortable paying in crypto can launch a campaign.
                 </p>
               </motion.div>
             </div>

@@ -96,26 +96,22 @@ export default function InfluencersPage() {
               <div className="inline-flex items-center gap-2 px-4 sm:px-5 py-2 rounded-full bg-secondary/10 border border-secondary/20 backdrop-blur-sm mb-6">
                 <Sparkles className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-secondary" />
                 <span className="text-xs sm:text-sm font-medium text-secondary">
-                  For AI Influencers & Creators
+                  FOR CREATORS & KOLs
                 </span>
               </div>
 
               <h1 className="text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
-                Monetize Your AI Influence
+                Get paid in crypto for the collabs you already do
               </h1>
 
               <p className="mt-6 text-lg text-muted-foreground sm:text-xl leading-relaxed">
-                Connect with premium brands. Set your own rates.
-              </p>
-
-              <p className="text-lg text-muted-foreground sm:text-xl leading-relaxed">
-                Keep full creative control.
+                AI influencers, crypto KOLs, and Web3 creators — connect with crypto-native projects, set your rates, and get paid in USDC/USDT. Escrow means you never chase payment again.
               </p>
 
               <div className="mt-10">
                 <Button size="lg" asChild className="w-full sm:w-64 bg-secondary/10 hover:bg-secondary/15 backdrop-blur-sm border-2 border-secondary/30 h-14 text-base transition-all rounded-xl px-8">
                   <Link href="/signup?type=influencer" className="flex items-center justify-center">
-                    <span className="bg-gradient-to-r from-secondary to-primary bg-clip-text text-transparent font-medium">Join as Influencer</span>
+                    <span className="bg-gradient-to-r from-secondary to-primary bg-clip-text text-transparent font-medium">Join as a creator</span>
                     <ArrowRight className="ml-2 h-5 w-5 text-secondary" />
                   </Link>
                 </Button>
@@ -209,7 +205,7 @@ export default function InfluencersPage() {
                     <Bell className="h-4 w-4 lg:h-5 lg:w-5 text-secondary shrink-0 mt-0.5" />
                     <div className="flex-1 min-w-0">
                       <p className="text-xs lg:text-sm font-medium">New campaign offer</p>
-                      <p className="text-[10px] lg:text-xs text-muted-foreground truncate">Nike wants to collaborate - $2,500</p>
+                      <p className="text-[10px] lg:text-xs text-muted-foreground truncate">Arbitrum wants to collaborate - $2,500 USDC</p>
                     </div>
                     <Clock className="h-3 w-3 lg:h-4 lg:w-4 text-muted-foreground shrink-0" />
                   </motion.div>
@@ -223,7 +219,7 @@ export default function InfluencersPage() {
                     <CheckCircle2 className="h-4 w-4 lg:h-5 lg:w-5 text-primary shrink-0 mt-0.5" />
                     <div className="flex-1 min-w-0">
                       <p className="text-xs lg:text-sm font-medium">Payment received</p>
-                      <p className="text-[10px] lg:text-xs text-muted-foreground truncate">Apple campaign - $3,200</p>
+                      <p className="text-[10px] lg:text-xs text-muted-foreground truncate">Solana Foundation campaign - $3,200 USDC</p>
                     </div>
                   </motion.div>
                 </div>
@@ -354,7 +350,7 @@ export default function InfluencersPage() {
                     </div>
                     <div>
                       <p className="font-medium text-sm">Exclusive Founder Badge</p>
-                      <p className="text-xs text-muted-foreground">Stand out to premium brands</p>
+                      <p className="text-xs text-muted-foreground">Stand out to premium projects</p>
                     </div>
                   </div>
 
@@ -374,7 +370,7 @@ export default function InfluencersPage() {
                     </div>
                     <div>
                       <p className="font-medium text-sm">Featured Placement</p>
-                      <p className="text-xs text-muted-foreground">Boosted visibility in brand searches</p>
+                      <p className="text-xs text-muted-foreground">Boosted visibility in project searches</p>
                     </div>
                   </div>
 
@@ -446,7 +442,7 @@ export default function InfluencersPage() {
             </div>
             <span className="hidden sm:block text-muted-foreground">•</span>
             <p className="text-sm sm:text-base text-muted-foreground">
-              AI influencers earn <span className="font-semibold text-secondary">2-3x more</span> than traditional creators
+              Crypto-native creators earn <span className="font-semibold text-secondary">2-3x more</span> than traditional creators
             </p>
           </div>
         </div>
@@ -466,7 +462,7 @@ export default function InfluencersPage() {
               Why Choose Influx
             </Badge>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4">
-              Built for Your Success
+              Built for crypto creators
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
               The only platform where you control your rates, terms, and partnerships
@@ -480,7 +476,7 @@ export default function InfluencersPage() {
               </div>
               <h3 className="text-base lg:text-xl font-semibold mb-2 lg:mb-3">Set Your Rates</h3>
               <p className="text-muted-foreground text-xs lg:text-sm">
-                You decide your pricing. No platform fees. Keep 100% of what you earn.
+                You price your work. Get paid in stablecoins, keep control.
               </p>
             </Card>
 
@@ -490,7 +486,7 @@ export default function InfluencersPage() {
               </div>
               <h3 className="text-base lg:text-xl font-semibold mb-2 lg:mb-3">Secure Payments</h3>
               <p className="text-muted-foreground text-xs lg:text-sm">
-                All payments protected through escrow. Get paid automatically as you deliver.
+                Escrow protects every collab — no more unpaid deals or DM ghosting.
               </p>
             </Card>
 
@@ -500,7 +496,7 @@ export default function InfluencersPage() {
               </div>
               <h3 className="text-base lg:text-xl font-semibold mb-2 lg:mb-3">Perfect Matches</h3>
               <p className="text-muted-foreground text-xs lg:text-sm">
-                Connect with brands that align with your niche and values
+                Connect with Web3 projects that fit your niche and audience.
               </p>
             </Card>
 
@@ -510,9 +506,16 @@ export default function InfluencersPage() {
               </div>
               <h3 className="text-base lg:text-xl font-semibold mb-2 lg:mb-3">Full Control</h3>
               <p className="text-muted-foreground text-xs lg:text-sm">
-                Approve every collaboration. Maintain creative freedom always.
+                Approve every collaboration. Keep full creative freedom.
               </p>
             </Card>
+          </div>
+
+          {/* Who's on Influx */}
+          <div className="mt-12 text-center">
+            <p className="text-base lg:text-lg text-muted-foreground max-w-3xl mx-auto">
+              <span className="font-semibold text-foreground">Who&apos;s on Influx:</span> AI influencers, crypto Twitter KOLs, YouTube & video creators, and anon accounts. If you have an audience in crypto, you belong here.
+            </p>
           </div>
         </div>
       </motion.section>
@@ -565,7 +568,7 @@ export default function InfluencersPage() {
               </div>
               <h3 className="text-sm lg:text-lg font-semibold mb-1 lg:mb-2">Get Offers</h3>
               <p className="text-xs lg:text-sm text-muted-foreground">
-                Receive collaboration requests from brands matching your niche.
+                Receive collaboration requests from projects matching your niche.
               </p>
 
               {/* Arrow */}
@@ -744,7 +747,7 @@ export default function InfluencersPage() {
                   </div>
                   <h4 className="font-bold text-xs lg:text-base mb-1 lg:mb-2">Content Approval</h4>
                   <p className="text-[10px] lg:text-sm text-muted-foreground leading-relaxed">
-                    Payment releases automatically when brand approves your final content version.
+                    Payment releases automatically when project approves your final content version.
                   </p>
                 </div>
 
