@@ -35,22 +35,33 @@ enum InfluencerStatus {
 }
 
 enum CollaborationStatus {
-  APPLIED      @map("applied")
-  NEGOTIATING  @map("negotiating")
-  AGREED       @map("agreed")
-  IN_PROGRESS  @map("in_progress")
-  COMPLETED    @map("completed")
-  CANCELLED    @map("cancelled")
+  APPLIED        @map("applied")
+  NEGOTIATING    @map("negotiating")
+  AGREED         @map("agreed")
+  IN_PROGRESS    @map("in_progress")
+  CONTENT_REVIEW @map("content_review")
+  REVISION       @map("revision")
+  PUBLISHING     @map("publishing")
+  DELIVERED      @map("delivered")
+  COMPLETED      @map("completed")
+  CANCELLED      @map("cancelled")
+  DISPUTED       @map("disputed")
+  RESOLVED       @map("resolved")
 
   @@map("collaboration_status")
 }
 
 enum TransactionType {
-  DEPOSIT           @map("deposit")
-  WITHDRAWAL        @map("withdrawal")
-  CAMPAIGN_FREEZE   @map("campaign_freeze")
-  CAMPAIGN_UNFREEZE @map("campaign_unfreeze")
-  CAMPAIGN_PAYOUT   @map("campaign_payout")
+  DEPOSIT              @map("deposit")
+  WITHDRAWAL           @map("withdrawal")
+  CAMPAIGN_FREEZE      @map("campaign_freeze")
+  CAMPAIGN_UNFREEZE    @map("campaign_unfreeze")
+  CAMPAIGN_ADVANCE     @map("campaign_advance")
+  ADVANCE_REFUND       @map("advance_refund")
+  CAMPAIGN_PAYOUT      @map("campaign_payout")
+  CAMPAIGN_PAYOUT_AUTO @map("campaign_payout_auto")
+  DISPUTE_PAYOUT       @map("dispute_payout")
+  DISPUTE_REFUND       @map("dispute_refund")
 
   @@map("transaction_type")
 }
@@ -216,11 +227,25 @@ model Collaboration {
   deliverables String[] @default([])
   message      String? // influencer's application message
 
+  // Content review
+  contentUrl     String?   @map("content_url")
+  publishedUrl   String?   @map("published_url")
+  revisionNote   String?   @map("revision_note")
+  revisionCount  Int       @default(0) @map("revision_count")
+
+  // Dispute
+  disputeReason  String?   @map("dispute_reason")
+  disputeResult  String?   @map("dispute_result")
+
   // Timestamps
-  frozenAt    DateTime? @map("frozen_at") @db.Timestamptz
-  completedAt DateTime? @map("completed_at") @db.Timestamptz
-  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz
-  updatedAt   DateTime  @updatedAt @map("updated_at") @db.Timestamptz
+  frozenAt       DateTime? @map("frozen_at") @db.Timestamptz
+  completedAt    DateTime? @map("completed_at") @db.Timestamptz
+  advancePaidAt  DateTime? @map("advance_paid_at") @db.Timestamptz
+  deliveredAt    DateTime? @map("delivered_at") @db.Timestamptz
+  disputedAt     DateTime? @map("disputed_at") @db.Timestamptz
+  resolvedAt     DateTime? @map("resolved_at") @db.Timestamptz
+  createdAt      DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt      DateTime  @updatedAt @map("updated_at") @db.Timestamptz
 
   campaign   Campaign   @relation(fields: [campaignId], references: [id], onDelete: Cascade)
   influencer Influencer @relation(fields: [influencerId], references: [id], onDelete: Cascade)

@@ -58,8 +58,8 @@ export async function PATCH(
     const collaboration = await prisma.collaboration.findUnique({
       where: { id },
       include: {
-        campaign: { include: { brand: { select: { userId: true } } } },
-        influencer: { select: { userId: true } },
+        campaign: { include: { brand: { select: { id: true, userId: true } } } },
+        influencer: { select: { id: true, userId: true } },
       },
     })
 
@@ -101,17 +101,18 @@ export async function PATCH(
       }
     }
 
-    // Either party can cancel — fully atomic with unfreeze
+    // Either party can cancel — fully atomic with unfreeze / advance handling
     if (body.status === 'CANCELLED') {
       try {
-        const needsUnfreeze = (collaboration.status === 'AGREED' || collaboration.status === 'IN_PROGRESS') && collaboration.agreedPrice
+        const wasAgreed = collaboration.status === 'AGREED' && collaboration.agreedPrice
+        const wasInProgress = collaboration.status === 'IN_PROGRESS' && collaboration.agreedPrice
 
         await prisma.$transaction(async (tx) => {
           // Atomic status check + cancel
           const cancelResult = await tx.collaboration.updateMany({
             where: {
               id,
-              status: { in: ['APPLIED', 'NEGOTIATING', 'AGREED', 'IN_PROGRESS'] },
+              status: { in: ['APPLIED', 'NEGOTIATING', 'AGREED', 'IN_PROGRESS', 'CONTENT_REVIEW', 'REVISION', 'PUBLISHING'] },
             },
             data: { status: 'CANCELLED' },
           })
@@ -120,26 +121,101 @@ export async function PATCH(
             throw new Error('CANNOT_CANCEL')
           }
 
-          // Unfreeze funds if needed
-          if (needsUnfreeze) {
-            const campaign = await tx.campaign.findUnique({
+          if (wasAgreed) {
+            // No advance paid yet — full unfreeze to brand
+            const campaign = await tx.campaign.findUniqueOrThrow({
               where: { id: collaboration.campaignId },
               include: { brand: true },
             })
-            if (campaign) {
+            await tx.brand.update({
+              where: { id: campaign.brand.id },
+              data: {
+                frozenBalance: { decrement: collaboration.agreedPrice! },
+                balance: { increment: collaboration.agreedPrice! },
+              },
+            })
+            await tx.transaction.create({
+              data: {
+                userId: campaign.brand.userId,
+                type: 'CAMPAIGN_UNFREEZE',
+                amount: collaboration.agreedPrice!,
+                description: 'Funds unfrozen due to collaboration cancellation',
+                referenceId: collaboration.id,
+              },
+            })
+          } else if (wasInProgress) {
+            const campaign = await tx.campaign.findUniqueOrThrow({
+              where: { id: collaboration.campaignId },
+              include: { brand: true },
+            })
+            const advance = Math.round(collaboration.agreedPrice! / 2)
+            const frozenRemainder = collaboration.agreedPrice! - advance
+
+            if (isInfluencer) {
+              // Influencer cancels: try to refund advance from influencer balance
+              const influencer = await tx.influencer.findUniqueOrThrow({
+                where: { id: collaboration.influencerId },
+                select: { id: true, balance: true },
+              })
+
+              const refundable = Math.min(influencer.balance, advance)
+
+              if (refundable > 0) {
+                await tx.influencer.update({
+                  where: { id: influencer.id },
+                  data: { balance: { decrement: refundable } },
+                })
+              }
+
+              // Return refundable advance + frozen remainder to brand
+              const totalBrandReturn = refundable + frozenRemainder
               await tx.brand.update({
                 where: { id: campaign.brand.id },
                 data: {
-                  frozenBalance: { decrement: collaboration.agreedPrice! },
-                  balance: { increment: collaboration.agreedPrice! },
+                  frozenBalance: { decrement: frozenRemainder },
+                  balance: { increment: totalBrandReturn },
                 },
               })
+
+              if (refundable > 0) {
+                await tx.transaction.create({
+                  data: {
+                    userId: collaboration.influencer.userId,
+                    type: 'ADVANCE_REFUND',
+                    amount: refundable,
+                    description: refundable < advance
+                      ? `Partial advance refund (${refundable} of ${advance} cents)`
+                      : 'Full advance refund due to influencer cancellation',
+                    referenceId: collaboration.id,
+                  },
+                })
+              }
+
               await tx.transaction.create({
                 data: {
                   userId: campaign.brand.userId,
                   type: 'CAMPAIGN_UNFREEZE',
-                  amount: collaboration.agreedPrice!,
-                  description: 'Funds unfrozen due to collaboration cancellation',
+                  amount: totalBrandReturn,
+                  description: 'Funds returned due to influencer cancellation',
+                  referenceId: collaboration.id,
+                },
+              })
+            } else {
+              // Brand cancels: advance stays with influencer, only frozen remainder returns
+              await tx.brand.update({
+                where: { id: campaign.brand.id },
+                data: {
+                  frozenBalance: { decrement: frozenRemainder },
+                  balance: { increment: frozenRemainder },
+                },
+              })
+
+              await tx.transaction.create({
+                data: {
+                  userId: campaign.brand.userId,
+                  type: 'CAMPAIGN_UNFREEZE',
+                  amount: frozenRemainder,
+                  description: 'Frozen remainder returned due to brand cancellation (advance kept by influencer)',
                   referenceId: collaboration.id,
                 },
               })
@@ -166,9 +242,75 @@ export async function PATCH(
       }
     }
 
-    // Brand can move to IN_PROGRESS after agreement
+    // Brand can move to IN_PROGRESS after agreement — pays 50% advance atomically
     if (body.status === 'IN_PROGRESS' && collaboration.status === 'AGREED' && (isBrandOwner || isAdmin)) {
-      updateData.status = 'IN_PROGRESS'
+      if (!collaboration.agreedPrice) {
+        return NextResponse.json({ error: 'No agreed price set' }, { status: 400 })
+      }
+
+      try {
+        const advance = Math.round(collaboration.agreedPrice / 2)
+
+        const result = await prisma.$transaction(async (tx) => {
+          // Deduct advance from frozen balance, credit influencer
+          const brand = await tx.brand.findUniqueOrThrow({
+            where: { id: collaboration.campaign.brand.id },
+            select: { id: true, userId: true, frozenBalance: true },
+          })
+
+          if (brand.frozenBalance < advance) {
+            throw new Error('INSUFFICIENT_FROZEN_BALANCE')
+          }
+
+          await tx.brand.update({
+            where: { id: brand.id },
+            data: { frozenBalance: { decrement: advance } },
+          })
+
+          await tx.influencer.update({
+            where: { id: collaboration.influencerId },
+            data: { balance: { increment: advance } },
+          })
+
+          await tx.transaction.create({
+            data: {
+              userId: brand.userId,
+              type: 'CAMPAIGN_ADVANCE',
+              amount: advance,
+              description: '50% advance payment for collaboration',
+              referenceId: collaboration.id,
+            },
+          })
+
+          await tx.transaction.create({
+            data: {
+              userId: collaboration.influencer.userId,
+              type: 'CAMPAIGN_ADVANCE',
+              amount: advance,
+              description: '50% advance received for collaboration',
+              referenceId: collaboration.id,
+            },
+          })
+
+          const updated = await tx.collaboration.update({
+            where: { id },
+            data: {
+              ...updateData,
+              status: 'IN_PROGRESS',
+              advancePaidAt: new Date(),
+            },
+          })
+
+          return updated
+        })
+
+        return NextResponse.json({ collaboration: result })
+      } catch (txError) {
+        if (txError instanceof Error && txError.message === 'INSUFFICIENT_FROZEN_BALANCE') {
+          return NextResponse.json({ error: 'Insufficient frozen balance for advance payment' }, { status: 400 })
+        }
+        throw txError
+      }
     }
 
     const updated = await prisma.collaboration.update({
