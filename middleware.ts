@@ -18,6 +18,7 @@ const publicApiRoutes = [
   '/api/health',
   '/api/webhooks',
   '/api/auth',
+  '/api/cron',
 ]
 
 // API routes that allow unauthenticated GET requests only
