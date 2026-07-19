@@ -105,7 +105,7 @@ export default function InfluencersPage() {
               </h1>
 
               <p className="mt-6 text-lg text-muted-foreground sm:text-xl leading-relaxed">
-                AI influencers, crypto KOLs, and Web3 creators — connect with crypto-native projects, set your rates, and get paid in USDC/USDT. Escrow means you never chase payment again.
+                AI influencers, crypto KOLs, and Web3 creators — connect with crypto-native projects, set your rates, and get paid in USDC/USDT. 50% advance when you start — never work for free.
               </p>
 
               <div className="mt-10">
@@ -486,7 +486,7 @@ export default function InfluencersPage() {
               </div>
               <h3 className="text-base lg:text-xl font-semibold mb-2 lg:mb-3">Secure Payments</h3>
               <p className="text-muted-foreground text-xs lg:text-sm">
-                Escrow protects every collab — no more unpaid deals or DM ghosting.
+                50% advance upfront, remaining 50% auto-releases after 7 days.
               </p>
             </Card>
 
@@ -606,7 +606,7 @@ export default function InfluencersPage() {
               </div>
               <h3 className="text-sm lg:text-lg font-semibold mb-1 lg:mb-2">Get Paid</h3>
               <p className="text-xs lg:text-sm text-muted-foreground">
-                Receive payments automatically as milestones complete.
+                Remaining 50% auto-releases 7 days after delivery.
               </p>
             </div>
           </div>
@@ -640,36 +640,36 @@ export default function InfluencersPage() {
               Your Earnings Are Protected
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Every payment is secured through our escrow system with milestone-based releases
+              Every payment uses our 50/50 split with built-in review and auto-release protection
             </p>
           </div>
 
           <div className="flex overflow-x-auto gap-4 pb-4 md:grid md:grid-cols-2 md:gap-8 md:overflow-visible snap-x snap-mandatory md:snap-none mb-8 lg:mb-12">
-            {/* Escrow System */}
+            {/* 50/50 Secure Payments */}
             <Card className="p-5 lg:p-8 bg-gradient-to-br from-success/5 to-transparent border-success/20 min-w-[300px] md:min-w-0 snap-center">
               <div className="flex items-center gap-2 lg:gap-3 mb-4 lg:mb-6">
                 <div className="w-10 h-10 lg:w-12 lg:h-12 rounded-xl bg-success/10 flex items-center justify-center">
                   <Lock className="h-5 w-5 lg:h-6 lg:w-6 text-success" />
                 </div>
-                <h3 className="text-lg lg:text-2xl font-bold">Escrow Protection</h3>
+                <h3 className="text-lg lg:text-2xl font-bold">50/50 Secure Payments</h3>
               </div>
 
               <div className="space-y-2 lg:space-y-4">
                 <div className="flex items-start gap-2 lg:gap-3">
                   <ArrowDownCircle className="h-4 w-4 lg:h-5 lg:w-5 text-success shrink-0 mt-0.5 lg:mt-1" />
-                  <p className="text-xs lg:text-base text-muted-foreground">Funds secured before work starts</p>
+                  <p className="text-xs lg:text-base text-muted-foreground">50% advance when work begins — get paid upfront</p>
                 </div>
                 <div className="flex items-start gap-2 lg:gap-3">
                   <ArrowDownCircle className="h-4 w-4 lg:h-5 lg:w-5 text-success shrink-0 mt-0.5 lg:mt-1" />
-                  <p className="text-xs lg:text-base text-muted-foreground">Automatic milestone-based releases</p>
+                  <p className="text-xs lg:text-base text-muted-foreground">50% on delivery — released when brand approves</p>
                 </div>
                 <div className="flex items-start gap-2 lg:gap-3">
                   <ArrowDownCircle className="h-4 w-4 lg:h-5 lg:w-5 text-success shrink-0 mt-0.5 lg:mt-1" />
-                  <p className="text-xs lg:text-base text-muted-foreground">Protected from non-payment</p>
+                  <p className="text-xs lg:text-base text-muted-foreground">Auto-release after 7 days — no payment ghosting</p>
                 </div>
                 <div className="flex items-start gap-2 lg:gap-3">
                   <ArrowDownCircle className="h-4 w-4 lg:h-5 lg:w-5 text-success shrink-0 mt-0.5 lg:mt-1" />
-                  <p className="text-xs lg:text-base text-muted-foreground">Transparent transaction history</p>
+                  <p className="text-xs lg:text-base text-muted-foreground">Full transaction transparency</p>
                 </div>
               </div>
             </Card>
@@ -704,13 +704,13 @@ export default function InfluencersPage() {
             </Card>
           </div>
 
-          {/* Milestone Flow */}
+          {/* 50/50 Payment Flow */}
           <Card className="p-5 lg:p-8 bg-gradient-to-br from-secondary/5 to-transparent border-secondary/20">
             <div className="flex items-center gap-2 lg:gap-3 mb-5 lg:mb-8">
               <div className="w-10 h-10 lg:w-12 lg:h-12 rounded-xl bg-secondary/10 flex items-center justify-center">
                 <CreditCard className="h-5 w-5 lg:h-6 lg:w-6 text-secondary" />
               </div>
-              <h3 className="text-lg lg:text-2xl font-bold">Milestone-Based Payments</h3>
+              <h3 className="text-lg lg:text-2xl font-bold">50/50 Payment Flow</h3>
             </div>
 
             <div className="relative">
@@ -719,39 +719,39 @@ export default function InfluencersPage() {
               <div className="hidden lg:block absolute top-[46px] left-[16%] right-[16%] h-0.5 bg-gradient-to-r from-secondary/10 via-secondary/30 to-secondary/10" />
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-3 lg:gap-6">
-                {/* Milestone 1: Negotiation - 25% */}
+                {/* Step 1: Agreement - 50% advance */}
                 <div className="relative bg-background rounded-xl border-2 border-secondary/30 p-3 lg:p-5 hover:border-secondary/50 transition-all">
                   <div className="flex items-center gap-1.5 lg:gap-2 mb-2 lg:mb-3">
                     <div className="w-8 h-8 lg:w-10 lg:h-10 rounded-lg bg-secondary/10 flex items-center justify-center">
                       <FileText className="h-4 w-4 lg:h-5 lg:w-5 text-secondary" />
                     </div>
                     <div>
-                      <span className="text-base lg:text-xl font-bold text-secondary">25%</span>
+                      <span className="text-base lg:text-xl font-bold text-secondary">50%</span>
                     </div>
                   </div>
-                  <h4 className="font-bold text-xs lg:text-base mb-1 lg:mb-2">Negotiation</h4>
+                  <h4 className="font-bold text-xs lg:text-base mb-1 lg:mb-2">Advance Payment</h4>
                   <p className="text-[10px] lg:text-sm text-muted-foreground leading-relaxed">
-                    First payment releases when both parties agree on collaboration terms and conditions.
+                    50% advance releases when both parties agree on terms. You get paid before you start working.
                   </p>
                 </div>
 
-                {/* Milestone 2: Content Approval - 25% */}
+                {/* Step 2: Review */}
                 <div className="relative bg-background rounded-xl border-2 border-secondary/30 p-3 lg:p-5 hover:border-secondary/50 transition-all">
                   <div className="flex items-center gap-1.5 lg:gap-2 mb-2 lg:mb-3">
                     <div className="w-8 h-8 lg:w-10 lg:h-10 rounded-lg bg-secondary/10 flex items-center justify-center">
                       <CheckCircle2 className="h-4 w-4 lg:h-5 lg:w-5 text-secondary" />
                     </div>
                     <div>
-                      <span className="text-base lg:text-xl font-bold text-secondary">25%</span>
+                      <span className="text-base lg:text-xl font-bold text-secondary">Review</span>
                     </div>
                   </div>
-                  <h4 className="font-bold text-xs lg:text-base mb-1 lg:mb-2">Content Approval</h4>
+                  <h4 className="font-bold text-xs lg:text-base mb-1 lg:mb-2">Content Review</h4>
                   <p className="text-[10px] lg:text-sm text-muted-foreground leading-relaxed">
-                    Payment releases automatically when project approves your final content version.
+                    Brand reviews your content with up to 3 revision rounds. Clear feedback loop.
                   </p>
                 </div>
 
-                {/* Milestone 3: Publication & Metrics - 50% */}
+                {/* Step 3: Final Payment - 50% */}
                 <div className="relative bg-background rounded-xl border-2 border-secondary/30 p-3 lg:p-5 hover:border-secondary/50 transition-all">
                   <div className="flex items-center gap-1.5 lg:gap-2 mb-2 lg:mb-3">
                     <div className="w-8 h-8 lg:w-10 lg:h-10 rounded-lg bg-secondary/10 flex items-center justify-center">
@@ -761,9 +761,9 @@ export default function InfluencersPage() {
                       <span className="text-base lg:text-xl font-bold text-secondary">50%</span>
                     </div>
                   </div>
-                  <h4 className="font-bold text-xs lg:text-base mb-1 lg:mb-2">Publication & Metrics</h4>
+                  <h4 className="font-bold text-xs lg:text-base mb-1 lg:mb-2">Final Payment</h4>
                   <p className="text-[10px] lg:text-sm text-muted-foreground leading-relaxed">
-                    Final 50% releases when you publish content and deliver performance metrics.
+                    Remaining 50% releases on approval. Auto-releases after 7 days if brand doesn&apos;t respond.
                   </p>
                 </div>
               </div>
@@ -894,32 +894,32 @@ export default function InfluencersPage() {
               Your Money is Protected
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Every payment is secured through escrow with automatic milestone-based releases
+              Every payment uses our 50/50 split with auto-release protection
             </p>
           </div>
 
           <div className="flex overflow-x-auto gap-4 pb-4 md:grid md:grid-cols-2 md:gap-8 md:overflow-visible snap-x snap-mandatory md:snap-none mb-8 lg:mb-12">
-            {/* Escrow Protection */}
+            {/* 50/50 Payment Protection */}
             <Card className="p-5 lg:p-8 bg-gradient-to-br from-primary/5 to-transparent border-primary/20 min-w-[300px] md:min-w-0 snap-center">
               <div className="flex items-center gap-2 lg:gap-3 mb-4 lg:mb-6">
                 <div className="w-10 h-10 lg:w-12 lg:h-12 rounded-xl bg-primary/10 flex items-center justify-center">
                   <Shield className="h-5 w-5 lg:h-6 lg:w-6 text-primary" />
                 </div>
-                <h3 className="text-lg lg:text-2xl font-bold">Escrow Protection</h3>
+                <h3 className="text-lg lg:text-2xl font-bold">50/50 Payment Protection</h3>
               </div>
 
               <div className="space-y-2 lg:space-y-4">
                 <div className="flex items-start gap-2 lg:gap-3">
                   <CheckCircle2 className="h-4 w-4 lg:h-5 lg:w-5 text-primary shrink-0 mt-0.5 lg:mt-1" />
-                  <p className="text-xs lg:text-base text-muted-foreground">Funds secured before you start work</p>
+                  <p className="text-xs lg:text-base text-muted-foreground">50% advance when you start — never work for free</p>
                 </div>
                 <div className="flex items-start gap-2 lg:gap-3">
                   <CheckCircle2 className="h-4 w-4 lg:h-5 lg:w-5 text-primary shrink-0 mt-0.5 lg:mt-1" />
-                  <p className="text-xs lg:text-base text-muted-foreground">Automatic payment release on completion</p>
+                  <p className="text-xs lg:text-base text-muted-foreground">Remaining 50% auto-releases 7 days after delivery</p>
                 </div>
                 <div className="flex items-start gap-2 lg:gap-3">
                   <CheckCircle2 className="h-4 w-4 lg:h-5 lg:w-5 text-primary shrink-0 mt-0.5 lg:mt-1" />
-                  <p className="text-xs lg:text-base text-muted-foreground">Fair dispute resolution included</p>
+                  <p className="text-xs lg:text-base text-muted-foreground">Dispute resolution by platform team</p>
                 </div>
                 <div className="flex items-start gap-2 lg:gap-3">
                   <CheckCircle2 className="h-4 w-4 lg:h-5 lg:w-5 text-primary shrink-0 mt-0.5 lg:mt-1" />
@@ -928,27 +928,27 @@ export default function InfluencersPage() {
               </div>
             </Card>
 
-            {/* Milestone Payments */}
+            {/* Built-in Review Process */}
             <Card className="p-5 lg:p-8 bg-gradient-to-br from-secondary/5 to-transparent border-secondary/20 min-w-[300px] md:min-w-0 snap-center">
               <div className="flex items-center gap-2 lg:gap-3 mb-4 lg:mb-6">
                 <div className="w-10 h-10 lg:w-12 lg:h-12 rounded-xl bg-secondary/10 flex items-center justify-center">
                   <Wallet className="h-5 w-5 lg:h-6 lg:w-6 text-secondary" />
                 </div>
-                <h3 className="text-lg lg:text-2xl font-bold">Milestone Payments</h3>
+                <h3 className="text-lg lg:text-2xl font-bold">Built-in Review Process</h3>
               </div>
 
               <div className="space-y-2 lg:space-y-4">
                 <div className="flex items-start gap-2 lg:gap-3">
                   <CheckCircle2 className="h-4 w-4 lg:h-5 lg:w-5 text-secondary shrink-0 mt-0.5 lg:mt-1" />
-                  <p className="text-xs lg:text-base text-muted-foreground">Get paid as you complete work</p>
+                  <p className="text-xs lg:text-base text-muted-foreground">Content review before publishing</p>
                 </div>
                 <div className="flex items-start gap-2 lg:gap-3">
                   <CheckCircle2 className="h-4 w-4 lg:h-5 lg:w-5 text-secondary shrink-0 mt-0.5 lg:mt-1" />
-                  <p className="text-xs lg:text-base text-muted-foreground">Clear deliverables at each stage</p>
+                  <p className="text-xs lg:text-base text-muted-foreground">Up to 3 revision rounds included</p>
                 </div>
                 <div className="flex items-start gap-2 lg:gap-3">
                   <CheckCircle2 className="h-4 w-4 lg:h-5 lg:w-5 text-secondary shrink-0 mt-0.5 lg:mt-1" />
-                  <p className="text-xs lg:text-base text-muted-foreground">Automated payment processing</p>
+                  <p className="text-xs lg:text-base text-muted-foreground">Clear deliverables and expectations</p>
                 </div>
                 <div className="flex items-start gap-2 lg:gap-3">
                   <CheckCircle2 className="h-4 w-4 lg:h-5 lg:w-5 text-secondary shrink-0 mt-0.5 lg:mt-1" />

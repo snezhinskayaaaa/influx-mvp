@@ -114,7 +114,7 @@ export default function Home() {
                 </span>
               </h1>
               <p className="mt-6 text-lg text-muted-foreground sm:text-xl leading-relaxed">
-                The crypto-native platform where DeFi, NFT, GameFi, L2s and exchanges find influencers, launch campaigns, and pay in crypto. Escrow protects both sides — no more risky DMs and manual deals.
+                The crypto-native platform where DeFi, NFT, GameFi, L2s and exchanges find influencers, launch campaigns, and pay in crypto. 50/50 secure payments protect both sides — no more risky DMs and manual deals.
               </p>
               <div className="mt-10 flex flex-col sm:flex-row items-start gap-4">
                 <Button size="lg" asChild className="w-full sm:w-64 bg-primary/10 hover:bg-primary/15 backdrop-blur-sm border-2 border-primary/30 h-14 text-base transition-all">
@@ -148,7 +148,7 @@ export default function Home() {
       <div className="bg-muted/50 border-y border-border/50 py-4">
         <div className="container px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
           <p className="text-center text-xs sm:text-sm text-muted-foreground">
-            Budget in dollars, pay in stablecoins (USDC/USDT) &middot; Milestone-based escrow &middot; AI influencers + crypto KOLs &middot; No banks, no fiat friction
+            Budget in dollars, pay in stablecoins (USDC/USDT) &middot; 50/50 secure payments &middot; AI influencers + crypto KOLs &middot; No banks, no fiat friction
           </p>
         </div>
       </div>

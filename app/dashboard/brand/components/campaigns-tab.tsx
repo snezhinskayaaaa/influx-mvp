@@ -43,7 +43,8 @@ import {
   ExternalLink,
   Camera,
 } from "lucide-react";
-import type { Tab, Campaign, CampaignApplication } from "./types";
+import type { Tab, Campaign, CampaignApplication, CollaborationStatus } from "./types";
+import { COLLABORATION_STATUS_CONFIG } from "./types";
 
 interface CampaignsTabProps {
   campaigns: Campaign[];
@@ -77,6 +78,143 @@ export function CampaignsTab({
   const [selectedInfluencerForPipeline, setSelectedInfluencerForPipeline] = useState<CampaignApplication | null>(null);
   const [showInfluencerSelector, setShowInfluencerSelector] = useState(false);
   const [brandFeedbackText, setBrandFeedbackText] = useState("");
+  const [revisionNoteText, setRevisionNoteText] = useState("");
+  const [disputeReasonText, setDisputeReasonText] = useState("");
+  const [showRevisionInput, setShowRevisionInput] = useState(false);
+  const [showDisputeInput, setShowDisputeInput] = useState(false);
+  const [actionLoading, setActionLoading] = useState(false);
+
+  /** Helper to get collaboration status badge */
+  const getCollaborationStatusBadge = (collabStatus: CollaborationStatus | undefined) => {
+    if (!collabStatus) return null;
+    const config = COLLABORATION_STATUS_CONFIG[collabStatus];
+    if (!config) return null;
+    return (
+      <Badge variant="outline" className={`text-xs ${config.badgeClass}`}>
+        {config.label}
+      </Badge>
+    );
+  };
+
+  /** Start campaign: AGREED -> IN_PROGRESS (pays 50% advance) */
+  const handleStartCampaign = async (collaborationId: string) => {
+    setActionLoading(true);
+    try {
+      const res = await fetch(`/api/collaborations/${collaborationId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: 'IN_PROGRESS' }),
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        showToast(data.error || 'Failed to start campaign', 'error');
+        return;
+      }
+      showToast('Campaign started. 50% advance paid to creator.', 'success');
+      // Refresh page to reflect changes
+      window.location.reload();
+    } catch {
+      showToast('Failed to start campaign', 'error');
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  /** Approve content: CONTENT_REVIEW -> PUBLISHING */
+  const handleApproveContent = async (collaborationId: string) => {
+    setActionLoading(true);
+    try {
+      const res = await fetch(`/api/collaborations/${collaborationId}/review`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'approve' }),
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        showToast(data.error || 'Failed to approve content', 'error');
+        return;
+      }
+      showToast('Content approved. Waiting for creator to publish.', 'success');
+      window.location.reload();
+    } catch {
+      showToast('Failed to approve content', 'error');
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  /** Request revision: CONTENT_REVIEW -> REVISION */
+  const handleRequestRevision = async (collaborationId: string, note: string) => {
+    setActionLoading(true);
+    try {
+      const res = await fetch(`/api/collaborations/${collaborationId}/review`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'request_revision', note }),
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        showToast(data.error || 'Failed to request revision', 'error');
+        return;
+      }
+      showToast('Revision requested.', 'success');
+      setRevisionNoteText("");
+      setShowRevisionInput(false);
+      window.location.reload();
+    } catch {
+      showToast('Failed to request revision', 'error');
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  /** Approve delivery: DELIVERED -> COMPLETED (pays final 50%) */
+  const handleApproveDelivery = async (collaborationId: string) => {
+    setActionLoading(true);
+    try {
+      const res = await fetch(`/api/collaborations/${collaborationId}/review`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'approve' }),
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        showToast(data.error || 'Failed to approve delivery', 'error');
+        return;
+      }
+      showToast('Delivery approved. Final payment released.', 'success');
+      window.location.reload();
+    } catch {
+      showToast('Failed to approve delivery', 'error');
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  /** Dispute delivery: DELIVERED -> DISPUTED */
+  const handleDispute = async (collaborationId: string, reason: string) => {
+    setActionLoading(true);
+    try {
+      const res = await fetch(`/api/collaborations/${collaborationId}/review`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'dispute', note: reason }),
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        showToast(data.error || 'Failed to file dispute', 'error');
+        return;
+      }
+      showToast('Dispute filed. Platform team will review.', 'success');
+      setDisputeReasonText("");
+      setShowDisputeInput(false);
+      window.location.reload();
+    } catch {
+      showToast('Failed to file dispute', 'error');
+    } finally {
+      setActionLoading(false);
+    }
+  };
 
   return (
     <motion.div
@@ -793,6 +931,7 @@ export function CampaignsTab({
                                     Approved
                                   </Badge>
                                 )}
+                                {application.collaborationStatus && getCollaborationStatusBadge(application.collaborationStatus)}
                               </div>
                               <div className="flex items-center gap-3 text-xs text-muted-foreground">
                                 <span>{application.influencerUsername}</span>
@@ -1160,18 +1299,258 @@ export function CampaignsTab({
                             )}
                           </div>
                         )}
+
+                        {/* === Collaboration Lifecycle Actions === */}
+
+                        {/* AGREED: Start Campaign button */}
+                        {selectedInfluencerForPipeline.collaborationStatus === "AGREED" && selectedInfluencerForPipeline.collaborationId && (
+                          <div className="space-y-3 pt-3 border-t">
+                            <div className="p-3 rounded-lg bg-primary/5 border border-primary/20">
+                              <p className="text-xs text-muted-foreground">
+                                50% advance (${selectedInfluencerForPipeline.agreedPrice ? (selectedInfluencerForPipeline.agreedPrice / 2).toFixed(2) : '...'}) will be paid to the creator when you start.
+                              </p>
+                            </div>
+                            <Button
+                              onClick={() => handleStartCampaign(selectedInfluencerForPipeline.collaborationId!)}
+                              disabled={actionLoading}
+                              className="w-full bg-gradient-to-r from-primary to-secondary"
+                            >
+                              <Rocket className="h-4 w-4 mr-2" />
+                              {actionLoading ? "Starting..." : "Start Campaign"}
+                            </Button>
+                          </div>
+                        )}
+
+                        {/* CONTENT_REVIEW: View content + Approve / Revision */}
+                        {selectedInfluencerForPipeline.collaborationStatus === "CONTENT_REVIEW" && selectedInfluencerForPipeline.collaborationId && (
+                          <div className="space-y-3 pt-3 border-t">
+                            {selectedInfluencerForPipeline.contentUrl && (
+                              <div className="p-3 rounded-lg bg-blue-50 border border-blue-200">
+                                <a
+                                  href={selectedInfluencerForPipeline.contentUrl}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="text-sm text-blue-600 hover:underline flex items-center gap-1"
+                                >
+                                  <ExternalLink className="h-3.5 w-3.5" />
+                                  View submitted content
+                                </a>
+                              </div>
+                            )}
+
+                            <div className="text-xs text-muted-foreground">
+                              Revision {selectedInfluencerForPipeline.revisionCount ?? 0}/3
+                            </div>
+
+                            {showRevisionInput ? (
+                              <div className="space-y-2">
+                                <textarea
+                                  className="w-full min-h-[80px] px-3 py-2 rounded-lg border border-border bg-background text-sm resize-none focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"
+                                  placeholder="Describe what needs to be changed..."
+                                  value={revisionNoteText}
+                                  onChange={(e) => setRevisionNoteText(e.target.value)}
+                                />
+                                <div className="flex gap-2">
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => {
+                                      setShowRevisionInput(false);
+                                      setRevisionNoteText("");
+                                    }}
+                                    className="flex-1"
+                                  >
+                                    Cancel
+                                  </Button>
+                                  <Button
+                                    size="sm"
+                                    disabled={actionLoading || !revisionNoteText.trim()}
+                                    onClick={() => handleRequestRevision(selectedInfluencerForPipeline.collaborationId!, revisionNoteText)}
+                                    className="flex-1 bg-amber-500 hover:bg-amber-600 text-white"
+                                  >
+                                    {actionLoading ? "Sending..." : "Send Revision"}
+                                  </Button>
+                                </div>
+                              </div>
+                            ) : (
+                              <div className="flex gap-2">
+                                <Button
+                                  onClick={() => handleApproveContent(selectedInfluencerForPipeline.collaborationId!)}
+                                  disabled={actionLoading}
+                                  className="flex-1 bg-gradient-to-r from-green-500 to-green-600 text-white"
+                                >
+                                  <CheckCircle2 className="h-4 w-4 mr-2" />
+                                  {actionLoading ? "Approving..." : "Approve Content"}
+                                </Button>
+                                <Button
+                                  variant="outline"
+                                  onClick={() => setShowRevisionInput(true)}
+                                  disabled={actionLoading || (selectedInfluencerForPipeline.revisionCount ?? 0) >= 3}
+                                  className="flex-1 border-amber-500 text-amber-600 hover:bg-amber-50"
+                                >
+                                  <MessageSquare className="h-4 w-4 mr-2" />
+                                  Request Revision
+                                </Button>
+                              </div>
+                            )}
+                          </div>
+                        )}
+
+                        {/* PUBLISHING: Waiting for creator */}
+                        {selectedInfluencerForPipeline.collaborationStatus === "PUBLISHING" && (
+                          <div className="pt-3 border-t">
+                            <div className="flex items-center gap-2 px-4 py-3 rounded-lg bg-purple-500/10 border border-purple-500/20">
+                              <Clock className="h-5 w-5 text-purple-600" />
+                              <div>
+                                <p className="text-sm font-medium text-purple-600">Content Approved</p>
+                                <p className="text-xs text-muted-foreground">Waiting for creator to publish.</p>
+                              </div>
+                            </div>
+                          </div>
+                        )}
+
+                        {/* DELIVERED: Approve & Pay or Dispute */}
+                        {selectedInfluencerForPipeline.collaborationStatus === "DELIVERED" && selectedInfluencerForPipeline.collaborationId && (
+                          <div className="space-y-3 pt-3 border-t">
+                            {selectedInfluencerForPipeline.publishedUrl && (
+                              <div className="p-3 rounded-lg bg-green-50 border border-green-200">
+                                <a
+                                  href={selectedInfluencerForPipeline.publishedUrl}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="text-sm text-green-600 hover:underline flex items-center gap-1"
+                                >
+                                  <ExternalLink className="h-3.5 w-3.5" />
+                                  View published post
+                                </a>
+                              </div>
+                            )}
+
+                            <div className="p-3 rounded-lg bg-primary/5 border border-primary/20">
+                              <p className="text-xs text-muted-foreground">
+                                Remaining 50% (${selectedInfluencerForPipeline.agreedPrice ? (selectedInfluencerForPipeline.agreedPrice / 2).toFixed(2) : '...'}) will be released. Auto-release in 7 days.
+                              </p>
+                            </div>
+
+                            {showDisputeInput ? (
+                              <div className="space-y-2">
+                                <textarea
+                                  className="w-full min-h-[80px] px-3 py-2 rounded-lg border border-red-300 bg-background text-sm resize-none focus:outline-none focus:ring-2 focus:ring-red-300 focus:border-transparent"
+                                  placeholder="Describe the reason for dispute..."
+                                  value={disputeReasonText}
+                                  onChange={(e) => setDisputeReasonText(e.target.value)}
+                                />
+                                <div className="flex gap-2">
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => {
+                                      setShowDisputeInput(false);
+                                      setDisputeReasonText("");
+                                    }}
+                                    className="flex-1"
+                                  >
+                                    Cancel
+                                  </Button>
+                                  <Button
+                                    size="sm"
+                                    disabled={actionLoading || !disputeReasonText.trim()}
+                                    onClick={() => handleDispute(selectedInfluencerForPipeline.collaborationId!, disputeReasonText)}
+                                    className="flex-1 bg-red-500 hover:bg-red-600 text-white"
+                                  >
+                                    {actionLoading ? "Filing..." : "File Dispute"}
+                                  </Button>
+                                </div>
+                              </div>
+                            ) : (
+                              <div className="flex gap-2">
+                                <Button
+                                  onClick={() => handleApproveDelivery(selectedInfluencerForPipeline.collaborationId!)}
+                                  disabled={actionLoading}
+                                  className="flex-1 bg-gradient-to-r from-green-500 to-green-600 text-white"
+                                >
+                                  <CheckCircle2 className="h-4 w-4 mr-2" />
+                                  {actionLoading ? "Approving..." : "Approve & Pay"}
+                                </Button>
+                                <Button
+                                  variant="outline"
+                                  onClick={() => setShowDisputeInput(true)}
+                                  disabled={actionLoading}
+                                  className="flex-1 border-red-500 text-red-600 hover:bg-red-50"
+                                >
+                                  <AlertCircle className="h-4 w-4 mr-2" />
+                                  Dispute
+                                </Button>
+                              </div>
+                            )}
+                          </div>
+                        )}
+
+                        {/* DISPUTED: Under review */}
+                        {selectedInfluencerForPipeline.collaborationStatus === "DISPUTED" && (
+                          <div className="space-y-3 pt-3 border-t">
+                            <div className="flex items-center gap-2 px-4 py-3 rounded-lg bg-red-500/10 border border-red-500/20">
+                              <AlertCircle className="h-5 w-5 text-red-600" />
+                              <div>
+                                <p className="text-sm font-medium text-red-600">Under review by platform team</p>
+                                <p className="text-xs text-muted-foreground">
+                                  We will investigate and resolve this dispute.
+                                </p>
+                              </div>
+                            </div>
+                            {selectedInfluencerForPipeline.disputeReason && (
+                              <div className="p-3 rounded-lg bg-muted/50 border border-border">
+                                <p className="text-xs text-muted-foreground mb-1">Dispute Reason:</p>
+                                <p className="text-sm">{selectedInfluencerForPipeline.disputeReason}</p>
+                              </div>
+                            )}
+                          </div>
+                        )}
+
+                        {/* COMPLETED or RESOLVED: Payment summary */}
+                        {(selectedInfluencerForPipeline.collaborationStatus === "COMPLETED" || selectedInfluencerForPipeline.collaborationStatus === "RESOLVED") && (
+                          <div className="space-y-3 pt-3 border-t">
+                            <div className="flex items-center gap-2 px-4 py-3 rounded-lg bg-success/10 border border-success/20">
+                              <CheckCircle2 className="h-5 w-5 text-success" />
+                              <div>
+                                <p className="text-sm font-medium text-success">
+                                  {selectedInfluencerForPipeline.collaborationStatus === "COMPLETED" ? "Completed" : "Resolved"}
+                                </p>
+                                <p className="text-xs text-muted-foreground">All payments processed.</p>
+                              </div>
+                            </div>
+                            {selectedInfluencerForPipeline.agreedPrice && (
+                              <div className="p-3 rounded-lg bg-muted/50 border border-border">
+                                <div className="grid grid-cols-2 gap-2 text-sm">
+                                  <div className="flex items-center justify-between p-2 rounded bg-background/50">
+                                    <span className="text-muted-foreground">50% Advance</span>
+                                    <span className="font-medium">${(selectedInfluencerForPipeline.agreedPrice / 2).toFixed(2)}</span>
+                                  </div>
+                                  <div className="flex items-center justify-between p-2 rounded bg-background/50">
+                                    <span className="text-muted-foreground">50% Final</span>
+                                    <span className="font-medium">${(selectedInfluencerForPipeline.agreedPrice / 2).toFixed(2)}</span>
+                                  </div>
+                                  <div className="col-span-2 flex items-center justify-between p-2 rounded bg-primary/5 border border-primary/20">
+                                    <span className="text-muted-foreground font-medium">Total Paid</span>
+                                    <span className="font-bold text-primary">${selectedInfluencerForPipeline.agreedPrice.toFixed(2)}</span>
+                                  </div>
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        )}
                       </div>
                     </>
                   )}
                 </div>
               </div>
 
-              {/* Stage 2: Content Approval */}
+              {/* Stage 2: Content Review & Approval */}
               <div className="flex gap-4">
                 <div className="flex flex-col items-center">
                   <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold ${
                     (selectedCampaignDetails.currentStage || 1) >= 2
-                      ? "bg-secondary text-secondary-foreground"
+                      ? "bg-blue-500 text-white"
                       : "bg-muted text-muted-foreground"
                   }`}>
                     2
@@ -1451,7 +1830,7 @@ export function CampaignsTab({
                 </div>
               </div>
 
-              {/* Stage 3: Publication & Metrics */}
+              {/* Stage 3: Publication & Delivery */}
               <div className="flex gap-4">
                 <div className="flex flex-col items-center">
                   <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold ${
@@ -1881,13 +2260,13 @@ export function CampaignsTab({
 
               {/* Pipeline Column */}
               <div className="flex-1">
-                <div className="flex items-center gap-2 mb-2">
-                  {/* Stage 1: Negotiation */}
-                  <div className="flex flex-col items-center gap-1.5 flex-1">
-                    <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">
-                      Negotiation
+                <div className="flex items-center gap-1 mb-2">
+                  {/* Stage 1: Agreement */}
+                  <div className="flex flex-col items-center gap-1 flex-1">
+                    <span className="text-[9px] font-semibold text-muted-foreground uppercase tracking-wider">
+                      Agreed
                     </span>
-                    <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold ${
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold ${
                       (campaign.currentStage || 1) >= 1
                         ? "bg-primary/10 text-primary"
                         : "bg-muted/50 text-muted-foreground"
@@ -1896,14 +2275,14 @@ export function CampaignsTab({
                     </div>
                   </div>
 
-                  <ArrowRight className="h-3.5 w-3.5 text-muted-foreground/40 mt-5" />
+                  <ArrowRight className="h-3 w-3 text-muted-foreground/40 mt-4" />
 
-                  {/* Stage 2: Content */}
-                  <div className="flex flex-col items-center gap-1.5 flex-1">
-                    <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">
-                      Content
+                  {/* Stage 2: Advance */}
+                  <div className="flex flex-col items-center gap-1 flex-1">
+                    <span className="text-[9px] font-semibold text-muted-foreground uppercase tracking-wider">
+                      Advance
                     </span>
-                    <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold ${
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold ${
                       (campaign.currentStage || 1) >= 2
                         ? "bg-secondary/10 text-secondary"
                         : "bg-muted/50 text-muted-foreground"
@@ -1912,15 +2291,47 @@ export function CampaignsTab({
                     </div>
                   </div>
 
-                  <ArrowRight className="h-3.5 w-3.5 text-muted-foreground/40 mt-5" />
+                  <ArrowRight className="h-3 w-3 text-muted-foreground/40 mt-4" />
 
-                  {/* Stage 3: Published */}
-                  <div className="flex flex-col items-center gap-1.5 flex-1">
-                    <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">
-                      Published
+                  {/* Stage 3: Content */}
+                  <div className="flex flex-col items-center gap-1 flex-1">
+                    <span className="text-[9px] font-semibold text-muted-foreground uppercase tracking-wider">
+                      Content
                     </span>
-                    <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold ${
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold ${
                       (campaign.currentStage || 1) >= 3
+                        ? "bg-blue-500/10 text-blue-600"
+                        : "bg-muted/50 text-muted-foreground"
+                    }`}>
+                      0
+                    </div>
+                  </div>
+
+                  <ArrowRight className="h-3 w-3 text-muted-foreground/40 mt-4" />
+
+                  {/* Stage 4: Publish */}
+                  <div className="flex flex-col items-center gap-1 flex-1">
+                    <span className="text-[9px] font-semibold text-muted-foreground uppercase tracking-wider">
+                      Publish
+                    </span>
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold ${
+                      (campaign.currentStage || 1) >= 4
+                        ? "bg-purple-500/10 text-purple-600"
+                        : "bg-muted/50 text-muted-foreground"
+                    }`}>
+                      0
+                    </div>
+                  </div>
+
+                  <ArrowRight className="h-3 w-3 text-muted-foreground/40 mt-4" />
+
+                  {/* Stage 5: Done */}
+                  <div className="flex flex-col items-center gap-1 flex-1">
+                    <span className="text-[9px] font-semibold text-muted-foreground uppercase tracking-wider">
+                      Done
+                    </span>
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold ${
+                      (campaign.currentStage || 1) >= 5
                         ? "bg-success/10 text-success"
                         : "bg-muted/50 text-muted-foreground"
                     }`}>
@@ -2028,38 +2439,60 @@ export function CampaignsTab({
 
                     <div>
                       <div className="text-muted-foreground text-xs mb-2">Pipeline</div>
-                      <div className="flex items-center gap-1.5">
+                      <div className="flex items-center gap-1">
                         <div className="flex flex-col items-center gap-1 flex-1">
-                          <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold ${
+                          <div className={`w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-semibold ${
                             (campaign.currentStage || 1) >= 1
                               ? "bg-primary/10 text-primary"
                               : "bg-muted/50 text-muted-foreground"
                           }`}>
                             0
                           </div>
-                          <span className="text-[9px] font-medium text-muted-foreground">Negot.</span>
+                          <span className="text-[8px] font-medium text-muted-foreground">Agreed</span>
                         </div>
-                        <ArrowRight className="h-3 w-3 text-muted-foreground/40 mb-3" />
+                        <ArrowRight className="h-2.5 w-2.5 text-muted-foreground/40 mb-3" />
                         <div className="flex flex-col items-center gap-1 flex-1">
-                          <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold ${
+                          <div className={`w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-semibold ${
                             (campaign.currentStage || 1) >= 2
                               ? "bg-secondary/10 text-secondary"
                               : "bg-muted/50 text-muted-foreground"
                           }`}>
                             0
                           </div>
-                          <span className="text-[9px] font-medium text-muted-foreground">Content</span>
+                          <span className="text-[8px] font-medium text-muted-foreground">Advance</span>
                         </div>
-                        <ArrowRight className="h-3 w-3 text-muted-foreground/40 mb-3" />
+                        <ArrowRight className="h-2.5 w-2.5 text-muted-foreground/40 mb-3" />
                         <div className="flex flex-col items-center gap-1 flex-1">
-                          <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold ${
+                          <div className={`w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-semibold ${
                             (campaign.currentStage || 1) >= 3
+                              ? "bg-blue-500/10 text-blue-600"
+                              : "bg-muted/50 text-muted-foreground"
+                          }`}>
+                            0
+                          </div>
+                          <span className="text-[8px] font-medium text-muted-foreground">Content</span>
+                        </div>
+                        <ArrowRight className="h-2.5 w-2.5 text-muted-foreground/40 mb-3" />
+                        <div className="flex flex-col items-center gap-1 flex-1">
+                          <div className={`w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-semibold ${
+                            (campaign.currentStage || 1) >= 4
+                              ? "bg-purple-500/10 text-purple-600"
+                              : "bg-muted/50 text-muted-foreground"
+                          }`}>
+                            0
+                          </div>
+                          <span className="text-[8px] font-medium text-muted-foreground">Publish</span>
+                        </div>
+                        <ArrowRight className="h-2.5 w-2.5 text-muted-foreground/40 mb-3" />
+                        <div className="flex flex-col items-center gap-1 flex-1">
+                          <div className={`w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-semibold ${
+                            (campaign.currentStage || 1) >= 5
                               ? "bg-success/10 text-success"
                               : "bg-muted/50 text-muted-foreground"
                           }`}>
                             0
                           </div>
-                          <span className="text-[9px] font-medium text-muted-foreground">Published</span>
+                          <span className="text-[8px] font-medium text-muted-foreground">Done</span>
                         </div>
                       </div>
                     </div>

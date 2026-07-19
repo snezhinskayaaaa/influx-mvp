@@ -197,7 +197,7 @@ export default function BrandsPage() {
               </h1>
 
               <p className="mt-6 text-lg text-muted-foreground sm:text-xl leading-relaxed">
-                Discover creators. Fund in crypto. Launch in minutes. Escrow protects every deal.
+                Discover creators. Fund in crypto. Launch in minutes. 50/50 payments protect every deal.
               </p>
 
               <div className="mt-10">
@@ -559,7 +559,7 @@ export default function BrandsPage() {
               </div>
               <h3 className="text-sm lg:text-lg font-semibold mb-1 lg:mb-2">Fund in crypto</h3>
               <p className="text-xs lg:text-sm text-muted-foreground">
-                Deposit USDC/USDT. Funds held securely in escrow.
+                Deposit USDC/USDT. 50% advance goes to creator.
               </p>
 
               {/* Arrow */}
@@ -595,9 +595,9 @@ export default function BrandsPage() {
               <div className="inline-flex items-center justify-center w-10 h-10 lg:w-12 lg:h-12 rounded-full bg-primary/10 text-primary font-bold text-base lg:text-lg mb-2 lg:mb-4">
                 3
               </div>
-              <h3 className="text-sm lg:text-lg font-semibold mb-1 lg:mb-2">Track progress</h3>
+              <h3 className="text-sm lg:text-lg font-semibold mb-1 lg:mb-2">Review content</h3>
               <p className="text-xs lg:text-sm text-muted-foreground">
-                Monitor milestones and approve deliverables in real-time.
+                Review deliverables with up to 3 revision rounds.
               </p>
 
               {/* Arrow */}
@@ -614,9 +614,9 @@ export default function BrandsPage() {
               <div className="inline-flex items-center justify-center w-10 h-10 lg:w-12 lg:h-12 rounded-full bg-primary/10 text-primary font-bold text-base lg:text-lg mb-2 lg:mb-4">
                 4
               </div>
-              <h3 className="text-sm lg:text-lg font-semibold mb-1 lg:mb-2">Auto payment</h3>
+              <h3 className="text-sm lg:text-lg font-semibold mb-1 lg:mb-2">Approve & pay</h3>
               <p className="text-xs lg:text-sm text-muted-foreground">
-                Funds release automatically as milestones complete.
+                Approve and release remaining 50%. Auto-releases after 7 days.
               </p>
             </div>
           </div>
@@ -734,7 +734,7 @@ export default function BrandsPage() {
         </div>
       </motion.section>
 
-      {/* Escrow & Milestone System */}
+      {/* Protected Payment System */}
       <motion.section
         initial="hidden"
         whileInView="visible"
@@ -751,32 +751,32 @@ export default function BrandsPage() {
               Protected Payment System
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Every payment is protected through our escrow system with milestone-based releases
+              Every payment is split 50/50 with built-in review and auto-release protection
             </p>
           </div>
 
           <div className="flex overflow-x-auto gap-4 pb-4 md:grid md:grid-cols-2 md:gap-8 md:overflow-visible snap-x snap-mandatory md:snap-none mb-8 lg:mb-12">
-            {/* Escrow System */}
+            {/* 50/50 Secure Payments */}
             <Card className="p-5 lg:p-8 bg-gradient-to-br from-success/5 to-transparent border-success/20 min-w-[300px] md:min-w-0 snap-center">
               <div className="flex items-center gap-2 lg:gap-3 mb-4 lg:mb-6">
                 <div className="w-10 h-10 lg:w-12 lg:h-12 rounded-xl bg-success/10 flex items-center justify-center">
                   <Lock className="h-5 w-5 lg:h-6 lg:w-6 text-success" />
                 </div>
-                <h3 className="text-lg lg:text-2xl font-bold">Escrow System</h3>
+                <h3 className="text-lg lg:text-2xl font-bold">50/50 Secure Payments</h3>
               </div>
 
               <div className="space-y-2 lg:space-y-4">
                 <div className="flex items-start gap-2 lg:gap-3">
                   <ArrowDownCircle className="h-4 w-4 lg:h-5 lg:w-5 text-success shrink-0 mt-0.5 lg:mt-1" />
-                  <p className="text-xs lg:text-base text-muted-foreground">All payments flow through our secure platform</p>
+                  <p className="text-xs lg:text-base text-muted-foreground">50% advance when work begins — creators get paid upfront</p>
                 </div>
                 <div className="flex items-start gap-2 lg:gap-3">
                   <ArrowDownCircle className="h-4 w-4 lg:h-5 lg:w-5 text-success shrink-0 mt-0.5 lg:mt-1" />
-                  <p className="text-xs lg:text-base text-muted-foreground">Automatic release based on milestones</p>
+                  <p className="text-xs lg:text-base text-muted-foreground">50% on delivery — released when you approve the work</p>
                 </div>
                 <div className="flex items-start gap-2 lg:gap-3">
                   <ArrowDownCircle className="h-4 w-4 lg:h-5 lg:w-5 text-success shrink-0 mt-0.5 lg:mt-1" />
-                  <p className="text-xs lg:text-base text-muted-foreground">Built-in dispute resolution</p>
+                  <p className="text-xs lg:text-base text-muted-foreground">Auto-release after 7 days — no payment ghosting</p>
                 </div>
                 <div className="flex items-start gap-2 lg:gap-3">
                   <ArrowDownCircle className="h-4 w-4 lg:h-5 lg:w-5 text-success shrink-0 mt-0.5 lg:mt-1" />
@@ -785,43 +785,43 @@ export default function BrandsPage() {
               </div>
             </Card>
 
-            {/* Contract Management */}
+            {/* Built-in Review Process */}
             <Card className="p-5 lg:p-8 bg-gradient-to-br from-primary/5 to-transparent border-primary/20 min-w-[300px] md:min-w-0 snap-center">
               <div className="flex items-center gap-2 lg:gap-3 mb-4 lg:mb-6">
                 <div className="w-10 h-10 lg:w-12 lg:h-12 rounded-xl bg-primary/10 flex items-center justify-center">
-                  <FileText className="h-5 w-5 lg:h-6 lg:w-6 text-primary" />
+                  <CheckSquare className="h-5 w-5 lg:h-6 lg:w-6 text-primary" />
                 </div>
-                <h3 className="text-lg lg:text-2xl font-bold">Smart Contracts</h3>
+                <h3 className="text-lg lg:text-2xl font-bold">Built-in Review Process</h3>
               </div>
 
               <div className="space-y-2 lg:space-y-4">
                 <div className="flex items-start gap-2 lg:gap-3">
                   <CheckSquare className="h-4 w-4 lg:h-5 lg:w-5 text-primary shrink-0 mt-0.5 lg:mt-1" />
-                  <p className="text-xs lg:text-base text-muted-foreground">Auto-generated legal templates</p>
+                  <p className="text-xs lg:text-base text-muted-foreground">Content review before publishing</p>
                 </div>
                 <div className="flex items-start gap-2 lg:gap-3">
                   <CheckSquare className="h-4 w-4 lg:h-5 lg:w-5 text-primary shrink-0 mt-0.5 lg:mt-1" />
-                  <p className="text-xs lg:text-base text-muted-foreground">E-signature integration (DocuSign)</p>
+                  <p className="text-xs lg:text-base text-muted-foreground">Up to 3 revision rounds included</p>
                 </div>
                 <div className="flex items-start gap-2 lg:gap-3">
                   <CheckSquare className="h-4 w-4 lg:h-5 lg:w-5 text-primary shrink-0 mt-0.5 lg:mt-1" />
-                  <p className="text-xs lg:text-base text-muted-foreground">Stored securely on platform</p>
+                  <p className="text-xs lg:text-base text-muted-foreground">Dispute resolution by platform team</p>
                 </div>
                 <div className="flex items-start gap-2 lg:gap-3">
                   <CheckSquare className="h-4 w-4 lg:h-5 lg:w-5 text-primary shrink-0 mt-0.5 lg:mt-1" />
-                  <p className="text-xs lg:text-base text-muted-foreground">Compliance tracking included</p>
+                  <p className="text-xs lg:text-base text-muted-foreground">7-day auto-release protection</p>
                 </div>
               </div>
             </Card>
           </div>
 
-          {/* Milestone Flow */}
+          {/* Payment Flow */}
           <Card className="p-5 lg:p-8 bg-gradient-to-br from-secondary/5 to-transparent border-secondary/20">
             <div className="flex items-center gap-2 lg:gap-3 mb-5 lg:mb-8">
               <div className="w-10 h-10 lg:w-12 lg:h-12 rounded-xl bg-secondary/10 flex items-center justify-center">
                 <CreditCard className="h-5 w-5 lg:h-6 lg:w-6 text-secondary" />
               </div>
-              <h3 className="text-lg lg:text-2xl font-bold">Milestone-Based Payments</h3>
+              <h3 className="text-lg lg:text-2xl font-bold">50/50 Payment Flow</h3>
             </div>
 
             <div className="relative">
@@ -830,39 +830,39 @@ export default function BrandsPage() {
               <div className="hidden lg:block absolute top-[46px] left-[16%] right-[16%] h-0.5 bg-gradient-to-r from-secondary/10 via-secondary/30 to-secondary/10" />
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-3 lg:gap-6">
-                {/* Milestone 1: Negotiation - 25% */}
+                {/* Step 1: Agreement - 50% advance */}
                 <div className="relative bg-background rounded-xl border-2 border-secondary/30 p-3 lg:p-5 hover:border-secondary/50 transition-all">
                   <div className="flex items-center gap-1.5 lg:gap-2 mb-2 lg:mb-3">
                     <div className="w-8 h-8 lg:w-10 lg:h-10 rounded-lg bg-secondary/10 flex items-center justify-center">
                       <FileText className="h-4 w-4 lg:h-5 lg:w-5 text-secondary" />
                     </div>
                     <div>
-                      <span className="text-base lg:text-xl font-bold text-secondary">25%</span>
+                      <span className="text-base lg:text-xl font-bold text-secondary">50%</span>
                     </div>
                   </div>
-                  <h4 className="font-bold text-xs lg:text-base mb-1 lg:mb-2">Negotiation</h4>
+                  <h4 className="font-bold text-xs lg:text-base mb-1 lg:mb-2">Advance Payment</h4>
                   <p className="text-[10px] lg:text-sm text-muted-foreground leading-relaxed">
-                    Funds are secured in escrow when both parties agree on terms. First payment released to begin work.
+                    Both parties agree on terms. 50% advance is released to the creator so work can begin immediately.
                   </p>
                 </div>
 
-                {/* Milestone 2: Content Approval - 25% */}
+                {/* Step 2: Review */}
                 <div className="relative bg-background rounded-xl border-2 border-secondary/30 p-3 lg:p-5 hover:border-secondary/50 transition-all">
                   <div className="flex items-center gap-1.5 lg:gap-2 mb-2 lg:mb-3">
                     <div className="w-8 h-8 lg:w-10 lg:h-10 rounded-lg bg-secondary/10 flex items-center justify-center">
                       <CheckCircle2 className="h-4 w-4 lg:h-5 lg:w-5 text-secondary" />
                     </div>
                     <div>
-                      <span className="text-base lg:text-xl font-bold text-secondary">25%</span>
+                      <span className="text-base lg:text-xl font-bold text-secondary">Review</span>
                     </div>
                   </div>
-                  <h4 className="font-bold text-xs lg:text-base mb-1 lg:mb-2">Content Approval</h4>
+                  <h4 className="font-bold text-xs lg:text-base mb-1 lg:mb-2">Content Review</h4>
                   <p className="text-[10px] lg:text-sm text-muted-foreground leading-relaxed">
-                    Payment releases when you approve the final version.
+                    Review delivered content with up to 3 revision rounds. Request changes or approve.
                   </p>
                 </div>
 
-                {/* Milestone 3: Publication & Metrics - 50% */}
+                {/* Step 3: Final Payment - 50% */}
                 <div className="relative bg-background rounded-xl border-2 border-secondary/30 p-3 lg:p-5 hover:border-secondary/50 transition-all">
                   <div className="flex items-center gap-1.5 lg:gap-2 mb-2 lg:mb-3">
                     <div className="w-8 h-8 lg:w-10 lg:h-10 rounded-lg bg-secondary/10 flex items-center justify-center">
@@ -872,9 +872,9 @@ export default function BrandsPage() {
                       <span className="text-base lg:text-xl font-bold text-secondary">50%</span>
                     </div>
                   </div>
-                  <h4 className="font-bold text-xs lg:text-base mb-1 lg:mb-2">Publication & Metrics</h4>
+                  <h4 className="font-bold text-xs lg:text-base mb-1 lg:mb-2">Final Payment</h4>
                   <p className="text-[10px] lg:text-sm text-muted-foreground leading-relaxed">
-                    Content goes live and performance metrics are delivered. Final payment automatically releases.
+                    Approve the work and remaining 50% releases to the creator. Auto-releases after 7 days if no response.
                   </p>
                 </div>
               </div>
@@ -930,7 +930,7 @@ export default function BrandsPage() {
                     </Badge>
                   </div>
                   <p className="text-sm text-muted-foreground mb-3">
-                    Applied only when you deposit funds. Covers crypto payment processing, secure escrow,
+                    Applied only when you deposit funds. Covers crypto payment processing, secure 50/50 payment split,
                     platform infrastructure, and 24/7 support.
                   </p>
                   <div className="bg-muted/50 p-3 rounded-lg mb-3">
@@ -954,7 +954,7 @@ export default function BrandsPage() {
                 <div className="grid sm:grid-cols-2 gap-3">
                   <div className="flex items-start gap-2">
                     <Check className="h-5 w-5 text-primary shrink-0 mt-0.5" />
-                    <span className="text-sm">Secure escrow protection</span>
+                    <span className="text-sm">Secure 50/50 payment protection</span>
                   </div>
                   <div className="flex items-start gap-2">
                     <Check className="h-5 w-5 text-primary shrink-0 mt-0.5" />

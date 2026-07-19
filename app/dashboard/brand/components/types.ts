@@ -1,5 +1,38 @@
 export type Tab = "discover" | "campaigns" | "profile" | "create-campaign" | "settings";
 
+export type CollaborationStatus =
+  | "APPLIED"
+  | "NEGOTIATING"
+  | "AGREED"
+  | "IN_PROGRESS"
+  | "CONTENT_REVIEW"
+  | "REVISION"
+  | "PUBLISHING"
+  | "DELIVERED"
+  | "COMPLETED"
+  | "CANCELLED"
+  | "DISPUTED"
+  | "RESOLVED";
+
+/** Map collaboration status to display label and color classes */
+export const COLLABORATION_STATUS_CONFIG: Record<
+  CollaborationStatus,
+  { label: string; badgeClass: string }
+> = {
+  APPLIED: { label: "Applied", badgeClass: "bg-muted text-foreground border-border" },
+  NEGOTIATING: { label: "Negotiating", badgeClass: "bg-primary/10 text-primary border-primary/20" },
+  AGREED: { label: "Agreed", badgeClass: "bg-success/10 text-success border-success/20" },
+  IN_PROGRESS: { label: "In Progress", badgeClass: "bg-secondary/10 text-secondary border-secondary/20" },
+  CONTENT_REVIEW: { label: "Content Review", badgeClass: "bg-blue-500/10 text-blue-600 border-blue-500/20" },
+  REVISION: { label: "Revision Requested", badgeClass: "bg-amber-500/10 text-amber-600 border-amber-500/20" },
+  PUBLISHING: { label: "Publishing", badgeClass: "bg-purple-500/10 text-purple-600 border-purple-500/20" },
+  DELIVERED: { label: "Delivered", badgeClass: "bg-green-500/10 text-green-600 border-green-500/20" },
+  COMPLETED: { label: "Completed", badgeClass: "bg-success/10 text-success border-success/20" },
+  CANCELLED: { label: "Cancelled", badgeClass: "bg-muted text-muted-foreground border-border" },
+  DISPUTED: { label: "Disputed", badgeClass: "bg-red-500/10 text-red-600 border-red-500/20" },
+  RESOLVED: { label: "Resolved", badgeClass: "bg-gray-500/10 text-gray-600 border-gray-500/20" },
+} as const;
+
 export interface Notification {
   id: number;
   type: "invitation_accepted" | "campaign_application";
@@ -66,6 +99,7 @@ export interface InsightsScreenshot {
 
 export interface CampaignApplication {
   id: number;
+  collaborationId?: string;
   influencerId: number;
   influencerName: string;
   influencerUsername: string;
@@ -73,9 +107,13 @@ export interface CampaignApplication {
   influencerFollowers: string;
   source: "applied" | "invited";
   status: "pending" | "approved" | "rejected";
+  /** Collaboration lifecycle status from the backend */
+  collaborationStatus?: CollaborationStatus;
   proposedPriceCPM?: string;
   proposedPriceCPC?: string;
   proposedPriceCPE?: string;
+  /** Agreed price in dollars (converted from cents) */
+  agreedPrice?: number;
   message?: string;
   appliedAt: string;
 
@@ -89,10 +127,19 @@ export interface CampaignApplication {
   // Content creation and approval
   contentRevisions?: ContentRevision[];
   currentContentUrl?: string;
+  contentUrl?: string;
   contentApproved?: boolean;
   contentApprovedAt?: string;
 
-  // Payment tracking
+  // Revision tracking
+  revisionCount?: number;
+  revisionNote?: string;
+
+  // Payment tracking (new 50/50 model)
+  advancePaid?: boolean;    // 50% at IN_PROGRESS
+  finalPaymentPaid?: boolean; // 50% at COMPLETED
+
+  // Legacy payment tracking
   initialPaymentSent?: boolean; // 25% after negotiation
   contentApprovalPaymentSent?: boolean; // 25% after content approval
   finalPaymentSent?: boolean; // 50% after metrics reached
@@ -104,6 +151,9 @@ export interface CampaignApplication {
   insightsScreenshots?: InsightsScreenshot[];
   metricsTargetReached?: boolean;
   metricsVerifiedAt?: string;
+
+  // Dispute
+  disputeReason?: string;
 }
 
 export interface Campaign {
@@ -137,22 +187,28 @@ export interface Campaign {
   creatorScript: string;
   detailedRequirements: string;
   createdAt: string;
-  currentStage?: number; // 1: Negotiation, 2: Content Approval, 3: Publication & Metrics
+  currentStage?: number; // 1: Agreement, 2: Advance Paid, 3: Content Review, 4: Publishing, 5: Delivered, 6: Completed
 }
 
 export interface CampaignInfluencer {
   id: number;
+  collaborationId?: string;
   name: string;
   username: string;
   avatar: string;
   status: "invited" | "applied" | "approved";
 
-  // Timeline stage for approved influencers
-  timelineStage?: 1 | 2 | 3 | 4;
+  /** Collaboration lifecycle status */
+  collaborationStatus?: CollaborationStatus;
+
+  // Timeline stage for approved influencers (mapped from collaborationStatus)
+  // 1: Agreement, 2: Advance Paid, 3: Content Review, 4: Publishing, 5: Delivered, 6: Completed
+  timelineStage?: 1 | 2 | 3 | 4 | 5 | 6;
 
   // Checkpoint 1: Discussion/Negotiation
   proposedPrice?: number;
   proposedPricingModel?: "CPM" | "CPC" | "CPE";
+  agreedPrice?: number;
   brandApprovedPrice?: boolean;
   brandCounterPrice?: number;
   influencerApprovedCounter?: boolean;
@@ -168,26 +224,35 @@ export interface CampaignInfluencer {
   brandReadyToStart?: boolean;
   influencerReadyToStart?: boolean;
 
-  // Checkpoint 2: Content Draft
+  // Content review
+  contentUrl?: string;
   draftSubmitted?: boolean;
   draftUrl?: string;
 
-  // Checkpoint 3: Revisions
+  // Revisions
   revisionCount?: number;
+  revisionNote?: string;
   currentDraftUrl?: string;
   brandApprovedDraft?: boolean;
   influencerApprovedDraft?: boolean;
 
-  // Checkpoint 4: Published
+  // Published
   publishedUrl?: string;
   metricsDelivered?: boolean;
   targetMetricsReached?: boolean;
 
-  // Payment tracking
+  // Payment tracking (new 50/50 model)
+  advancePaid?: boolean;    // 50% at IN_PROGRESS
+  finalPaymentPaid?: boolean; // 50% at COMPLETED
+
+  // Legacy payment tracking (kept for backward compatibility)
   payment25Sent?: boolean;
   payment50Sent?: boolean;
   payment75Sent?: boolean;
   payment100Sent?: boolean;
+
+  // Dispute
+  disputeReason?: string;
 }
 
 // Minimum market rates for pricing models

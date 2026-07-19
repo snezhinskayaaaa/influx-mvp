@@ -28,6 +28,7 @@ import { CreateCampaignTab } from "./components/create-campaign-tab";
 import { ProfileTab } from "./components/profile-tab";
 import { SettingsTab } from "./components/settings-tab";
 import type { Tab, Campaign, Influencer, Notification, CampaignInfluencer } from "./components/types";
+import { COLLABORATION_STATUS_CONFIG } from "./components/types";
 
 export default function BrandDashboard() {
   const [activeTab, setActiveTab] = useState<Tab>("discover");
@@ -439,210 +440,222 @@ export default function BrandDashboard() {
 
           {selectedInfluencerDetails && (
             <div className="space-y-6 mt-4">
+              {/* Collaboration Status Badge */}
+              {selectedInfluencerDetails.collaborationStatus && (
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-medium">Status:</span>
+                  <Badge variant="outline" className={`text-xs ${COLLABORATION_STATUS_CONFIG[selectedInfluencerDetails.collaborationStatus]?.badgeClass || ''}`}>
+                    {COLLABORATION_STATUS_CONFIG[selectedInfluencerDetails.collaborationStatus]?.label || selectedInfluencerDetails.collaborationStatus}
+                  </Badge>
+                </div>
+              )}
+
               {/* Progress bar */}
               <div className="space-y-2">
                 <div className="flex items-center justify-between text-sm">
                   <span className="font-medium">Overall Progress</span>
                   <span className="text-muted-foreground">
-                    Stage {selectedInfluencerDetails.timelineStage}/4
+                    Stage {selectedInfluencerDetails.timelineStage || 1}/6
                   </span>
                 </div>
                 <div className="h-2 bg-muted rounded-full overflow-hidden">
                   <div
                     className="h-full bg-gradient-to-r from-primary to-secondary transition-all duration-500"
-                    style={{ width: `${((selectedInfluencerDetails.timelineStage || 1) / 4) * 100}%` }}
+                    style={{ width: `${((selectedInfluencerDetails.timelineStage || 1) / 6) * 100}%` }}
                   />
                 </div>
               </div>
 
-              {/* Stage 1: Discussion & Negotiation */}
+              {/* Stage 1: Agreement */}
               <div className={`rounded-xl border-2 p-5 ${(selectedInfluencerDetails.timelineStage || 1) >= 1 ? 'border-primary/50 bg-primary/5' : 'border-border bg-muted/20'}`}>
                 <div className="flex items-start gap-4 mb-4">
                   <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 ${(selectedInfluencerDetails.timelineStage || 1) >= 1 ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'}`}>
                     1
                   </div>
                   <div className="flex-1">
-                    <h3 className="font-semibold text-base mb-1">Discussion & Negotiation</h3>
-                    <p className="text-xs text-muted-foreground">Price agreement and metrics planning</p>
+                    <h3 className="font-semibold text-base mb-1">Agreement</h3>
+                    <p className="text-xs text-muted-foreground">Negotiation, price agreement, and terms</p>
                   </div>
                   {(selectedInfluencerDetails.timelineStage || 1) > 1 && (
                     <CheckCircle2 className="h-5 w-5 text-primary" />
                   )}
                 </div>
 
-                {selectedInfluencerDetails.proposedPrice && (
-                  <div className="space-y-2 text-sm pl-14">
+                <div className="space-y-2 text-sm pl-14">
+                  {selectedInfluencerDetails.proposedPrice != null && (
                     <div className="flex justify-between items-center p-2 rounded bg-background/50">
                       <span className="text-muted-foreground">Proposed Price:</span>
                       <span className="font-medium">${selectedInfluencerDetails.proposedPrice} ({selectedInfluencerDetails.proposedPricingModel})</span>
                     </div>
-                    {selectedInfluencerDetails.brandApprovedPrice !== undefined && (
-                      <div className="flex justify-between items-center p-2 rounded bg-background/50">
-                        <span className="text-muted-foreground">Price Status:</span>
-                        <Badge className={selectedInfluencerDetails.brandApprovedPrice ? "bg-primary/10 text-primary" : "bg-amber-500/10 text-amber-600"}>
-                          {selectedInfluencerDetails.brandApprovedPrice ? "Approved" : "Pending"}
-                        </Badge>
-                      </div>
-                    )}
-                    {selectedInfluencerDetails.targetMetrics && (
-                      <div className="flex justify-between items-center p-2 rounded bg-background/50">
-                        <span className="text-muted-foreground">Target Metrics:</span>
-                        <span className="font-medium">
-                          {Object.entries(selectedInfluencerDetails.targetMetrics).map(([key, value]) =>
-                            `${value.toLocaleString()} ${key}`
-                          ).join(', ')}
-                        </span>
-                      </div>
-                    )}
-                  </div>
-                )}
+                  )}
+                  {selectedInfluencerDetails.agreedPrice != null && (
+                    <div className="flex justify-between items-center p-2 rounded bg-background/50">
+                      <span className="text-muted-foreground">Agreed Price:</span>
+                      <span className="font-medium text-primary">${selectedInfluencerDetails.agreedPrice.toFixed(2)}</span>
+                    </div>
+                  )}
+                  {selectedInfluencerDetails.targetMetrics && (
+                    <div className="flex justify-between items-center p-2 rounded bg-background/50">
+                      <span className="text-muted-foreground">Target Metrics:</span>
+                      <span className="font-medium">
+                        {Object.entries(selectedInfluencerDetails.targetMetrics).map(([key, value]) =>
+                          `${value.toLocaleString()} ${key}`
+                        ).join(', ')}
+                      </span>
+                    </div>
+                  )}
+                </div>
               </div>
 
-              {/* Stage 2: Content Draft */}
-              <div className={`rounded-xl border-2 p-5 ${(selectedInfluencerDetails.timelineStage || 1) >= 2 ? 'border-primary/50 bg-primary/5' : 'border-border bg-muted/20 opacity-60'}`}>
+              {/* Stage 2: Advance Paid */}
+              <div className={`rounded-xl border-2 p-5 ${(selectedInfluencerDetails.timelineStage || 1) >= 2 ? 'border-secondary/50 bg-secondary/5' : 'border-border bg-muted/20 opacity-60'}`}>
                 <div className="flex items-start gap-4 mb-4">
-                  <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 ${(selectedInfluencerDetails.timelineStage || 1) >= 2 ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'}`}>
+                  <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 ${(selectedInfluencerDetails.timelineStage || 1) >= 2 ? 'bg-secondary text-secondary-foreground' : 'bg-muted text-muted-foreground'}`}>
                     2
                   </div>
                   <div className="flex-1">
-                    <h3 className="font-semibold text-base mb-1">Content Draft</h3>
-                    <p className="text-xs text-muted-foreground">Influencer submits first draft</p>
+                    <h3 className="font-semibold text-base mb-1">Advance Paid</h3>
+                    <p className="text-xs text-muted-foreground">50% advance paid to creator, work begins</p>
                   </div>
                   {(selectedInfluencerDetails.timelineStage || 1) > 2 && (
-                    <CheckCircle2 className="h-5 w-5 text-primary" />
+                    <CheckCircle2 className="h-5 w-5 text-secondary" />
                   )}
                 </div>
 
-                {selectedInfluencerDetails.draftSubmitted && (
+                {(selectedInfluencerDetails.timelineStage || 1) >= 2 && selectedInfluencerDetails.agreedPrice != null && (
                   <div className="space-y-2 text-sm pl-14">
                     <div className="flex justify-between items-center p-2 rounded bg-background/50">
-                      <span className="text-muted-foreground">Draft Status:</span>
-                      <Badge className="bg-primary/10 text-primary">Submitted</Badge>
+                      <span className="text-muted-foreground">Advance (50%):</span>
+                      <span className="font-medium text-secondary">${(selectedInfluencerDetails.agreedPrice / 2).toFixed(2)}</span>
                     </div>
-                    {selectedInfluencerDetails.draftUrl && (
-                      <div className="p-2 rounded bg-background/50">
-                        <a href={selectedInfluencerDetails.draftUrl} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline text-sm">
-                          View Draft →
-                        </a>
-                      </div>
-                    )}
+                    <div className="flex justify-between items-center p-2 rounded bg-background/50">
+                      <span className="text-muted-foreground">Status:</span>
+                      <Badge className={selectedInfluencerDetails.advancePaid ? "bg-success/10 text-success" : "bg-amber-500/10 text-amber-600"}>
+                        {selectedInfluencerDetails.advancePaid ? "Paid" : "Pending"}
+                      </Badge>
+                    </div>
                   </div>
                 )}
               </div>
 
-              {/* Stage 3: Revisions */}
-              <div className={`rounded-xl border-2 p-5 ${(selectedInfluencerDetails.timelineStage || 1) >= 3 ? 'border-primary/50 bg-primary/5' : 'border-border bg-muted/20 opacity-60'}`}>
+              {/* Stage 3: Content Review */}
+              <div className={`rounded-xl border-2 p-5 ${(selectedInfluencerDetails.timelineStage || 1) >= 3 ? 'border-blue-500/50 bg-blue-500/5' : 'border-border bg-muted/20 opacity-60'}`}>
                 <div className="flex items-start gap-4 mb-4">
-                  <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 ${(selectedInfluencerDetails.timelineStage || 1) >= 3 ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'}`}>
+                  <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 ${(selectedInfluencerDetails.timelineStage || 1) >= 3 ? 'bg-blue-500 text-white' : 'bg-muted text-muted-foreground'}`}>
                     3
                   </div>
                   <div className="flex-1">
-                    <h3 className="font-semibold text-base mb-1">Revisions</h3>
-                    <p className="text-xs text-muted-foreground">Review and approve final content</p>
+                    <h3 className="font-semibold text-base mb-1">Content Review</h3>
+                    <p className="text-xs text-muted-foreground">Creator submits content for review</p>
                   </div>
                   {(selectedInfluencerDetails.timelineStage || 1) > 3 && (
-                    <CheckCircle2 className="h-5 w-5 text-primary" />
+                    <CheckCircle2 className="h-5 w-5 text-blue-500" />
                   )}
                 </div>
 
                 {(selectedInfluencerDetails.timelineStage || 1) >= 3 && (
                   <div className="space-y-2 text-sm pl-14">
+                    {selectedInfluencerDetails.contentUrl && (
+                      <div className="p-2 rounded bg-background/50">
+                        <a href={selectedInfluencerDetails.contentUrl} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline text-sm">
+                          View Submitted Content
+                        </a>
+                      </div>
+                    )}
                     <div className="flex justify-between items-center p-2 rounded bg-background/50">
                       <span className="text-muted-foreground">Revision Count:</span>
-                      <span className="font-medium">{selectedInfluencerDetails.revisionCount || 0}</span>
+                      <span className="font-medium">{selectedInfluencerDetails.revisionCount || 0}/3</span>
                     </div>
-                    {selectedInfluencerDetails.brandApprovedDraft !== undefined && (
-                      <div className="flex justify-between items-center p-2 rounded bg-background/50">
-                        <span className="text-muted-foreground">Approval Status:</span>
-                        <Badge className={selectedInfluencerDetails.brandApprovedDraft ? "bg-primary/10 text-primary" : "bg-amber-500/10 text-amber-600"}>
-                          {selectedInfluencerDetails.brandApprovedDraft ? "Approved" : "Pending Review"}
-                        </Badge>
+                    {selectedInfluencerDetails.revisionNote && (
+                      <div className="p-2 rounded bg-amber-500/5 border border-amber-500/20">
+                        <span className="text-xs text-muted-foreground">Last revision note:</span>
+                        <p className="text-sm mt-1">{selectedInfluencerDetails.revisionNote}</p>
                       </div>
                     )}
                   </div>
                 )}
               </div>
 
-              {/* Stage 4: Published */}
-              <div className={`rounded-xl border-2 p-5 ${(selectedInfluencerDetails.timelineStage || 1) >= 4 ? 'border-primary/50 bg-primary/5' : 'border-border bg-muted/20 opacity-60'}`}>
+              {/* Stage 4: Publishing */}
+              <div className={`rounded-xl border-2 p-5 ${(selectedInfluencerDetails.timelineStage || 1) >= 4 ? 'border-purple-500/50 bg-purple-500/5' : 'border-border bg-muted/20 opacity-60'}`}>
                 <div className="flex items-start gap-4 mb-4">
-                  <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 ${(selectedInfluencerDetails.timelineStage || 1) >= 4 ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'}`}>
+                  <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 ${(selectedInfluencerDetails.timelineStage || 1) >= 4 ? 'bg-purple-500 text-white' : 'bg-muted text-muted-foreground'}`}>
                     4
                   </div>
                   <div className="flex-1">
-                    <h3 className="font-semibold text-base mb-1">Published</h3>
-                    <p className="text-xs text-muted-foreground">Content live and tracking metrics</p>
+                    <h3 className="font-semibold text-base mb-1">Publishing</h3>
+                    <p className="text-xs text-muted-foreground">Content approved, creator publishes to platform</p>
                   </div>
-                  {(selectedInfluencerDetails.timelineStage || 1) >= 4 && selectedInfluencerDetails.targetMetricsReached && (
-                    <CheckCircle2 className="h-5 w-5 text-primary" />
+                  {(selectedInfluencerDetails.timelineStage || 1) > 4 && (
+                    <CheckCircle2 className="h-5 w-5 text-purple-500" />
+                  )}
+                </div>
+              </div>
+
+              {/* Stage 5: Delivered */}
+              <div className={`rounded-xl border-2 p-5 ${(selectedInfluencerDetails.timelineStage || 1) >= 5 ? 'border-green-500/50 bg-green-500/5' : 'border-border bg-muted/20 opacity-60'}`}>
+                <div className="flex items-start gap-4 mb-4">
+                  <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 ${(selectedInfluencerDetails.timelineStage || 1) >= 5 ? 'bg-green-500 text-white' : 'bg-muted text-muted-foreground'}`}>
+                    5
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="font-semibold text-base mb-1">Delivered</h3>
+                    <p className="text-xs text-muted-foreground">Content published and awaiting brand approval</p>
+                  </div>
+                  {(selectedInfluencerDetails.timelineStage || 1) > 5 && (
+                    <CheckCircle2 className="h-5 w-5 text-green-500" />
                   )}
                 </div>
 
-                {(selectedInfluencerDetails.timelineStage || 1) >= 4 && (
+                {(selectedInfluencerDetails.timelineStage || 1) >= 5 && (
                   <div className="space-y-2 text-sm pl-14">
                     {selectedInfluencerDetails.publishedUrl && (
                       <div className="p-2 rounded bg-background/50">
-                        <a href={selectedInfluencerDetails.publishedUrl} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline text-sm">
-                          View Published Content →
+                        <a href={selectedInfluencerDetails.publishedUrl} target="_blank" rel="noopener noreferrer" className="text-green-500 hover:underline text-sm">
+                          View Published Content
                         </a>
                       </div>
                     )}
-                    {selectedInfluencerDetails.metricsDelivered !== undefined && (
-                      <div className="flex justify-between items-center p-2 rounded bg-background/50">
-                        <span className="text-muted-foreground">Metrics Delivered:</span>
-                        <Badge className={selectedInfluencerDetails.metricsDelivered ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground"}>
-                          {selectedInfluencerDetails.metricsDelivered ? "Yes" : "Pending"}
-                        </Badge>
+                  </div>
+                )}
+              </div>
+
+              {/* Stage 6: Completed */}
+              <div className={`rounded-xl border-2 p-5 ${(selectedInfluencerDetails.timelineStage || 1) >= 6 ? 'border-success/50 bg-success/5' : 'border-border bg-muted/20 opacity-60'}`}>
+                <div className="flex items-start gap-4 mb-4">
+                  <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 ${(selectedInfluencerDetails.timelineStage || 1) >= 6 ? 'bg-success text-success-foreground' : 'bg-muted text-muted-foreground'}`}>
+                    6
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="font-semibold text-base mb-1">Completed</h3>
+                    <p className="text-xs text-muted-foreground">Final payment released, collaboration complete</p>
+                  </div>
+                  {(selectedInfluencerDetails.timelineStage || 1) >= 6 && (
+                    <CheckCircle2 className="h-5 w-5 text-success" />
+                  )}
+                </div>
+
+                {(selectedInfluencerDetails.timelineStage || 1) >= 6 && selectedInfluencerDetails.agreedPrice != null && (
+                  <div className="space-y-2 text-sm pl-14">
+                    {/* Payment Progress (50/50 model) */}
+                    <div className="p-3 rounded-lg bg-background/80 border">
+                      <div className="font-medium text-sm mb-2">Payment Summary</div>
+                      <div className="grid grid-cols-2 gap-2">
+                        <div className={`text-center p-2 rounded ${selectedInfluencerDetails.advancePaid ? 'bg-primary/10 text-primary' : 'bg-muted text-muted-foreground'}`}>
+                          <div className="text-xs font-medium">50% Advance</div>
+                          <div className="text-sm font-bold">${(selectedInfluencerDetails.agreedPrice / 2).toFixed(2)}</div>
+                          <div className="text-[10px]">{selectedInfluencerDetails.advancePaid ? 'Paid' : 'Pending'}</div>
+                        </div>
+                        <div className={`text-center p-2 rounded ${selectedInfluencerDetails.finalPaymentPaid ? 'bg-primary/10 text-primary' : 'bg-muted text-muted-foreground'}`}>
+                          <div className="text-xs font-medium">50% Final</div>
+                          <div className="text-sm font-bold">${(selectedInfluencerDetails.agreedPrice / 2).toFixed(2)}</div>
+                          <div className="text-[10px]">{selectedInfluencerDetails.finalPaymentPaid ? 'Paid' : 'Pending'}</div>
+                        </div>
                       </div>
-                    )}
-
-                    {/* Payment Progress */}
-                    <div className="mt-4 p-3 rounded-lg bg-background/80 border">
-                      <div className="font-medium text-sm mb-1">Payment Progress</div>
-                      {(() => {
-                        const price = selectedInfluencerDetails.proposedPrice || 0;
-                        const model = selectedInfluencerDetails.proposedPricingModel;
-                        const metrics = selectedInfluencerDetails.targetMetrics || {};
-                        let estimatedCost = 0;
-
-                        if (model === "CPM" && metrics.views) {
-                          estimatedCost = (price / 1000) * metrics.views;
-                        } else if (model === "CPC" && metrics.clicks) {
-                          estimatedCost = price * metrics.clicks;
-                        } else if (model === "CPE" && metrics.engagements) {
-                          estimatedCost = price * metrics.engagements;
-                        }
-
-                        return (
-                          <>
-                            <div className="text-xs text-muted-foreground mb-3">
-                              Total: ${estimatedCost.toFixed(2)}
-                            </div>
-                            <div className="grid grid-cols-4 gap-2">
-                              <div className={`text-center p-2 rounded ${selectedInfluencerDetails.payment25Sent ? 'bg-primary/10 text-primary' : 'bg-muted text-muted-foreground'}`}>
-                                <div className="text-xs font-medium">25%</div>
-                                <div className="text-[10px] font-medium">${(estimatedCost * 0.25).toFixed(2)}</div>
-                                <div className="text-[10px]">{selectedInfluencerDetails.payment25Sent ? '✓ Sent' : 'Pending'}</div>
-                              </div>
-                              <div className={`text-center p-2 rounded ${selectedInfluencerDetails.payment50Sent ? 'bg-primary/10 text-primary' : 'bg-muted text-muted-foreground'}`}>
-                                <div className="text-xs font-medium">50%</div>
-                                <div className="text-[10px] font-medium">${(estimatedCost * 0.50).toFixed(2)}</div>
-                                <div className="text-[10px]">{selectedInfluencerDetails.payment50Sent ? '✓ Sent' : 'Pending'}</div>
-                              </div>
-                              <div className={`text-center p-2 rounded ${selectedInfluencerDetails.payment75Sent ? 'bg-primary/10 text-primary' : 'bg-muted text-muted-foreground'}`}>
-                                <div className="text-xs font-medium">75%</div>
-                                <div className="text-[10px] font-medium">${(estimatedCost * 0.75).toFixed(2)}</div>
-                                <div className="text-[10px]">{selectedInfluencerDetails.payment75Sent ? '✓ Sent' : 'Pending'}</div>
-                              </div>
-                              <div className={`text-center p-2 rounded ${selectedInfluencerDetails.payment100Sent ? 'bg-primary/10 text-primary' : 'bg-muted text-muted-foreground'}`}>
-                                <div className="text-xs font-medium">100%</div>
-                                <div className="text-[10px] font-medium">${(estimatedCost * 1.00).toFixed(2)}</div>
-                                <div className="text-[10px]">{selectedInfluencerDetails.payment100Sent ? '✓ Sent' : 'Pending'}</div>
-                              </div>
-                            </div>
-                          </>
-                        );
-                      })()}
+                      <div className="mt-2 p-2 rounded bg-success/5 border border-success/20 text-center">
+                        <div className="text-xs text-muted-foreground">Total</div>
+                        <div className="text-lg font-bold text-success">${selectedInfluencerDetails.agreedPrice.toFixed(2)}</div>
+                      </div>
                     </div>
                   </div>
                 )}

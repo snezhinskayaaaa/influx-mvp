@@ -59,6 +59,20 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 
+type CampaignStatus =
+  | "open"
+  | "applied"
+  | "approved"
+  | "active"
+  | "completed"
+  | "content_review"
+  | "revision"
+  | "publishing"
+  | "delivered"
+  | "disputed"
+  | "resolved"
+  | "cancelled";
+
 interface Campaign {
   id: number | string;
   title: string;
@@ -71,7 +85,7 @@ interface Campaign {
   requirements: string[];
   platforms: string[];
   deadline: string;
-  status: "open" | "applied" | "approved" | "active" | "completed";
+  status: CampaignStatus;
   startDate?: string;
   endDate?: string;
   goal?: string;
@@ -97,6 +111,11 @@ interface Campaign {
     comments?: number;
     shares?: number;
   };
+  // Collaboration lifecycle fields
+  revisionNote?: string;
+  revisionCount?: number;
+  contentUrl?: string;
+  disputeReason?: string;
 }
 
 
@@ -124,6 +143,7 @@ export default function InfluencerDashboard() {
   const [applyLoading, setApplyLoading] = useState(false);
   const [applyError, setApplyError] = useState("");
   const [applySuccess, setApplySuccess] = useState("");
+  const [submitLoading, setSubmitLoading] = useState(false);
 
   const [discoverCampaigns, setDiscoverCampaigns] = useState<Campaign[]>([]);
   const [myCampaigns, setMyCampaigns] = useState<Campaign[]>([]);
@@ -212,13 +232,19 @@ export default function InfluencerDashboard() {
         if (collabRes.ok) {
           const data = await collabRes.json();
           if (data.collaborations && data.collaborations.length > 0) {
-            const statusMap: Record<string, Campaign['status']> = {
+            const statusMap: Record<string, CampaignStatus> = {
               APPLIED: 'applied',
               NEGOTIATING: 'applied',
               AGREED: 'approved',
               IN_PROGRESS: 'active',
+              CONTENT_REVIEW: 'content_review',
+              REVISION: 'revision',
+              PUBLISHING: 'publishing',
+              DELIVERED: 'delivered',
               COMPLETED: 'completed',
-              CANCELLED: 'completed',
+              CANCELLED: 'cancelled',
+              DISPUTED: 'disputed',
+              RESOLVED: 'resolved',
             };
             const mapped: Campaign[] = data.collaborations.map((collab: Record<string, unknown>) => {
               const campaign = collab.campaign as Record<string, unknown>;
@@ -239,6 +265,11 @@ export default function InfluencerDashboard() {
                 platforms: [],
                 deadline: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
                 status: statusMap[(collab.status as string)] || 'applied',
+                revisionNote: (collab.revisionNote as string) || undefined,
+                revisionCount: (collab.revisionCount as number) || 0,
+                contentUrl: (collab.contentUrl as string) || undefined,
+                publishedUrl: (collab.publishedUrl as string) || undefined,
+                disputeReason: (collab.disputeReason as string) || undefined,
               };
             });
             setMyCampaigns(mapped);
@@ -385,10 +416,149 @@ export default function InfluencerDashboard() {
         return "bg-green-500/10 text-green-600 border-green-500/30";
       case "active":
         return "bg-primary/10 text-primary border-primary/30";
+      case "content_review":
+        return "bg-blue-500/10 text-blue-600 border-blue-500/30";
+      case "revision":
+        return "bg-orange-500/10 text-orange-600 border-orange-500/30";
+      case "publishing":
+        return "bg-purple-500/10 text-purple-600 border-purple-500/30";
+      case "delivered":
+        return "bg-green-500/10 text-green-600 border-green-500/30";
       case "completed":
+        return "bg-gray-500/10 text-gray-600 border-gray-500/30";
+      case "disputed":
+        return "bg-red-500/10 text-red-600 border-red-500/30";
+      case "resolved":
+        return "bg-gray-500/10 text-gray-600 border-gray-500/30";
+      case "cancelled":
         return "bg-gray-500/10 text-gray-600 border-gray-500/30";
       default:
         return "";
+    }
+  };
+
+  const getStatusLabel = (status: CampaignStatus): string => {
+    switch (status) {
+      case "open": return "Open";
+      case "applied": return "Pending";
+      case "approved": return "Approved";
+      case "active": return "In Progress";
+      case "content_review": return "Under Review";
+      case "revision": return "Revision Requested";
+      case "publishing": return "Ready to Publish";
+      case "delivered": return "Delivered";
+      case "completed": return "Completed";
+      case "disputed": return "Disputed";
+      case "resolved": return "Resolved";
+      case "cancelled": return "Cancelled";
+      default: return status;
+    }
+  };
+
+  const getStatusDotColor = (status: CampaignStatus): string => {
+    switch (status) {
+      case "active": return "bg-success";
+      case "applied": return "bg-yellow-600";
+      case "approved": return "bg-primary";
+      case "content_review": return "bg-blue-600";
+      case "revision": return "bg-orange-600";
+      case "publishing": return "bg-purple-600";
+      case "delivered": return "bg-green-600";
+      case "disputed": return "bg-red-600";
+      case "resolved": return "bg-gray-500";
+      case "cancelled": return "bg-gray-500";
+      case "completed": return "bg-gray-500";
+      default: return "bg-muted-foreground";
+    }
+  };
+
+  /** Helper to refresh collaborations list after a submit action */
+  const refreshCollaborations = async () => {
+    try {
+      const collabRes = await fetch("/api/collaborations");
+      if (collabRes.ok) {
+        const collabData = await collabRes.json();
+        if (collabData.collaborations && collabData.collaborations.length > 0) {
+          const statusMap: Record<string, CampaignStatus> = {
+            APPLIED: "applied",
+            NEGOTIATING: "applied",
+            AGREED: "approved",
+            IN_PROGRESS: "active",
+            CONTENT_REVIEW: "content_review",
+            REVISION: "revision",
+            PUBLISHING: "publishing",
+            DELIVERED: "delivered",
+            COMPLETED: "completed",
+            CANCELLED: "cancelled",
+            DISPUTED: "disputed",
+            RESOLVED: "resolved",
+          };
+          const mapped: Campaign[] = collabData.collaborations.map((collab: Record<string, unknown>) => {
+            const campaign = collab.campaign as Record<string, unknown>;
+            const brand = campaign?.brand as Record<string, unknown>;
+            const agreedPrice = collab.agreedPrice as number | null;
+            const colProposedPrice = collab.proposedPrice as number;
+            const budgetCents = agreedPrice || colProposedPrice || 0;
+            return {
+              id: collab.id,
+              title: (campaign?.title as string) || "",
+              brand: (brand?.companyName as string) || "Unknown Brand",
+              brandAvatar: "🏢",
+              category: (brand?.industry as string) || "General",
+              budget: Math.round(budgetCents / 100),
+              pricingModel: "CPM" as const,
+              description: (campaign?.description as string) || "",
+              requirements: (collab.deliverables as string[]) || [],
+              platforms: [],
+              deadline: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
+              status: statusMap[(collab.status as string)] || "applied",
+              revisionNote: (collab.revisionNote as string) || undefined,
+              revisionCount: (collab.revisionCount as number) || 0,
+              contentUrl: (collab.contentUrl as string) || undefined,
+              publishedUrl: (collab.publishedUrl as string) || undefined,
+              disputeReason: (collab.disputeReason as string) || undefined,
+            };
+          });
+          setMyCampaigns(mapped);
+          // Update the selected campaign details if one is selected
+          if (selectedCampaignDetails) {
+            const updated = mapped.find(c => c.id === selectedCampaignDetails.id);
+            if (updated) {
+              setSelectedCampaignDetails(updated);
+            }
+          }
+        }
+      }
+    } catch (error) {
+      console.error("Failed to refresh collaborations:", error);
+    }
+  };
+
+  /** Handle content/published URL submission */
+  const handleSubmitContent = async (collaborationId: string | number, payload: { contentUrl?: string; publishedUrl?: string }) => {
+    setSubmitLoading(true);
+    try {
+      const res = await fetch(`/api/collaborations/${collaborationId}/submit`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        showToast(data.error || "Failed to submit", "error");
+        return;
+      }
+      showToast(
+        payload.publishedUrl ? "Published link submitted!" : "Content submitted for review!",
+        "success"
+      );
+      setContentLinkInput("");
+      setPublishedLinkInput("");
+      await refreshCollaborations();
+    } catch {
+      showToast("Something went wrong. Please try again.", "error");
+    } finally {
+      setSubmitLoading(false);
     }
   };
 
@@ -424,13 +594,19 @@ export default function InfluencerDashboard() {
       if (collabRes.ok) {
         const collabData = await collabRes.json();
         if (collabData.collaborations && collabData.collaborations.length > 0) {
-          const statusMap: Record<string, Campaign["status"]> = {
+          const statusMap: Record<string, CampaignStatus> = {
             APPLIED: "applied",
             NEGOTIATING: "applied",
             AGREED: "approved",
             IN_PROGRESS: "active",
+            CONTENT_REVIEW: "content_review",
+            REVISION: "revision",
+            PUBLISHING: "publishing",
+            DELIVERED: "delivered",
             COMPLETED: "completed",
-            CANCELLED: "completed",
+            CANCELLED: "cancelled",
+            DISPUTED: "disputed",
+            RESOLVED: "resolved",
           };
           const mapped: Campaign[] = collabData.collaborations.map((collab: Record<string, unknown>) => {
             const campaign = collab.campaign as Record<string, unknown>;
@@ -451,6 +627,11 @@ export default function InfluencerDashboard() {
               platforms: [],
               deadline: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
               status: statusMap[(collab.status as string)] || "applied",
+              revisionNote: (collab.revisionNote as string) || undefined,
+              revisionCount: (collab.revisionCount as number) || 0,
+              contentUrl: (collab.contentUrl as string) || undefined,
+              publishedUrl: (collab.publishedUrl as string) || undefined,
+              disputeReason: (collab.disputeReason as string) || undefined,
             };
           });
           setMyCampaigns(mapped);
@@ -806,10 +987,7 @@ export default function InfluencerDashboard() {
                               </div>
                             </div>
                             <Badge className={`${getStatusColor(campaign.status)} shrink-0 px-3 py-1 border`}>
-                              {campaign.status === "open" && "Open"}
-                              {campaign.status === "applied" && "Applied"}
-                              {campaign.status === "approved" && "Approved"}
-                              {campaign.status === "active" && "Active"}
+                              {getStatusLabel(campaign.status)}
                             </Badge>
                           </div>
 
@@ -920,31 +1098,12 @@ export default function InfluencerDashboard() {
                       <div className="flex items-center gap-2">
                         <Badge
                           variant={selectedCampaignDetails.status === "active" ? "default" : "secondary"}
-                          className={
-                            selectedCampaignDetails.status === "active"
-                              ? "bg-success/10 text-success border-success/20"
-                              : selectedCampaignDetails.status === "applied"
-                              ? "bg-yellow-500/10 text-yellow-600 border-yellow-500/20"
-                              : selectedCampaignDetails.status === "approved"
-                              ? "bg-primary/10 text-primary border-primary/20"
-                              : "bg-muted text-muted-foreground border-border"
-                          }
+                          className={`${getStatusColor(selectedCampaignDetails.status)} border`}
                         >
                           <div
-                            className={`w-1.5 h-1.5 rounded-full mr-1.5 ${
-                              selectedCampaignDetails.status === "active"
-                                ? "bg-success"
-                                : selectedCampaignDetails.status === "applied"
-                                ? "bg-yellow-600"
-                                : selectedCampaignDetails.status === "approved"
-                                ? "bg-primary"
-                                : "bg-muted-foreground"
-                            }`}
+                            className={`w-1.5 h-1.5 rounded-full mr-1.5 ${getStatusDotColor(selectedCampaignDetails.status)}`}
                           />
-                          {selectedCampaignDetails.status === "applied" && "Pending"}
-                          {selectedCampaignDetails.status === "approved" && "Approved"}
-                          {selectedCampaignDetails.status === "active" && "Active"}
-                          {selectedCampaignDetails.status === "completed" && "Completed"}
+                          {getStatusLabel(selectedCampaignDetails.status)}
                         </Badge>
                         <Badge variant="outline" className="bg-muted text-foreground border-border">
                           ${selectedCampaignDetails.budget.toLocaleString()} ({selectedCampaignDetails.pricingModel})
@@ -1227,10 +1386,10 @@ export default function InfluencerDashboard() {
                                 <Wallet className="h-5 w-5 text-primary" />
                                 <div>
                                   <p className="text-sm font-medium text-primary">
-                                    Initial Payment Secured (25%)
+                                    Advance Payment Secured (50%)
                                   </p>
                                   <p className="text-xs text-muted-foreground">
-                                    ${(selectedCampaignDetails.budget * 0.25).toLocaleString()} held in escrow
+                                    ${(selectedCampaignDetails.budget * 0.5).toLocaleString()} held in escrow
                                   </p>
                                 </div>
                               </div>
@@ -1244,9 +1403,7 @@ export default function InfluencerDashboard() {
                         <div className="flex flex-col items-center">
                           <div
                             className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold ${
-                              selectedCampaignDetails.status === "active" ||
-                              selectedCampaignDetails.status === "completed" ||
-                              selectedCampaignDetails.contentApproved
+                              ["active", "content_review", "revision", "publishing", "delivered", "completed", "resolved"].includes(selectedCampaignDetails.status)
                                 ? "bg-secondary text-secondary-foreground"
                                 : "bg-muted text-muted-foreground"
                             }`}
@@ -1261,20 +1418,28 @@ export default function InfluencerDashboard() {
                             Create content and submit links for brand review
                           </p>
 
-                          {selectedCampaignDetails.status === "applied" ? (
+                          {selectedCampaignDetails.status === "applied" || selectedCampaignDetails.status === "approved" ? (
                             <div className="text-center py-8 bg-muted/30 rounded-lg border border-dashed border-border">
                               <Clock className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
                               <p className="text-sm text-muted-foreground">
                                 Complete negotiation stage first
                               </p>
                             </div>
-                          ) : !selectedCampaignDetails.contentApproved ? (
+                          ) : selectedCampaignDetails.status === "active" ? (
                             <div className="space-y-4">
-                              {/* Content Link Input */}
+                              <div className="flex items-center gap-2 px-4 py-3 rounded-lg bg-primary/10 border border-primary/20">
+                                <Wallet className="h-5 w-5 text-primary" />
+                                <div>
+                                  <p className="text-sm font-medium text-primary">50% advance received</p>
+                                  <p className="text-xs text-muted-foreground">
+                                    Submit your content draft for review.
+                                  </p>
+                                </div>
+                              </div>
                               <div className="space-y-2">
-                                <Label className="text-sm font-medium">Submit Content Link</Label>
+                                <Label className="text-sm font-medium">Submit Content</Label>
                                 <p className="text-xs text-muted-foreground mb-2">
-                                  Share a link to your content (Google Drive, Dropbox, etc.)
+                                  Share a link to your content draft (Google Drive, Dropbox, etc.)
                                 </p>
                                 <div className="flex gap-2">
                                   <div className="relative flex-1">
@@ -1286,79 +1451,107 @@ export default function InfluencerDashboard() {
                                       className="pl-10 h-11"
                                     />
                                   </div>
-                                  <Button className="bg-gradient-to-r from-primary to-secondary">
+                                  <Button
+                                    className="bg-gradient-to-r from-primary to-secondary"
+                                    disabled={submitLoading || !contentLinkInput.trim()}
+                                    onClick={() => handleSubmitContent(selectedCampaignDetails.id, { contentUrl: contentLinkInput.trim() })}
+                                  >
                                     <Upload className="h-4 w-4 mr-2" />
-                                    Submit
+                                    {submitLoading ? "Submitting..." : "Submit Content"}
                                   </Button>
                                 </div>
                               </div>
-
-                              {selectedCampaignDetails.currentContentUrl && (
-                                <div className="space-y-3">
-                                  <div className="bg-background rounded-lg p-4 border border-border">
-                                    <div className="flex items-center gap-2 mb-2">
-                                      <LinkIcon className="h-4 w-4 text-primary" />
-                                      <span className="text-sm font-medium">Submitted Content</span>
-                                    </div>
-                                    <a
-                                      href={selectedCampaignDetails.currentContentUrl}
-                                      target="_blank"
-                                      rel="noopener noreferrer"
-                                      className="text-sm text-primary hover:underline break-all flex items-center gap-1"
-                                    >
-                                      {selectedCampaignDetails.currentContentUrl}
-                                      <ExternalLink className="h-3 w-3" />
-                                    </a>
+                            </div>
+                          ) : selectedCampaignDetails.status === "content_review" ? (
+                            <div className="space-y-3">
+                              <div className="flex items-center gap-2 px-4 py-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
+                                <Clock className="h-5 w-5 text-blue-600" />
+                                <div>
+                                  <p className="text-sm font-medium text-blue-600">Content submitted. Waiting for brand review.</p>
+                                </div>
+                              </div>
+                              {selectedCampaignDetails.contentUrl && (
+                                <div className="bg-background rounded-lg p-4 border border-border">
+                                  <div className="flex items-center gap-2 mb-2">
+                                    <LinkIcon className="h-4 w-4 text-primary" />
+                                    <span className="text-sm font-medium">Submitted Content</span>
                                   </div>
-
-                                  <div className="flex items-center gap-2 px-4 py-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
-                                    <Clock className="h-5 w-5 text-yellow-600" />
-                                    <div>
-                                      <p className="text-sm font-medium text-yellow-600">
-                                        Waiting for Brand Review
-                                      </p>
-                                      <p className="text-xs text-muted-foreground">
-                                        Brand will review and provide feedback
-                                      </p>
-                                    </div>
-                                  </div>
+                                  <a
+                                    href={selectedCampaignDetails.contentUrl}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="text-sm text-primary hover:underline break-all flex items-center gap-1"
+                                  >
+                                    {selectedCampaignDetails.contentUrl}
+                                    <ExternalLink className="h-3 w-3" />
+                                  </a>
                                 </div>
                               )}
                             </div>
-                          ) : (
-                            <div className="space-y-3">
-                              <div className="flex items-center gap-2 px-4 py-3 rounded-lg bg-success/10 border border-success/20">
-                                <CheckCircle2 className="h-5 w-5 text-success" />
-                                <div className="flex-1">
-                                  <p className="text-sm font-medium text-success">Content Approved</p>
-                                  <p className="text-xs text-muted-foreground">
-                                    Brand has approved your content
-                                  </p>
+                          ) : selectedCampaignDetails.status === "revision" ? (
+                            <div className="space-y-4">
+                              {selectedCampaignDetails.revisionNote && (
+                                <div className="rounded-lg p-4 border border-orange-500/20 bg-orange-500/5">
+                                  <p className="text-xs font-semibold text-orange-700 uppercase tracking-wide mb-1">Brand&apos;s feedback:</p>
+                                  <p className="text-sm text-foreground whitespace-pre-wrap">{selectedCampaignDetails.revisionNote}</p>
+                                </div>
+                              )}
+                              <div className="flex items-center gap-2 px-4 py-3 rounded-lg bg-orange-500/10 border border-orange-500/20">
+                                <AlertCircle className="h-5 w-5 text-orange-600" />
+                                <p className="text-sm font-medium text-orange-600">
+                                  Revision {selectedCampaignDetails.revisionCount ?? 0}/3
+                                </p>
+                              </div>
+                              <div className="space-y-2">
+                                <Label className="text-sm font-medium">Submit Revised Content</Label>
+                                <div className="flex gap-2">
+                                  <div className="relative flex-1">
+                                    <LinkIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                                    <Input
+                                      placeholder="https://drive.google.com/..."
+                                      value={contentLinkInput}
+                                      onChange={(e) => setContentLinkInput(e.target.value)}
+                                      className="pl-10 h-11"
+                                    />
+                                  </div>
+                                  <Button
+                                    className="bg-gradient-to-r from-primary to-secondary"
+                                    disabled={submitLoading || !contentLinkInput.trim()}
+                                    onClick={() => handleSubmitContent(selectedCampaignDetails.id, { contentUrl: contentLinkInput.trim() })}
+                                  >
+                                    <Upload className="h-4 w-4 mr-2" />
+                                    {submitLoading ? "Submitting..." : "Submit Revised Content"}
+                                  </Button>
                                 </div>
                               </div>
-
-                              <div className="flex items-center gap-2 px-4 py-3 rounded-lg bg-primary/10 border border-primary/20">
-                                <Wallet className="h-5 w-5 text-primary" />
-                                <div>
-                                  <p className="text-sm font-medium text-primary">
-                                    Content Approval Payment (25%)
-                                  </p>
-                                  <p className="text-xs text-muted-foreground">
-                                    ${(selectedCampaignDetails.budget * 0.25).toLocaleString()} released
-                                  </p>
-                                </div>
+                            </div>
+                          ) : selectedCampaignDetails.status === "disputed" ? (
+                            <div className="flex items-center gap-2 px-4 py-3 rounded-lg bg-red-500/10 border border-red-500/20">
+                              <AlertCircle className="h-5 w-5 text-red-600" />
+                              <div>
+                                <p className="text-sm font-medium text-red-600">Under review by platform team. Remaining payment is held.</p>
+                              </div>
+                            </div>
+                          ) : (
+                            <div className="flex items-center gap-2 px-4 py-3 rounded-lg bg-success/10 border border-success/20">
+                              <CheckCircle2 className="h-5 w-5 text-success" />
+                              <div className="flex-1">
+                                <p className="text-sm font-medium text-success">Content Approved</p>
+                                <p className="text-xs text-muted-foreground">
+                                  Brand has approved your content
+                                </p>
                               </div>
                             </div>
                           )}
                         </div>
                       </div>
 
-                      {/* Stage 3: Publication & Metrics */}
+                      {/* Stage 3: Publication & Completion */}
                       <div className="flex gap-4">
                         <div className="flex flex-col items-center">
                           <div
                             className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold ${
-                              selectedCampaignDetails.publishedUrl
+                              ["publishing", "delivered", "completed", "resolved"].includes(selectedCampaignDetails.status)
                                 ? "bg-success text-success-foreground"
                                 : "bg-muted text-muted-foreground"
                             }`}
@@ -1367,12 +1560,12 @@ export default function InfluencerDashboard() {
                           </div>
                         </div>
                         <div className="flex-1">
-                          <h3 className="font-semibold mb-2">Publication & Metrics</h3>
+                          <h3 className="font-semibold mb-2">Publication & Completion</h3>
                           <p className="text-sm text-muted-foreground mb-3">
-                            Publish content and track performance metrics
+                            Publish content and receive final payment
                           </p>
 
-                          {!selectedCampaignDetails.contentApproved ? (
+                          {["applied", "approved", "active", "content_review", "revision"].includes(selectedCampaignDetails.status) ? (
                             <div className="text-center py-8 bg-muted/30 rounded-lg border border-dashed border-border">
                               <Clock className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
                               <p className="text-sm text-muted-foreground mb-1">
@@ -1382,13 +1575,18 @@ export default function InfluencerDashboard() {
                                 You can publish after brand approves your content
                               </p>
                             </div>
-                          ) : !selectedCampaignDetails.publishedUrl ? (
+                          ) : selectedCampaignDetails.status === "publishing" ? (
                             <div className="space-y-4">
-                              {/* Published Link Input */}
+                              <div className="flex items-center gap-2 px-4 py-3 rounded-lg bg-purple-500/10 border border-purple-500/20">
+                                <CheckCircle2 className="h-5 w-5 text-purple-600" />
+                                <div>
+                                  <p className="text-sm font-medium text-purple-600">Content approved! Publish it and share the link.</p>
+                                </div>
+                              </div>
                               <div className="space-y-2">
-                                <Label className="text-sm font-medium">Submit Published Content URL</Label>
+                                <Label className="text-sm font-medium">Submit Published Link</Label>
                                 <p className="text-xs text-muted-foreground mb-2">
-                                  Share the link to your published content
+                                  Share the link to your live published post
                                 </p>
                                 <div className="flex gap-2">
                                   <div className="relative flex-1">
@@ -1400,43 +1598,81 @@ export default function InfluencerDashboard() {
                                       className="pl-10 h-11"
                                     />
                                   </div>
-                                  <Button className="bg-gradient-to-r from-secondary to-primary">
+                                  <Button
+                                    className="bg-gradient-to-r from-secondary to-primary"
+                                    disabled={submitLoading || !publishedLinkInput.trim()}
+                                    onClick={() => handleSubmitContent(selectedCampaignDetails.id, { publishedUrl: publishedLinkInput.trim() })}
+                                  >
                                     <Rocket className="h-4 w-4 mr-2" />
-                                    Publish
+                                    {submitLoading ? "Submitting..." : "Submit Published Link"}
                                   </Button>
                                 </div>
                               </div>
-
                               <div className="flex items-center gap-2 px-4 py-3 rounded-lg bg-primary/10 border border-primary/20">
                                 <Wallet className="h-5 w-5 text-primary" />
                                 <div>
                                   <p className="text-sm font-medium text-primary">
-                                    Publication Payment (50%)
+                                    Final Payment (50%)
                                   </p>
                                   <p className="text-xs text-muted-foreground">
                                     ${(selectedCampaignDetails.budget * 0.5).toLocaleString()} will be released
-                                    upon publication
+                                    upon completion
                                   </p>
                                 </div>
                               </div>
                             </div>
-                          ) : (
+                          ) : selectedCampaignDetails.status === "delivered" ? (
                             <div className="space-y-3">
-                              <div className="bg-background rounded-lg p-4 border border-border">
-                                <div className="flex items-center gap-2 mb-2">
-                                  <Rocket className="h-4 w-4 text-success" />
-                                  <span className="text-sm font-medium">Published Content</span>
+                              <div className="flex items-center gap-2 px-4 py-3 rounded-lg bg-green-500/10 border border-green-500/20">
+                                <Clock className="h-5 w-5 text-green-600" />
+                                <div>
+                                  <p className="text-sm font-medium text-green-600">Waiting for brand approval. Auto-release in 7 days.</p>
                                 </div>
-                                <a
-                                  href={selectedCampaignDetails.publishedUrl}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="text-sm text-primary hover:underline break-all flex items-center gap-1"
-                                >
-                                  {selectedCampaignDetails.publishedUrl}
-                                  <ExternalLink className="h-3 w-3" />
-                                </a>
                               </div>
+                              {selectedCampaignDetails.publishedUrl && (
+                                <div className="bg-background rounded-lg p-4 border border-border">
+                                  <div className="flex items-center gap-2 mb-2">
+                                    <Rocket className="h-4 w-4 text-success" />
+                                    <span className="text-sm font-medium">Published Content</span>
+                                  </div>
+                                  <a
+                                    href={selectedCampaignDetails.publishedUrl}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="text-sm text-primary hover:underline break-all flex items-center gap-1"
+                                  >
+                                    {selectedCampaignDetails.publishedUrl}
+                                    <ExternalLink className="h-3 w-3" />
+                                  </a>
+                                </div>
+                              )}
+                            </div>
+                          ) : selectedCampaignDetails.status === "disputed" ? (
+                            <div className="flex items-center gap-2 px-4 py-3 rounded-lg bg-red-500/10 border border-red-500/20">
+                              <AlertCircle className="h-5 w-5 text-red-600" />
+                              <div>
+                                <p className="text-sm font-medium text-red-600">Under review by platform team. Remaining payment is held.</p>
+                              </div>
+                            </div>
+                          ) : (selectedCampaignDetails.status === "completed" || selectedCampaignDetails.status === "resolved") ? (
+                            <div className="space-y-3">
+                              {selectedCampaignDetails.publishedUrl && (
+                                <div className="bg-background rounded-lg p-4 border border-border">
+                                  <div className="flex items-center gap-2 mb-2">
+                                    <Rocket className="h-4 w-4 text-success" />
+                                    <span className="text-sm font-medium">Published Content</span>
+                                  </div>
+                                  <a
+                                    href={selectedCampaignDetails.publishedUrl}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="text-sm text-primary hover:underline break-all flex items-center gap-1"
+                                  >
+                                    {selectedCampaignDetails.publishedUrl}
+                                    <ExternalLink className="h-3 w-3" />
+                                  </a>
+                                </div>
+                              )}
 
                               {/* Public Metrics */}
                               {selectedCampaignDetails.publicMetrics && (
@@ -1444,7 +1680,7 @@ export default function InfluencerDashboard() {
                                   <div className="flex items-center justify-between mb-3">
                                     <h4 className="text-sm font-semibold">Performance Metrics</h4>
                                     <Badge variant="outline" className="text-xs">
-                                      Live
+                                      Final
                                     </Badge>
                                   </div>
                                   <div className="grid grid-cols-2 gap-3">
@@ -1499,12 +1735,21 @@ export default function InfluencerDashboard() {
                               <div className="flex items-center gap-2 px-4 py-3 rounded-lg bg-success/10 border border-success/20">
                                 <CheckCircle2 className="h-5 w-5 text-success" />
                                 <div>
-                                  <p className="text-sm font-medium text-success">Campaign Active</p>
+                                  <p className="text-sm font-medium text-success">
+                                    {selectedCampaignDetails.status === "completed" ? "Completed" : "Resolved"}
+                                  </p>
                                   <p className="text-xs text-muted-foreground">
-                                    Tracking metrics until campaign end
+                                    Total earned: ${selectedCampaignDetails.budget.toLocaleString()}
                                   </p>
                                 </div>
                               </div>
+                            </div>
+                          ) : (
+                            <div className="text-center py-8 bg-muted/30 rounded-lg border border-dashed border-border">
+                              <Clock className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
+                              <p className="text-sm text-muted-foreground">
+                                This stage is not yet available
+                              </p>
                             </div>
                           )}
                         </div>
@@ -1550,8 +1795,13 @@ export default function InfluencerDashboard() {
                         <SelectItem value="all">All Status</SelectItem>
                         <SelectItem value="applied">Pending</SelectItem>
                         <SelectItem value="approved">Approved</SelectItem>
-                        <SelectItem value="active">Active</SelectItem>
+                        <SelectItem value="active">In Progress</SelectItem>
+                        <SelectItem value="content_review">Under Review</SelectItem>
+                        <SelectItem value="revision">Revision</SelectItem>
+                        <SelectItem value="publishing">Ready to Publish</SelectItem>
+                        <SelectItem value="delivered">Delivered</SelectItem>
                         <SelectItem value="completed">Completed</SelectItem>
+                        <SelectItem value="disputed">Disputed</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -1587,25 +1837,10 @@ export default function InfluencerDashboard() {
                             <div className="flex items-center gap-2">
                               <Badge
                                 variant={campaign.status === "active" ? "default" : "secondary"}
-                                className={`w-[80px] justify-center ${
-                                  campaign.status === "active"
-                                    ? "bg-success/10 text-success border-success/20 hover:bg-success/20"
-                                    : campaign.status === "applied"
-                                    ? "bg-yellow-500/10 text-yellow-600 border-yellow-500/20"
-                                    : campaign.status === "approved"
-                                    ? "bg-primary/10 text-primary border-primary/20 hover:bg-primary/20"
-                                    : "bg-muted text-muted-foreground border-border"
-                                }`}
+                                className={`min-w-[80px] justify-center ${getStatusColor(campaign.status)} border`}
                               >
-                                <div className={`w-1.5 h-1.5 rounded-full mr-1.5 ${
-                                  campaign.status === "active" ? "bg-success" :
-                                  campaign.status === "applied" ? "bg-yellow-600" :
-                                  campaign.status === "approved" ? "bg-primary" : "bg-muted-foreground"
-                                }`} />
-                                {campaign.status === "applied" && "Pending"}
-                                {campaign.status === "approved" && "Approved"}
-                                {campaign.status === "active" && "Active"}
-                                {campaign.status === "completed" && "Done"}
+                                <div className={`w-1.5 h-1.5 rounded-full mr-1.5 ${getStatusDotColor(campaign.status)}`} />
+                                {getStatusLabel(campaign.status)}
                               </Badge>
                               <span className="text-xs text-muted-foreground">{campaign.brand}</span>
                             </div>
@@ -1640,10 +1875,11 @@ export default function InfluencerDashboard() {
                         <div className="w-[120px] flex items-center">
                           <div className="text-sm font-medium text-success">
                             ${(() => {
-                              if (campaign.status === "applied") return "0";
-                              if (campaign.status === "approved") return (campaign.budget * 0.25).toLocaleString();
-                              if (campaign.status === "active") return (campaign.budget * 0.5).toLocaleString();
-                              if (campaign.status === "completed") return campaign.budget.toLocaleString();
+                              if (campaign.status === "applied" || campaign.status === "approved") return "0";
+                              // 50% advance paid at IN_PROGRESS
+                              if (["active", "content_review", "revision", "publishing", "delivered", "disputed"].includes(campaign.status)) return (campaign.budget * 0.5).toLocaleString();
+                              // 100% at completed/resolved
+                              if (campaign.status === "completed" || campaign.status === "resolved") return campaign.budget.toLocaleString();
                               return "0";
                             })()}
                           </div>
@@ -1682,25 +1918,10 @@ export default function InfluencerDashboard() {
                             <h3 className="text-sm font-semibold mb-1 leading-tight">{campaign.title}</h3>
                             <Badge
                               variant={campaign.status === "active" ? "default" : "secondary"}
-                              className={`text-[10px] px-2 py-0 h-5 ${
-                                campaign.status === "active"
-                                  ? "bg-success/10 text-success border-success/20"
-                                  : campaign.status === "applied"
-                                  ? "bg-yellow-500/10 text-yellow-600 border-yellow-500/20"
-                                  : campaign.status === "approved"
-                                  ? "bg-primary/10 text-primary border-primary/20"
-                                  : "bg-muted text-muted-foreground border-border"
-                              }`}
+                              className={`text-[10px] px-2 py-0 h-5 ${getStatusColor(campaign.status)} border`}
                             >
-                              <div className={`w-1.5 h-1.5 rounded-full mr-1 ${
-                                campaign.status === "active" ? "bg-success" :
-                                campaign.status === "applied" ? "bg-yellow-600" :
-                                campaign.status === "approved" ? "bg-primary" : "bg-muted-foreground"
-                              }`} />
-                              {campaign.status === "applied" && "Pending"}
-                              {campaign.status === "approved" && "Approved"}
-                              {campaign.status === "active" && "Active"}
-                              {campaign.status === "completed" && "Done"}
+                              <div className={`w-1.5 h-1.5 rounded-full mr-1 ${getStatusDotColor(campaign.status)}`} />
+                              {getStatusLabel(campaign.status)}
                             </Badge>
                           </div>
                         </div>
@@ -1728,10 +1949,9 @@ export default function InfluencerDashboard() {
                             <div className="text-muted-foreground mb-0.5">Received</div>
                             <div className="font-semibold text-success">
                               ${(() => {
-                                if (campaign.status === "applied") return "0";
-                                if (campaign.status === "approved") return (campaign.budget * 0.25).toLocaleString();
-                                if (campaign.status === "active") return (campaign.budget * 0.5).toLocaleString();
-                                if (campaign.status === "completed") return campaign.budget.toLocaleString();
+                                if (campaign.status === "applied" || campaign.status === "approved") return "0";
+                                if (["active", "content_review", "revision", "publishing", "delivered", "disputed"].includes(campaign.status)) return (campaign.budget * 0.5).toLocaleString();
+                                if (campaign.status === "completed" || campaign.status === "resolved") return campaign.budget.toLocaleString();
                                 return "0";
                               })()}
                             </div>

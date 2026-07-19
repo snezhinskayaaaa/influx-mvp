@@ -738,7 +738,7 @@ export default function PricingPage() {
                 className="overflow-hidden"
               >
                 <p className="pb-4 text-sm text-muted-foreground">
-                  We&apos;re stablecoin-native. Fund campaigns and get paid in USDC/USDT across supported chains, all protected by escrow. Because everything is in stablecoins, budgets stay dollar-denominated — no crypto price volatility, no fiat or bank transfers required.
+                  We&apos;re stablecoin-native. Fund campaigns and get paid in USDC/USDT across supported chains, all protected by our 50/50 payment split. Because everything is in stablecoins, budgets stay dollar-denominated — no crypto price volatility, no fiat or bank transfers required.
                 </p>
               </motion.div>
             </div>
@@ -749,7 +749,7 @@ export default function PricingPage() {
                 onClick={() => setOpenFaq(openFaq === 6 ? null : 6)}
                 className="w-full py-4 text-left flex items-center justify-between hover:bg-muted/30 transition-colors"
               >
-                <h3 className="font-semibold text-base">How does the escrow system protect me?</h3>
+                <h3 className="font-semibold text-base">How does the payment system protect me?</h3>
                 <ChevronDown
                   className={`h-5 w-5 text-muted-foreground transition-transform shrink-0 ml-4 ${
                     openFaq === 6 ? "rotate-180" : ""
@@ -766,7 +766,7 @@ export default function PricingPage() {
                 className="overflow-hidden"
               >
                 <p className="pb-4 text-sm text-muted-foreground">
-                  Funds are held securely until campaign milestones are met. Projects are protected until content is delivered, and creators are guaranteed payment upon completion. Milestone-based releases ensure fair compensation.
+                  Payments are split 50/50: creators receive 50% upfront when work begins, and the remaining 50% is released when you approve the delivered content. If a brand doesn&apos;t respond within 7 days, payment auto-releases. Up to 3 revision rounds and dispute resolution by our team are included.
                 </p>
               </motion.div>
             </div>
