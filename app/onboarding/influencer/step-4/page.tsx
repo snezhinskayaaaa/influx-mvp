@@ -6,13 +6,14 @@ import { OnboardingLayout } from "@/components/onboarding-layout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Check, Instagram, Youtube, Video, Twitter, Users } from "lucide-react";
+import { Check, Instagram, Youtube, Video, Twitter, Users, MessageCircle } from "lucide-react";
 
 const platforms = [
+  { id: "twitter", name: "X (Twitter)", icon: Twitter },
+  { id: "telegram", name: "Telegram", icon: MessageCircle },
   { id: "instagram", name: "Instagram", icon: Instagram },
   { id: "tiktok", name: "TikTok", icon: Video },
   { id: "youtube", name: "YouTube", icon: Youtube },
-  { id: "twitter", name: "X/Twitter", icon: Twitter },
 ];
 
 export default function InfluencerOnboardingStep4() {

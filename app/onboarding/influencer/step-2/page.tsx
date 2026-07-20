@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { Instagram, Youtube, Video, Twitter } from "lucide-react";
+import { Instagram, Youtube, Video, Twitter, MessageCircle } from "lucide-react";
 
 export default function InfluencerOnboardingStep2() {
   const router = useRouter();
@@ -17,6 +17,7 @@ export default function InfluencerOnboardingStep2() {
   const [tiktok, setTiktok] = useState("");
   const [youtube, setYoutube] = useState("");
   const [twitter, setTwitter] = useState("");
+  const [telegram, setTelegram] = useState("");
 
   const handleNext = () => {
     if (creatorName && bio) {
@@ -26,6 +27,7 @@ export default function InfluencerOnboardingStep2() {
       localStorage.setItem("influencer_onboarding_tiktok", tiktok);
       localStorage.setItem("influencer_onboarding_youtube", youtube);
       localStorage.setItem("influencer_onboarding_twitter", twitter);
+      localStorage.setItem("influencer_onboarding_telegram", telegram);
       router.push("/onboarding/influencer/step-3");
     }
   };
@@ -116,6 +118,15 @@ export default function InfluencerOnboardingStep2() {
                 placeholder="X/Twitter username"
                 value={twitter}
                 onChange={(e) => setTwitter(e.target.value)}
+                className="pl-10 h-11"
+              />
+            </div>
+            <div className="relative">
+              <MessageCircle className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Telegram username"
+                value={telegram}
+                onChange={(e) => setTelegram(e.target.value)}
                 className="pl-10 h-11"
               />
             </div>

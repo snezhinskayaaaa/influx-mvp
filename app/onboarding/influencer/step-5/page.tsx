@@ -8,27 +8,27 @@ import { Check, Sparkles, TrendingUp, Users, Heart } from "lucide-react";
 
 const collaborationGoals = [
   {
-    id: "grow-audience",
-    title: "Grow my audience",
-    description: "I want to collaborate with brands that can help me reach new followers and expand my community across platforms.",
+    id: "grow-community",
+    title: "Grow my community",
+    description: "I want to collaborate with crypto projects that can help me reach new followers and expand my community across platforms.",
     icon: TrendingUp,
   },
   {
-    id: "monetize",
-    title: "Monetize my content",
-    description: "I'm focused on earning income through brand partnerships, sponsored content, and leveraging my existing audience.",
+    id: "paid-crypto",
+    title: "Get paid in crypto",
+    description: "I'm focused on earning income in crypto through project partnerships, sponsored content, and leveraging my existing audience.",
     icon: Sparkles,
   },
   {
-    id: "build-portfolio",
-    title: "Build my portfolio",
-    description: "I want to work with diverse brands to showcase my content creation skills and build a strong collaboration portfolio.",
+    id: "build-web3-portfolio",
+    title: "Build my Web3 portfolio",
+    description: "I want to work with diverse crypto projects to showcase my content creation skills and build a strong Web3 collaboration portfolio.",
     icon: Users,
   },
   {
-    id: "authentic-partnerships",
-    title: "Authentic partnerships",
-    description: "I'm looking for brands that align with my values and content style for genuine, long-term collaborations.",
+    id: "partner-crypto-projects",
+    title: "Partner with crypto projects",
+    description: "I'm looking for crypto projects that align with my values and content style for genuine, long-term collaborations.",
     icon: Heart,
   },
 ];
@@ -92,6 +92,7 @@ export default function InfluencerOnboardingStep5() {
           "influencer_onboarding_tiktok",
           "influencer_onboarding_youtube",
           "influencer_onboarding_twitter",
+          "influencer_onboarding_telegram",
           "influencer_onboarding_niches",
           "influencer_onboarding_platforms",
           "influencer_onboarding_followers",

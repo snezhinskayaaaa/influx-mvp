@@ -38,12 +38,6 @@ import {
   Flame,
   Award,
   Check,
-  Coins,
-  Image as ImageIcon,
-  Gamepad2,
-  Layers,
-  ArrowLeftRight,
-  Rocket,
   MessageCircle,
   Globe,
   Handshake,
@@ -544,141 +538,39 @@ export default function Home() {
             className="w-full max-w-7xl mx-auto px-4 sm:px-0"
           >
             <CarouselContent className="-ml-2 md:-ml-4">
-              {/* DeFi */}
-              <CarouselItem className="pl-2 md:pl-4 basis-[85%] sm:basis-1/2 md:basis-1/3 lg:basis-1/4">
-                <div className="relative overflow-hidden h-64 sm:h-72 rounded-xl border border-border hover:border-primary/50 transition-all cursor-pointer group">
-                  <div className="absolute inset-0 bg-gradient-to-br from-primary/30 via-primary/10 to-secondary/20 flex items-center justify-center">
-                    <Coins className="h-16 w-16 text-primary/40" />
+              {[
+                { name: "DeFi", subtitle: "Lending, DEX, yield & stablecoins", image: "https://images.unsplash.com/photo-1639762681485-074b7f938ba0?w=400&h=300&fit=crop" },
+                { name: "NFT & Digital Art", subtitle: "Collections, art & metaverse", image: "https://images.unsplash.com/photo-1646463535015-b8dfaa36138b?w=400&h=300&fit=crop" },
+                { name: "GameFi", subtitle: "Play-to-earn & Web3 games", image: "https://images.unsplash.com/photo-1542751371-adc38448a05e?w=400&h=300&fit=crop" },
+                { name: "Chains & Infrastructure", subtitle: "L1, L2, rollups & bridges", image: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=400&h=300&fit=crop" },
+                { name: "Exchanges", subtitle: "CEX, DEX & trading platforms", image: "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=400&h=300&fit=crop" },
+                { name: "Memecoins", subtitle: "Community-driven tokens", image: "https://images.unsplash.com/photo-1621761191319-c6fb62004040?w=400&h=300&fit=crop" },
+                { name: "DAOs & Governance", subtitle: "Communities & social tokens", image: "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=400&h=300&fit=crop" },
+                { name: "AI x Crypto", subtitle: "AI & blockchain intersection", image: "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=400&h=300&fit=crop" },
+                { name: "Wallets & Security", subtitle: "Wallets, custody & security tools", image: "https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=400&h=300&fit=crop" },
+                { name: "Other", subtitle: "Everything else in Web3", image: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=400&h=300&fit=crop" },
+              ].map((vertical) => (
+                <CarouselItem key={vertical.name} className="pl-2 md:pl-4 basis-[85%] sm:basis-1/2 md:basis-1/3 lg:basis-1/4">
+                  <div className="relative overflow-hidden h-64 sm:h-72 rounded-xl border border-border hover:border-primary/50 transition-all cursor-pointer group">
+                    <Image
+                      src={vertical.image}
+                      alt={vertical.name}
+                      fill
+                      className="object-cover transition-transform duration-500 group-hover:scale-105"
+                      sizes="(max-width: 640px) 85vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                    />
+                    <div className="absolute inset-0 bg-black/40" />
+                    <div className="relative h-full flex flex-col justify-end p-4 sm:p-5 bg-gradient-to-t from-black/75 via-black/30 to-transparent">
+                      <Badge className="self-start mb-2 sm:mb-3 bg-primary/30 backdrop-blur-sm border-primary/50 text-white text-xs sm:text-sm">
+                        {vertical.name}
+                      </Badge>
+                      <p className="text-white/90 text-xs sm:text-sm leading-relaxed">
+                        {vertical.subtitle}
+                      </p>
+                    </div>
                   </div>
-                  <div className="relative h-full flex flex-col justify-end p-4 sm:p-5 bg-gradient-to-t from-black/75 via-black/40 to-transparent">
-                    <Badge className="self-start mb-2 sm:mb-3 bg-primary/30 backdrop-blur-sm border-primary/50 text-white text-xs sm:text-sm">
-                      DeFi
-                    </Badge>
-                    <p className="text-white/90 text-xs sm:text-sm leading-relaxed">
-                      Protocols, yield, stablecoins &amp; perps
-                    </p>
-                  </div>
-                </div>
-              </CarouselItem>
-
-              {/* NFT */}
-              <CarouselItem className="pl-2 md:pl-4 basis-[85%] sm:basis-1/2 md:basis-1/3 lg:basis-1/4">
-                <div className="relative overflow-hidden h-64 sm:h-72 rounded-xl border border-border hover:border-[#FF6B9D]/50 transition-all cursor-pointer group">
-                  <div className="absolute inset-0 bg-gradient-to-br from-[#FF6B9D]/30 via-[#FF6B9D]/10 to-secondary/20 flex items-center justify-center">
-                    <ImageIcon className="h-16 w-16 text-[#FF6B9D]/40" />
-                  </div>
-                  <div className="relative h-full flex flex-col justify-end p-4 sm:p-5 bg-gradient-to-t from-black/75 via-black/40 to-transparent">
-                    <Badge className="self-start mb-2 sm:mb-3 text-xs sm:text-sm bg-[#FF6B9D]/30 backdrop-blur-sm border-[#FF6B9D]/50 text-white">
-                      NFT
-                    </Badge>
-                    <p className="text-white/90 text-xs sm:text-sm leading-relaxed">
-                      Collections, art &amp; digital culture
-                    </p>
-                  </div>
-                </div>
-              </CarouselItem>
-
-              {/* GameFi */}
-              <CarouselItem className="pl-2 md:pl-4 basis-[85%] sm:basis-1/2 md:basis-1/3 lg:basis-1/4">
-                <div className="relative overflow-hidden h-64 sm:h-72 rounded-xl border border-border hover:border-success/50 transition-all cursor-pointer group">
-                  <div className="absolute inset-0 bg-gradient-to-br from-success/30 via-success/10 to-primary/20 flex items-center justify-center">
-                    <Gamepad2 className="h-16 w-16 text-success/40" />
-                  </div>
-                  <div className="relative h-full flex flex-col justify-end p-4 sm:p-5 bg-gradient-to-t from-black/75 via-black/40 to-transparent">
-                    <Badge className="self-start mb-2 sm:mb-3 text-xs sm:text-sm bg-success/30 backdrop-blur-sm border-success/50 text-white">
-                      GameFi
-                    </Badge>
-                    <p className="text-white/90 text-xs sm:text-sm leading-relaxed">
-                      Web3 games &amp; play-to-earn economies
-                    </p>
-                  </div>
-                </div>
-              </CarouselItem>
-
-              {/* Layer 1 / Layer 2 */}
-              <CarouselItem className="pl-2 md:pl-4 basis-[85%] sm:basis-1/2 md:basis-1/3 lg:basis-1/4">
-                <div className="relative overflow-hidden h-64 sm:h-72 rounded-xl border border-border hover:border-secondary/50 transition-all cursor-pointer group">
-                  <div className="absolute inset-0 bg-gradient-to-br from-secondary/30 via-secondary/10 to-primary/20 flex items-center justify-center">
-                    <Layers className="h-16 w-16 text-secondary/40" />
-                  </div>
-                  <div className="relative h-full flex flex-col justify-end p-4 sm:p-5 bg-gradient-to-t from-black/75 via-black/40 to-transparent">
-                    <Badge className="self-start mb-2 sm:mb-3 text-xs sm:text-sm bg-secondary/30 backdrop-blur-sm border-secondary/50 text-white">
-                      Layer 1 / Layer 2
-                    </Badge>
-                    <p className="text-white/90 text-xs sm:text-sm leading-relaxed">
-                      Chains, rollups &amp; infrastructure
-                    </p>
-                  </div>
-                </div>
-              </CarouselItem>
-
-              {/* Exchanges */}
-              <CarouselItem className="pl-2 md:pl-4 basis-[85%] sm:basis-1/2 md:basis-1/3 lg:basis-1/4">
-                <div className="relative overflow-hidden h-64 sm:h-72 rounded-xl border border-border hover:border-[#00D084]/50 transition-all cursor-pointer group">
-                  <div className="absolute inset-0 bg-gradient-to-br from-[#00D084]/30 via-[#00D084]/10 to-primary/20 flex items-center justify-center">
-                    <ArrowLeftRight className="h-16 w-16 text-[#00D084]/40" />
-                  </div>
-                  <div className="relative h-full flex flex-col justify-end p-4 sm:p-5 bg-gradient-to-t from-black/75 via-black/40 to-transparent">
-                    <Badge className="self-start mb-2 sm:mb-3 text-xs sm:text-sm bg-[#00D084]/30 backdrop-blur-sm border-[#00D084]/50 text-white">
-                      Exchanges
-                    </Badge>
-                    <p className="text-white/90 text-xs sm:text-sm leading-relaxed">
-                      CEX, DEX &amp; trading platforms
-                    </p>
-                  </div>
-                </div>
-              </CarouselItem>
-
-              {/* Memecoins */}
-              <CarouselItem className="pl-2 md:pl-4 basis-[85%] sm:basis-1/2 md:basis-1/3 lg:basis-1/4">
-                <div className="relative overflow-hidden h-64 sm:h-72 rounded-xl border border-border hover:border-[#FF6B35]/50 transition-all cursor-pointer group">
-                  <div className="absolute inset-0 bg-gradient-to-br from-[#FF6B35]/30 via-[#FF6B35]/10 to-secondary/20 flex items-center justify-center">
-                    <Rocket className="h-16 w-16 text-[#FF6B35]/40" />
-                  </div>
-                  <div className="relative h-full flex flex-col justify-end p-4 sm:p-5 bg-gradient-to-t from-black/75 via-black/40 to-transparent">
-                    <Badge className="self-start mb-2 sm:mb-3 text-xs sm:text-sm bg-[#FF6B35]/30 backdrop-blur-sm border-[#FF6B35]/50 text-white">
-                      Memecoins
-                    </Badge>
-                    <p className="text-white/90 text-xs sm:text-sm leading-relaxed">
-                      Community-driven, viral-first tokens
-                    </p>
-                  </div>
-                </div>
-              </CarouselItem>
-
-              {/* DAOs & Social */}
-              <CarouselItem className="pl-2 md:pl-4 basis-[85%] sm:basis-1/2 md:basis-1/3 lg:basis-1/4">
-                <div className="relative overflow-hidden h-64 sm:h-72 rounded-xl border border-border hover:border-primary/50 transition-all cursor-pointer group">
-                  <div className="absolute inset-0 bg-gradient-to-br from-primary/30 via-primary/10 to-[#FF6B9D]/20 flex items-center justify-center">
-                    <Users className="h-16 w-16 text-primary/40" />
-                  </div>
-                  <div className="relative h-full flex flex-col justify-end p-4 sm:p-5 bg-gradient-to-t from-black/75 via-black/40 to-transparent">
-                    <Badge className="self-start mb-2 sm:mb-3 text-xs sm:text-sm bg-primary/30 backdrop-blur-sm border-primary/50 text-white">
-                      DAOs &amp; Social
-                    </Badge>
-                    <p className="text-white/90 text-xs sm:text-sm leading-relaxed">
-                      Governance, communities &amp; social tokens
-                    </p>
-                  </div>
-                </div>
-              </CarouselItem>
-
-              {/* AI x Crypto */}
-              <CarouselItem className="pl-2 md:pl-4 basis-[85%] sm:basis-1/2 md:basis-1/3 lg:basis-1/4">
-                <div className="relative overflow-hidden h-64 sm:h-72 rounded-xl border border-border hover:border-secondary/50 transition-all cursor-pointer group">
-                  <div className="absolute inset-0 bg-gradient-to-br from-secondary/30 via-secondary/10 to-primary/20 flex items-center justify-center">
-                    <Sparkles className="h-16 w-16 text-secondary/40" />
-                  </div>
-                  <div className="relative h-full flex flex-col justify-end p-4 sm:p-5 bg-gradient-to-t from-black/75 via-black/40 to-transparent">
-                    <Badge className="self-start mb-2 sm:mb-3 text-xs sm:text-sm bg-secondary/30 backdrop-blur-sm border-secondary/50 text-white">
-                      AI x Crypto
-                    </Badge>
-                    <p className="text-white/90 text-xs sm:text-sm leading-relaxed">
-                      The intersection where AI influencers shine
-                    </p>
-                  </div>
-                </div>
-              </CarouselItem>
+                </CarouselItem>
+              ))}
             </CarouselContent>
             <CarouselPrevious className="hover:bg-muted hover:text-foreground -left-4 sm:-left-12" />
             <CarouselNext className="hover:bg-muted hover:text-foreground -right-4 sm:-right-12" />

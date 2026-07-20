@@ -8,21 +8,21 @@ import { Check, Image, TrendingUp, DollarSign, Sparkles } from "lucide-react";
 
 const campaignGoals = [
   {
-    id: "awareness",
-    title: "Brand Awareness",
-    description: "Collaborating with AI creators on a large scale is an effective way to promote your brand and make it popular. Imagine hundreds of AI influencers talking about your product - wouldn't that generate massive buzz?",
+    id: "community-growth",
+    title: "Community Growth",
+    description: "Collaborating with crypto KOLs on a large scale is an effective way to grow your community. Imagine hundreds of influencers talking about your project across Twitter and Telegram - driving real engagement and awareness.",
     icon: TrendingUp,
   },
   {
-    id: "ugc",
-    title: "UGC (User-Generated Content)",
-    description: "AI creators can create high-quality content for your brand at scale and low cost. Use this content in your ads, email marketing, social media, website, and other channels.",
+    id: "kol-endorsement",
+    title: "KOL Endorsement",
+    description: "Trusted crypto Key Opinion Leaders can create high-impact content endorsing your project. Leverage their credibility to build trust with your target audience across Web3.",
     icon: Image,
   },
   {
-    id: "sales",
-    title: "Drive Sales",
-    description: "To drive strong sales through AI influencer marketing, focus on scale and persistence. While some creators may not generate many sales individually, the occasional standout will make up for others. Success usually takes time.",
+    id: "token-launch",
+    title: "Token Launch / TGE",
+    description: "Drive awareness and participation for your token generation event. Crypto influencers can help build hype, educate potential holders, and maximize your launch impact.",
     icon: DollarSign,
   },
 ];

@@ -363,15 +363,16 @@ export default function InfluencerDashboard() {
 
   const categories = [
     "all",
-    "Fashion & Style",
-    "Technology",
-    "Health & Fitness",
-    "Beauty & Care",
-    "Food & Beverage",
-    "Travel",
-    "Lifestyle",
-    "Gaming",
-    "Education",
+    "DeFi",
+    "NFT & Digital Art",
+    "GameFi",
+    "Chains & Infrastructure",
+    "Exchanges",
+    "Memecoins",
+    "DAOs & Governance",
+    "AI x Crypto",
+    "Wallets & Security",
+    "Other",
   ];
 
   const platforms = ["all", "Instagram", "TikTok", "YouTube", "Twitter"];
@@ -2107,17 +2108,16 @@ export default function InfluencerDashboard() {
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="Fashion & Style">Fashion & Style</SelectItem>
-                        <SelectItem value="Beauty & Care">Beauty & Care</SelectItem>
-                        <SelectItem value="Technology">Technology</SelectItem>
-                        <SelectItem value="Health & Fitness">Health & Fitness</SelectItem>
-                        <SelectItem value="Lifestyle">Lifestyle</SelectItem>
-                        <SelectItem value="Food & Beverage">Food & Beverage</SelectItem>
-                        <SelectItem value="Travel">Travel</SelectItem>
-                        <SelectItem value="Gaming">Gaming</SelectItem>
-                        <SelectItem value="Music">Music</SelectItem>
-                        <SelectItem value="Education">Education</SelectItem>
-                        <SelectItem value="Sports">Sports</SelectItem>
+                        <SelectItem value="DeFi">DeFi</SelectItem>
+                        <SelectItem value="NFT & Digital Art">NFT & Digital Art</SelectItem>
+                        <SelectItem value="GameFi">GameFi</SelectItem>
+                        <SelectItem value="Chains & Infrastructure">Chains & Infrastructure</SelectItem>
+                        <SelectItem value="Exchanges">Exchanges</SelectItem>
+                        <SelectItem value="Memecoins">Memecoins</SelectItem>
+                        <SelectItem value="DAOs & Governance">DAOs & Governance</SelectItem>
+                        <SelectItem value="AI x Crypto">AI x Crypto</SelectItem>
+                        <SelectItem value="Wallets & Security">Wallets & Security</SelectItem>
+                        <SelectItem value="Other">Other</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>

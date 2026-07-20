@@ -42,9 +42,6 @@ export function DiscoverTab({ influencers, onCollaborate }: DiscoverTabProps) {
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [selectedFollowers, setSelectedFollowers] = useState("all");
   const [selectedEngagement, setSelectedEngagement] = useState("all");
-  const [selectedGender, setSelectedGender] = useState("all");
-  const [selectedEthnicity, setSelectedEthnicity] = useState("all");
-  const [selectedAge, setSelectedAge] = useState("all");
   const [showFilters, setShowFilters] = useState(false);
   const [selectedInfluencer, setSelectedInfluencer] = useState<Influencer | null>(null);
   const [showDetailModal, setShowDetailModal] = useState(false);
@@ -77,16 +74,7 @@ export function DiscoverTab({ influencers, onCollaborate }: DiscoverTabProps) {
       if (selectedEngagement === "10+" && engagement < 10) matchesEngagement = false;
     }
 
-    // Gender filter
-    const matchesGender = selectedGender === "all" || influencer.gender === selectedGender;
-
-    // Ethnicity filter
-    const matchesEthnicity = selectedEthnicity === "all" || influencer.ethnicity === selectedEthnicity;
-
-    // Age filter
-    const matchesAge = selectedAge === "all" || influencer.age === selectedAge;
-
-    return matchesSearch && matchesCategory && matchesFollowers && matchesEngagement && matchesGender && matchesEthnicity && matchesAge;
+    return matchesSearch && matchesCategory && matchesFollowers && matchesEngagement;
   });
 
   const handleCardClick = (influencer: Influencer) => {
@@ -146,9 +134,9 @@ export function DiscoverTab({ influencers, onCollaborate }: DiscoverTabProps) {
           >
             <Filter className="h-4 w-4" />
             Filters
-            {(selectedCategory !== "all" || selectedFollowers !== "all" || selectedEngagement !== "all" || selectedGender !== "all" || selectedEthnicity !== "all" || selectedAge !== "all") && (
+            {(selectedCategory !== "all" || selectedFollowers !== "all" || selectedEngagement !== "all") && (
               <Badge className="ml-1 bg-primary text-primary-foreground px-1.5 py-0 text-xs">
-                {[selectedCategory !== "all", selectedFollowers !== "all", selectedEngagement !== "all", selectedGender !== "all", selectedEthnicity !== "all", selectedAge !== "all"].filter(Boolean).length}
+                {[selectedCategory !== "all", selectedFollowers !== "all", selectedEngagement !== "all"].filter(Boolean).length}
               </Badge>
             )}
           </Button>
@@ -171,23 +159,15 @@ export function DiscoverTab({ influencers, onCollaborate }: DiscoverTabProps) {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All Categories</SelectItem>
-                  <SelectItem value="Beauty & Care">Beauty & Care</SelectItem>
-                  <SelectItem value="Fashion & Style">Fashion & Style</SelectItem>
-                  <SelectItem value="Tech & Gaming">Tech & Gaming</SelectItem>
-                  <SelectItem value="Health & Wellness">Health & Wellness</SelectItem>
-                  <SelectItem value="Sports & Fitness">Sports & Fitness</SelectItem>
-                  <SelectItem value="Food & Drinks">Food & Drinks</SelectItem>
-                  <SelectItem value="Travel">Travel</SelectItem>
-                  <SelectItem value="Lifestyle">Lifestyle</SelectItem>
-                  <SelectItem value="Business & Finance">Business & Finance</SelectItem>
-                  <SelectItem value="Music">Music</SelectItem>
-                  <SelectItem value="Art & Design">Art & Design</SelectItem>
-                  <SelectItem value="Photography">Photography</SelectItem>
-                  <SelectItem value="Home & Garden">Home & Garden</SelectItem>
-                  <SelectItem value="Pets">Pets</SelectItem>
-                  <SelectItem value="Kids & Parenting">Kids & Parenting</SelectItem>
-                  <SelectItem value="Skincare">Skincare</SelectItem>
-                  <SelectItem value="Makeup">Makeup</SelectItem>
+                  <SelectItem value="DeFi">DeFi</SelectItem>
+                  <SelectItem value="NFT & Digital Art">NFT & Digital Art</SelectItem>
+                  <SelectItem value="GameFi">GameFi</SelectItem>
+                  <SelectItem value="Chains & Infrastructure">Chains & Infrastructure</SelectItem>
+                  <SelectItem value="Exchanges">Exchanges</SelectItem>
+                  <SelectItem value="Memecoins">Memecoins</SelectItem>
+                  <SelectItem value="DAOs & Governance">DAOs & Governance</SelectItem>
+                  <SelectItem value="AI x Crypto">AI x Crypto</SelectItem>
+                  <SelectItem value="Wallets & Security">Wallets & Security</SelectItem>
                   <SelectItem value="Other">Other</SelectItem>
                 </SelectContent>
               </Select>
@@ -212,15 +192,12 @@ export function DiscoverTab({ influencers, onCollaborate }: DiscoverTabProps) {
             <div>
               <div className="flex items-center justify-between mb-2">
                 <Label className="text-xs font-medium">Engagement Rate</Label>
-                {(selectedCategory !== "all" || selectedFollowers !== "all" || selectedEngagement !== "all" || selectedGender !== "all" || selectedEthnicity !== "all" || selectedAge !== "all") && (
+                {(selectedCategory !== "all" || selectedFollowers !== "all" || selectedEngagement !== "all") && (
                   <button
                     onClick={() => {
                       setSelectedCategory("all");
                       setSelectedFollowers("all");
                       setSelectedEngagement("all");
-                      setSelectedGender("all");
-                      setSelectedEthnicity("all");
-                      setSelectedAge("all");
                     }}
                     className="text-xs text-muted-foreground hover:text-primary transition-colors"
                   >
@@ -242,55 +219,6 @@ export function DiscoverTab({ influencers, onCollaborate }: DiscoverTabProps) {
               </Select>
             </div>
 
-            <div>
-              <Label className="text-xs font-medium mb-2 block">Gender</Label>
-              <Select value={selectedGender} onValueChange={setSelectedGender}>
-                <SelectTrigger className="h-10 hover:bg-primary/10 hover:text-primary hover:border-primary/30">
-                  <SelectValue placeholder="Select gender" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Genders</SelectItem>
-                  <SelectItem value="Male">Male</SelectItem>
-                  <SelectItem value="Female">Female</SelectItem>
-                  <SelectItem value="Non-binary">Non-binary</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div>
-              <Label className="text-xs font-medium mb-2 block">Ethnicity</Label>
-              <Select value={selectedEthnicity} onValueChange={setSelectedEthnicity}>
-                <SelectTrigger className="h-10 hover:bg-primary/10 hover:text-primary hover:border-primary/30">
-                  <SelectValue placeholder="Select ethnicity" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Ethnicities</SelectItem>
-                  <SelectItem value="Asian">Asian</SelectItem>
-                  <SelectItem value="Black">Black</SelectItem>
-                  <SelectItem value="White">White</SelectItem>
-                  <SelectItem value="Hispanic">Hispanic</SelectItem>
-                  <SelectItem value="Mixed">Mixed</SelectItem>
-                  <SelectItem value="Other">Other</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div>
-              <Label className="text-xs font-medium mb-2 block">Appearance Age</Label>
-              <Select value={selectedAge} onValueChange={setSelectedAge}>
-                <SelectTrigger className="h-10 hover:bg-primary/10 hover:text-primary hover:border-primary/30">
-                  <SelectValue placeholder="Select appearance" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Appearances</SelectItem>
-                  <SelectItem value="Teen">Teen</SelectItem>
-                  <SelectItem value="Young Adult">Young Adult</SelectItem>
-                  <SelectItem value="Adult">Adult</SelectItem>
-                  <SelectItem value="Mature">Mature</SelectItem>
-                  <SelectItem value="Senior">Senior</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
             </div>
           </motion.div>
         )}

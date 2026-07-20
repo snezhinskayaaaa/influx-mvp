@@ -4,44 +4,44 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { OnboardingLayout } from "@/components/onboarding-layout";
 import { Button } from "@/components/ui/button";
-import { Check, ShoppingCart, Store, MapPin, Globe, Code, HelpCircle } from "lucide-react";
+import { Check, Wallet, Image, Store, Globe, Gamepad2, HelpCircle } from "lucide-react";
 
 const businessTypes = [
   {
-    id: "ecommerce",
-    title: "E-Commerce",
-    description: "Your business sells products online and delivers across the country.",
-    icon: ShoppingCart,
+    id: "defi",
+    title: "DeFi Protocol",
+    description: "Your project offers decentralized finance services such as lending, DEX, yield farming, or staking.",
+    icon: Wallet,
   },
   {
-    id: "in-person",
-    title: "In Person Services",
-    description: "Your business sells services or products that require in person presence e.g. hotel / airbnb, gym, beauty salon, big items furniture.",
-    icon: MapPin,
+    id: "nft-metaverse",
+    title: "NFT / Metaverse",
+    description: "Your project is focused on NFTs, digital collectibles, virtual worlds, or metaverse experiences.",
+    icon: Image,
   },
   {
-    id: "marketplace",
-    title: "Marketplace",
-    description: "Your business is a marketplace.",
+    id: "exchange",
+    title: "Exchange (CEX/DEX)",
+    description: "Your project operates a centralized or decentralized exchange for trading digital assets.",
     icon: Store,
   },
   {
-    id: "digital",
-    title: "Digital Services",
-    description: "Your business sells services that don't require in person presence e.g. online yoga classes, online training courses.",
+    id: "infrastructure",
+    title: "Infrastructure / L1/L2",
+    description: "Your project builds blockchain infrastructure, layer 1 or layer 2 solutions, or developer tooling.",
     icon: Globe,
   },
   {
-    id: "other",
-    title: "Other",
-    description: "If not covered in the above please select this option.",
-    icon: HelpCircle,
+    id: "gamefi",
+    title: "GameFi / Play-to-Earn",
+    description: "Your project combines gaming with decentralized finance, play-to-earn mechanics, or in-game assets.",
+    icon: Gamepad2,
   },
   {
-    id: "software",
-    title: "Software",
-    description: "Your business sells software e.g. photo editing tools, digital photo book.",
-    icon: Code,
+    id: "other-web3",
+    title: "Other Web3",
+    description: "If your Web3 project is not covered in the above categories, please select this option.",
+    icon: HelpCircle,
   },
 ];
 
@@ -65,7 +65,7 @@ export default function BusinessTypePage() {
       currentStep={3}
       totalSteps={8}
       title="Business type"
-      subtitle="Which type of business do you operate? Do you offer products, services, or software for sale? Online or in person?"
+      subtitle="Which type of Web3 project do you operate? Select the category that best describes your business."
       onBack={handleBack}
     >
       <div className="space-y-3 mb-8">

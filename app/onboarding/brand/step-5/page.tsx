@@ -9,30 +9,23 @@ import { Check, Instagram } from "lucide-react";
 const monthlyTargets = ["1-5", "6-10", "11-19", "20+"];
 
 const platforms = [
+  { id: "twitter", name: "X (Twitter)", icon: null },
+  { id: "telegram", name: "Telegram", icon: null },
   { id: "instagram", name: "Instagram", icon: Instagram },
   { id: "tiktok", name: "TikTok", icon: null },
   { id: "youtube", name: "YouTube", icon: null },
-  { id: "twitter", name: "Twitter/X", icon: null },
 ];
 
 const categories = [
-  "Beauty & Care",
-  "Fashion & Style",
-  "Tech & Gaming",
-  "Health & Wellness",
-  "Sports & Fitness",
-  "Food & Drinks",
-  "Travel",
-  "Lifestyle",
-  "Business & Finance",
-  "Music",
-  "Art & Design",
-  "Photography",
-  "Home & Garden",
-  "Pets",
-  "Kids & Parenting",
-  "Skincare",
-  "Makeup",
+  "DeFi Analysts",
+  "NFT / Art Creators",
+  "Trading & Charts",
+  "GameFi Reviewers",
+  "Tech / Dev Content",
+  "Memecoin Hunters",
+  "DAO & Governance",
+  "AI x Crypto",
+  "General Crypto",
   "Other",
 ];
 

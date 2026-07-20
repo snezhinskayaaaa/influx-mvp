@@ -13,6 +13,8 @@ const sources = [
   { id: "google-ads", label: "Google Ads" },
   { id: "google-search", label: "Google Search" },
   { id: "social-media", label: "Social Media Post" },
+  { id: "crypto-twitter", label: "Crypto Twitter" },
+  { id: "telegram", label: "Telegram" },
   { id: "blog-review", label: "Review on a blog, website, etc." },
   { id: "other", label: "Other" },
 ];
