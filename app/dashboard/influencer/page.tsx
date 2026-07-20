@@ -41,6 +41,7 @@ import {
   Rocket,
   Mail,
   AlertCircle,
+  FileText,
 } from "lucide-react";
 import {
   Select,
@@ -1327,6 +1328,18 @@ export default function InfluencerDashboard() {
                     <div className="flex items-center justify-between mb-6">
                       <h2 className="text-xl font-bold">Campaign Progress</h2>
                     </div>
+
+                    {/* Download Agreement — available from AGREED (approved) onwards */}
+                    {["approved", "active", "content_review", "revision", "publishing", "delivered", "completed", "disputed", "resolved"].includes(selectedCampaignDetails?.status || "") && selectedCampaignDetails?.id && (
+                      <a
+                        href={`/api/collaborations/${selectedCampaignDetails.id}/agreement`}
+                        download
+                        className="inline-flex items-center gap-2 text-sm text-primary hover:underline mb-4"
+                      >
+                        <FileText className="h-4 w-4" />
+                        Download Agreement
+                      </a>
+                    )}
 
                     <div className="space-y-6">
                       {/* Stage 1: Negotiation */}

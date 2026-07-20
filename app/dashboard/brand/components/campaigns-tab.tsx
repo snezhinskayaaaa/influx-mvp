@@ -42,6 +42,7 @@ import {
   AlertCircle,
   ExternalLink,
   Camera,
+  FileText,
 } from "lucide-react";
 import type { Tab, Campaign, CampaignApplication, CollaborationStatus } from "./types";
 import { COLLABORATION_STATUS_CONFIG } from "./types";
@@ -1301,6 +1302,18 @@ export function CampaignsTab({
                         )}
 
                         {/* === Collaboration Lifecycle Actions === */}
+
+                        {/* Download Agreement — available from AGREED onwards */}
+                        {["AGREED", "IN_PROGRESS", "CONTENT_REVIEW", "REVISION", "PUBLISHING", "DELIVERED", "COMPLETED", "DISPUTED", "RESOLVED"].includes(selectedInfluencerForPipeline.collaborationStatus ?? "") && selectedInfluencerForPipeline.collaborationId && (
+                          <a
+                            href={`/api/collaborations/${selectedInfluencerForPipeline.collaborationId}/agreement`}
+                            download
+                            className="inline-flex items-center gap-2 text-sm text-primary hover:underline mb-3"
+                          >
+                            <FileText className="h-4 w-4" />
+                            Download Agreement
+                          </a>
+                        )}
 
                         {/* AGREED: Start Campaign button */}
                         {selectedInfluencerForPipeline.collaborationStatus === "AGREED" && selectedInfluencerForPipeline.collaborationId && (
