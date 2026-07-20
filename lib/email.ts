@@ -70,3 +70,32 @@ export async function sendPasswordResetEmail(email: string, token: string) {
     `,
   })
 }
+
+export async function sendCollaborationEmail(
+  to: string,
+  subject: string,
+  heading: string,
+  body: string,
+  ctaText?: string,
+  ctaUrl?: string,
+) {
+  await getResend().emails.send({
+    from: FROM_EMAIL,
+    to,
+    subject: `Influx: ${subject}`,
+    html: `
+      <div style="font-family: 'Inter', sans-serif; max-width: 600px; margin: 0 auto; padding: 40px 20px;">
+        <h1 style="font-size: 24px; font-weight: bold; margin-bottom: 16px;">${heading}</h1>
+        <p style="color: #666; font-size: 16px; margin-bottom: 24px;">${body}</p>
+        ${ctaText && ctaUrl ? `
+          <a href="${ctaUrl}" style="display: inline-block; background-color: #4F46E5; color: #ffffff; padding: 12px 32px; border-radius: 8px; text-decoration: none; font-weight: 600;">
+            ${ctaText}
+          </a>
+        ` : ''}
+        <p style="color: #999; font-size: 12px; margin-top: 32px;">
+          You can manage your notification preferences in your dashboard settings.
+        </p>
+      </div>
+    `,
+  })
+}

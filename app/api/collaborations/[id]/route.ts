@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
 import { getCurrentUser } from '@/lib/auth'
+import { notifyInfluencerApplicationAccepted, notifyInfluencerAgreedAndAdvance } from '@/lib/notifications'
 
 export async function GET(
   request: NextRequest,
@@ -59,7 +60,7 @@ export async function PATCH(
       where: { id },
       include: {
         campaign: { include: { brand: { select: { id: true, userId: true } } } },
-        influencer: { select: { id: true, userId: true } },
+        influencer: { select: { id: true, userId: true, handle: true } },
       },
     })
 
@@ -304,6 +305,9 @@ export async function PATCH(
           return updated
         })
 
+        // Fire-and-forget notification: advance paid, collaboration in progress
+        notifyInfluencerAgreedAndAdvance(collaboration.influencer.userId, collaboration.campaign.title, advance)
+
         return NextResponse.json({ collaboration: result })
       } catch (txError) {
         if (txError instanceof Error && txError.message === 'INSUFFICIENT_FROZEN_BALANCE') {
@@ -317,6 +321,11 @@ export async function PATCH(
       where: { id },
       data: updateData,
     })
+
+    // Fire-and-forget notification when brand accepts application
+    if (updateData.status === 'NEGOTIATING') {
+      notifyInfluencerApplicationAccepted(collaboration.influencer.userId, collaboration.campaign.title)
+    }
 
     return NextResponse.json({ collaboration: updated })
   } catch (error) {

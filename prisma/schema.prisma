@@ -79,6 +79,10 @@ model Profile {
   createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz
   updatedAt    DateTime @updatedAt @map("updated_at") @db.Timestamptz
 
+  // Notification preferences
+  emailNotifications Boolean @default(true) @map("email_notifications")
+  campaignUpdates    Boolean @default(true) @map("campaign_updates")
+
   influencer       Influencer?
   brand            Brand?
   sentMessages     Message[]     @relation("SenderMessages")

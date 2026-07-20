@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
 import { getCurrentUser } from '@/lib/auth'
 import { rateLimit } from '@/lib/rate-limit'
+import { notifyBrandNewApplication } from '@/lib/notifications'
 
 export async function GET(request: NextRequest) {
   try {
@@ -147,7 +148,10 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Proposed price must be a positive number up to 1,000,000' }, { status: 400 })
     }
 
-    const campaign = await prisma.campaign.findUnique({ where: { id: campaignId } })
+    const campaign = await prisma.campaign.findUnique({
+      where: { id: campaignId },
+      include: { brand: { select: { userId: true } } },
+    })
     if (!campaign || campaign.status !== 'ACTIVE') {
       return NextResponse.json({ error: 'Campaign not found or not active' }, { status: 400 })
     }
@@ -178,6 +182,9 @@ export async function POST(request: NextRequest) {
         status: 'APPLIED',
       },
     })
+
+    // Fire-and-forget notification to the brand
+    notifyBrandNewApplication(campaign.brand.userId, influencer.handle, campaign.title)
 
     return NextResponse.json({ collaboration }, { status: 201 })
   } catch (error) {

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
 import { getCurrentUser } from '@/lib/auth'
 import { rateLimit } from '@/lib/rate-limit'
+import { notifyBrandContentSubmitted, notifyBrandContentDelivered } from '@/lib/notifications'
 
 export async function POST(
   request: NextRequest,
@@ -25,7 +26,7 @@ export async function POST(
       where: { id },
       include: {
         campaign: { include: { brand: { select: { userId: true } } } },
-        influencer: { select: { id: true, userId: true } },
+        influencer: { select: { id: true, userId: true, handle: true } },
       },
     })
 
@@ -54,6 +55,9 @@ export async function POST(
         },
       })
 
+      // Fire-and-forget notification: draft submitted for review
+      notifyBrandContentSubmitted(collaboration.campaign.brand.userId, collaboration.influencer.handle, collaboration.campaign.title)
+
       return NextResponse.json({ collaboration: updated })
     }
 
@@ -71,6 +75,9 @@ export async function POST(
           deliveredAt: new Date(),
         },
       })
+
+      // Fire-and-forget notification: published content delivered
+      notifyBrandContentDelivered(collaboration.campaign.brand.userId, collaboration.influencer.handle, collaboration.campaign.title)
 
       return NextResponse.json({ collaboration: updated })
     }

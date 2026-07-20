@@ -2,6 +2,12 @@ import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
 import { getCurrentUser } from '@/lib/auth'
 import { rateLimit } from '@/lib/rate-limit'
+import {
+  notifyInfluencerContentApproved,
+  notifyInfluencerPaymentReceived,
+  notifyInfluencerRevisionRequested,
+  notifyInfluencerDisputeCreated,
+} from '@/lib/notifications'
 
 export async function POST(
   request: NextRequest,
@@ -55,6 +61,10 @@ export async function POST(
           where: { id },
           data: { status: 'PUBLISHING' },
         })
+
+        // Fire-and-forget notification: content approved
+        notifyInfluencerContentApproved(collaboration.influencer.userId, collaboration.campaign.title)
+
         return NextResponse.json({ collaboration: updated })
       }
 
@@ -116,6 +126,9 @@ export async function POST(
             })
           })
 
+          // Fire-and-forget notification: final payment received
+          notifyInfluencerPaymentReceived(collaboration.influencer.userId, collaboration.campaign.title, remainingPayout)
+
           return NextResponse.json({ collaboration: result })
         } catch (txError) {
           if (txError instanceof Error && txError.message === 'INSUFFICIENT_FROZEN_BALANCE') {
@@ -153,6 +166,9 @@ export async function POST(
         },
       })
 
+      // Fire-and-forget notification: revision requested
+      notifyInfluencerRevisionRequested(collaboration.influencer.userId, collaboration.campaign.title, note ?? '')
+
       return NextResponse.json({ collaboration: updated })
     }
 
@@ -173,6 +189,9 @@ export async function POST(
           disputedAt: new Date(),
         },
       })
+
+      // Fire-and-forget notification: dispute created
+      notifyInfluencerDisputeCreated(collaboration.influencer.userId, collaboration.campaign.title, note ?? '')
 
       return NextResponse.json({ collaboration: updated })
     }
