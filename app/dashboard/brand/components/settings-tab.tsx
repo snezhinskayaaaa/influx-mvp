@@ -12,6 +12,25 @@ export function SettingsTab() {
   const [deleteConfirmText, setDeleteConfirmText] = useState('');
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [deleteError, setDeleteError] = useState('');
+  const [emailNotifications, setEmailNotifications] = useState(true);
+  const [campaignUpdates, setCampaignUpdates] = useState(true);
+
+  const handleNotificationToggle = async (field: 'emailNotifications' | 'campaignUpdates', value: boolean) => {
+    if (field === 'emailNotifications') setEmailNotifications(value);
+    else setCampaignUpdates(value);
+
+    try {
+      await fetch('/api/profiles/me/notifications', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ [field]: value }),
+      });
+    } catch {
+      // Revert on error
+      if (field === 'emailNotifications') setEmailNotifications(!value);
+      else setCampaignUpdates(!value);
+    }
+  };
 
   return (
     <motion.div
@@ -61,14 +80,24 @@ export function SettingsTab() {
                   <p className="text-sm font-medium">Email Notifications</p>
                   <p className="text-xs text-muted-foreground">Receive email updates about your campaigns</p>
                 </div>
-                <input type="checkbox" defaultChecked className="h-4 w-4" />
+                <input
+                  type="checkbox"
+                  checked={emailNotifications}
+                  onChange={(e) => handleNotificationToggle('emailNotifications', e.target.checked)}
+                  className="h-4 w-4"
+                />
               </div>
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium">Campaign Updates</p>
                   <p className="text-xs text-muted-foreground">Get notified when influencers apply or accept invitations</p>
                 </div>
-                <input type="checkbox" defaultChecked className="h-4 w-4" />
+                <input
+                  type="checkbox"
+                  checked={campaignUpdates}
+                  onChange={(e) => handleNotificationToggle('campaignUpdates', e.target.checked)}
+                  className="h-4 w-4"
+                />
               </div>
             </div>
           </div>

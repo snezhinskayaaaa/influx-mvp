@@ -160,6 +160,8 @@ export default function InfluencerDashboard() {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleteConfirmText, setDeleteConfirmText] = useState('');
   const [deleteLoading, setDeleteLoading] = useState(false);
+  const [emailNotifications, setEmailNotifications] = useState(true);
+  const [campaignUpdates, setCampaignUpdates] = useState(true);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [emailVerified, setEmailVerified] = useState(true);
   const [influencerStatus, setInfluencerStatus] = useState<string>('PENDING');
@@ -531,6 +533,23 @@ export default function InfluencerDashboard() {
       }
     } catch (error) {
       console.error("Failed to refresh collaborations:", error);
+    }
+  };
+
+  const handleNotificationToggle = async (field: 'emailNotifications' | 'campaignUpdates', value: boolean) => {
+    if (field === 'emailNotifications') setEmailNotifications(value);
+    else setCampaignUpdates(value);
+
+    try {
+      await fetch('/api/profiles/me/notifications', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ [field]: value }),
+      });
+    } catch {
+      // Revert on error
+      if (field === 'emailNotifications') setEmailNotifications(!value);
+      else setCampaignUpdates(!value);
     }
   };
 
@@ -2352,30 +2371,31 @@ export default function InfluencerDashboard() {
                   <div className="space-y-3">
                     <div className="flex items-center justify-between">
                       <div>
-                        <div className="font-medium">Campaign Invitations</div>
+                        <div className="font-medium">Email Notifications</div>
                         <div className="text-sm text-muted-foreground">
-                          Get notified when brands invite you
+                          Receive email updates about your campaigns
                         </div>
                       </div>
-                      <input type="checkbox" defaultChecked className="rounded" />
+                      <input
+                        type="checkbox"
+                        checked={emailNotifications}
+                        onChange={(e) => handleNotificationToggle('emailNotifications', e.target.checked)}
+                        className="rounded"
+                      />
                     </div>
                     <div className="flex items-center justify-between">
                       <div>
-                        <div className="font-medium">Application Updates</div>
+                        <div className="font-medium">Campaign Updates</div>
                         <div className="text-sm text-muted-foreground">
-                          Updates on your campaign applications
+                          Get notified about campaign invitations and application updates
                         </div>
                       </div>
-                      <input type="checkbox" defaultChecked className="rounded" />
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <div className="font-medium">Payment Notifications</div>
-                        <div className="text-sm text-muted-foreground">
-                          Get notified about payments
-                        </div>
-                      </div>
-                      <input type="checkbox" defaultChecked className="rounded" />
+                      <input
+                        type="checkbox"
+                        checked={campaignUpdates}
+                        onChange={(e) => handleNotificationToggle('campaignUpdates', e.target.checked)}
+                        className="rounded"
+                      />
                     </div>
                   </div>
                 </Card>
