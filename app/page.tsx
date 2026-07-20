@@ -578,33 +578,6 @@ export default function Home() {
         </div>
       </motion.section>
 
-      {/* Managed on day one */}
-      <motion.section
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, margin: "-100px" }}
-        variants={fadeInUp}
-        className="py-16 sm:py-24 lg:py-32 bg-muted/30"
-      >
-        <div className="container px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto text-center">
-          <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-6">
-            <Handshake className="h-7 w-7 text-primary" />
-          </div>
-          <h2 className="text-3xl sm:text-4xl font-bold tracking-tight lg:text-5xl mb-4 sm:mb-6">
-            We&apos;ll shortlist your first campaign
-          </h2>
-          <p className="text-base sm:text-lg text-muted-foreground lg:text-xl leading-relaxed mb-8 max-w-2xl mx-auto">
-            New to influencer marketing? Our team helps crypto-native projects hand-pick the right creators, structure the deal, and launch — then you go self-serve whenever you&apos;re ready.
-          </p>
-          <Button asChild size="lg" className="bg-gradient-to-r from-primary to-secondary text-white hover:opacity-90 transition-all h-14 text-base px-10 rounded-2xl shadow-xl">
-            <Link href="/signup?type=brand">
-              Talk to us
-              <ArrowRight className="ml-2 h-5 w-5" />
-            </Link>
-          </Button>
-        </div>
-      </motion.section>
-
       {/* Founding Projects Program - Limited Time Offer */}
       <motion.section
         initial="hidden"
