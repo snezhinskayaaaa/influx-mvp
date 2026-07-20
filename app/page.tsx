@@ -108,7 +108,7 @@ export default function Home() {
                 </span>
               </h1>
               <p className="mt-6 text-lg text-muted-foreground sm:text-xl leading-relaxed">
-                The crypto-native platform where DeFi, NFT, GameFi, L2s and exchanges find influencers, launch campaigns, and pay in crypto. 50/50 secure payments protect both sides — no more risky DMs and manual deals.
+                The crypto-native platform where Web3 projects find influencers, launch campaigns, and pay in crypto. 50/50 secure payments — no more risky DMs.
               </p>
               <div className="mt-10 flex flex-col sm:flex-row items-start gap-4">
                 <Button size="lg" asChild className="w-full sm:w-64 bg-primary/10 hover:bg-primary/15 backdrop-blur-sm border-2 border-primary/30 h-14 text-base transition-all">
