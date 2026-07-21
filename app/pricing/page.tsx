@@ -8,7 +8,6 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Navigation } from "@/components/navigation";
 import { NetworkLogo } from "@/components/logo";
-import { CountdownTimer } from "@/components/countdown-timer";
 import { motion } from "framer-motion";
 import {
   Check,
@@ -24,7 +23,6 @@ import {
   BookOpen,
   Crown,
   Flame,
-  MessageSquare,
 } from "lucide-react";
 
 const fadeInUp = {
@@ -123,23 +121,32 @@ export default function PricingPage() {
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-amber-500/20 to-orange-500/20 border-2 border-amber-500/30 mb-4">
               <Flame className="h-4 w-4 text-amber-500" />
               <span className="text-sm font-semibold bg-gradient-to-r from-amber-500 to-orange-500 bg-clip-text text-transparent">
-                LIMITED TIME OFFER
+                LIMITED SPOTS
               </span>
               <Flame className="h-4 w-4 text-amber-500" />
             </div>
 
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4">
               <span className="bg-gradient-to-r from-primary via-amber-500 to-secondary bg-clip-text text-transparent">
-                Founding Projects Program
+                Founding Member Programs
               </span>
             </h2>
 
             <p className="text-base sm:text-lg text-muted-foreground max-w-3xl mx-auto mb-6">
-              Join in the first month and lock in the lowest rates forever
+              10 spots for projects, 20 spots for creators — lock in the lowest rates forever
             </p>
 
-            {/* Countdown Timer */}
-            <CountdownTimer />
+            {/* Spots Counter */}
+            <div className="flex items-center justify-center gap-6">
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20">
+                <Building2 className="h-4 w-4 text-primary" />
+                <span className="text-sm font-medium text-primary">0 / 10 projects</span>
+              </div>
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-secondary/10 border border-secondary/20">
+                <Sparkles className="h-4 w-4 text-secondary" />
+                <span className="text-sm font-medium text-secondary">0 / 20 creators</span>
+              </div>
+            </div>
           </div>
 
           {/* Main Offer Card */}
@@ -175,15 +182,8 @@ export default function PricingPage() {
                   <div className="flex items-start gap-3">
                     <Crown className="h-5 w-5 text-amber-500 shrink-0 mt-0.5" />
                     <div>
-                      <p className="font-medium text-sm">Founding Member Status</p>
-                      <p className="text-xs text-muted-foreground">Leave feedback → Lock 2% rate forever</p>
-                    </div>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <Award className="h-5 w-5 text-primary shrink-0 mt-0.5" />
-                    <div>
-                      <p className="font-medium text-sm">Early Adopter Badge</p>
-                      <p className="text-xs text-muted-foreground">Without feedback → Badge only (rates increase to 4%)</p>
+                      <p className="font-medium text-sm">Founding Project Status</p>
+                      <p className="text-xs text-muted-foreground">First funded campaign ($100 min) within 30 days = Lock 2% rate forever</p>
                     </div>
                   </div>
                 </div>
@@ -219,15 +219,8 @@ export default function PricingPage() {
                   <div className="flex items-start gap-3">
                     <Crown className="h-5 w-5 text-amber-500 shrink-0 mt-0.5" />
                     <div>
-                      <p className="font-medium text-sm">Founding Member Status</p>
-                      <p className="text-xs text-muted-foreground">Leave feedback → Lock 3% rate forever</p>
-                    </div>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <Award className="h-5 w-5 text-secondary shrink-0 mt-0.5" />
-                    <div>
-                      <p className="font-medium text-sm">Early Adopter Badge</p>
-                      <p className="text-xs text-muted-foreground">Without feedback → Badge only (rates increase to 6%)</p>
+                      <p className="font-medium text-sm">Founding Creator Status</p>
+                      <p className="text-xs text-muted-foreground">First completed withdrawal within 30 days = Lock 3% rate forever</p>
                     </div>
                   </div>
                 </div>
@@ -236,31 +229,28 @@ export default function PricingPage() {
 
             {/* How to Qualify */}
             <div className="mt-8 pt-8 border-t border-border/50">
-              <div className="flex items-start gap-4 mb-6">
-                <MessageSquare className="h-6 w-6 text-primary shrink-0" />
-                <div>
-                  <h4 className="font-semibold mb-2">How to Become a Founding Member</h4>
-                  <p className="text-sm text-muted-foreground mb-4">
-                    Complete your first transaction (campaign for projects, withdrawal for creators) within the first month and leave honest feedback. Your rates will be locked forever at 2%/3%.
-                  </p>
-                </div>
+              <div className="mb-6">
+                <h4 className="font-semibold mb-2">How to Become a Founding Member</h4>
+                <p className="text-sm text-muted-foreground mb-4">
+                  Claim your spot and complete your first transaction (campaign for projects, withdrawal for creators) within 30 days. Your rates will be locked forever at 2%/3%.
+                </p>
               </div>
 
               <div className="grid sm:grid-cols-3 gap-4">
                 <div className="bg-muted/30 p-4 rounded-xl border border-border/50">
                   <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-sm font-bold text-primary mb-3">1</div>
-                  <p className="text-sm font-medium mb-1">Sign up in month 1</p>
-                  <p className="text-xs text-muted-foreground">Join during launch period</p>
+                  <p className="text-sm font-medium mb-1">Claim your spot</p>
+                  <p className="text-xs text-muted-foreground">10 for projects, 20 for creators</p>
                 </div>
                 <div className="bg-muted/30 p-4 rounded-xl border border-border/50">
                   <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-sm font-bold text-primary mb-3">2</div>
                   <p className="text-sm font-medium mb-1">Complete first transaction</p>
-                  <p className="text-xs text-muted-foreground">Campaign or withdrawal</p>
+                  <p className="text-xs text-muted-foreground">Campaign or withdrawal within 30 days</p>
                 </div>
                 <div className="bg-muted/30 p-4 rounded-xl border border-border/50">
                   <div className="w-8 h-8 rounded-full bg-amber-500/20 flex items-center justify-center text-sm font-bold text-amber-500 mb-3">3</div>
-                  <p className="text-sm font-medium mb-1">Leave feedback</p>
-                  <p className="text-xs text-muted-foreground">Lock your rates forever</p>
+                  <p className="text-sm font-medium mb-1">Lock your rate</p>
+                  <p className="text-xs text-muted-foreground">2%/3% rate locked permanently</p>
                 </div>
               </div>
             </div>
@@ -297,12 +287,12 @@ export default function PricingPage() {
             <Button asChild size="lg" className="bg-gradient-to-r from-primary to-secondary text-white hover:opacity-90 transition-all h-14 text-base px-10 rounded-2xl shadow-xl">
               <Link href="/signup">
                 <Crown className="mr-2 h-5 w-5" />
-                Join as Founding Member
+                Claim Your Spot
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Link>
             </Button>
             <p className="text-xs text-muted-foreground mt-4">
-              Only available for the first month • No credit card required
+              Only 10 project spots and 20 creator spots available • No credit card required
             </p>
           </div>
         </div>
@@ -592,7 +582,7 @@ export default function PricingPage() {
                 className="overflow-hidden"
               >
                 <p className="pb-4 text-sm text-muted-foreground">
-                  Founding Members are our first users who join during the launch month. By completing your first transaction and leaving feedback, you lock in the lowest rates forever (2% for projects, 3% for creators). After the first month, rates increase to 4% and 5% respectively.
+                  Founding Members are our earliest users who claim one of the limited spots (10 for projects, 20 for creators). By completing your first transaction within 30 days, you lock in the lowest rates forever (2% for projects, 3% for creators). After spots fill, rates increase to 4% and 6% respectively.
                 </p>
               </motion.div>
             </div>
@@ -620,7 +610,7 @@ export default function PricingPage() {
                 className="overflow-hidden"
               >
                 <p className="pb-4 text-sm text-muted-foreground">
-                  Join during the first month, complete your first transaction (campaign deposit for projects, withdrawal for creators), and leave honest feedback about your experience. Your locked rates will apply to all future transactions forever.
+                  Claim one of the available spots (10 for projects, 20 for creators), then complete your first transaction (campaign deposit for projects, withdrawal for creators) within 30 days. Your locked rates will apply to all future transactions forever.
                 </p>
               </motion.div>
             </div>

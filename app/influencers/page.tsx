@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { NetworkLogo } from "@/components/logo";
-import { CountdownTimer } from "@/components/countdown-timer";
 import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
 import {
@@ -258,7 +257,7 @@ export default function InfluencersPage() {
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-amber-500/20 to-orange-500/20 border-2 border-amber-500/30 mb-5">
               <Flame className="h-4 w-4 text-amber-500" />
               <span className="text-sm font-semibold bg-gradient-to-r from-amber-500 to-orange-500 bg-clip-text text-transparent">
-                LIMITED TIME - FIRST MONTH ONLY
+                LIMITED SPOTS
               </span>
               <Flame className="h-4 w-4 text-amber-500" />
             </div>
@@ -270,11 +269,15 @@ export default function InfluencersPage() {
             </h2>
 
             <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto mb-6">
-              Complete your first payout during our launch month and lock in the lowest withdrawal fees forever
+              Join as one of the first 20 creators and lock in the lowest withdrawal fees forever
             </p>
 
-            {/* Countdown */}
-            <CountdownTimer />
+            {/* Spots Counter */}
+            <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-muted/50 border border-border/50">
+              <span className="text-sm font-medium text-muted-foreground">Spots claimed:</span>
+              <span className="text-lg font-bold text-secondary">0</span>
+              <span className="text-sm text-muted-foreground">/ 20</span>
+            </div>
           </div>
 
           {/* Main Benefits Card */}
@@ -317,14 +320,7 @@ export default function InfluencersPage() {
                     <Crown className="h-5 w-5 text-amber-500 shrink-0 mt-1" />
                     <div>
                       <p className="font-semibold text-sm mb-1">Founding Creator Status</p>
-                      <p className="text-xs text-muted-foreground">Complete first withdrawal + leave feedback = Lock 3% rate forever</p>
-                    </div>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <Award className="h-5 w-5 text-secondary shrink-0 mt-1" />
-                    <div>
-                      <p className="font-semibold text-sm mb-1">Early Adopter Badge</p>
-                      <p className="text-xs text-muted-foreground">Without feedback = Badge only (rates increase to 6%)</p>
+                      <p className="text-xs text-muted-foreground">First completed withdrawal within 30 days = Lock 3% rate forever</p>
                     </div>
                   </div>
                 </div>
@@ -393,18 +389,18 @@ export default function InfluencersPage() {
               <div className="grid sm:grid-cols-3 gap-4">
                 <div className="bg-muted/30 p-5 rounded-xl border border-border/50 text-center">
                   <div className="w-10 h-10 rounded-full bg-secondary/20 flex items-center justify-center text-base font-bold text-secondary mb-4 mx-auto">1</div>
-                  <p className="font-semibold text-sm mb-2">Join This Month</p>
-                  <p className="text-xs text-muted-foreground">Sign up during launch period</p>
+                  <p className="font-semibold text-sm mb-2">Claim your spot</p>
+                  <p className="text-xs text-muted-foreground">Sign up as one of the first 20 creators</p>
                 </div>
                 <div className="bg-muted/30 p-5 rounded-xl border border-border/50 text-center">
                   <div className="w-10 h-10 rounded-full bg-secondary/20 flex items-center justify-center text-base font-bold text-secondary mb-4 mx-auto">2</div>
-                  <p className="font-semibold text-sm mb-2">Complete Campaign</p>
-                  <p className="text-xs text-muted-foreground">Earn and withdraw your first payment</p>
+                  <p className="font-semibold text-sm mb-2">Complete first campaign</p>
+                  <p className="text-xs text-muted-foreground">Earn and withdraw your first payment within 30 days</p>
                 </div>
                 <div className="bg-muted/30 p-5 rounded-xl border border-border/50 text-center">
                   <div className="w-10 h-10 rounded-full bg-amber-500/20 flex items-center justify-center text-base font-bold text-amber-500 mb-4 mx-auto">3</div>
-                  <p className="font-semibold text-sm mb-2">Share Feedback</p>
-                  <p className="text-xs text-muted-foreground">Lock 3% rate forever</p>
+                  <p className="font-semibold text-sm mb-2">Lock your rate</p>
+                  <p className="text-xs text-muted-foreground">3% rate locked permanently</p>
                 </div>
               </div>
             </div>
@@ -420,7 +416,7 @@ export default function InfluencersPage() {
               </Link>
             </Button>
             <p className="text-sm text-muted-foreground mt-4">
-              No fees to join • Instant payouts • Start earning today
+              Only 20 spots available • No credit card required
             </p>
           </div>
         </div>
@@ -985,7 +981,7 @@ export default function InfluencersPage() {
               How Withdrawals Work
             </h2>
             <p className="text-base md:text-lg text-muted-foreground max-w-2xl mx-auto">
-              Industry-low 3% fee on withdrawals. Lock this rate forever by leaving feedback after your first payout.
+              Industry-low 3% fee on withdrawals. Founding creators lock this rate forever.
             </p>
           </div>
 
@@ -1015,8 +1011,7 @@ export default function InfluencersPage() {
                   <div className="flex items-start gap-2 text-xs text-muted-foreground bg-secondary/5 p-3 rounded-lg">
                     <Crown className="h-4 w-4 text-amber-500 shrink-0 mt-0.5" />
                     <p>
-                      <span className="font-semibold text-foreground">Founding Members:</span> Complete your first withdrawal
-                      and leave feedback to lock 3% forever. Standard rate increases to 6% after launch month.
+                      <span className="font-semibold text-foreground">Founding Creators:</span> First 20 creators to complete a withdrawal within 30 days lock 3% forever. Standard rate increases to 6% after spots fill.
                     </p>
                   </div>
                 </div>

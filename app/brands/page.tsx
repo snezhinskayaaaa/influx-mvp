@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { NetworkLogo } from "@/components/logo";
-import { CountdownTimer } from "@/components/countdown-timer";
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import {
@@ -33,7 +32,6 @@ import {
   BookOpen,
   Crown,
   Flame,
-  Award,
   Check
 } from "lucide-react";
 import Link from "next/link";
@@ -275,7 +273,7 @@ export default function BrandsPage() {
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-amber-500/20 to-orange-500/20 border-2 border-amber-500/30 mb-5">
               <Flame className="h-4 w-4 text-amber-500" />
               <span className="text-sm font-semibold bg-gradient-to-r from-amber-500 to-orange-500 bg-clip-text text-transparent">
-                LIMITED TIME - FIRST MONTH ONLY
+                LIMITED SPOTS
               </span>
               <Flame className="h-4 w-4 text-amber-500" />
             </div>
@@ -287,11 +285,15 @@ export default function BrandsPage() {
             </h2>
 
             <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto mb-6">
-              Launch your first campaign during our opening month and secure the lowest platform fees forever for your project
+              Join as one of the first 10 projects and lock in the lowest rates forever
             </p>
 
-            {/* Countdown */}
-            <CountdownTimer />
+            {/* Spots Counter */}
+            <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-muted/50 border border-border/50">
+              <span className="text-sm font-medium text-muted-foreground">Spots claimed:</span>
+              <span className="text-lg font-bold text-primary">0</span>
+              <span className="text-sm text-muted-foreground">/ 10</span>
+            </div>
           </div>
 
           {/* Main Benefits Card */}
@@ -334,14 +336,7 @@ export default function BrandsPage() {
                     <Crown className="h-5 w-5 text-amber-500 shrink-0 mt-1" />
                     <div>
                       <p className="font-semibold text-sm mb-1">Founding Project Status</p>
-                      <p className="text-xs text-muted-foreground">Complete your first campaign + leave feedback = Lock 2% rate forever</p>
-                    </div>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <Award className="h-5 w-5 text-primary shrink-0 mt-1" />
-                    <div>
-                      <p className="font-semibold text-sm mb-1">Early Adopter Badge</p>
-                      <p className="text-xs text-muted-foreground">Without feedback = Badge only (rates increase to 4%)</p>
+                      <p className="text-xs text-muted-foreground">First funded campaign ($100 min) within 30 days = Lock 2% rate forever</p>
                     </div>
                   </div>
                 </div>
@@ -410,18 +405,18 @@ export default function BrandsPage() {
               <div className="grid sm:grid-cols-3 gap-4">
                 <div className="bg-muted/30 p-5 rounded-xl border border-border/50 text-center">
                   <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center text-base font-bold text-primary mb-4 mx-auto">1</div>
-                  <p className="font-semibold text-sm mb-2">Join This Month</p>
-                  <p className="text-xs text-muted-foreground">Sign up during our launch period</p>
+                  <p className="font-semibold text-sm mb-2">Claim your spot</p>
+                  <p className="text-xs text-muted-foreground">Sign up as one of the first 10 projects</p>
                 </div>
                 <div className="bg-muted/30 p-5 rounded-xl border border-border/50 text-center">
                   <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center text-base font-bold text-primary mb-4 mx-auto">2</div>
-                  <p className="font-semibold text-sm mb-2">Launch Campaign</p>
-                  <p className="text-xs text-muted-foreground">Complete your first collaboration</p>
+                  <p className="font-semibold text-sm mb-2">Complete first campaign</p>
+                  <p className="text-xs text-muted-foreground">Fund your first campaign ($100 min) within 30 days</p>
                 </div>
                 <div className="bg-muted/30 p-5 rounded-xl border border-border/50 text-center">
                   <div className="w-10 h-10 rounded-full bg-amber-500/20 flex items-center justify-center text-base font-bold text-amber-500 mb-4 mx-auto">3</div>
-                  <p className="font-semibold text-sm mb-2">Share Feedback</p>
-                  <p className="text-xs text-muted-foreground">Lock 2% rate forever</p>
+                  <p className="font-semibold text-sm mb-2">Lock your rate</p>
+                  <p className="text-xs text-muted-foreground">2% rate locked permanently</p>
                 </div>
               </div>
             </div>
@@ -437,7 +432,7 @@ export default function BrandsPage() {
               </Link>
             </Button>
             <p className="text-sm text-muted-foreground mt-4">
-              No credit card required • 100% secure • Join in minutes
+              Only 10 spots available • No credit card required
             </p>
           </div>
         </div>
@@ -908,7 +903,7 @@ export default function BrandsPage() {
               How Payment Works
             </h2>
             <p className="text-base md:text-lg text-muted-foreground max-w-2xl mx-auto">
-              Ultra-low 2% fee when you add funds. Lock this rate forever by leaving feedback after your first campaign.
+              Ultra-low 2% fee when you add funds. Founding projects lock this rate forever.
             </p>
           </div>
 
@@ -938,8 +933,7 @@ export default function BrandsPage() {
                   <div className="flex items-start gap-2 text-xs text-muted-foreground bg-primary/5 p-3 rounded-lg">
                     <Crown className="h-4 w-4 text-amber-500 shrink-0 mt-0.5" />
                     <p>
-                      <span className="font-semibold text-foreground">Founding Members:</span> Complete your first campaign
-                      and leave feedback to lock 2% forever. Standard rate increases to 4% after launch month.
+                      <span className="font-semibold text-foreground">Founding Projects:</span> First 10 projects to complete a funded campaign ($100 min) within 30 days lock 2% forever. Standard rate increases to 4% after spots fill.
                     </p>
                   </div>
                 </div>
