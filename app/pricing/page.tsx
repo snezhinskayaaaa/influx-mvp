@@ -493,18 +493,18 @@ export default function PricingPage() {
                 </Card>
               </motion.div>
 
-              {/* BRAND PRO */}
+              {/* PROJECT PRO */}
               <motion.div variants={fadeInUp} className="min-w-[300px] md:min-w-0 snap-center">
                 <Card className="p-5 md:p-8 bg-gradient-to-br from-primary/20 to-primary/5 backdrop-blur-sm border-2 border-primary/50 hover:border-primary transition-all relative h-full flex flex-col shadow-2xl pt-6 md:pt-8">
                   <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground text-xs">
-                    Recommended
+                    Coming Soon
                   </Badge>
 
                   <div className="mb-5 md:mb-6">
                     <TrendingUp className="h-8 w-8 md:h-10 md:w-10 text-primary mb-3 md:mb-4" />
-                    <h3 className="text-xl md:text-2xl font-bold mb-2">BRAND PRO</h3>
+                    <h3 className="text-xl md:text-2xl font-bold mb-2">PROJECT PRO</h3>
                     <div className="flex items-baseline gap-1 mb-2">
-                      <span className="text-3xl md:text-4xl font-bold">$199</span>
+                      <span className="text-3xl md:text-4xl font-bold">$20</span>
                       <span className="text-sm md:text-base text-muted-foreground">/month</span>
                     </div>
                     <Badge className="bg-secondary/20 text-secondary border-secondary/30 mb-3 md:mb-4 text-xs">
