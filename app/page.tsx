@@ -680,7 +680,7 @@ export default function Home() {
               </div>
 
               <div className="text-center text-sm text-muted-foreground mb-4">
-                <span className="font-semibold text-primary">{foundingStats.projects}</span> / 10 confirmed
+                <span className="font-semibold text-primary">{foundingStats.projects}</span> / 10 registered
               </div>
 
               <Button asChild className="w-full bg-gradient-to-r from-primary to-primary/80 text-white hover:opacity-90 h-12 text-sm rounded-xl">
