@@ -724,6 +724,7 @@ export default function Home() {
                     <p className="text-xs text-muted-foreground">No conditions. Sign up, lock your rate forever.</p>
                   </div>
                 </div>
+                <div className="h-5" aria-hidden="true" />
               </div>
 
               <div className="text-center text-sm text-muted-foreground mb-4">
