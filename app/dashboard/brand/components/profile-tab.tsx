@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { XIcon } from "@/components/x-icon";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -10,7 +11,6 @@ import {
   Building2,
   Globe,
   Instagram,
-  Twitter,
   Linkedin,
   Camera,
   Save,
@@ -154,7 +154,7 @@ export function ProfileTab({
             </div>
 
             <div className="relative">
-              <Twitter className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <XIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
                 placeholder="X URL"
                 value={twitterUrl}

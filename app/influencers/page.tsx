@@ -1,6 +1,7 @@
 "use client";
 
 import { Navigation } from "@/components/navigation";
+import { XIcon } from "@/components/x-icon";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -25,7 +26,6 @@ import {
   Mail,
   Instagram,
   Send,
-  Twitter,
   BookOpen,
   Bell,
   Clock,
@@ -1107,7 +1107,7 @@ export default function InfluencersPage() {
                   <Send className="h-5 w-5" />
                 </Link>
                 <Link href="https://x.com/aiinflux" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-2xl border-2 border-muted-foreground/30 flex items-center justify-center text-muted-foreground hover:border-primary hover:text-primary transition-all">
-                  <Twitter className="h-5 w-5" />
+                  <XIcon className="h-5 w-5" />
                 </Link>
                 <Link href="https://medium.com/@aiinflux" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-2xl border-2 border-muted-foreground/30 flex items-center justify-center text-muted-foreground hover:border-primary hover:text-primary transition-all">
                   <BookOpen className="h-5 w-5" />

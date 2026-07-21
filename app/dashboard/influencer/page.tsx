@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { XIcon } from "@/components/x-icon";
 import Link from "next/link";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
@@ -31,7 +32,6 @@ import {
   Camera,
   Save,
   Instagram,
-  Twitter,
   Youtube,
   ArrowRight,
   Link as LinkIcon,
@@ -1243,7 +1243,7 @@ export default function InfluencerDashboard() {
                                     {platform === "Instagram" && <Instagram className="h-3 w-3 mr-1" />}
                                     {platform === "TikTok" && <svg className="h-3 w-3 mr-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5" /></svg>}
                                     {platform === "YouTube" && <Youtube className="h-3 w-3 mr-1" />}
-                                    {platform === "Twitter" && <Twitter className="h-3 w-3 mr-1" />}
+                                    {platform === "Twitter" && <XIcon className="h-3 w-3 mr-1" />}
                                     {platform}
                                   </Badge>
                                 ))}
@@ -2169,7 +2169,7 @@ export default function InfluencerDashboard() {
 
                     <div className="flex gap-2">
                       <div className="relative flex-1">
-                        <Twitter className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                        <XIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                         <Input
                           placeholder="X URL or @handle"
                           value={profileData.twitter}

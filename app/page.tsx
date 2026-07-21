@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { XIcon } from "@/components/x-icon";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -30,7 +31,6 @@ import {
   Youtube,
   Video,
   Twitch,
-  Twitter,
   Send,
   BookOpen,
   Mail,
@@ -375,7 +375,7 @@ export default function Home() {
                 <Card className="p-4 sm:p-6 md:p-8 bg-muted/50 border-2 hover:border-[#000000]/50 transition-all hover:shadow-lg group h-full flex flex-col">
                   <div className="mb-3 sm:mb-4 md:mb-6">
                     <div className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-xl sm:rounded-2xl bg-[#000000] flex items-center justify-center group-hover:scale-110 transition-transform">
-                      <Twitter className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8 text-white" />
+                      <XIcon className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8 text-white" />
                     </div>
                   </div>
                   <h3 className="text-lg sm:text-xl md:text-2xl font-semibold mb-2 sm:mb-3 md:mb-4">X (Twitter)</h3>
@@ -839,7 +839,7 @@ export default function Home() {
                   <Send className="h-5 w-5" />
                 </Link>
                 <Link href="https://x.com/aiinflux" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-2xl border-2 border-muted-foreground/30 flex items-center justify-center text-muted-foreground hover:border-primary hover:text-primary transition-all">
-                  <Twitter className="h-5 w-5" />
+                  <XIcon className="h-5 w-5" />
                 </Link>
                 <Link href="https://medium.com/@aiinflux" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-2xl border-2 border-muted-foreground/30 flex items-center justify-center text-muted-foreground hover:border-primary hover:text-primary transition-all">
                   <BookOpen className="h-5 w-5" />

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { XIcon } from "@/components/x-icon";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -20,7 +21,6 @@ import {
   Search,
   Users,
   Instagram,
-  Twitter,
   Plus,
   Save,
   CheckCircle2,
@@ -509,7 +509,7 @@ export function CampaignsTab({
                               {platform === "instagram" && <Instagram className="h-4 w-4 mr-2" />}
                               {platform === "tiktok" && <Video className="h-4 w-4 mr-2" />}
                               {platform === "youtube" && <Youtube className="h-4 w-4 mr-2" />}
-                              {platform === "twitter" && <Twitter className="h-4 w-4 mr-2" />}
+                              {platform === "twitter" && <XIcon className="h-4 w-4 mr-2" />}
                               {platform}
                             </label>
                           </div>
@@ -522,7 +522,7 @@ export function CampaignsTab({
                             {platform === "instagram" && <Instagram className="h-3 w-3 mr-1" />}
                             {platform === "tiktok" && <Video className="h-3 w-3 mr-1" />}
                             {platform === "youtube" && <Youtube className="h-3 w-3 mr-1" />}
-                            {platform === "twitter" && <Twitter className="h-3 w-3 mr-1" />}
+                            {platform === "twitter" && <XIcon className="h-3 w-3 mr-1" />}
                             {platform}
                           </Badge>
                         ))}
