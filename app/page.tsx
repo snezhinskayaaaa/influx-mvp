@@ -559,7 +559,7 @@ export default function Home() {
             <CarouselContent className="-ml-2 md:-ml-4">
               {[
                 { name: "DeFi", subtitle: "Lending, DEX, yield & stablecoins", image: "https://images.unsplash.com/photo-1639762681485-074b7f938ba0?w=400&h=300&fit=crop" },
-                { name: "NFT & Digital Art", subtitle: "Collections, art & metaverse", image: "https://images.unsplash.com/photo-1646463535015-b8dfaa36138b?w=400&h=300&fit=crop" },
+                { name: "NFT & Digital Art", subtitle: "Collections, art & metaverse", image: "https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?w=400&h=300&fit=crop" },
                 { name: "GameFi", subtitle: "Play-to-earn & Web3 games", image: "https://images.unsplash.com/photo-1542751371-adc38448a05e?w=400&h=300&fit=crop" },
                 { name: "Chains & Infrastructure", subtitle: "L1, L2, rollups & bridges", image: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=400&h=300&fit=crop" },
                 { name: "Exchanges", subtitle: "CEX, DEX & trading platforms", image: "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=400&h=300&fit=crop" },
