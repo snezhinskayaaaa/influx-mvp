@@ -40,7 +40,9 @@ import {
   Check,
   MessageCircle,
   Globe,
-  Handshake,
+  DollarSign,
+  Shield,
+  Zap,
 } from "lucide-react";
 
 const fadeInUp = {
@@ -138,12 +140,29 @@ export default function Home() {
         </div>
       </motion.section>
 
-      {/* Trust Bar */}
-      <div className="bg-muted/50 border-y border-border/50 py-4">
-        <div className="container px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-          <p className="text-center text-xs sm:text-sm text-muted-foreground">
-            Budget in dollars, pay in stablecoins (USDC/USDT) &middot; 50/50 secure payments &middot; AI influencers + crypto KOLs &middot; No banks, no fiat friction
-          </p>
+      {/* Trust Bar — Ticker */}
+      <div className="bg-gradient-to-r from-primary/5 via-muted/50 to-secondary/5 border-y border-border/50 py-3 overflow-hidden">
+        <div className="flex animate-marquee whitespace-nowrap">
+          {[...Array(2)].map((_, i) => (
+            <div key={i} className="flex items-center gap-8 sm:gap-12 mx-8 sm:mx-12">
+              <span className="flex items-center gap-2 text-xs sm:text-sm text-muted-foreground">
+                <DollarSign className="h-3.5 w-3.5 text-primary" />
+                Budget in dollars, pay in stablecoins
+              </span>
+              <span className="flex items-center gap-2 text-xs sm:text-sm text-muted-foreground">
+                <Shield className="h-3.5 w-3.5 text-primary" />
+                50/50 secure payments
+              </span>
+              <span className="flex items-center gap-2 text-xs sm:text-sm text-muted-foreground">
+                <Users className="h-3.5 w-3.5 text-primary" />
+                AI influencers + crypto KOLs
+              </span>
+              <span className="flex items-center gap-2 text-xs sm:text-sm text-muted-foreground">
+                <Zap className="h-3.5 w-3.5 text-primary" />
+                No banks, no fiat friction
+              </span>
+            </div>
+          ))}
         </div>
       </div>
 
