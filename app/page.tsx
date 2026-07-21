@@ -827,6 +827,12 @@ export default function Home() {
             {/* Social Media & Contact */}
             <div className="flex flex-col items-center md:items-end gap-3">
               <div className="flex items-center gap-3">
+                <Link href="https://x.com/aiinflux" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-2xl border-2 border-muted-foreground/30 flex items-center justify-center text-muted-foreground hover:border-primary hover:text-primary transition-all">
+                  <XIcon className="h-5 w-5" />
+                </Link>
+                <Link href="https://t.me/aiinflux" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-2xl border-2 border-muted-foreground/30 flex items-center justify-center text-muted-foreground hover:border-primary hover:text-primary transition-all">
+                  <Send className="h-5 w-5" />
+                </Link>
                 <Link href="https://www.instagram.com/influx.connect/" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-2xl border-2 border-muted-foreground/30 flex items-center justify-center text-muted-foreground hover:border-primary hover:text-primary transition-all">
                   <Instagram className="h-5 w-5" />
                 </Link>
@@ -834,12 +840,6 @@ export default function Home() {
                   <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5" />
                   </svg>
-                </Link>
-                <Link href="https://t.me/aiinflux" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-2xl border-2 border-muted-foreground/30 flex items-center justify-center text-muted-foreground hover:border-primary hover:text-primary transition-all">
-                  <Send className="h-5 w-5" />
-                </Link>
-                <Link href="https://x.com/aiinflux" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-2xl border-2 border-muted-foreground/30 flex items-center justify-center text-muted-foreground hover:border-primary hover:text-primary transition-all">
-                  <XIcon className="h-5 w-5" />
                 </Link>
                 <Link href="https://medium.com/@aiinflux" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-2xl border-2 border-muted-foreground/30 flex items-center justify-center text-muted-foreground hover:border-primary hover:text-primary transition-all">
                   <BookOpen className="h-5 w-5" />
