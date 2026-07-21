@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { XIcon } from "@/components/x-icon";
 import Image from "next/image";
@@ -81,6 +82,15 @@ const cardVariant = {
 };
 
 export default function Home() {
+  const [foundingStats, setFoundingStats] = useState({ projects: 0, creators: 0 });
+
+  useEffect(() => {
+    fetch('/api/founding/stats')
+      .then(r => r.json())
+      .then(data => setFoundingStats(data))
+      .catch(() => {});
+  }, []);
+
   return (
     <div className="flex min-h-screen flex-col">
       {/* Navigation */}
@@ -670,7 +680,7 @@ export default function Home() {
               </div>
 
               <div className="text-center text-sm text-muted-foreground mb-4">
-                <span className="font-semibold text-primary">0</span> / 10 confirmed
+                <span className="font-semibold text-primary">{foundingStats.projects}</span> / 10 confirmed
               </div>
 
               <Button asChild className="w-full bg-gradient-to-r from-primary to-primary/80 text-white hover:opacity-90 h-12 text-sm rounded-xl">
@@ -728,7 +738,7 @@ export default function Home() {
               </div>
 
               <div className="text-center text-sm text-muted-foreground mb-4">
-                <span className="font-semibold text-secondary">0</span> / 20 taken
+                <span className="font-semibold text-secondary">{foundingStats.creators}</span> / 20 taken
               </div>
 
               <Button asChild className="w-full bg-gradient-to-r from-secondary to-secondary/80 text-white hover:opacity-90 h-12 text-sm rounded-xl">

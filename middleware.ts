@@ -24,6 +24,7 @@ const publicApiRoutes = [
 // API routes that allow unauthenticated GET requests only
 const publicGetApiRoutes = [
   '/api/influencers',
+  '/api/founding/stats',
 ]
 
 // HTTP methods that mutate state and require CSRF protection
