@@ -54,7 +54,7 @@ export default function PrivacyPage() {
                 Privacy Policy
               </h1>
               <p className="text-base text-muted-foreground sm:text-xl">
-                Last updated: March 2026
+                Last updated: July 2026
               </p>
             </div>
           </div>
@@ -75,7 +75,7 @@ export default function PrivacyPage() {
             <motion.div variants={fadeInUp}>
               <div className="space-y-4 text-muted-foreground leading-relaxed">
                 <p>
-                  INFLUXconnect (&quot;Company,&quot; &quot;we,&quot; &quot;us,&quot; or &quot;our&quot;) is committed to protecting the privacy of our users. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our AI influencer marketplace platform (&quot;Platform&quot;). Please read this policy carefully. By using the Platform, you consent to the practices described herein.
+                  INFLUXconnect (&quot;Company,&quot; &quot;we,&quot; &quot;us,&quot; or &quot;our&quot;) is committed to protecting the privacy of our users. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our crypto-native influencer marketing platform (&quot;Platform&quot;). Please read this policy carefully. By using the Platform, you consent to the practices described herein.
                 </p>
               </div>
             </motion.div>
@@ -89,10 +89,10 @@ export default function PrivacyPage() {
                   When you create an account, we collect information you provide directly, including:
                 </p>
                 <ul className="list-disc pl-6 space-y-2">
-                  <li>Full name, email address, and password</li>
-                  <li>Account type (brand or influencer)</li>
-                  <li>Company name and business details (for brand accounts)</li>
-                  <li>AI influencer profile details, including persona name, niche, platform presence, and portfolio content (for influencer accounts)</li>
+                  <li>Full name, email address, Telegram handle, and password</li>
+                  <li>Account type (project or creator)</li>
+                  <li>Project name, blockchain/vertical, and business details (for project accounts)</li>
+                  <li>Creator profile details, including persona name, niche, social media presence, and portfolio (for creator accounts)</li>
                   <li>Profile photos and avatar images</li>
                 </ul>
 
@@ -114,7 +114,7 @@ export default function PrivacyPage() {
                 </p>
                 <ul className="list-disc pl-6 space-y-2">
                   <li>Campaign briefs, deliverables, and performance metrics</li>
-                  <li>Communications between brands and influencers conducted through the Platform</li>
+                  <li>Communications between projects and creators conducted through the Platform</li>
                   <li>Content submitted for campaign review and approval</li>
                   <li>Campaign ratings and feedback</li>
                 </ul>
@@ -125,10 +125,15 @@ export default function PrivacyPage() {
                 </p>
                 <ul className="list-disc pl-6 space-y-2">
                   <li>Wallet addresses for cryptocurrency transactions</li>
+                  <li>Blockchain network identifiers and on-chain transaction hashes</li>
+                  <li>Stablecoin type (USDC/USDT) and network (e.g., Ethereum, Tron, Arbitrum)</li>
                   <li>Deposit and withdrawal history, amounts, and timestamps</li>
                   <li>Transaction IDs and payment confirmation details</li>
                   <li>Identity verification documents as required by applicable regulations</li>
                 </ul>
+                <p>
+                  Please note: Blockchain transactions are publicly visible on-chain. While we do not publish your wallet address, transactions on public blockchains can be traced by third parties.
+                </p>
               </div>
             </motion.div>
 
@@ -141,10 +146,11 @@ export default function PrivacyPage() {
                 </p>
                 <ul className="list-disc pl-6 space-y-2">
                   <li><strong className="text-foreground">Platform Operation:</strong> To provide, maintain, and improve the Platform&apos;s functionality, including account management, campaign facilitation, and payment processing.</li>
-                  <li><strong className="text-foreground">Personalization:</strong> To tailor your experience, including recommending relevant campaigns, influencers, or content based on your profile and activity.</li>
+                  <li><strong className="text-foreground">Personalization:</strong> To tailor your experience, including recommending relevant campaigns, creators, or content based on your profile and activity.</li>
                   <li><strong className="text-foreground">Communication:</strong> To send you important updates about your account, campaigns, transactions, and Platform changes. You may opt out of promotional communications at any time.</li>
                   <li><strong className="text-foreground">Security and Fraud Prevention:</strong> To detect, investigate, and prevent fraudulent transactions, unauthorized access, and other malicious activities.</li>
                   <li><strong className="text-foreground">Analytics:</strong> To understand how users interact with the Platform, identify trends, and improve our services.</li>
+                  <li><strong className="text-foreground">Blockchain Compliance:</strong> To monitor on-chain transactions for compliance with anti-money laundering regulations.</li>
                   <li><strong className="text-foreground">Legal Compliance:</strong> To comply with applicable laws, regulations, and legal processes, including anti-money laundering (AML) and know-your-customer (KYC) requirements.</li>
                 </ul>
               </div>
@@ -158,9 +164,11 @@ export default function PrivacyPage() {
                   <strong className="text-foreground">We do not sell your personal data.</strong> We may share your information only in the following circumstances:
                 </p>
                 <ul className="list-disc pl-6 space-y-2">
-                  <li><strong className="text-foreground">Campaign Partners:</strong> When you participate in a campaign, relevant profile information and campaign-related data are shared with the other party (brand or influencer) to facilitate the collaboration.</li>
+                  <li><strong className="text-foreground">Campaign Partners:</strong> When you participate in a campaign, relevant profile information and campaign-related data are shared with the other party (project or creator) to facilitate the collaboration.</li>
                   <li><strong className="text-foreground">Service Providers:</strong> We share data with trusted third-party service providers who assist us in operating the Platform, processing payments, and analyzing usage. These providers are contractually obligated to protect your data and use it only for the purposes we specify.</li>
                   <li><strong className="text-foreground">Legal Requirements:</strong> We may disclose your information if required to do so by law, in response to valid legal process, or to protect the rights, property, or safety of INFLUXconnect, our users, or the public.</li>
+                  <li><strong className="text-foreground">Blockchain Networks:</strong> When you make deposits or withdrawals, transaction data is broadcast to the relevant blockchain network and becomes publicly visible. This is inherent to blockchain technology and not within our control.</li>
+                  <li><strong className="text-foreground">Regulatory Bodies:</strong> We may share data with financial regulators as required by KYC/AML laws.</li>
                   <li><strong className="text-foreground">Business Transfers:</strong> In the event of a merger, acquisition, or sale of assets, your data may be transferred as part of that transaction. We will notify you of any such change in ownership or control.</li>
                 </ul>
               </div>
@@ -179,6 +187,8 @@ export default function PrivacyPage() {
                   <li>Access controls and role-based permissions for internal systems</li>
                   <li>Secure authentication mechanisms, including support for two-factor authentication</li>
                   <li>Monitoring and logging of system access and anomalous activity</li>
+                  <li>Wallet addresses are stored encrypted</li>
+                  <li>We never store private keys — users are solely responsible for their wallet security</li>
                 </ul>
                 <p>
                   While we strive to protect your data, no method of electronic transmission or storage is 100% secure. We cannot guarantee absolute security but will promptly notify affected users in the event of a data breach as required by applicable law.
@@ -186,9 +196,25 @@ export default function PrivacyPage() {
               </div>
             </motion.div>
 
-            {/* 5. Cookies and Tracking */}
+            {/* 5. Blockchain Privacy Considerations */}
             <motion.div variants={fadeInUp}>
-              <h2 className="text-2xl font-bold mb-4 text-foreground">5. Cookies and Tracking</h2>
+              <h2 className="text-2xl font-bold mb-4 text-foreground">5. Blockchain Privacy Considerations</h2>
+              <div className="space-y-4 text-muted-foreground leading-relaxed">
+                <p>
+                  When using the Platform&apos;s cryptocurrency features, please be aware of the following:
+                </p>
+                <ul className="list-disc pl-6 space-y-2">
+                  <li>Blockchain transactions are pseudonymous but not anonymous. While transactions are not directly linked to your identity on-chain, patterns of activity may be analyzed by third parties.</li>
+                  <li>On-chain data is permanent and publicly visible. Once a transaction is recorded on a blockchain, it cannot be altered or deleted by any party.</li>
+                  <li>GDPR right to erasure has limitations with blockchain data. We can delete your off-chain data (account information, profile details, and Platform records) upon request, but we cannot modify or remove on-chain transaction records.</li>
+                  <li>We minimize on-chain data exposure by processing transactions through our payment provider, reducing the direct association between your Platform identity and blockchain addresses.</li>
+                </ul>
+              </div>
+            </motion.div>
+
+            {/* 6. Cookies and Tracking */}
+            <motion.div variants={fadeInUp}>
+              <h2 className="text-2xl font-bold mb-4 text-foreground">6. Cookies and Tracking</h2>
               <div className="space-y-4 text-muted-foreground leading-relaxed">
                 <p>
                   We use cookies and similar tracking technologies to enhance your experience on the Platform. These include:
@@ -204,9 +230,9 @@ export default function PrivacyPage() {
               </div>
             </motion.div>
 
-            {/* 6. User Rights */}
+            {/* 7. User Rights */}
             <motion.div variants={fadeInUp}>
-              <h2 className="text-2xl font-bold mb-4 text-foreground">6. User Rights</h2>
+              <h2 className="text-2xl font-bold mb-4 text-foreground">7. User Rights</h2>
               <div className="space-y-4 text-muted-foreground leading-relaxed">
                 <p>
                   Depending on your jurisdiction, you may have the following rights regarding your personal data:
@@ -232,18 +258,19 @@ export default function PrivacyPage() {
               </div>
             </motion.div>
 
-            {/* 7. Data Retention */}
+            {/* 8. Data Retention */}
             <motion.div variants={fadeInUp}>
-              <h2 className="text-2xl font-bold mb-4 text-foreground">7. Data Retention</h2>
+              <h2 className="text-2xl font-bold mb-4 text-foreground">8. Data Retention</h2>
               <div className="space-y-4 text-muted-foreground leading-relaxed">
                 <p>
                   We retain your personal data for as long as your account is active or as needed to provide you with our services. Specific retention periods include:
                 </p>
                 <ul className="list-disc pl-6 space-y-2">
                   <li><strong className="text-foreground">Account Data:</strong> Retained for the duration of your account and for 30 days after deletion to allow for account recovery.</li>
-                  <li><strong className="text-foreground">Transaction Records:</strong> Retained for a minimum of 5 years to comply with financial reporting and anti-money laundering regulations.</li>
+                  <li><strong className="text-foreground">Transaction Records:</strong> Retained for a minimum of 7 years to comply with financial reporting, anti-money laundering, and cryptocurrency regulations.</li>
                   <li><strong className="text-foreground">Campaign Data:</strong> Retained for 2 years after campaign completion for analytics and dispute resolution purposes.</li>
                   <li><strong className="text-foreground">Usage Logs:</strong> Retained for 12 months for security monitoring and analytics.</li>
+                  <li><strong className="text-foreground">Blockchain Data:</strong> On-chain transaction records exist permanently on public blockchains and cannot be deleted by us or any party.</li>
                 </ul>
                 <p>
                   After the applicable retention period, data is securely deleted or anonymized so that it can no longer be associated with you.
@@ -251,9 +278,9 @@ export default function PrivacyPage() {
               </div>
             </motion.div>
 
-            {/* 8. Third-Party Services */}
+            {/* 9. Third-Party Services */}
             <motion.div variants={fadeInUp}>
-              <h2 className="text-2xl font-bold mb-4 text-foreground">8. Third-Party Services</h2>
+              <h2 className="text-2xl font-bold mb-4 text-foreground">9. Third-Party Services</h2>
               <div className="space-y-4 text-muted-foreground leading-relaxed">
                 <p>
                   The Platform integrates with and relies on the following third-party services:
@@ -261,7 +288,8 @@ export default function PrivacyPage() {
                 <ul className="list-disc pl-6 space-y-2">
                   <li><strong className="text-foreground">Railway:</strong> Our infrastructure and hosting provider. Data is processed and stored on Railway&apos;s secure servers.</li>
                   <li><strong className="text-foreground">PostgreSQL:</strong> Our database management system, used to store structured application data securely.</li>
-                  <li><strong className="text-foreground">Payment Processors:</strong> Third-party cryptocurrency payment processors handle wallet deposits and withdrawals.</li>
+                  <li><strong className="text-foreground">Payment Processors:</strong> 0xProcessing and other cryptocurrency payment providers handle stablecoin deposits and withdrawals.</li>
+                  <li><strong className="text-foreground">Blockchain Networks:</strong> Public blockchain networks (Ethereum, Tron, Arbitrum, etc.) process on-chain transactions.</li>
                   <li><strong className="text-foreground">Analytics Providers:</strong> We use analytics services to understand Platform usage and improve our offerings.</li>
                 </ul>
                 <p>
@@ -270,9 +298,9 @@ export default function PrivacyPage() {
               </div>
             </motion.div>
 
-            {/* 9. Children's Privacy */}
+            {/* 10. Children's Privacy */}
             <motion.div variants={fadeInUp}>
-              <h2 className="text-2xl font-bold mb-4 text-foreground">9. Children&apos;s Privacy</h2>
+              <h2 className="text-2xl font-bold mb-4 text-foreground">10. Children&apos;s Privacy</h2>
               <div className="space-y-4 text-muted-foreground leading-relaxed">
                 <p>
                   The Platform is intended for users who are at least 18 years of age. We do not knowingly collect personal information from individuals under 18. If we become aware that a user is under 18, we will promptly delete their account and all associated data.
@@ -287,9 +315,9 @@ export default function PrivacyPage() {
               </div>
             </motion.div>
 
-            {/* 10. Changes to Privacy Policy */}
+            {/* 11. Changes to Privacy Policy */}
             <motion.div variants={fadeInUp}>
-              <h2 className="text-2xl font-bold mb-4 text-foreground">10. Changes to Privacy Policy</h2>
+              <h2 className="text-2xl font-bold mb-4 text-foreground">11. Changes to Privacy Policy</h2>
               <div className="space-y-4 text-muted-foreground leading-relaxed">
                 <p>
                   We may update this Privacy Policy from time to time to reflect changes in our practices, technologies, legal requirements, or other factors. When we make material changes, we will:
@@ -305,9 +333,9 @@ export default function PrivacyPage() {
               </div>
             </motion.div>
 
-            {/* 11. Contact */}
+            {/* 12. Contact */}
             <motion.div variants={fadeInUp}>
-              <h2 className="text-2xl font-bold mb-4 text-foreground">11. Contact</h2>
+              <h2 className="text-2xl font-bold mb-4 text-foreground">12. Contact</h2>
               <div className="space-y-4 text-muted-foreground leading-relaxed">
                 <p>
                   If you have any questions, concerns, or requests regarding this Privacy Policy or our data practices, please contact us at:
