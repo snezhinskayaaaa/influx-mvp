@@ -837,18 +837,18 @@ export default function InfluencersPage() {
             {/* Creator Pro */}
             <Card className="pt-6 px-4 pb-4 lg:p-6 bg-gradient-to-br from-primary/5 to-primary/10 border-2 border-primary/50 hover:border-primary transition-all relative flex flex-col min-w-[280px] lg:min-w-0 snap-center">
               <Badge className="absolute -top-2 lg:-top-3 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground text-xs">
-                Most Popular
+                Coming Soon
               </Badge>
 
               <div className="mb-4 lg:mb-6 h-[140px] lg:h-[160px] mt-2 lg:mt-0">
                 <Award className="h-6 w-6 lg:h-8 lg:w-8 text-primary mb-2 lg:mb-3" />
                 <h3 className="text-base lg:text-xl font-bold mb-1 lg:mb-2">CREATOR PRO</h3>
                 <div className="flex items-baseline gap-1 mb-2">
-                  <span className="text-2xl lg:text-3xl font-bold">$49</span>
+                  <span className="text-2xl lg:text-3xl font-bold">$20</span>
                   <span className="text-sm lg:text-base text-muted-foreground">/month</span>
                 </div>
-                <Badge className="bg-secondary/20 text-secondary border-secondary/30 text-xs">
-                  First month $1
+                <Badge className="bg-primary/20 text-primary border-primary/30 text-xs">
+                  Coming Soon
                 </Badge>
               </div>
 
@@ -860,11 +860,8 @@ export default function InfluencersPage() {
                 </div>
               </div>
 
-              <Button asChild className="w-full bg-primary hover:bg-primary/90 h-9 lg:h-10 text-sm">
-                <Link href="/signup?type=influencer&plan=pro">
-                  Start Pro Trial
-                  <ArrowRight className="ml-2 h-3 w-3 lg:h-4 lg:w-4" />
-                </Link>
+              <Button disabled className="w-full bg-primary/50 h-9 lg:h-10 text-sm opacity-50 cursor-not-allowed">
+                Coming Soon
               </Button>
             </Card>
           </div>

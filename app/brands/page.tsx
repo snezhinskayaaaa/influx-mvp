@@ -717,11 +717,8 @@ export default function BrandsPage() {
                 </div>
               </div>
 
-              <Button asChild className="w-full bg-primary hover:bg-primary/90 h-9 lg:h-10 text-sm">
-                <Link href="/signup?type=brand&plan=pro">
-                  Start Pro Trial
-                  <ArrowRight className="ml-2 h-3 w-3 lg:h-4 lg:w-4" />
-                </Link>
+              <Button disabled className="w-full bg-primary/50 h-9 lg:h-10 text-sm opacity-50 cursor-not-allowed">
+                Coming Soon
               </Button>
             </Card>
           </div>

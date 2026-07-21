@@ -372,11 +372,11 @@ export default function PricingPage() {
                     <Award className="h-8 w-8 md:h-10 md:w-10 text-primary mb-3 md:mb-4" />
                     <h3 className="text-xl md:text-2xl font-bold mb-2">CREATOR PRO</h3>
                     <div className="flex items-baseline gap-1 mb-2">
-                      <span className="text-3xl md:text-4xl font-bold">$49</span>
+                      <span className="text-3xl md:text-4xl font-bold">$20</span>
                       <span className="text-sm md:text-base text-muted-foreground">/month</span>
                     </div>
-                    <Badge className="bg-secondary/20 text-secondary border-secondary/30 mb-3 md:mb-4 text-xs">
-                      First month $1
+                    <Badge className="bg-primary/20 text-primary border-primary/30 mb-3 md:mb-4 text-xs">
+                      Coming Soon
                     </Badge>
                     <p className="text-sm text-muted-foreground">
                       Level up your earnings
@@ -406,11 +406,8 @@ export default function PricingPage() {
                     </div>
                   </div>
 
-                  <Button asChild className="w-full text-sm h-10">
-                    <Link href="/signup?type=creator&plan=pro">
-                      Start Pro Trial
-                      <ArrowRight className="ml-2 h-4 w-4" />
-                    </Link>
+                  <Button disabled className="w-full text-sm h-10 opacity-50 cursor-not-allowed">
+                    Coming Soon
                   </Button>
                 </Card>
               </motion.div>
@@ -546,11 +543,8 @@ export default function PricingPage() {
                     </div>
                   </div>
 
-                  <Button asChild className="w-full text-sm h-10">
-                    <Link href="/signup?type=brand&plan=pro">
-                      Start Pro Trial
-                      <ArrowRight className="ml-2 h-4 w-4" />
-                    </Link>
+                  <Button disabled className="w-full text-sm h-10 opacity-50 cursor-not-allowed">
+                    Coming Soon
                   </Button>
                 </Card>
               </motion.div>
