@@ -134,10 +134,10 @@ export default function Home() {
             </div>
 
             {/* Right Column - AI Influencer Image */}
-            <div className="relative h-[400px] lg:h-[500px] rounded-3xl overflow-hidden">
+            <div className="relative h-[500px] lg:h-[600px] rounded-3xl overflow-hidden">
               <Image
-                src="/hero-web3.jpeg"
-                alt="Crypto KOL promoting NFT collection on X"
+                src="/ai-influencer-hero-old.jpeg"
+                alt="AI Influencer"
                 fill
                 className="object-cover"
                 priority
