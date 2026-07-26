@@ -44,6 +44,7 @@ import {
   ExternalLink,
   Camera,
   FileText,
+  Rocket,
 } from "lucide-react";
 import type { Tab, Campaign, CampaignApplication, CollaborationStatus } from "./types";
 import { COLLABORATION_STATUS_CONFIG } from "./types";
@@ -221,8 +222,8 @@ export function CampaignsTab({
   };
 
   /** Toggle pause/resume on a campaign */
-  const handleTogglePause = async (campaign: Campaign) => {
-    const newStatus = campaign.status === 'paused' ? 'ACTIVE' : 'PAUSED';
+  const handleTogglePause = async (campaign: Campaign, forceStatus?: string) => {
+    const newStatus = forceStatus || (campaign.status === 'paused' || campaign.status === 'draft' ? 'ACTIVE' : 'PAUSED');
     setActionLoading(true);
     try {
       const res = await fetch(`/api/campaigns/${campaign.id}`, {
@@ -240,7 +241,7 @@ export function CampaignsTab({
         c.id === campaign.id ? { ...c, status: updatedStatus } : c
       ));
       showToast(
-        newStatus === 'PAUSED' ? 'Campaign paused.' : 'Campaign resumed.',
+        newStatus === 'PAUSED' ? 'Campaign paused.' : 'Campaign is now live!',
         'success'
       );
     } catch {
@@ -2493,6 +2494,16 @@ export function CampaignsTab({
                 >
                   <Pencil className="h-4 w-4 text-muted-foreground hover:text-foreground" />
                 </button>
+                {campaign.status === "draft" && (
+                  <button
+                    title="Launch campaign"
+                    disabled={actionLoading}
+                    className="p-2 rounded-lg hover:bg-muted transition-colors"
+                    onClick={() => handleTogglePause(campaign, 'ACTIVE')}
+                  >
+                    <Rocket className="h-4 w-4 text-primary hover:text-primary/80" />
+                  </button>
+                )}
                 {(campaign.status === "active" || campaign.status === "paused") && (
                   <button
                     title={campaign.status === "paused" ? "Resume campaign" : "Pause campaign"}
