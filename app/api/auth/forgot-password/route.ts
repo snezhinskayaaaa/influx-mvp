@@ -6,7 +6,7 @@ import { rateLimit } from '@/lib/rate-limit'
 export async function POST(request: NextRequest) {
   try {
     const ip = request.headers.get('x-forwarded-for') || 'unknown'
-    const { success } = rateLimit(`forgot:${ip}`, 3, 300000) // 3 attempts per 5 minutes
+    const { success } = rateLimit(`forgot:${ip}`, 5, 600000) // 5 attempts per 10 minutes
     if (!success) {
       return NextResponse.json({ error: 'Too many requests. Please wait a few minutes.' }, { status: 429 })
     }
