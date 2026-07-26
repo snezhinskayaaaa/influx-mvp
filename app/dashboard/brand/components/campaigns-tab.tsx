@@ -85,6 +85,8 @@ export function CampaignsTab({
   const [showRevisionInput, setShowRevisionInput] = useState(false);
   const [showDisputeInput, setShowDisputeInput] = useState(false);
   const [actionLoading, setActionLoading] = useState(false);
+  const [deletingCampaign, setDeletingCampaign] = useState<Campaign | null>(null);
+  const [deleteConfirmText, setDeleteConfirmText] = useState("");
 
   /** Helper to get collaboration status badge */
   const getCollaborationStatusBadge = (collabStatus: CollaborationStatus | undefined) => {
@@ -249,13 +251,11 @@ export function CampaignsTab({
   };
 
   /** Delete a campaign */
-  const handleDeleteCampaign = async (campaign: Campaign) => {
-    if (!window.confirm('Are you sure you want to delete this campaign? This cannot be undone.')) {
-      return;
-    }
+  const handleDeleteCampaign = async () => {
+    if (!deletingCampaign) return;
     setActionLoading(true);
     try {
-      const res = await fetch(`/api/campaigns/${campaign.id}`, {
+      const res = await fetch(`/api/campaigns/${deletingCampaign.id}`, {
         method: 'DELETE',
       });
       if (!res.ok) {
@@ -263,9 +263,8 @@ export function CampaignsTab({
         showToast(data.error || 'Failed to delete campaign', 'error');
         return;
       }
-      setCampaigns(campaigns.filter(c => c.id !== campaign.id));
-      // If we were viewing this campaign's details, go back to the list
-      if (selectedCampaignDetails?.id === campaign.id) {
+      setCampaigns(campaigns.filter(c => c.id !== deletingCampaign.id));
+      if (selectedCampaignDetails?.id === deletingCampaign.id) {
         setSelectedCampaignDetails(null);
       }
       showToast('Campaign deleted.', 'success');
@@ -273,6 +272,8 @@ export function CampaignsTab({
       showToast('Failed to delete campaign', 'error');
     } finally {
       setActionLoading(false);
+      setDeletingCampaign(null);
+      setDeleteConfirmText("");
     }
   };
 
@@ -2507,7 +2508,7 @@ export function CampaignsTab({
                   title="Delete campaign"
                   disabled={actionLoading}
                   className="p-2 rounded-lg hover:bg-muted transition-colors hover:text-red-600"
-                  onClick={() => handleDeleteCampaign(campaign)}
+                  onClick={() => { setDeletingCampaign(campaign); setDeleteConfirmText(""); }}
                 >
                   <Trash2 className="h-4 w-4 text-muted-foreground hover:text-red-600" />
                 </button>
@@ -2658,6 +2659,44 @@ export function CampaignsTab({
       )}
         </>
       )}
+      {/* Delete Campaign Modal */}
+      {deletingCampaign && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+          <div className="bg-background border border-border rounded-2xl p-6 w-full max-w-md mx-4 shadow-2xl">
+            <h3 className="text-lg font-bold mb-1 text-destructive">Delete Campaign</h3>
+            <p className="text-sm text-muted-foreground mb-4">
+              This action is permanent and cannot be undone. All campaign data will be deleted.
+            </p>
+            <p className="text-sm mb-2">
+              Type <span className="font-semibold">{deletingCampaign.title}</span> to confirm:
+            </p>
+            <input
+              type="text"
+              value={deleteConfirmText}
+              onChange={(e) => setDeleteConfirmText(e.target.value)}
+              placeholder={deletingCampaign.title}
+              className="w-full px-3 py-2 border border-border rounded-lg text-sm mb-4 bg-background focus:outline-none focus:ring-2 focus:ring-destructive/50"
+              autoFocus
+            />
+            <div className="flex gap-3 justify-end">
+              <button
+                onClick={() => { setDeletingCampaign(null); setDeleteConfirmText(""); }}
+                className="px-4 py-2 text-sm rounded-lg border border-border hover:bg-muted transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleDeleteCampaign}
+                disabled={deleteConfirmText !== deletingCampaign.title || actionLoading}
+                className="px-4 py-2 text-sm rounded-lg bg-destructive text-destructive-foreground hover:bg-destructive/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {actionLoading ? 'Deleting...' : 'Delete Campaign'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {toast && (
         <div className={`fixed bottom-6 right-6 z-50 px-5 py-3 rounded-xl shadow-lg border backdrop-blur-sm ${
           toast.variant === 'success'
