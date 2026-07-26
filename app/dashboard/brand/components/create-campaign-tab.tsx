@@ -803,7 +803,7 @@ export function CreateCampaignTab({ campaigns, setCampaigns, setActiveTab }: Cre
               </div>
             </div>
             <p className="text-xs text-muted-foreground mt-2">
-              Set a budget range per influencer (in USDC). Influencers will see this range when applying.
+              Set a budget range per influencer (in USDC/USDT). Creators will see this range when applying.
             </p>
 
             {/* Total Campaign Budget */}
