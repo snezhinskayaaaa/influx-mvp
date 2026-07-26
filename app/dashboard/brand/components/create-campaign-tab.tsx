@@ -205,10 +205,11 @@ export function CreateCampaignTab({ campaigns, setCampaigns, setActiveTab }: Cre
               body: JSON.stringify({
                 title: campaignTitle,
                 description: campaignDescription,
-                budgetMin: parseFloat(campaignBudgetMin) || 0,
-                budgetMax: parseFloat(campaignBudgetMax) || 0,
+                budgetMin: parseFloat(campaignBudgetMin) || 20,
+                budgetMax: parseFloat(campaignBudgetMax) || 20,
                 desiredInfluencerCount: parseInt(campaignInfluencerCount) || 1,
                 deliverables: campaignDetailedRequirements,
+                status: 'ACTIVE',
               }),
             });
             if (res.ok) {
@@ -976,6 +977,7 @@ export function CreateCampaignTab({ campaigns, setCampaigns, setActiveTab }: Cre
                       budgetMax: parseFloat(campaignBudgetMax) || 20,
                       desiredInfluencerCount: parseInt(campaignInfluencerCount) || 1,
                       deliverables: campaignDetailedRequirements,
+                      status: 'DRAFT',
                     }),
                   });
                   if (res.ok) {

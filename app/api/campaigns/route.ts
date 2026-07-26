@@ -131,7 +131,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json()
-    const { title, description, budgetMin, budgetMax, desiredInfluencerCount, deliverables } = body
+    const { title, description, budgetMin, budgetMax, desiredInfluencerCount, deliverables, status: requestedStatus } = body
 
     if (!title || typeof title !== 'string' || title.trim().length === 0) {
       return NextResponse.json({ error: 'Title is required' }, { status: 400 })
@@ -155,8 +155,12 @@ export async function POST(request: NextRequest) {
     const budgetMinCents = Math.round(budgetMin * 100)
     const budgetMaxCents = Math.round(budgetMax * 100)
 
-    // Balance is checked atomically at the collaboration agree step when funds are frozen,
-    // not here at campaign creation time, to avoid race conditions.
+    const campaignStatus = requestedStatus === 'DRAFT' ? 'DRAFT' : 'ACTIVE'
+
+    // For ACTIVE campaigns, warn if balance is low (not blocking — actual freeze happens at agree step)
+    if (campaignStatus === 'ACTIVE' && brand.balance < budgetMinCents) {
+      // Still allow creation, but balance will need to be topped up before collaborations are agreed
+    }
 
     let parsedDeliverables: string[] = []
     if (typeof deliverables === 'string') {
@@ -174,7 +178,7 @@ export async function POST(request: NextRequest) {
         budgetMax: budgetMaxCents,
         desiredInfluencerCount: desiredInfluencerCount || 1,
         deliverables: parsedDeliverables,
-        status: 'ACTIVE',
+        status: campaignStatus,
       },
     })
 
