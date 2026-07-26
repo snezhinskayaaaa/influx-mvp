@@ -42,6 +42,8 @@ import {
   Mail,
   AlertCircle,
   FileText,
+  Send,
+  Video,
 } from "lucide-react";
 import {
   Select,
@@ -81,7 +83,11 @@ interface Campaign {
   brandAvatar: string;
   category: string;
   budget: number;
-  pricingModel: "CPM" | "CPC" | "CPE";
+  budgetMin: number;
+  budgetMax: number;
+  pricingModel: string;
+  pricingModels: string[];
+  contentFormats: string[];
   description: string;
   requirements: string[];
   platforms: string[];
@@ -217,14 +223,19 @@ export default function InfluencerDashboard() {
               title: (c.title as string) || '',
               brand: ((c as Record<string, unknown>).brand as Record<string, unknown>)?.companyName || 'Unknown Brand',
               brandAvatar: '🏢',
-              category: ((c as Record<string, unknown>).brand as Record<string, unknown>)?.industry || 'General',
+              category: (c.influencerNiches as string[])?.[0] || ((c as Record<string, unknown>).brand as Record<string, string>)?.industry || '',
               budget: Math.round(((c.budgetMax as number) || 0) / 100),
-              pricingModel: 'CPM' as const,
+              budgetMin: Math.round(((c.budgetMin as number) || 0) / 100),
+              budgetMax: Math.round(((c.budgetMax as number) || 0) / 100),
+              pricingModel: (Array.isArray(c.pricingModels) && (c.pricingModels as string[]).length > 0) ? (c.pricingModels as string[])[0].toUpperCase() : 'CPM',
+              pricingModels: Array.isArray(c.pricingModels) ? c.pricingModels as string[] : [],
+              contentFormats: Array.isArray(c.contentFormats) ? c.contentFormats as string[] : [],
               description: (c.description as string) || '',
               requirements: (c.deliverables as string[]) || [],
-              platforms: [],
+              platforms: Array.isArray(c.platforms) ? c.platforms as string[] : [],
               deadline: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
               status: 'open' as const,
+              goal: (c.goal as string) || '',
             }));
             setDiscoverCampaigns(mapped);
           }
@@ -260,14 +271,19 @@ export default function InfluencerDashboard() {
                 title: (campaign?.title as string) || '',
                 brand: (brand?.companyName as string) || 'Unknown Brand',
                 brandAvatar: '🏢',
-                category: (brand?.industry as string) || 'General',
+                category: (campaign?.influencerNiches as string[])?.[0] || (brand?.industry as string) || '',
                 budget: Math.round(budgetCents / 100),
-                pricingModel: 'CPM' as const,
+                budgetMin: Math.round(((campaign?.budgetMin as number) || 0) / 100),
+                budgetMax: Math.round(((campaign?.budgetMax as number) || 0) / 100),
+                pricingModel: (Array.isArray(campaign?.pricingModels) && (campaign.pricingModels as string[]).length > 0) ? (campaign.pricingModels as string[])[0].toUpperCase() : 'CPM',
+                pricingModels: Array.isArray(campaign?.pricingModels) ? campaign.pricingModels as string[] : [],
+                contentFormats: Array.isArray(campaign?.contentFormats) ? campaign.contentFormats as string[] : [],
                 description: (campaign?.description as string) || '',
                 requirements: (collab.deliverables as string[]) || [],
-                platforms: [],
+                platforms: Array.isArray(campaign?.platforms) ? campaign.platforms as string[] : [],
                 deadline: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
                 status: statusMap[(collab.status as string)] || 'applied',
+                goal: (campaign?.goal as string) || '',
                 revisionNote: (collab.revisionNote as string) || undefined,
                 revisionCount: (collab.revisionCount as number) || 0,
                 contentUrl: (collab.contentUrl as string) || undefined,
@@ -476,6 +492,24 @@ export default function InfluencerDashboard() {
     }
   };
 
+  const getPlatformIcon = (platform: string) => {
+    switch (platform) {
+      case 'twitter': return <XIcon className="h-3.5 w-3.5" />;
+      case 'telegram': return <Send className="h-3.5 w-3.5" />;
+      case 'instagram': return <Instagram className="h-3.5 w-3.5" />;
+      case 'tiktok': return <Video className="h-3.5 w-3.5" />;
+      case 'youtube': return <Youtube className="h-3.5 w-3.5" />;
+      default: return null;
+    }
+  };
+
+  const getPricingBadgeStyle = (model: string) => {
+    const upper = model.toUpperCase();
+    if (upper === 'CPM') return 'bg-primary/10 text-primary border border-primary/20';
+    if (upper === 'CPC') return 'bg-secondary/10 text-secondary border border-secondary/20';
+    return 'bg-muted text-foreground border border-border';
+  };
+
   /** Helper to refresh collaborations list after a submit action */
   const refreshCollaborations = async () => {
     try {
@@ -508,14 +542,19 @@ export default function InfluencerDashboard() {
               title: (campaign?.title as string) || "",
               brand: (brand?.companyName as string) || "Unknown Brand",
               brandAvatar: "🏢",
-              category: (brand?.industry as string) || "General",
+              category: (campaign?.influencerNiches as string[])?.[0] || (brand?.industry as string) || '',
               budget: Math.round(budgetCents / 100),
-              pricingModel: "CPM" as const,
+              budgetMin: Math.round(((campaign?.budgetMin as number) || 0) / 100),
+              budgetMax: Math.round(((campaign?.budgetMax as number) || 0) / 100),
+              pricingModel: (Array.isArray(campaign?.pricingModels) && (campaign.pricingModels as string[]).length > 0) ? (campaign.pricingModels as string[])[0].toUpperCase() : 'CPM',
+              pricingModels: Array.isArray(campaign?.pricingModels) ? campaign.pricingModels as string[] : [],
+              contentFormats: Array.isArray(campaign?.contentFormats) ? campaign.contentFormats as string[] : [],
               description: (campaign?.description as string) || "",
               requirements: (collab.deliverables as string[]) || [],
-              platforms: [],
+              platforms: Array.isArray(campaign?.platforms) ? campaign.platforms as string[] : [],
               deadline: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
               status: statusMap[(collab.status as string)] || "applied",
+              goal: (campaign?.goal as string) || '',
               revisionNote: (collab.revisionNote as string) || undefined,
               revisionCount: (collab.revisionCount as number) || 0,
               contentUrl: (collab.contentUrl as string) || undefined,
@@ -640,14 +679,19 @@ export default function InfluencerDashboard() {
               title: (campaign?.title as string) || "",
               brand: (brand?.companyName as string) || "Unknown Brand",
               brandAvatar: "🏢",
-              category: (brand?.industry as string) || "General",
+              category: (campaign?.influencerNiches as string[])?.[0] || (brand?.industry as string) || '',
               budget: Math.round(budgetCents / 100),
-              pricingModel: "CPM" as const,
+              budgetMin: Math.round(((campaign?.budgetMin as number) || 0) / 100),
+              budgetMax: Math.round(((campaign?.budgetMax as number) || 0) / 100),
+              pricingModel: (Array.isArray(campaign?.pricingModels) && (campaign.pricingModels as string[]).length > 0) ? (campaign.pricingModels as string[])[0].toUpperCase() : 'CPM',
+              pricingModels: Array.isArray(campaign?.pricingModels) ? campaign.pricingModels as string[] : [],
+              contentFormats: Array.isArray(campaign?.contentFormats) ? campaign.contentFormats as string[] : [],
               description: (campaign?.description as string) || "",
               requirements: (collab.deliverables as string[]) || [],
-              platforms: [],
+              platforms: Array.isArray(campaign?.platforms) ? campaign.platforms as string[] : [],
               deadline: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
               status: statusMap[(collab.status as string)] || "applied",
+              goal: (campaign?.goal as string) || '',
               revisionNote: (collab.revisionNote as string) || undefined,
               revisionCount: (collab.revisionCount as number) || 0,
               contentUrl: (collab.contentUrl as string) || undefined,
@@ -1014,12 +1058,27 @@ export default function InfluencerDashboard() {
 
                           <p className="text-sm text-muted-foreground mb-3">{campaign.description}</p>
 
-                          {/* Price and Deadline */}
+                          {/* Price, Pricing Models, and Platforms */}
                           <div className="flex items-center gap-6 mb-3 text-sm">
                             <div className="flex items-center gap-2">
                               <DollarSign className="h-4 w-4 text-primary" />
-                              <span className="font-bold">${campaign.budget.toLocaleString()}</span>
-                              <span className="text-muted-foreground">({campaign.pricingModel})</span>
+                              <span className="font-bold">
+                                ${campaign.budgetMin.toLocaleString()} &ndash; ${campaign.budgetMax.toLocaleString()}
+                              </span>
+                              <span className="text-muted-foreground">/ creator</span>
+                            </div>
+                            <div className="flex items-center gap-1.5">
+                              {campaign.pricingModels.length > 0 ? (
+                                campaign.pricingModels.map((m) => (
+                                  <Badge key={m} variant="outline" className={`text-[10px] px-2 py-0.5 ${getPricingBadgeStyle(m)}`}>
+                                    {m.toUpperCase()}
+                                  </Badge>
+                                ))
+                              ) : (
+                                <Badge variant="outline" className={`text-[10px] px-2 py-0.5 ${getPricingBadgeStyle(campaign.pricingModel)}`}>
+                                  {campaign.pricingModel}
+                                </Badge>
+                              )}
                             </div>
                             <div className="flex items-center gap-2 text-muted-foreground">
                               <Calendar className="h-4 w-4" />
@@ -1027,13 +1086,26 @@ export default function InfluencerDashboard() {
                             </div>
                           </div>
 
-                          {/* Platforms */}
-                          <div className="flex flex-wrap gap-2 mb-3">
-                            {campaign.platforms.map((platform) => (
-                              <Badge key={platform} className="bg-primary text-primary-foreground hover:bg-primary/90">
-                                {platform}
-                              </Badge>
-                            ))}
+                          {/* Platforms and Content Formats */}
+                          <div className="flex flex-wrap items-center gap-3 mb-3">
+                            {campaign.platforms.length > 0 && (
+                              <div className="flex items-center gap-1.5">
+                                {campaign.platforms.map((platform) => (
+                                  <span key={platform} className="text-muted-foreground" title={platform}>
+                                    {getPlatformIcon(platform)}
+                                  </span>
+                                ))}
+                              </div>
+                            )}
+                            {campaign.contentFormats.length > 0 && (
+                              <div className="flex flex-wrap gap-1.5">
+                                {campaign.contentFormats.map((format) => (
+                                  <span key={format} className="text-[10px] text-muted-foreground bg-muted/50 px-2 py-0.5 rounded">
+                                    {format.replace(/-/g, ' ')}
+                                  </span>
+                                ))}
+                              </div>
+                            )}
                           </div>
 
                           {/* Requirements */}
@@ -1883,17 +1955,17 @@ export default function InfluencerDashboard() {
                         {/* Pricing Column */}
                         <div className="w-[100px] flex items-center">
                           <div className="flex flex-wrap gap-1">
-                            <div
-                              className={`text-xs px-2 py-0.5 rounded-md font-medium ${
-                                campaign.pricingModel === "CPM"
-                                  ? "bg-primary/10 text-primary border border-primary/20"
-                                  : campaign.pricingModel === "CPC"
-                                  ? "bg-secondary/10 text-secondary border border-secondary/20"
-                                  : "bg-muted text-foreground border border-border"
-                              }`}
-                            >
-                              {campaign.pricingModel}
-                            </div>
+                            {campaign.pricingModels.length > 0 ? (
+                              campaign.pricingModels.map((m) => (
+                                <div key={m} className={`text-xs px-2 py-0.5 rounded-md font-medium ${getPricingBadgeStyle(m)}`}>
+                                  {m.toUpperCase()}
+                                </div>
+                              ))
+                            ) : (
+                              <div className={`text-xs px-2 py-0.5 rounded-md font-medium ${getPricingBadgeStyle(campaign.pricingModel)}`}>
+                                {campaign.pricingModel}
+                              </div>
+                            )}
                           </div>
                         </div>
 
@@ -1962,16 +2034,18 @@ export default function InfluencerDashboard() {
                         <div className="grid grid-cols-2 gap-2 text-xs">
                           <div>
                             <div className="text-muted-foreground mb-0.5">Pricing</div>
-                            <div
-                              className={`inline-block text-[10px] px-2 py-0.5 rounded-md font-medium ${
-                                campaign.pricingModel === "CPM"
-                                  ? "bg-primary/10 text-primary border border-primary/20"
-                                  : campaign.pricingModel === "CPC"
-                                  ? "bg-secondary/10 text-secondary border border-secondary/20"
-                                  : "bg-muted text-foreground border border-border"
-                              }`}
-                            >
-                              {campaign.pricingModel}
+                            <div className="flex flex-wrap gap-1">
+                              {campaign.pricingModels.length > 0 ? (
+                                campaign.pricingModels.map((m) => (
+                                  <div key={m} className={`inline-block text-[10px] px-2 py-0.5 rounded-md font-medium ${getPricingBadgeStyle(m)}`}>
+                                    {m.toUpperCase()}
+                                  </div>
+                                ))
+                              ) : (
+                                <div className={`inline-block text-[10px] px-2 py-0.5 rounded-md font-medium ${getPricingBadgeStyle(campaign.pricingModel)}`}>
+                                  {campaign.pricingModel}
+                                </div>
+                              )}
                             </div>
                           </div>
                           <div>
