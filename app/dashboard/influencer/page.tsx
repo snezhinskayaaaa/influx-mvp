@@ -2432,25 +2432,56 @@ export default function InfluencerDashboard() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
           <div className="bg-background border border-border rounded-2xl p-6 w-full max-w-md mx-4 shadow-2xl">
             <h3 className="text-lg font-bold mb-1">Apply to Campaign</h3>
-            <p className="text-sm text-muted-foreground mb-4">{applyingCampaign.title}</p>
+            <p className="text-sm text-muted-foreground mb-2">{applyingCampaign.title}</p>
+
+            {/* Campaign details summary */}
+            <div className="bg-muted/50 rounded-xl p-3 mb-4 space-y-2 text-sm">
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Budget range</span>
+                <span className="font-medium">${applyingCampaign.budget ? `${applyingCampaign.budget}` : 'Not specified'} / creator</span>
+              </div>
+              {applyingCampaign.platforms && applyingCampaign.platforms.length > 0 && (
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Platforms</span>
+                  <span className="font-medium">{applyingCampaign.platforms.map(p => p === 'twitter' ? 'X' : p.charAt(0).toUpperCase() + p.slice(1)).join(', ')}</span>
+                </div>
+              )}
+              {applyingCampaign.goal && (
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Goal</span>
+                  <span className="font-medium capitalize">{applyingCampaign.goal.replace(/-/g, ' ')}</span>
+                </div>
+              )}
+              {applyingCampaign.requirements && applyingCampaign.requirements.length > 0 && (
+                <div>
+                  <span className="text-muted-foreground">Deliverables</span>
+                  <ul className="mt-1 space-y-0.5">
+                    {applyingCampaign.requirements.map((r, i) => (
+                      <li key={i} className="text-xs text-muted-foreground">• {r}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
 
             <div className="space-y-4">
               <div>
-                <label className="text-sm font-medium mb-1 block">Your Price ($)</label>
+                <label className="text-sm font-medium mb-1 block">Your Price ($) for this campaign</label>
                 <input
                   type="number"
                   value={proposedPrice}
                   onChange={(e) => setProposedPrice(e.target.value)}
-                  placeholder="Enter your price"
+                  placeholder="Enter your total price in USD"
                   className="w-full px-3 py-2 rounded-lg border border-border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary"
                 />
+                <p className="text-xs text-muted-foreground mt-1">Total price for all deliverables. 50% advance on start, 50% on delivery.</p>
               </div>
               <div>
                 <label className="text-sm font-medium mb-1 block">Message (optional)</label>
                 <textarea
                   value={applicationMessage}
                   onChange={(e) => setApplicationMessage(e.target.value)}
-                  placeholder="Why you're a great fit..."
+                  placeholder="Why you're a great fit for this campaign..."
                   rows={3}
                   className="w-full px-3 py-2 rounded-lg border border-border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary resize-none"
                 />
