@@ -44,7 +44,6 @@ import {
   ExternalLink,
   Camera,
   FileText,
-  Rocket,
 } from "lucide-react";
 import type { Tab, Campaign, CampaignApplication, CollaborationStatus } from "./types";
 import { COLLABORATION_STATUS_CONFIG } from "./types";
