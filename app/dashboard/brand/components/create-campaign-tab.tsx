@@ -41,37 +41,61 @@ export function CreateCampaignTab({ campaigns, setCampaigns, setActiveTab }: Cre
     setTimeout(() => setToast(null), 4000);
   };
 
-  // Load saved draft from localStorage
-  const draft = (() => {
-    if (typeof window === 'undefined') return null;
-    try { return JSON.parse(localStorage.getItem('influx_campaign_draft') || 'null'); } catch { return null; }
-  })();
+  const getDraft = (key: string, fallback: string = "") => {
+    if (typeof window === 'undefined') return fallback;
+    try {
+      const saved = localStorage.getItem('influx_campaign_draft');
+      if (!saved) return fallback;
+      const data = JSON.parse(saved);
+      return data[key] ?? fallback;
+    } catch { return fallback; }
+  };
 
-  const [campaignTitle, setCampaignTitle] = useState(draft?.campaignTitle || "");
-  const [campaignBudgetMin, setCampaignBudgetMin] = useState(draft?.campaignBudgetMin || "");
-  const [campaignBudgetMax, setCampaignBudgetMax] = useState(draft?.campaignBudgetMax || "");
-  const [campaignDescription, setCampaignDescription] = useState(draft?.campaignDescription || "");
-  const [campaignGoal, setCampaignGoal] = useState(draft?.campaignGoal || "");
-  const [campaignStartDate, setCampaignStartDate] = useState<Date | undefined>(draft?.campaignStartDate ? new Date(draft.campaignStartDate) : undefined);
-  const [campaignEndDate, setCampaignEndDate] = useState<Date | undefined>(draft?.campaignEndDate ? new Date(draft.campaignEndDate) : undefined);
-  const [campaignInfluencerCount, setCampaignInfluencerCount] = useState(draft?.campaignInfluencerCount || "");
-  const [campaignPlatforms, setCampaignPlatforms] = useState<string[]>(draft?.campaignPlatforms || []);
-  const [campaignContentFormats, setCampaignContentFormats] = useState<string[]>(draft?.campaignContentFormats || []);
-  const [campaignContentType, setCampaignContentType] = useState<string>(draft?.campaignContentType || "");
-  const [campaignInfluencerNiches, setCampaignInfluencerNiches] = useState<string[]>(draft?.campaignInfluencerNiches || []);
-  const [campaignPricingModels, setCampaignPricingModels] = useState<string[]>(draft?.campaignPricingModels || []);
-  const [campaignTargetViews, setCampaignTargetViews] = useState(draft?.campaignTargetViews || "");
-  const [campaignTargetClicks, setCampaignTargetClicks] = useState(draft?.campaignTargetClicks || "");
-  const [campaignTargetEngagements, setCampaignTargetEngagements] = useState(draft?.campaignTargetEngagements || "");
-  const [campaignBrandTag, setCampaignBrandTag] = useState(draft?.campaignBrandTag || "");
-  const [campaignHashtags, setCampaignHashtags] = useState(draft?.campaignHashtags || "");
-  const [campaignCreatorScript, setCampaignCreatorScript] = useState(draft?.campaignCreatorScript || "");
-  const [campaignDetailedRequirements, setCampaignDetailedRequirements] = useState(draft?.campaignDetailedRequirements || "");
-  const [campaignProductName, setCampaignProductName] = useState(draft?.campaignProductName || "");
-  const [campaignProductPrice, setCampaignProductPrice] = useState(draft?.campaignProductPrice || "");
-  const [campaignProductPhoto, setCampaignProductPhoto] = useState(draft?.campaignProductPhoto || "");
-  const [campaignProductLink, setCampaignProductLink] = useState(draft?.campaignProductLink || "");
-  const [campaignProductDescription, setCampaignProductDescription] = useState(draft?.campaignProductDescription || "");
+  const getDraftArray = (key: string): string[] => {
+    if (typeof window === 'undefined') return [];
+    try {
+      const saved = localStorage.getItem('influx_campaign_draft');
+      if (!saved) return [];
+      const data = JSON.parse(saved);
+      return Array.isArray(data[key]) ? data[key] : [];
+    } catch { return []; }
+  };
+
+  const getDraftDate = (key: string): Date | undefined => {
+    if (typeof window === 'undefined') return undefined;
+    try {
+      const saved = localStorage.getItem('influx_campaign_draft');
+      if (!saved) return undefined;
+      const data = JSON.parse(saved);
+      return data[key] ? new Date(data[key]) : undefined;
+    } catch { return undefined; }
+  };
+
+  const [campaignTitle, setCampaignTitle] = useState(() => getDraft('campaignTitle'));
+  const [campaignBudgetMin, setCampaignBudgetMin] = useState(() => getDraft('campaignBudgetMin'));
+  const [campaignBudgetMax, setCampaignBudgetMax] = useState(() => getDraft('campaignBudgetMax'));
+  const [campaignDescription, setCampaignDescription] = useState(() => getDraft('campaignDescription'));
+  const [campaignGoal, setCampaignGoal] = useState(() => getDraft('campaignGoal'));
+  const [campaignStartDate, setCampaignStartDate] = useState<Date | undefined>(() => getDraftDate('campaignStartDate'));
+  const [campaignEndDate, setCampaignEndDate] = useState<Date | undefined>(() => getDraftDate('campaignEndDate'));
+  const [campaignInfluencerCount, setCampaignInfluencerCount] = useState(() => getDraft('campaignInfluencerCount'));
+  const [campaignPlatforms, setCampaignPlatforms] = useState<string[]>(() => getDraftArray('campaignPlatforms'));
+  const [campaignContentFormats, setCampaignContentFormats] = useState<string[]>(() => getDraftArray('campaignContentFormats'));
+  const [campaignContentType, setCampaignContentType] = useState<string>(() => getDraft('campaignContentType'));
+  const [campaignInfluencerNiches, setCampaignInfluencerNiches] = useState<string[]>(() => getDraftArray('campaignInfluencerNiches'));
+  const [campaignPricingModels, setCampaignPricingModels] = useState<string[]>(() => getDraftArray('campaignPricingModels'));
+  const [campaignTargetViews, setCampaignTargetViews] = useState(() => getDraft('campaignTargetViews'));
+  const [campaignTargetClicks, setCampaignTargetClicks] = useState(() => getDraft('campaignTargetClicks'));
+  const [campaignTargetEngagements, setCampaignTargetEngagements] = useState(() => getDraft('campaignTargetEngagements'));
+  const [campaignBrandTag, setCampaignBrandTag] = useState(() => getDraft('campaignBrandTag'));
+  const [campaignHashtags, setCampaignHashtags] = useState(() => getDraft('campaignHashtags'));
+  const [campaignCreatorScript, setCampaignCreatorScript] = useState(() => getDraft('campaignCreatorScript'));
+  const [campaignDetailedRequirements, setCampaignDetailedRequirements] = useState(() => getDraft('campaignDetailedRequirements'));
+  const [campaignProductName, setCampaignProductName] = useState(() => getDraft('campaignProductName'));
+  const [campaignProductPrice, setCampaignProductPrice] = useState(() => getDraft('campaignProductPrice'));
+  const [campaignProductPhoto, setCampaignProductPhoto] = useState(() => getDraft('campaignProductPhoto'));
+  const [campaignProductLink, setCampaignProductLink] = useState(() => getDraft('campaignProductLink'));
+  const [campaignProductDescription, setCampaignProductDescription] = useState(() => getDraft('campaignProductDescription'));
 
   // Auto-save draft to localStorage on any change
   useEffect(() => {
