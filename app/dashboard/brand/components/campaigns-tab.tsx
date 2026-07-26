@@ -475,10 +475,11 @@ export function CampaignsTab({
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="brand-awareness">Brand Awareness</SelectItem>
-                        <SelectItem value="engagement">Engagement</SelectItem>
-                        <SelectItem value="conversions">Conversions</SelectItem>
-                        <SelectItem value="traffic">Traffic</SelectItem>
+                        <SelectItem value="project-awareness">Project Awareness</SelectItem>
+                        <SelectItem value="community-engagement">Community Engagement</SelectItem>
+                        <SelectItem value="token-launch">Token / Protocol Launch</SelectItem>
+                        <SelectItem value="user-acquisition">User Acquisition</SelectItem>
+                        <SelectItem value="dapp-traffic">dApp Traffic</SelectItem>
                       </SelectContent>
                     </Select>
                   ) : (
@@ -608,7 +609,7 @@ export function CampaignsTab({
                     <Label className="text-sm font-semibold mb-2 block">Platforms</Label>
                     {isEditingCampaign && editedCampaignData ? (
                       <div className="space-y-2">
-                        {["instagram", "tiktok", "youtube", "twitter"].map((platform) => (
+                        {["twitter", "telegram", "instagram", "tiktok", "youtube"].map((platform) => (
                           <div key={platform} className="flex items-center space-x-2">
                             <Checkbox
                               id={`platform-${platform}`}
@@ -623,13 +624,14 @@ export function CampaignsTab({
                             />
                             <label
                               htmlFor={`platform-${platform}`}
-                              className="text-sm font-medium capitalize cursor-pointer flex items-center"
+                              className="text-sm font-medium cursor-pointer flex items-center"
                             >
+                              {platform === "twitter" && <XIcon className="h-4 w-4 mr-2" />}
+                              {platform === "telegram" && <MessageCircle className="h-4 w-4 mr-2" />}
                               {platform === "instagram" && <Instagram className="h-4 w-4 mr-2" />}
                               {platform === "tiktok" && <Video className="h-4 w-4 mr-2" />}
                               {platform === "youtube" && <Youtube className="h-4 w-4 mr-2" />}
-                              {platform === "twitter" && <XIcon className="h-4 w-4 mr-2" />}
-                              {platform}
+                              {platform === "twitter" ? "X (Twitter)" : platform.charAt(0).toUpperCase() + platform.slice(1)}
                             </label>
                           </div>
                         ))}
@@ -637,12 +639,13 @@ export function CampaignsTab({
                     ) : selectedCampaignDetails.platforms && selectedCampaignDetails.platforms.length > 0 ? (
                       <div className="flex gap-2">
                         {selectedCampaignDetails.platforms.map((platform) => (
-                          <Badge key={platform} variant="outline" className="capitalize">
+                          <Badge key={platform} variant="outline">
+                            {platform === "twitter" && <XIcon className="h-3 w-3 mr-1" />}
+                            {platform === "telegram" && <MessageCircle className="h-3 w-3 mr-1" />}
                             {platform === "instagram" && <Instagram className="h-3 w-3 mr-1" />}
                             {platform === "tiktok" && <Video className="h-3 w-3 mr-1" />}
                             {platform === "youtube" && <Youtube className="h-3 w-3 mr-1" />}
-                            {platform === "twitter" && <XIcon className="h-3 w-3 mr-1" />}
-                            {platform}
+                            {platform === "twitter" ? "X (Twitter)" : platform.charAt(0).toUpperCase() + platform.slice(1)}
                           </Badge>
                         ))}
                       </div>
@@ -799,12 +802,12 @@ export function CampaignsTab({
                           <SelectValue placeholder="Select content type" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="product-review">Product Review</SelectItem>
-                          <SelectItem value="tutorial">Tutorial</SelectItem>
-                          <SelectItem value="unboxing">Unboxing</SelectItem>
-                          <SelectItem value="lifestyle">Lifestyle</SelectItem>
+                          <SelectItem value="protocol-review">Protocol Review</SelectItem>
+                          <SelectItem value="tutorial">Tutorial / Walkthrough</SelectItem>
+                          <SelectItem value="deep-dive">Deep Dive</SelectItem>
+                          <SelectItem value="alpha-thread">Alpha Thread</SelectItem>
                           <SelectItem value="testimonial">Testimonial</SelectItem>
-                          <SelectItem value="brand-awareness">Brand Awareness</SelectItem>
+                          <SelectItem value="project-overview">Project Overview</SelectItem>
                         </SelectContent>
                       </Select>
                     ) : selectedCampaignDetails.contentType ? (
@@ -820,7 +823,7 @@ export function CampaignsTab({
                     <Label className="text-sm font-semibold mb-2 block">Influencer Niches</Label>
                     {isEditingCampaign && editedCampaignData ? (
                       <div className="grid grid-cols-2 gap-2">
-                        {["Fashion", "Beauty", "Tech", "Gaming", "Fitness", "Food", "Travel", "Lifestyle"].map((niche) => (
+                        {["DeFi", "NFT & Digital Art", "GameFi", "Chains & Infrastructure", "Exchanges", "Memecoins", "DAOs & Governance", "AI x Crypto", "Wallets & Security", "Other"].map((niche) => (
                           <div key={niche} className="flex items-center space-x-2">
                             <Checkbox
                               id={`niche-${niche}`}
@@ -857,28 +860,28 @@ export function CampaignsTab({
 
                   {/* Product Details */}
                   <div className="border-t pt-4">
-                    <Label className="text-sm font-semibold mb-3 block">Product Details</Label>
+                    <Label className="text-sm font-semibold mb-3 block">Project Details</Label>
                     <div className="space-y-3">
                       <div>
-                        <Label className="text-xs text-muted-foreground mb-1 block">Product Name</Label>
+                        <Label className="text-xs text-muted-foreground mb-1 block">Project / Token Name</Label>
                         {isEditingCampaign && editedCampaignData ? (
                           <Input
                             value={editedCampaignData.productName || ""}
                             onChange={(e) => setEditedCampaignData({...editedCampaignData, productName: e.target.value})}
-                            placeholder="Enter product name"
+                            placeholder="e.g., Arbitrum, Uniswap"
                           />
                         ) : (
                           <p className="text-sm">{selectedCampaignDetails.productName || "Not set"}</p>
                         )}
                       </div>
                       <div>
-                        <Label className="text-xs text-muted-foreground mb-1 block">Product Price</Label>
+                        <Label className="text-xs text-muted-foreground mb-1 block">Token Price</Label>
                         {isEditingCampaign && editedCampaignData ? (
                           <Input
                             type="number"
                             value={editedCampaignData.productPrice || ""}
                             onChange={(e) => setEditedCampaignData({...editedCampaignData, productPrice: e.target.value})}
-                            placeholder="Enter product price"
+                            placeholder="e.g., 1.25"
                           />
                         ) : (
                           <p className="text-sm font-medium">
@@ -887,12 +890,12 @@ export function CampaignsTab({
                         )}
                       </div>
                       <div>
-                        <Label className="text-xs text-muted-foreground mb-1 block">Product Link</Label>
+                        <Label className="text-xs text-muted-foreground mb-1 block">Project Link</Label>
                         {isEditingCampaign && editedCampaignData ? (
                           <Input
                             value={editedCampaignData.productLink || ""}
                             onChange={(e) => setEditedCampaignData({...editedCampaignData, productLink: e.target.value})}
-                            placeholder="https://example.com/product"
+                            placeholder="https://yourproject.xyz"
                           />
                         ) : selectedCampaignDetails.productLink ? (
                           <a
@@ -908,12 +911,12 @@ export function CampaignsTab({
                         )}
                       </div>
                       <div>
-                        <Label className="text-xs text-muted-foreground mb-1 block">Product Description</Label>
+                        <Label className="text-xs text-muted-foreground mb-1 block">Project Description</Label>
                         {isEditingCampaign && editedCampaignData ? (
                           <Textarea
                             value={editedCampaignData.productDescription || ""}
                             onChange={(e) => setEditedCampaignData({...editedCampaignData, productDescription: e.target.value})}
-                            placeholder="Enter product description"
+                            placeholder="Enter project description"
                             rows={3}
                             className="resize-none"
                           />
@@ -929,12 +932,12 @@ export function CampaignsTab({
                     <Label className="text-sm font-semibold mb-3 block">Instructions for Creators</Label>
                     <div className="space-y-3">
                       <div>
-                        <Label className="text-xs text-muted-foreground mb-1 block">Brand Tag</Label>
+                        <Label className="text-xs text-muted-foreground mb-1 block">Project Tag</Label>
                         {isEditingCampaign && editedCampaignData ? (
                           <Input
                             value={editedCampaignData.brandTag || ""}
                             onChange={(e) => setEditedCampaignData({...editedCampaignData, brandTag: e.target.value})}
-                            placeholder="@yourbrand"
+                            placeholder="@yourproject"
                           />
                         ) : (
                           <p className="text-sm">{selectedCampaignDetails.brandTag || "Not set"}</p>
