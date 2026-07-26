@@ -6,11 +6,9 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
 
-    // Ignore test webhooks — log a warning in production
-    if (body.Test === true) {
-      if (process.env.NODE_ENV === 'production') {
-        console.warn('Test webhook received in production, ignoring')
-      }
+    // Ignore test webhooks unless OX_TEST_MODE is enabled
+    if (body.Test === true && process.env.OX_TEST_MODE !== 'true') {
+      console.warn('Test webhook received but OX_TEST_MODE is off, ignoring')
       return NextResponse.json({ ok: true })
     }
 
