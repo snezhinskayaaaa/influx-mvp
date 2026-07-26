@@ -1131,10 +1131,6 @@ export default function InfluencerDashboard() {
                                 >
                                   Apply Now
                                 </Button>
-                                <Button size="default" variant="outline" className="gap-2">
-                                  <Heart className="h-4 w-4" />
-                                  Save
-                                </Button>
                               </>
                             )}
                             {campaign.status === "applied" && (
