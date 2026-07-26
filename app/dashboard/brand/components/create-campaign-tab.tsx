@@ -964,11 +964,34 @@ export function CreateCampaignTab({ campaigns, setCampaigns, setActiveTab }: Cre
               type="button"
               variant="outline"
               className="h-11"
-              onClick={() => {
-                const newCampaign = buildCampaignFromForm("draft");
-                setCampaigns([newCampaign, ...campaigns]);
-                clearForm();
-                setActiveTab("campaigns");
+              onClick={async () => {
+                try {
+                  const res = await fetch('/api/campaigns', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                      title: campaignTitle || 'Untitled Campaign',
+                      description: campaignDescription,
+                      budgetMin: parseFloat(campaignBudgetMin) || 20,
+                      budgetMax: parseFloat(campaignBudgetMax) || 20,
+                      desiredInfluencerCount: parseInt(campaignInfluencerCount) || 1,
+                      deliverables: campaignDetailedRequirements,
+                    }),
+                  });
+                  if (res.ok) {
+                    const data = await res.json();
+                    const newCampaign = { ...buildCampaignFromForm("draft"), id: data.campaign?.id };
+                    setCampaigns([newCampaign, ...campaigns]);
+                    clearForm();
+                    showToast("Draft saved successfully");
+                    setActiveTab("campaigns");
+                  } else {
+                    const errData = await res.json().catch(() => ({}));
+                    showToast(errData.error || "Failed to save draft", 'error');
+                  }
+                } catch {
+                  showToast("Failed to save draft", 'error');
+                }
               }}
             >
               Save Draft
