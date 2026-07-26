@@ -10,7 +10,6 @@ import { DatePicker } from "@/components/ui/date-picker";
 import { motion } from "framer-motion";
 import {
   Instagram,
-  Twitter,
   DollarSign,
   Video,
   Youtube,
@@ -24,6 +23,7 @@ import {
   CheckCircle2,
   AlertCircle,
 } from "lucide-react";
+import { XIcon } from "@/components/x-icon";
 import type { Tab, Campaign } from "./types";
 import { PRICING_MIN_RATES } from "./types";
 
@@ -364,7 +364,7 @@ export function CreateCampaignTab({ campaigns, setCampaigns, setActiveTab }: Cre
             </Label>
             <div className="grid grid-cols-2 gap-3">
               {[
-                { id: "twitter", name: "X (Twitter)", icon: Twitter },
+                { id: "twitter", name: "X (Twitter)", icon: XIcon },
                 { id: "telegram", name: "Telegram", icon: MessageCircle },
                 { id: "instagram", name: "Instagram", icon: Instagram },
                 { id: "tiktok", name: "TikTok", icon: Video },
