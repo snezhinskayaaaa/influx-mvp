@@ -56,6 +56,35 @@ interface CampaignsTabProps {
   setShowInsufficientFundsDialog: (show: boolean) => void;
 }
 
+/** Label maps for values saved by the create form */
+const FORMAT_LABELS: Record<string, string> = {
+  "twitter-post": "X Post",
+  "twitter-thread": "X Thread",
+  "telegram-post": "Telegram Post",
+  "telegram-ama": "Telegram AMA",
+  "instagram-post": "Instagram Post",
+  "instagram-story": "Instagram Story",
+  "instagram-reel": "Instagram Reel",
+  "tiktok-video": "TikTok Video",
+  "youtube-video": "YouTube Video",
+  "youtube-short": "YouTube Short",
+};
+
+const GOAL_LABELS: Record<string, string> = {
+  "brand-awareness": "Project Awareness",
+  "engagement": "Community Engagement",
+  "conversions": "Conversions",
+  "product-launch": "Token / Protocol Launch",
+  "lead-generation": "User Acquisition",
+  "traffic": "dApp Traffic",
+};
+
+const PRICING_LABELS: Record<string, string> = {
+  "cpm": "CPM",
+  "cpc": "CPC",
+  "cpe": "CPE",
+};
+
 export function CampaignsTab({
   campaigns,
   setCampaigns,
@@ -475,16 +504,17 @@ export function CampaignsTab({
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="project-awareness">Project Awareness</SelectItem>
-                        <SelectItem value="community-engagement">Community Engagement</SelectItem>
-                        <SelectItem value="token-launch">Token / Protocol Launch</SelectItem>
-                        <SelectItem value="user-acquisition">User Acquisition</SelectItem>
-                        <SelectItem value="dapp-traffic">dApp Traffic</SelectItem>
+                        <SelectItem value="brand-awareness">Project Awareness</SelectItem>
+                        <SelectItem value="engagement">Community Engagement</SelectItem>
+                        <SelectItem value="conversions">Conversions</SelectItem>
+                        <SelectItem value="product-launch">Token / Protocol Launch</SelectItem>
+                        <SelectItem value="lead-generation">User Acquisition</SelectItem>
+                        <SelectItem value="traffic">dApp Traffic</SelectItem>
                       </SelectContent>
                     </Select>
                   ) : (
-                    <div className="text-sm font-medium capitalize">
-                      {selectedCampaignDetails.goal?.replace("-", " ") || "Not set"}
+                    <div className="text-sm font-medium">
+                      {(selectedCampaignDetails.goal && GOAL_LABELS[selectedCampaignDetails.goal]) || selectedCampaignDetails.goal || "Not set"}
                     </div>
                   )}
                 </div>
@@ -659,7 +689,7 @@ export function CampaignsTab({
                     <Label className="text-sm font-semibold mb-2 block">Content Formats</Label>
                     {isEditingCampaign && editedCampaignData ? (
                       <div className="space-y-2">
-                        {["video", "photo", "story", "reel", "carousel", "live"].map((format) => (
+                        {Object.entries(FORMAT_LABELS).map(([format, label]) => (
                           <div key={format} className="flex items-center space-x-2">
                             <Checkbox
                               id={`format-${format}`}
@@ -674,9 +704,9 @@ export function CampaignsTab({
                             />
                             <label
                               htmlFor={`format-${format}`}
-                              className="text-sm font-medium capitalize cursor-pointer"
+                              className="text-sm font-medium cursor-pointer"
                             >
-                              {format}
+                              {label}
                             </label>
                           </div>
                         ))}
@@ -684,8 +714,8 @@ export function CampaignsTab({
                     ) : selectedCampaignDetails.contentFormats && selectedCampaignDetails.contentFormats.length > 0 ? (
                       <div className="flex flex-wrap gap-2">
                         {selectedCampaignDetails.contentFormats.map((format) => (
-                          <Badge key={format} variant="secondary" className="text-xs capitalize">
-                            {format.replace("-", " ")}
+                          <Badge key={format} variant="secondary" className="text-xs">
+                            {FORMAT_LABELS[format] || format}
                           </Badge>
                         ))}
                       </div>
@@ -699,7 +729,7 @@ export function CampaignsTab({
                     <Label className="text-sm font-semibold mb-2 block">Pricing Models</Label>
                     {isEditingCampaign && editedCampaignData ? (
                       <div className="space-y-2">
-                        {["CPM", "CPC", "CPE"].map((model) => (
+                        {Object.entries(PRICING_LABELS).map(([model, label]) => (
                           <div key={model} className="flex items-center space-x-2">
                             <Checkbox
                               id={`pricing-${model}`}
@@ -716,7 +746,7 @@ export function CampaignsTab({
                               htmlFor={`pricing-${model}`}
                               className="text-sm font-medium uppercase cursor-pointer"
                             >
-                              {model}
+                              {label}
                             </label>
                           </div>
                         ))}
@@ -725,7 +755,7 @@ export function CampaignsTab({
                       <div className="flex gap-2">
                         {selectedCampaignDetails.pricingModels.map((model) => (
                           <Badge key={model} variant="outline" className="uppercase">
-                            {model}
+                            {PRICING_LABELS[model] || model}
                           </Badge>
                         ))}
                       </div>
@@ -741,7 +771,7 @@ export function CampaignsTab({
                     <div>
                       <Label className="text-sm font-semibold mb-2 block">Campaign Goals</Label>
                       <div className="space-y-2">
-                        {(selectedCampaignDetails.targetViews || (isEditingCampaign && editedCampaignData?.pricingModels?.includes("CPM"))) && (
+                        {(selectedCampaignDetails.targetViews || (isEditingCampaign && editedCampaignData?.pricingModels?.includes("cpm"))) && (
                           <div>
                             <Label className="text-xs text-muted-foreground mb-1 block">Target Views</Label>
                             {isEditingCampaign && editedCampaignData ? (
@@ -756,7 +786,7 @@ export function CampaignsTab({
                             )}
                           </div>
                         )}
-                        {(selectedCampaignDetails.targetClicks || (isEditingCampaign && editedCampaignData?.pricingModels?.includes("CPC"))) && (
+                        {(selectedCampaignDetails.targetClicks || (isEditingCampaign && editedCampaignData?.pricingModels?.includes("cpc"))) && (
                           <div>
                             <Label className="text-xs text-muted-foreground mb-1 block">Target Clicks</Label>
                             {isEditingCampaign && editedCampaignData ? (
@@ -771,7 +801,7 @@ export function CampaignsTab({
                             )}
                           </div>
                         )}
-                        {(selectedCampaignDetails.targetEngagements || (isEditingCampaign && editedCampaignData?.pricingModels?.includes("CPE"))) && (
+                        {(selectedCampaignDetails.targetEngagements || (isEditingCampaign && editedCampaignData?.pricingModels?.includes("cpe"))) && (
                           <div>
                             <Label className="text-xs text-muted-foreground mb-1 block">Target Engagements</Label>
                             {isEditingCampaign && editedCampaignData ? (

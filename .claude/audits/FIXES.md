@@ -198,6 +198,24 @@
 
 ---
 
+## FIX-018: Value mismatches between create-campaign-tab and campaigns-tab
+
+### Changes Made
+- `app/dashboard/brand/components/campaigns-tab.tsx` - Added `FORMAT_LABELS`, `GOAL_LABELS`, and `PRICING_LABELS` lookup maps at module level for consistent display
+- `campaigns-tab.tsx:508-513` - Replaced goal select options (`project-awareness`, `community-engagement`, `token-launch`, `user-acquisition`, `dapp-traffic`) with IDs matching create form (`brand-awareness`, `engagement`, `conversions`, `product-launch`, `lead-generation`, `traffic`)
+- `campaigns-tab.tsx:517` - Goal display now uses `GOAL_LABELS` lookup instead of `.replace("-", " ")` with capitalize
+- `campaigns-tab.tsx:692-712` - Content format checkboxes now use `FORMAT_LABELS` entries (`twitter-post`, `instagram-post`, etc.) instead of old generic IDs (`video`, `photo`, `story`, `reel`, `carousel`, `live`)
+- `campaigns-tab.tsx:718` - Content format display badges now use `FORMAT_LABELS` lookup instead of `.replace("-", " ")` with capitalize
+- `campaigns-tab.tsx:730-746` - Pricing model checkboxes now use lowercase IDs (`cpm`, `cpc`, `cpe`) matching create form, instead of uppercase (`CPM`, `CPC`, `CPE`)
+- `campaigns-tab.tsx:758` - Pricing model display badges now use `PRICING_LABELS` lookup
+- `campaigns-tab.tsx:774,789,804` - Campaign Goals target metrics visibility checks now use lowercase pricing model IDs
+
+### Verification
+- [x] Linter passes
+- [x] No new lint errors introduced
+
+---
+
 ## Summary
 
 | ID | File | Status |
@@ -219,3 +237,4 @@
 | FIX-015 | app/api/auth/reset-password/route.ts | done |
 | FIX-016 | next.config.ts | done |
 | FIX-017 | .env.example | done |
+| FIX-018 | campaigns-tab.tsx | done |
