@@ -38,6 +38,7 @@ import {
   Briefcase,
   Pencil,
   Pause,
+  Play,
   Trash2,
   AlertCircle,
   ExternalLink,
@@ -71,7 +72,7 @@ export function CampaignsTab({
 
   const [selectedCampaignDetails, setSelectedCampaignDetails] = useState<Campaign | null>(null);
   const [campaignSearchQuery, setCampaignSearchQuery] = useState("");
-  const [campaignStatusFilter, setCampaignStatusFilter] = useState<"all" | "active" | "draft">("all");
+  const [campaignStatusFilter, setCampaignStatusFilter] = useState<"all" | "active" | "draft" | "paused">("all");
   const [isCampaignDetailsExpanded, setIsCampaignDetailsExpanded] = useState(false);
   const [isApplicationsExpanded, setIsApplicationsExpanded] = useState(false);
   const [isEditingCampaign, setIsEditingCampaign] = useState(false);
@@ -217,6 +218,71 @@ export function CampaignsTab({
     }
   };
 
+  /** Toggle pause/resume on a campaign */
+  const handleTogglePause = async (campaign: Campaign) => {
+    const newStatus = campaign.status === 'paused' ? 'ACTIVE' : 'PAUSED';
+    setActionLoading(true);
+    try {
+      const res = await fetch(`/api/campaigns/${campaign.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: newStatus }),
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        showToast(data.error || 'Failed to update campaign status', 'error');
+        return;
+      }
+      const updatedStatus = newStatus.toLowerCase() as 'active' | 'paused';
+      setCampaigns(campaigns.map(c =>
+        c.id === campaign.id ? { ...c, status: updatedStatus } : c
+      ));
+      showToast(
+        newStatus === 'PAUSED' ? 'Campaign paused.' : 'Campaign resumed.',
+        'success'
+      );
+    } catch {
+      showToast('Failed to update campaign status', 'error');
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  /** Delete a campaign */
+  const handleDeleteCampaign = async (campaign: Campaign) => {
+    if (!window.confirm('Are you sure you want to delete this campaign? This cannot be undone.')) {
+      return;
+    }
+    setActionLoading(true);
+    try {
+      const res = await fetch(`/api/campaigns/${campaign.id}`, {
+        method: 'DELETE',
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        showToast(data.error || 'Failed to delete campaign', 'error');
+        return;
+      }
+      setCampaigns(campaigns.filter(c => c.id !== campaign.id));
+      // If we were viewing this campaign's details, go back to the list
+      if (selectedCampaignDetails?.id === campaign.id) {
+        setSelectedCampaignDetails(null);
+      }
+      showToast('Campaign deleted.', 'success');
+    } catch {
+      showToast('Failed to delete campaign', 'error');
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  /** Open campaign detail view for editing */
+  const handleEditCampaign = (campaign: Campaign) => {
+    setSelectedCampaignDetails(campaign);
+    setIsEditingCampaign(true);
+    setEditedCampaignData(campaign);
+  };
+
   return (
     <motion.div
       key="campaigns"
@@ -245,10 +311,20 @@ export function CampaignsTab({
               <div className="flex items-center gap-2">
                 <Badge
                   variant={selectedCampaignDetails.status === "active" ? "default" : "secondary"}
-                  className={selectedCampaignDetails.status === "active" ? "bg-success/10 text-success border-success/20" : "bg-primary/10 text-primary border-primary/20"}
+                  className={
+                    selectedCampaignDetails.status === "active"
+                      ? "bg-success/10 text-success border-success/20"
+                      : selectedCampaignDetails.status === "paused"
+                      ? "bg-amber-500/10 text-amber-600 border-amber-500/20"
+                      : "bg-primary/10 text-primary border-primary/20"
+                  }
                 >
-                  <div className={`w-1.5 h-1.5 rounded-full mr-1.5 ${selectedCampaignDetails.status === "active" ? "bg-success" : "bg-primary"}`} />
-                  {selectedCampaignDetails.status === "active" ? "Active" : "Draft"}
+                  <div className={`w-1.5 h-1.5 rounded-full mr-1.5 ${
+                    selectedCampaignDetails.status === "active" ? "bg-success"
+                    : selectedCampaignDetails.status === "paused" ? "bg-amber-500"
+                    : "bg-primary"
+                  }`} />
+                  {selectedCampaignDetails.status === "active" ? "Active" : selectedCampaignDetails.status === "paused" ? "Paused" : "Draft"}
                 </Badge>
                 <Badge variant="outline" className="bg-muted text-foreground border-border">
                   ${selectedCampaignDetails.budgetMin} - ${selectedCampaignDetails.budgetMax} / influencer
@@ -259,14 +335,56 @@ export function CampaignsTab({
               {isEditingCampaign && (
                 <Button
                   className="bg-gradient-to-r from-primary to-secondary"
-                  onClick={() => {
+                  disabled={actionLoading}
+                  onClick={async () => {
                     if (editedCampaignData) {
-                      // Update campaign in campaigns list
-                      setCampaigns(campaigns.map(c =>
-                        c.id === editedCampaignData.id ? editedCampaignData : c
-                      ));
-                      setSelectedCampaignDetails(editedCampaignData);
-                      setIsEditingCampaign(false);
+                      setActionLoading(true);
+                      try {
+                        const patchBody: Record<string, unknown> = {};
+                        if (editedCampaignData.title !== selectedCampaignDetails.title) {
+                          patchBody.title = editedCampaignData.title;
+                        }
+                        if (editedCampaignData.description !== selectedCampaignDetails.description) {
+                          patchBody.description = editedCampaignData.description;
+                        }
+                        if (editedCampaignData.budgetMin !== selectedCampaignDetails.budgetMin) {
+                          patchBody.budgetMin = parseFloat(editedCampaignData.budgetMin);
+                        }
+                        if (editedCampaignData.budgetMax !== selectedCampaignDetails.budgetMax) {
+                          patchBody.budgetMax = parseFloat(editedCampaignData.budgetMax);
+                        }
+                        if (editedCampaignData.influencerCount !== selectedCampaignDetails.influencerCount) {
+                          patchBody.desiredInfluencerCount = parseInt(editedCampaignData.influencerCount) || 1;
+                        }
+                        if (editedCampaignData.detailedRequirements !== selectedCampaignDetails.detailedRequirements) {
+                          patchBody.deliverables = editedCampaignData.detailedRequirements;
+                        }
+
+                        if (Object.keys(patchBody).length > 0) {
+                          const res = await fetch(`/api/campaigns/${selectedCampaignDetails.id}`, {
+                            method: 'PATCH',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(patchBody),
+                          });
+                          if (!res.ok) {
+                            const data = await res.json();
+                            showToast(data.error || 'Failed to save changes', 'error');
+                            return;
+                          }
+                        }
+
+                        // Update local state
+                        setCampaigns(campaigns.map(c =>
+                          c.id === editedCampaignData.id ? editedCampaignData : c
+                        ));
+                        setSelectedCampaignDetails(editedCampaignData);
+                        setIsEditingCampaign(false);
+                        showToast('Campaign updated.', 'success');
+                      } catch {
+                        showToast('Failed to save changes', 'error');
+                      } finally {
+                        setActionLoading(false);
+                      }
                     }
                   }}
                 >
@@ -2176,13 +2294,14 @@ export function CampaignsTab({
                 className="pl-9 h-11 bg-card"
               />
             </div>
-            <Select value={campaignStatusFilter} onValueChange={(value: "all" | "active" | "draft") => setCampaignStatusFilter(value)}>
+            <Select value={campaignStatusFilter} onValueChange={(value: "all" | "active" | "draft" | "paused") => setCampaignStatusFilter(value)}>
               <SelectTrigger className="w-[180px] h-11 bg-card">
                 <SelectValue placeholder="Status" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Status</SelectItem>
                 <SelectItem value="active">Active</SelectItem>
+                <SelectItem value="paused">Paused</SelectItem>
                 <SelectItem value="draft">Draft</SelectItem>
               </SelectContent>
             </Select>
@@ -2228,11 +2347,17 @@ export function CampaignsTab({
                       className={`w-[80px] justify-center ${
                         campaign.status === "active"
                           ? "bg-success/10 text-success border-success/20 hover:bg-success/20"
+                          : campaign.status === "paused"
+                          ? "bg-amber-500/10 text-amber-600 border-amber-500/20 hover:bg-amber-500/20"
                           : "bg-primary/10 text-primary border-primary/20 hover:bg-primary/20"
                       }`}
                     >
-                      <div className={`w-1.5 h-1.5 rounded-full mr-1.5 ${campaign.status === "active" ? "bg-success" : "bg-primary"}`} />
-                      {campaign.status === "active" ? "Active" : "Draft"}
+                      <div className={`w-1.5 h-1.5 rounded-full mr-1.5 ${
+                        campaign.status === "active" ? "bg-success"
+                        : campaign.status === "paused" ? "bg-amber-500"
+                        : "bg-primary"
+                      }`} />
+                      {campaign.status === "active" ? "Active" : campaign.status === "paused" ? "Paused" : "Draft"}
                     </Badge>
                     <Badge
                       variant="outline"
@@ -2357,25 +2482,34 @@ export function CampaignsTab({
               {/* Actions Column */}
               <div className="w-[140px] flex items-center justify-end gap-2" onClick={(e) => e.stopPropagation()}>
                 <button
-                  title="Coming soon"
-                  disabled
+                  title="Edit campaign"
+                  disabled={actionLoading}
                   className="p-2 rounded-lg hover:bg-muted transition-colors"
+                  onClick={() => handleEditCampaign(campaign)}
                 >
                   <Pencil className="h-4 w-4 text-muted-foreground hover:text-foreground" />
                 </button>
+                {(campaign.status === "active" || campaign.status === "paused") && (
+                  <button
+                    title={campaign.status === "paused" ? "Resume campaign" : "Pause campaign"}
+                    disabled={actionLoading}
+                    className="p-2 rounded-lg hover:bg-muted transition-colors"
+                    onClick={() => handleTogglePause(campaign)}
+                  >
+                    {campaign.status === "paused" ? (
+                      <Play className="h-4 w-4 text-muted-foreground hover:text-foreground" />
+                    ) : (
+                      <Pause className="h-4 w-4 text-muted-foreground hover:text-foreground" />
+                    )}
+                  </button>
+                )}
                 <button
-                  title="Coming soon"
-                  disabled
-                  className="p-2 rounded-lg hover:bg-muted transition-colors"
+                  title="Delete campaign"
+                  disabled={actionLoading}
+                  className="p-2 rounded-lg hover:bg-muted transition-colors hover:text-red-600"
+                  onClick={() => handleDeleteCampaign(campaign)}
                 >
-                  <Pause className="h-4 w-4 text-muted-foreground hover:text-foreground" />
-                </button>
-                <button
-                  title="Coming soon"
-                  disabled
-                  className="p-2 rounded-lg hover:bg-muted transition-colors"
-                >
-                  <Trash2 className="h-4 w-4 text-muted-foreground hover:text-foreground" />
+                  <Trash2 className="h-4 w-4 text-muted-foreground hover:text-red-600" />
                 </button>
               </div>
             </div>
@@ -2410,11 +2544,17 @@ export function CampaignsTab({
                           className={`text-[10px] px-2 py-0 h-5 ${
                             campaign.status === "active"
                               ? "bg-success/10 text-success border-success/20"
+                              : campaign.status === "paused"
+                              ? "bg-amber-500/10 text-amber-600 border-amber-500/20"
                               : "bg-primary/10 text-primary border-primary/20"
                           }`}
                         >
-                          <div className={`w-1.5 h-1.5 rounded-full mr-1 ${campaign.status === "active" ? "bg-success" : "bg-primary"}`} />
-                          {campaign.status === "active" ? "Active" : "Draft"}
+                          <div className={`w-1.5 h-1.5 rounded-full mr-1 ${
+                            campaign.status === "active" ? "bg-success"
+                            : campaign.status === "paused" ? "bg-amber-500"
+                            : "bg-primary"
+                          }`} />
+                          {campaign.status === "active" ? "Active" : campaign.status === "paused" ? "Paused" : "Draft"}
                         </Badge>
                         <Badge variant="outline" className="bg-muted text-foreground border-border text-[10px] px-2 py-0 h-5">
                           ${campaign.budgetMin}-${campaign.budgetMax}/inf

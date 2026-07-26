@@ -82,7 +82,7 @@ export default function BrandDashboard() {
             const transformedCampaigns: Campaign[] = data.campaigns.map((c: Record<string, unknown>) => ({
               id: c.id,
               title: (c.title as string) || '',
-              status: ((c.status as string) || 'draft').toLowerCase() as 'active' | 'draft',
+              status: ((c.status as string) || 'draft').toLowerCase() as 'active' | 'draft' | 'paused',
               budgetMin: String(((c.budgetMin as number) || 0) / 100),
               budgetMax: String(((c.budgetMax as number) || 0) / 100),
               applications: (c._count as Record<string, number>)?.collaborations || 0,

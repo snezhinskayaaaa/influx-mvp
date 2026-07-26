@@ -20,6 +20,7 @@ enum UserRole {
 enum CampaignStatus {
   DRAFT     @map("draft")
   ACTIVE    @map("active")
+  PAUSED    @map("paused")
   COMPLETED @map("completed")
   CANCELLED @map("cancelled")
 
