@@ -774,7 +774,7 @@ export function CreateCampaignTab({ campaigns, setCampaigns, setActiveTab }: Cre
                   <Input
                     id="budget-min"
                     type="number"
-                    min="100"
+                    min="20"
                     placeholder="1000"
                     value={campaignBudgetMin}
                     onChange={(e) => setCampaignBudgetMin(e.target.value)}
