@@ -18,6 +18,7 @@ import {
   Bell,
   Sparkles,
   MessageSquare,
+  MessageCircle,
   Package,
   BookOpen,
   CheckCircle2,
@@ -133,7 +134,7 @@ export function CreateCampaignTab({ campaigns, setCampaigns, setActiveTab }: Cre
     >
       <div className="mb-6">
         <h1 className="text-2xl sm:text-3xl font-bold mb-2">Create New Campaign</h1>
-        <p className="text-muted-foreground text-sm sm:text-base">Launch your next influencer campaign</p>
+        <p className="text-muted-foreground text-sm sm:text-base">Launch your next Web3 influencer campaign</p>
       </div>
 
 <Card className="p-6 sm:p-8">
@@ -187,7 +188,7 @@ export function CreateCampaignTab({ campaigns, setCampaigns, setActiveTab }: Cre
             </Label>
             <Input
               id="campaign-title"
-              placeholder="e.g., Summer Collection Launch"
+              placeholder="e.g., Arbitrum DeFi Campaign Q3"
               value={campaignTitle}
               onChange={(e) => setCampaignTitle(e.target.value)}
               className="h-11"
@@ -202,7 +203,7 @@ export function CreateCampaignTab({ campaigns, setCampaigns, setActiveTab }: Cre
             </Label>
             <Textarea
               id="campaign-description"
-              placeholder="Describe your campaign goals, target audience, and requirements..."
+              placeholder="e.g., Promote our new L2 bridge launch to crypto-native audiences..."
               value={campaignDescription}
               onChange={(e) => setCampaignDescription(e.target.value)}
               rows={4}
@@ -218,12 +219,12 @@ export function CreateCampaignTab({ campaigns, setCampaigns, setActiveTab }: Cre
             </Label>
             <div className="grid grid-cols-2 gap-3">
               {[
-                { id: "brand-awareness", name: "Brand Awareness" },
-                { id: "engagement", name: "Engagement" },
+                { id: "brand-awareness", name: "Project Awareness" },
+                { id: "engagement", name: "Community Engagement" },
                 { id: "conversions", name: "Conversions" },
-                { id: "product-launch", name: "Product Launch" },
-                { id: "lead-generation", name: "Lead Generation" },
-                { id: "traffic", name: "Website Traffic" }
+                { id: "product-launch", name: "Token / Protocol Launch" },
+                { id: "lead-generation", name: "User Acquisition" },
+                { id: "traffic", name: "dApp Traffic" }
               ].map((goal) => (
                 <button
                   key={goal.id}
@@ -291,10 +292,11 @@ export function CreateCampaignTab({ campaigns, setCampaigns, setActiveTab }: Cre
             </Label>
             <div className="grid grid-cols-2 gap-3">
               {[
+                { id: "twitter", name: "X (Twitter)", icon: Twitter },
+                { id: "telegram", name: "Telegram", icon: MessageCircle },
                 { id: "instagram", name: "Instagram", icon: Instagram },
                 { id: "tiktok", name: "TikTok", icon: Video },
                 { id: "youtube", name: "YouTube", icon: Youtube },
-                { id: "twitter", name: "Twitter", icon: Twitter }
               ].map((platform) => (
                 <button
                   key={platform.id}
@@ -395,24 +397,52 @@ export function CreateCampaignTab({ campaigns, setCampaigns, setActiveTab }: Cre
                   </>
                 )}
                 {campaignPlatforms.includes("twitter") && (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      const format = "twitter-post";
-                      if (campaignContentFormats.includes(format)) {
-                        setCampaignContentFormats(campaignContentFormats.filter(f => f !== format));
-                      } else {
-                        setCampaignContentFormats([...campaignContentFormats, format]);
-                      }
-                    }}
-                    className={`p-3 rounded-xl border-2 text-sm transition-all ${
-                      campaignContentFormats.includes("twitter-post")
-                        ? "border-primary bg-primary/5"
-                        : "border-border hover:border-primary/50"
-                    }`}
-                  >
-                    Twitter Post
-                  </button>
+                  <>
+                    {["twitter-post", "twitter-thread"].map((format) => (
+                      <button
+                        key={format}
+                        type="button"
+                        onClick={() => {
+                          if (campaignContentFormats.includes(format)) {
+                            setCampaignContentFormats(campaignContentFormats.filter(f => f !== format));
+                          } else {
+                            setCampaignContentFormats([...campaignContentFormats, format]);
+                          }
+                        }}
+                        className={`p-3 rounded-xl border-2 text-sm transition-all ${
+                          campaignContentFormats.includes(format)
+                            ? "border-primary bg-primary/5"
+                            : "border-border hover:border-primary/50"
+                        }`}
+                      >
+                        {format === "twitter-post" ? "X Post" : "X Thread"}
+                      </button>
+                    ))}
+                  </>
+                )}
+                {campaignPlatforms.includes("telegram") && (
+                  <>
+                    {["telegram-post", "telegram-ama"].map((format) => (
+                      <button
+                        key={format}
+                        type="button"
+                        onClick={() => {
+                          if (campaignContentFormats.includes(format)) {
+                            setCampaignContentFormats(campaignContentFormats.filter(f => f !== format));
+                          } else {
+                            setCampaignContentFormats([...campaignContentFormats, format]);
+                          }
+                        }}
+                        className={`p-3 rounded-xl border-2 text-sm transition-all ${
+                          campaignContentFormats.includes(format)
+                            ? "border-primary bg-primary/5"
+                            : "border-border hover:border-primary/50"
+                        }`}
+                      >
+                        {format === "telegram-post" ? "Telegram Post" : "Telegram AMA"}
+                      </button>
+                    ))}
+                  </>
                 )}
               </div>
             </div>
@@ -514,9 +544,9 @@ export function CreateCampaignTab({ campaigns, setCampaigns, setActiveTab }: Cre
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {[
                 { id: "up-to-creator", title: "Up to the creator", description: "Our creators will send you their most creative takes", icon: Sparkles },
-                { id: "testimonial", title: "Testimonial", description: "Honest statement about your product from a customer's perspective", icon: MessageSquare },
-                { id: "unboxing", title: "Unboxing", description: "Taking your product out of its original box and doing a short review", icon: Package },
-                { id: "how-to", title: "How to", description: "Creators will record themselves explaining how your product works", icon: BookOpen }
+                { id: "testimonial", title: "Testimonial", description: "Honest statement about your project from a user's perspective", icon: MessageSquare },
+                { id: "tutorial", title: "Tutorial / Walkthrough", description: "Step-by-step guide showing how to use your protocol or dApp", icon: Package },
+                { id: "how-to", title: "Deep Dive / Review", description: "Creators will explain your project's tech, tokenomics, or roadmap", icon: BookOpen }
               ].map((type) => {
                 const Icon = type.icon;
                 return (
@@ -549,28 +579,20 @@ export function CreateCampaignTab({ campaigns, setCampaigns, setActiveTab }: Cre
               Influencer Niches
             </Label>
             <p className="text-xs text-muted-foreground mb-3">
-              Select the niches that best match your product or campaign
+              Select the verticals that best match your project or campaign
             </p>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
               {[
-                "Beauty & Care",
-                "Tech & Gaming",
-                "Fashion & Apparel",
-                "Health & Wellness",
-                "Food & Beverages",
-                "Sports & Fitness",
-                "Travel & Hospitality",
-                "Home & Garden",
-                "Entertainment",
-                "Education",
-                "Finance",
-                "Automotive",
-                "Pets",
-                "Kids & Family",
-                "Lifestyle",
-                "Business & Finance",
-                "Music",
-                "Art & Design",
+                "DeFi",
+                "NFT & Digital Art",
+                "GameFi",
+                "Chains & Infrastructure",
+                "Exchanges",
+                "Memecoins",
+                "DAOs & Governance",
+                "AI x Crypto",
+                "Wallets & Security",
+                "Other",
               ].map((niche) => (
                 <button
                   key={niche}
@@ -599,17 +621,17 @@ export function CreateCampaignTab({ campaigns, setCampaigns, setActiveTab }: Cre
           {/* Product Details */}
           <div>
             <div className="mb-3">
-              <Label className="text-sm font-medium block">Product details</Label>
+              <Label className="text-sm font-medium block">Project details</Label>
               <p className="text-xs text-muted-foreground mt-1">This information is visible to creators so please make sure it&apos;s up to date.</p>
             </div>
             <div className="space-y-4">
               <div>
                 <Label htmlFor="product-name" className="text-sm mb-2 block">
-                  Product Name
+                  Project / Token Name
                 </Label>
                 <Input
                   id="product-name"
-                  placeholder="e.g., Wireless Headphones Pro"
+                  placeholder="e.g., Arbitrum, Uniswap, BoredApes"
                   value={campaignProductName}
                   onChange={(e) => setCampaignProductName(e.target.value)}
                   className="h-11"
@@ -617,14 +639,14 @@ export function CreateCampaignTab({ campaigns, setCampaigns, setActiveTab }: Cre
               </div>
               <div>
                 <Label htmlFor="product-price" className="text-sm mb-2 block">
-                  Product Price
+                  Token Price (optional)
                 </Label>
                 <div className="relative">
                   <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input
                     id="product-price"
                     type="number"
-                    placeholder="99.99"
+                    placeholder="e.g., 1.25"
                     value={campaignProductPrice}
                     onChange={(e) => setCampaignProductPrice(e.target.value)}
                     className="pl-10 h-11"
@@ -635,12 +657,12 @@ export function CreateCampaignTab({ campaigns, setCampaigns, setActiveTab }: Cre
               </div>
               <div>
                 <Label htmlFor="product-photo" className="text-sm mb-2 block">
-                  Product Photo URL
+                  Project Logo URL
                 </Label>
                 <Input
                   id="product-photo"
                   type="url"
-                  placeholder="https://example.com/product-image.jpg"
+                  placeholder="https://yourproject.com/logo.png"
                   value={campaignProductPhoto}
                   onChange={(e) => setCampaignProductPhoto(e.target.value)}
                   className="h-11"
@@ -648,12 +670,12 @@ export function CreateCampaignTab({ campaigns, setCampaigns, setActiveTab }: Cre
               </div>
               <div>
                 <Label htmlFor="product-link" className="text-sm mb-2 block">
-                  Product Link
+                  Project Link
                 </Label>
                 <Input
                   id="product-link"
                   type="url"
-                  placeholder="https://yourstore.com/product"
+                  placeholder="https://yourproject.xyz"
                   value={campaignProductLink}
                   onChange={(e) => setCampaignProductLink(e.target.value)}
                   className="h-11"
@@ -665,7 +687,7 @@ export function CreateCampaignTab({ campaigns, setCampaigns, setActiveTab }: Cre
                 </Label>
                 <Textarea
                   id="product-description"
-                  placeholder="Example: Gymshark clothes use high-quality material and are engineered to be worn in the gym but when you're not working out, the clothes are designed to well, make you look well. If you're fit and toned and want people to know it, then Gymshark clothes are popular pieces of fitness apparel."
+                  placeholder="Example: Our protocol is a decentralized exchange built on Arbitrum, offering low-fee swaps with deep liquidity. Users can trade, provide liquidity, and earn yield through our native token staking program."
                   value={campaignProductDescription}
                   onChange={(e) => setCampaignProductDescription(e.target.value)}
                   rows={5}
@@ -684,11 +706,11 @@ export function CreateCampaignTab({ campaigns, setCampaigns, setActiveTab }: Cre
             <div className="space-y-4">
               <div>
                 <Label htmlFor="brand-tag" className="text-sm mb-2 block">
-                  Should the creator tag your brand? (optional)
+                  Should the creator tag your project? (optional)
                 </Label>
                 <Textarea
                   id="brand-tag"
-                  placeholder="Example: @mybrand"
+                  placeholder="Example: @myproject"
                   value={campaignBrandTag}
                   onChange={(e) => setCampaignBrandTag(e.target.value)}
                   rows={2}
@@ -701,7 +723,7 @@ export function CreateCampaignTab({ campaigns, setCampaigns, setActiveTab }: Cre
                 </Label>
                 <Textarea
                   id="hashtags"
-                  placeholder="Example: #mycampaign, #mybrand"
+                  placeholder="Example: #mycampaign, #myproject, #DeFi"
                   value={campaignHashtags}
                   onChange={(e) => setCampaignHashtags(e.target.value)}
                   rows={2}
@@ -714,7 +736,7 @@ export function CreateCampaignTab({ campaigns, setCampaigns, setActiveTab }: Cre
                 </Label>
                 <Textarea
                   id="creator-script"
-                  placeholder="Example: I like the product because it's comfortable and stylish."
+                  placeholder="Example: I've been using this protocol for a month and the gas fees are incredibly low..."
                   value={campaignCreatorScript}
                   onChange={(e) => setCampaignCreatorScript(e.target.value)}
                   rows={4}
@@ -727,7 +749,7 @@ export function CreateCampaignTab({ campaigns, setCampaigns, setActiveTab }: Cre
                 </Label>
                 <Textarea
                   id="detailed-requirements"
-                  placeholder="Describe any specific requirements, technical specifications, dos and don'ts, brand guidelines, or detailed instructions for creators..."
+                  placeholder="e.g., 2 Twitter threads, 1 Telegram AMA, 1 YouTube review. Include any specific requirements, talking points, dos and don'ts, or detailed instructions for creators..."
                   value={campaignDetailedRequirements}
                   onChange={(e) => setCampaignDetailedRequirements(e.target.value)}
                   rows={6}
@@ -781,7 +803,7 @@ export function CreateCampaignTab({ campaigns, setCampaigns, setActiveTab }: Cre
               </div>
             </div>
             <p className="text-xs text-muted-foreground mt-2">
-              Set a budget range per influencer. Influencers will see this range when applying.
+              Set a budget range per influencer (in USDC). Influencers will see this range when applying.
             </p>
 
             {/* Total Campaign Budget */}
