@@ -199,6 +199,29 @@ model Campaign {
   // General deliverables description for the campaign
   deliverables String[] @default([])
 
+  // Campaign details
+  goal               String?
+  platforms          String[] @default([])
+  contentFormats     String[] @default([]) @map("content_formats")
+  contentType        String?  @map("content_type")
+  influencerNiches   String[] @default([]) @map("influencer_niches")
+  pricingModels      String[] @default([]) @map("pricing_models")
+  targetViews        String?  @map("target_views")
+  targetClicks       String?  @map("target_clicks")
+  targetEngagements  String?  @map("target_engagements")
+
+  // Project details
+  productName        String?  @map("product_name")
+  productPrice       String?  @map("product_price")
+  productPhoto       String?  @map("product_photo")
+  productLink        String?  @map("product_link")
+  productDescription String?  @map("product_description")
+
+  // Instructions for creators
+  brandTag           String?  @map("brand_tag")
+  hashtags           String?
+  creatorScript      String?  @map("creator_script")
+
   status CampaignStatus @default(DRAFT)
 
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz

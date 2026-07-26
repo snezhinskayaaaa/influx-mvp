@@ -1,0 +1,17 @@
+ALTER TABLE "campaigns" ADD COLUMN IF NOT EXISTS "goal" TEXT;
+ALTER TABLE "campaigns" ADD COLUMN IF NOT EXISTS "platforms" TEXT[] DEFAULT '{}';
+ALTER TABLE "campaigns" ADD COLUMN IF NOT EXISTS "content_formats" TEXT[] DEFAULT '{}';
+ALTER TABLE "campaigns" ADD COLUMN IF NOT EXISTS "content_type" TEXT;
+ALTER TABLE "campaigns" ADD COLUMN IF NOT EXISTS "influencer_niches" TEXT[] DEFAULT '{}';
+ALTER TABLE "campaigns" ADD COLUMN IF NOT EXISTS "pricing_models" TEXT[] DEFAULT '{}';
+ALTER TABLE "campaigns" ADD COLUMN IF NOT EXISTS "target_views" TEXT;
+ALTER TABLE "campaigns" ADD COLUMN IF NOT EXISTS "target_clicks" TEXT;
+ALTER TABLE "campaigns" ADD COLUMN IF NOT EXISTS "target_engagements" TEXT;
+ALTER TABLE "campaigns" ADD COLUMN IF NOT EXISTS "product_name" TEXT;
+ALTER TABLE "campaigns" ADD COLUMN IF NOT EXISTS "product_price" TEXT;
+ALTER TABLE "campaigns" ADD COLUMN IF NOT EXISTS "product_photo" TEXT;
+ALTER TABLE "campaigns" ADD COLUMN IF NOT EXISTS "product_link" TEXT;
+ALTER TABLE "campaigns" ADD COLUMN IF NOT EXISTS "product_description" TEXT;
+ALTER TABLE "campaigns" ADD COLUMN IF NOT EXISTS "brand_tag" TEXT;
+ALTER TABLE "campaigns" ADD COLUMN IF NOT EXISTS "hashtags" TEXT;
+ALTER TABLE "campaigns" ADD COLUMN IF NOT EXISTS "creator_script" TEXT;
