@@ -645,10 +645,10 @@ export default function InfluencerDashboard() {
         setApplyError(data.error || "Failed to apply");
         return;
       }
-      setApplySuccess("Application submitted successfully!");
       setApplyingCampaign(null);
       setProposedPrice("");
       setApplicationMessage("");
+      showToast("Application submitted successfully!", "success");
       // Refresh collaborations
       const collabRes = await fetch("/api/collaborations");
       if (collabRes.ok) {
