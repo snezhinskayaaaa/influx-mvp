@@ -43,6 +43,7 @@ import {
   FileText,
   Send,
   Video,
+  XCircle,
 } from "lucide-react";
 import {
   Select,
@@ -1975,9 +1976,39 @@ export default function InfluencerDashboard() {
 
                         {/* Actions Column */}
                         <div className="w-[140px] flex items-center justify-end gap-2">
-                          <Button size="sm" variant="ghost" className="h-8 w-8 p-0">
+                          <Button size="sm" variant="ghost" className="h-8 w-8 p-0" onClick={() => setSelectedCampaignDetails(campaign)}>
                             <Eye className="h-4 w-4" />
                           </Button>
+                          {(campaign.status === "applied" || campaign.status === "approved") && campaign.collaborationId && (
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              className="h-8 w-8 p-0 hover:text-red-600"
+                              title="Withdraw application"
+                              onClick={async (e) => {
+                                e.stopPropagation();
+                                if (!confirm("Withdraw your application?")) return;
+                                try {
+                                  const res = await fetch(`/api/collaborations/${campaign.collaborationId}`, {
+                                    method: "PATCH",
+                                    headers: { "Content-Type": "application/json" },
+                                    body: JSON.stringify({ status: "CANCELLED" }),
+                                  });
+                                  if (res.ok) {
+                                    showToast("Application withdrawn", "success");
+                                    await refreshCollaborations();
+                                  } else {
+                                    const data = await res.json();
+                                    showToast(data.error || "Failed to withdraw", "error");
+                                  }
+                                } catch {
+                                  showToast("Failed to withdraw", "error");
+                                }
+                              }}
+                            >
+                              <XCircle className="h-4 w-4" />
+                            </Button>
+                          )}
                         </div>
                       </div>
                     ))}
