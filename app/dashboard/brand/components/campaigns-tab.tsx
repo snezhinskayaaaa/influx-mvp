@@ -306,6 +306,50 @@ export function CampaignsTab({
     }
   };
 
+  /** Open campaign detail view and fetch applications */
+  const handleOpenCampaign = async (campaign: Campaign) => {
+    setSelectedCampaignDetails(campaign);
+    try {
+      const res = await fetch('/api/collaborations');
+      if (res.ok) {
+        const data = await res.json();
+        if (data.collaborations) {
+          const campaignCollabs = data.collaborations
+            .filter((c: Record<string, unknown>) => {
+              const colCampaign = c.campaign as Record<string, unknown>;
+              return colCampaign?.id === campaign.id;
+            })
+            .map((c: Record<string, unknown>) => {
+              const inf = c.influencer as Record<string, unknown>;
+              return {
+                id: inf?.id || '',
+                name: (inf?.handle as string) || 'Unknown',
+                avatar: '👤',
+                followers: `${((inf?.instagramFollowers as number) || 0).toLocaleString()}`,
+                engagement: '0%',
+                category: '',
+                pricePerPost: `$${(((c.proposedPrice as number) || 0) / 100).toFixed(0)}`,
+                status: c.status === 'APPLIED' ? 'pending' as const : 'approved' as const,
+                collaborationId: c.id as string,
+                collaborationStatus: c.status as string,
+                agreedPrice: c.agreedPrice as number | null,
+                contentUrl: (c.contentUrl as string) || undefined,
+                revisionCount: (c.revisionCount as number) || 0,
+                revisionNote: (c.revisionNote as string) || undefined,
+              };
+            });
+          setSelectedCampaignDetails({ ...campaign, applicationsList: campaignCollabs, applications: campaignCollabs.length });
+          // Also update the campaigns list count
+          setCampaigns(campaigns.map(camp =>
+            camp.id === campaign.id ? { ...camp, applications: campaignCollabs.length } : camp
+          ));
+        }
+      }
+    } catch {
+      // Keep showing campaign without applications
+    }
+  };
+
   /** Open campaign detail view for editing */
   const handleEditCampaign = (campaign: Campaign) => {
     setSelectedCampaignDetails(campaign);
@@ -2366,7 +2410,7 @@ export function CampaignsTab({
                   className={`flex items-center px-6 py-5 hover:bg-muted/20 transition-colors cursor-pointer ${
                     index !== filteredCampaigns.length - 1 ? "border-b" : ""
                   }`}
-                  onClick={() => setSelectedCampaignDetails(campaign)}
+                  onClick={() => handleOpenCampaign(campaign)}
                 >
               {/* Name Column */}
               <div className="w-[320px] flex items-center gap-3">
@@ -2573,7 +2617,7 @@ export function CampaignsTab({
               return filteredCampaigns.map((campaign) => (
                 <Card
                   key={campaign.id}
-                  onClick={() => setSelectedCampaignDetails(campaign)}
+                  onClick={() => handleOpenCampaign(campaign)}
                   className="p-4 cursor-pointer hover:bg-muted/20 transition-colors"
                 >
                   <div className="flex items-start gap-3 mb-3">
