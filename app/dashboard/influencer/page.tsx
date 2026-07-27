@@ -119,6 +119,7 @@ interface Campaign {
     shares?: number;
   };
   // Collaboration lifecycle fields
+  collaborationId?: string;
   revisionNote?: string;
   revisionCount?: number;
   contentUrl?: string;
