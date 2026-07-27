@@ -87,6 +87,7 @@ model Profile {
   influencer       Influencer?
   brand            Brand?
   transactions     Transaction[]
+  notifications    Notification[]
 
   @@map("profiles")
 }
@@ -310,6 +311,22 @@ model Transaction {
   @@index([type])
   @@index([externalId])
   @@map("transactions")
+}
+
+model Notification {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId    String   @map("user_id") @db.Uuid
+  title     String
+  body      String
+  isRead    Boolean  @default(false) @map("is_read")
+  link      String?  // optional link to navigate to
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  profile Profile @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([isRead])
+  @@map("notifications")
 }
 
 model PlatformSettings {

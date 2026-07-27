@@ -27,7 +27,7 @@ import { CampaignsTab } from "./components/campaigns-tab";
 import { CreateCampaignTab } from "./components/create-campaign-tab";
 import { ProfileTab } from "./components/profile-tab";
 import { SettingsTab } from "./components/settings-tab";
-import type { Tab, Campaign, Influencer, Notification, CampaignInfluencer } from "./components/types";
+import type { Tab, Campaign, Influencer, CampaignInfluencer } from "./components/types";
 import { COLLABORATION_STATUS_CONFIG } from "./components/types";
 
 export default function BrandDashboard() {
@@ -58,8 +58,6 @@ export default function BrandDashboard() {
 
   const [influencers, setInfluencers] = useState<Influencer[]>([]);
   const [, setCollaborations] = useState<Record<string, unknown>[]>([]);
-
-  const [notifications, setNotifications] = useState<Notification[]>([]);
 
   const [showInfluencerDetails, setShowInfluencerDetails] = useState(false);
   const [selectedInfluencerDetails] = useState<CampaignInfluencer | null>(null);
@@ -274,10 +272,7 @@ export default function BrandDashboard() {
 
   return (
     <div className="min-h-screen bg-background">
-      <BrandNav
-        notifications={notifications}
-        setNotifications={setNotifications}
-      />
+      <BrandNav />
 
       <div className="flex">
         <BrandSidebar

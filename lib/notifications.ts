@@ -3,6 +3,16 @@ import { sendCollaborationEmail } from '@/lib/email'
 
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://aiinflux.io'
 
+async function createInAppNotification(userId: string, title: string, body: string, link?: string) {
+  try {
+    await prisma.notification.create({
+      data: { userId, title, body, link },
+    })
+  } catch (err) {
+    console.error('Failed to create in-app notification:', err)
+  }
+}
+
 async function shouldNotify(userId: string): Promise<{ email: string; notify: boolean }> {
   const profile = await prisma.profile.findUnique({
     where: { id: userId },
@@ -15,6 +25,7 @@ async function shouldNotify(userId: string): Promise<{ email: string; notify: bo
 // --- Brand notifications ---
 
 export async function notifyBrandNewApplication(brandUserId: string, influencerName: string, campaignTitle: string) {
+  await createInAppNotification(brandUserId, 'New Application', `${influencerName} applied to "${campaignTitle}"`, '/dashboard/brand')
   const { email, notify } = await shouldNotify(brandUserId)
   if (!notify) return
   await sendCollaborationEmail(
@@ -28,6 +39,7 @@ export async function notifyBrandNewApplication(brandUserId: string, influencerN
 }
 
 export async function notifyBrandContentSubmitted(brandUserId: string, influencerName: string, campaignTitle: string) {
+  await createInAppNotification(brandUserId, 'Content Submitted', `${influencerName} submitted content for "${campaignTitle}"`, '/dashboard/brand')
   const { email, notify } = await shouldNotify(brandUserId)
   if (!notify) return
   await sendCollaborationEmail(
@@ -41,6 +53,7 @@ export async function notifyBrandContentSubmitted(brandUserId: string, influence
 }
 
 export async function notifyBrandContentDelivered(brandUserId: string, influencerName: string, campaignTitle: string) {
+  await createInAppNotification(brandUserId, 'Content Published', `${influencerName} published content for "${campaignTitle}"`, '/dashboard/brand')
   const { email, notify } = await shouldNotify(brandUserId)
   if (!notify) return
   await sendCollaborationEmail(
@@ -54,6 +67,7 @@ export async function notifyBrandContentDelivered(brandUserId: string, influence
 }
 
 export async function notifyBrandAutoRelease(brandUserId: string, campaignTitle: string, amount: number) {
+  await createInAppNotification(brandUserId, 'Payment Auto-Released', `$${(amount / 100).toFixed(2)} released for "${campaignTitle}"`, '/dashboard/brand')
   const { email, notify } = await shouldNotify(brandUserId)
   if (!notify) return
   await sendCollaborationEmail(
@@ -67,6 +81,7 @@ export async function notifyBrandAutoRelease(brandUserId: string, campaignTitle:
 // --- Influencer notifications ---
 
 export async function notifyInfluencerApplicationAccepted(influencerUserId: string, campaignTitle: string) {
+  await createInAppNotification(influencerUserId, 'Application Accepted', `Your application for "${campaignTitle}" was accepted`, '/dashboard/influencer')
   const { email, notify } = await shouldNotify(influencerUserId)
   if (!notify) return
   await sendCollaborationEmail(
@@ -80,6 +95,7 @@ export async function notifyInfluencerApplicationAccepted(influencerUserId: stri
 }
 
 export async function notifyInfluencerAgreedAndAdvance(influencerUserId: string, campaignTitle: string, advanceAmount: number) {
+  await createInAppNotification(influencerUserId, 'Campaign Started', `$${(advanceAmount / 100).toFixed(2)} advance received for "${campaignTitle}"`, '/dashboard/influencer')
   const { email, notify } = await shouldNotify(influencerUserId)
   if (!notify) return
   await sendCollaborationEmail(
@@ -93,6 +109,7 @@ export async function notifyInfluencerAgreedAndAdvance(influencerUserId: string,
 }
 
 export async function notifyInfluencerContentApproved(influencerUserId: string, campaignTitle: string) {
+  await createInAppNotification(influencerUserId, 'Content Approved', `Your content for "${campaignTitle}" was approved — publish it!`, '/dashboard/influencer')
   const { email, notify } = await shouldNotify(influencerUserId)
   if (!notify) return
   await sendCollaborationEmail(
@@ -106,6 +123,7 @@ export async function notifyInfluencerContentApproved(influencerUserId: string, 
 }
 
 export async function notifyInfluencerRevisionRequested(influencerUserId: string, campaignTitle: string, note: string) {
+  await createInAppNotification(influencerUserId, 'Revision Requested', `Changes requested for "${campaignTitle}"`, '/dashboard/influencer')
   const { email, notify } = await shouldNotify(influencerUserId)
   if (!notify) return
   await sendCollaborationEmail(
@@ -119,6 +137,7 @@ export async function notifyInfluencerRevisionRequested(influencerUserId: string
 }
 
 export async function notifyInfluencerPaymentReceived(influencerUserId: string, campaignTitle: string, amount: number) {
+  await createInAppNotification(influencerUserId, 'Payment Received', `$${(amount / 100).toFixed(2)} received for "${campaignTitle}"`, '/dashboard/influencer')
   const { email, notify } = await shouldNotify(influencerUserId)
   if (!notify) return
   await sendCollaborationEmail(
@@ -132,6 +151,7 @@ export async function notifyInfluencerPaymentReceived(influencerUserId: string, 
 }
 
 export async function notifyInfluencerDisputeCreated(influencerUserId: string, campaignTitle: string, reason: string) {
+  await createInAppNotification(influencerUserId, 'Dispute Raised', `A dispute was raised for "${campaignTitle}"`, '/dashboard/influencer')
   const { email, notify } = await shouldNotify(influencerUserId)
   if (!notify) return
   await sendCollaborationEmail(

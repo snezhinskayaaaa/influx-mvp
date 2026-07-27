@@ -19,7 +19,6 @@ import {
   DollarSign,
   Settings,
   User,
-  Bell,
   LogOut,
   ChevronDown,
   Filter,
@@ -53,7 +52,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { NetworkLogo } from "@/components/logo";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { NotificationBell } from "@/components/notification-bell";
 import {
   Dialog,
   DialogContent,
@@ -724,26 +723,7 @@ export default function InfluencerDashboard() {
             </Link>
 
             <div className="flex items-center gap-2 sm:gap-3">
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button variant="ghost" size="sm" className="relative text-sm font-medium text-muted-foreground hover:bg-muted/50 hover:text-foreground">
-                    <Bell className="h-4 w-4" />
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-96 p-0" align="end" sideOffset={8}>
-                  <div className="p-4 border-b">
-                    <h3 className="font-semibold text-base">Notifications</h3>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      Stay updated with your campaigns
-                    </p>
-                  </div>
-                  <div className="p-3">
-                    <p className="text-sm text-muted-foreground text-center py-8">
-                      No new notifications
-                    </p>
-                  </div>
-                </PopoverContent>
-              </Popover>
+              <NotificationBell />
 
               <Button variant="ghost" size="sm" className="text-sm font-medium text-muted-foreground hover:bg-muted/50 hover:text-foreground" onClick={async () => { await fetch('/api/auth/logout', { method: 'POST' }); window.location.href = '/login'; }}>
                 <LogOut className="h-4 w-4" />

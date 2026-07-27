@@ -21,12 +21,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
 import { NetworkLogo } from "@/components/logo";
+import { NotificationBell } from "@/components/notification-bell";
 import { motion } from "framer-motion";
 import {
   Search,
@@ -38,25 +34,14 @@ import {
   Wallet,
   CreditCard,
   Bitcoin,
-  Bell,
   Check as CheckIcon,
   Copy,
   CheckCircle2,
   AlertCircle,
 } from "lucide-react";
-import type { Tab, Notification } from "./types";
+import type { Tab } from "./types";
 
-interface BrandNavProps {
-  notifications: Notification[];
-  setNotifications: React.Dispatch<React.SetStateAction<Notification[]>>;
-}
-
-export function BrandNav({
-  notifications,
-  setNotifications,
-}: BrandNavProps) {
-  const [showNotifications, setShowNotifications] = useState(false);
-
+export function BrandNav() {
   return (
     <>
       {/* Header */}
@@ -72,104 +57,7 @@ export function BrandNav({
             </Link>
 
             <div className="flex items-center gap-2 sm:gap-3">
-              <Popover open={showNotifications} onOpenChange={setShowNotifications}>
-                <PopoverTrigger asChild>
-                  <Button variant="ghost" size="sm" className="relative text-sm font-medium text-muted-foreground hover:bg-muted/50 hover:text-foreground">
-                    <Bell className="h-4 w-4" />
-                    {notifications.filter(n => !n.read).length > 0 && (
-                      <span className="absolute -top-1 -right-1 h-4 w-4 bg-primary text-primary-foreground text-[10px] font-semibold rounded-full flex items-center justify-center">
-                        {notifications.filter(n => !n.read).length}
-                      </span>
-                    )}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-96 p-0" align="end" sideOffset={8}>
-                  <div className="p-4 border-b">
-                    <h3 className="font-semibold text-base">Notifications</h3>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      Stay updated with your campaigns
-                    </p>
-                  </div>
-
-                  <div className="space-y-2 max-h-[400px] overflow-y-auto p-3">
-                    {notifications.length === 0 ? (
-                      <p className="text-sm text-muted-foreground text-center py-8">
-                        No notifications yet
-                      </p>
-                    ) : (
-                      notifications.map((notification) => (
-                        <div
-                          key={notification.id}
-                          className={`p-3 rounded-lg border ${
-                            notification.read
-                              ? "border-border bg-muted/20"
-                              : "border-primary/30 bg-primary/5"
-                          }`}
-                        >
-                          <div className="flex items-start justify-between mb-1.5">
-                            <div className="flex-1 pr-2">
-                              {notification.type === "invitation_accepted" ? (
-                                <p className="text-xs leading-relaxed">
-                                  <span className="font-semibold text-primary">{notification.influencerName}</span>
-                                  {" "}accepted your invite for{" "}
-                                  <span className="font-medium">{notification.campaignTitle}</span>
-                                </p>
-                              ) : (
-                                <p className="text-xs leading-relaxed">
-                                  <span className="font-semibold text-primary">{notification.influencerName}</span>
-                                  {" "}applied to{" "}
-                                  <span className="font-medium">{notification.campaignTitle}</span>
-                                </p>
-                              )}
-                            </div>
-                            {!notification.read && (
-                              <div className="w-2 h-2 bg-primary rounded-full shrink-0 mt-1"></div>
-                            )}
-                          </div>
-                          <div className="flex items-center justify-between">
-                            <span className="text-[10px] text-muted-foreground">{notification.timestamp}</span>
-                            {!notification.read && (
-                              <button
-                                onClick={() => {
-                                  setNotifications(notifications.map(n =>
-                                    n.id === notification.id ? { ...n, read: true } : n
-                                  ));
-                                }}
-                                className="text-[10px] text-primary hover:underline"
-                              >
-                                Mark as read
-                              </button>
-                            )}
-                          </div>
-                        </div>
-                      ))
-                    )}
-                  </div>
-
-                  {notifications.length > 0 && (
-                    <div className="p-3 border-t flex items-center justify-between gap-2">
-                      {notifications.filter(n => !n.read).length > 0 && (
-                        <button
-                          onClick={() => {
-                            setNotifications(notifications.map(n => ({ ...n, read: true })));
-                          }}
-                          className="flex-1 text-xs text-center text-primary hover:underline"
-                        >
-                          Mark all as read
-                        </button>
-                      )}
-                      <button
-                        onClick={() => {
-                          setNotifications([]);
-                        }}
-                        className="flex-1 text-xs text-center text-muted-foreground hover:text-destructive hover:underline"
-                      >
-                        Clear all
-                      </button>
-                    </div>
-                  )}
-                </PopoverContent>
-              </Popover>
+              <NotificationBell />
 
               <Button variant="ghost" size="sm" className="text-sm font-medium text-muted-foreground hover:bg-muted/50 hover:text-foreground" onClick={async () => { await fetch('/api/auth/logout', { method: 'POST' }); window.location.href = '/login'; }}>
                 <LogOut className="h-4 w-4" />
