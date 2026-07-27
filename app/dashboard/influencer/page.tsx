@@ -149,7 +149,7 @@ export default function InfluencerDashboard() {
   const [applicationMessage, setApplicationMessage] = useState("");
   const [applyLoading, setApplyLoading] = useState(false);
   const [applyError, setApplyError] = useState("");
-  const [applySuccess, setApplySuccess] = useState("");
+  const [applySuccess] = useState("");
   const [submitLoading, setSubmitLoading] = useState(false);
 
   const [discoverCampaigns, setDiscoverCampaigns] = useState<Campaign[]>([]);

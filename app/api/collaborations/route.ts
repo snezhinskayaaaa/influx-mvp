@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
 import { getCurrentUser } from '@/lib/auth'
 import { rateLimit } from '@/lib/rate-limit'
-import { notifyBrandNewApplication } from '@/lib/notifications'
+import { notifyBrandNewApplication, notifyInfluencerApplicationAccepted } from '@/lib/notifications'
 
 export async function GET(request: NextRequest) {
   try {
@@ -114,17 +114,82 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Too many requests. Please wait a minute.' }, { status: 429 })
     }
 
-    if (user.role !== 'INFLUENCER') {
-      return NextResponse.json({ error: 'Only influencers can apply to campaigns' }, { status: 403 })
+    if (user.role !== 'INFLUENCER' && user.role !== 'BRAND') {
+      return NextResponse.json({ error: 'Invalid role' }, { status: 403 })
     }
 
-    // Check email verification for financial/critical operations
+    // Check email verification
     const profile = await prisma.profile.findUnique({
       where: { id: user.userId },
       select: { emailVerified: true },
     })
     if (!profile?.emailVerified) {
       return NextResponse.json({ error: 'Please verify your email before using this feature' }, { status: 403 })
+    }
+
+    const body = await request.json()
+    const { campaignId, proposedPrice, message, deliverables, influencerId, isInvitation } = body
+
+    if (!campaignId) {
+      return NextResponse.json({ error: 'Campaign ID is required' }, { status: 400 })
+    }
+
+    const campaign = await prisma.campaign.findUnique({
+      where: { id: campaignId },
+      include: { brand: { select: { userId: true, id: true } } },
+    })
+    if (!campaign || campaign.status !== 'ACTIVE') {
+      return NextResponse.json({ error: 'Campaign not found or not active' }, { status: 400 })
+    }
+
+    let targetInfluencerId: string
+    let targetInfluencerHandle: string
+
+    if (user.role === 'BRAND' && isInvitation) {
+      // Brand inviting an influencer
+      if (campaign.brand.userId !== user.userId) {
+        return NextResponse.json({ error: 'You can only invite to your own campaigns' }, { status: 403 })
+      }
+      if (!influencerId) {
+        return NextResponse.json({ error: 'Influencer ID is required for invitations' }, { status: 400 })
+      }
+      const influencer = await prisma.influencer.findUnique({
+        where: { id: influencerId },
+      })
+      if (!influencer) {
+        return NextResponse.json({ error: 'Influencer not found' }, { status: 404 })
+      }
+      targetInfluencerId = influencer.id
+      targetInfluencerHandle = influencer.handle
+
+      // Check for existing collaboration
+      const existing = await prisma.collaboration.findUnique({
+        where: { campaignId_influencerId: { campaignId, influencerId: targetInfluencerId } },
+      })
+      if (existing) {
+        return NextResponse.json({ error: 'This influencer already has a collaboration with this campaign' }, { status: 409 })
+      }
+
+      // Use campaign budgetMin as proposed price for invitations
+      const collaboration = await prisma.collaboration.create({
+        data: {
+          campaignId,
+          influencerId: targetInfluencerId,
+          proposedPrice: campaign.budgetMin,
+          message: `You've been invited to collaborate on "${campaign.title}"`,
+          status: 'APPLIED',
+        },
+      })
+
+      // Notify the influencer
+      notifyInfluencerApplicationAccepted(influencer.userId, campaign.title)
+
+      return NextResponse.json({ collaboration }, { status: 201 })
+    }
+
+    // Influencer applying
+    if (user.role !== 'INFLUENCER') {
+      return NextResponse.json({ error: 'Only influencers can apply to campaigns' }, { status: 403 })
     }
 
     const influencer = await prisma.influencer.findUnique({
@@ -138,26 +203,15 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Your profile must be approved to apply' }, { status: 403 })
     }
 
-    const body = await request.json()
-    const { campaignId, proposedPrice, message, deliverables } = body
-
-    if (!campaignId) {
-      return NextResponse.json({ error: 'Campaign ID is required' }, { status: 400 })
-    }
     if (!proposedPrice || typeof proposedPrice !== 'number' || proposedPrice <= 0 || proposedPrice > 1000000) {
       return NextResponse.json({ error: 'Proposed price must be a positive number up to 1,000,000' }, { status: 400 })
     }
 
-    const campaign = await prisma.campaign.findUnique({
-      where: { id: campaignId },
-      include: { brand: { select: { userId: true } } },
-    })
-    if (!campaign || campaign.status !== 'ACTIVE') {
-      return NextResponse.json({ error: 'Campaign not found or not active' }, { status: 400 })
-    }
+    targetInfluencerId = influencer.id
+    targetInfluencerHandle = influencer.handle
 
     const existing = await prisma.collaboration.findUnique({
-      where: { campaignId_influencerId: { campaignId, influencerId: influencer.id } },
+      where: { campaignId_influencerId: { campaignId, influencerId: targetInfluencerId } },
     })
     if (existing) {
       return NextResponse.json({ error: 'You have already applied to this campaign' }, { status: 409 })
@@ -175,7 +229,7 @@ export async function POST(request: NextRequest) {
     const collaboration = await prisma.collaboration.create({
       data: {
         campaignId,
-        influencerId: influencer.id,
+        influencerId: targetInfluencerId,
         proposedPrice: proposedPriceCents,
         message: message || null,
         deliverables: parsedDeliverables,
@@ -184,7 +238,7 @@ export async function POST(request: NextRequest) {
     })
 
     // Fire-and-forget notification to the brand
-    notifyBrandNewApplication(campaign.brand.userId, influencer.handle, campaign.title)
+    notifyBrandNewApplication(campaign.brand.userId, targetInfluencerHandle, campaign.title)
 
     return NextResponse.json({ collaboration }, { status: 201 })
   } catch (error) {

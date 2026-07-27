@@ -411,8 +411,37 @@ export default function BrandDashboard() {
             </div>
 
             <Button
-              disabled
+              disabled={!selectedCampaignId || !selectedInfluencer}
               className="w-full h-11 bg-gradient-to-r from-primary to-secondary hover:opacity-90"
+              onClick={async () => {
+                if (!selectedCampaignId || !selectedInfluencer) return;
+                try {
+                  const res = await fetch("/api/collaborations", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                      campaignId: selectedCampaignId,
+                      influencerId: selectedInfluencer.id,
+                      isInvitation: true,
+                    }),
+                  });
+                  const data = await res.json();
+                  if (!res.ok) {
+                    alert(data.error || "Failed to send invitation");
+                    return;
+                  }
+                  setShowCollaborateModal(false);
+                  setSelectedCampaignId(null);
+                  // Refresh collaborations
+                  const collabRes = await fetch("/api/collaborations");
+                  if (collabRes.ok) {
+                    const collabData = await collabRes.json();
+                    if (collabData.collaborations) setCollaborations(collabData.collaborations);
+                  }
+                } catch {
+                  alert("Failed to send invitation");
+                }
+              }}
             >
               Send Invitation
             </Button>
