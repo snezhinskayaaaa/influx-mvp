@@ -1147,7 +1147,7 @@ export function CampaignsTab({
                                       });
                                       if (res.ok) {
                                         const updatedApplications = selectedCampaignDetails.applicationsList?.map(app =>
-                                          app.id === application.id ? { ...app, status: 'approved' as const, collaborationStatus: 'NEGOTIATING' } : app
+                                          app.id === application.id ? { ...app, status: 'approved' as const, collaborationStatus: 'NEGOTIATING' as CollaborationStatus } : app
                                         );
                                         setSelectedCampaignDetails({ ...selectedCampaignDetails, applicationsList: updatedApplications });
                                         showToast('Application approved', 'success');
