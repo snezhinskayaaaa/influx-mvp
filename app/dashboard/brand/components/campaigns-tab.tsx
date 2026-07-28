@@ -329,7 +329,7 @@ export function CampaignsTab({
                 influencerId: inf?.id || '',
                 influencerName: (inf?.handle as string) || 'Unknown',
                 influencerUsername: `@${(inf?.handle as string) || 'unknown'}`,
-                influencerAvatar: '👤',
+                influencerAvatar: (inf?.profile as Record<string, unknown>)?.avatarUrl as string || '👤',
                 influencerFollowers: followers > 0 ? followers.toLocaleString() : '0',
                 source: 'applied' as const,
                 status: c.status === 'APPLIED' ? 'pending' as const : 'approved' as const,
@@ -1107,8 +1107,12 @@ export function CampaignsTab({
                     >
                       <div className="flex items-start gap-4">
                         {/* Avatar */}
-                        <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center text-2xl shrink-0">
-                          {application.influencerAvatar}
+                        <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center text-2xl shrink-0 overflow-hidden">
+                          {application.influencerAvatar && application.influencerAvatar.startsWith('data:') ? (
+                            <img src={application.influencerAvatar} alt={application.influencerName} className="w-full h-full object-cover" />
+                          ) : (
+                            application.influencerAvatar || '👤'
+                          )}
                         </div>
 
                         {/* Info */}
@@ -1126,25 +1130,68 @@ export function CampaignsTab({
                               </div>
                             </div>
 
-                            {/* Action Button */}
+                            {/* Action Buttons */}
                             {application.status === "pending" && (
-                              <Button
-                                size="sm"
-                                className="bg-gradient-to-r from-primary to-secondary shrink-0"
-                                onClick={() => {
-                                  // Update application status
-                                  const updatedApplications = selectedCampaignDetails.applicationsList?.map(app =>
-                                    app.id === application.id ? { ...app, status: "approved" as const } : app
-                                  );
-                                  setSelectedCampaignDetails({
-                                    ...selectedCampaignDetails,
-                                    applicationsList: updatedApplications,
-                                  });
-                                }}
-                              >
-                                <CheckCircle2 className="h-4 w-4 mr-1" />
-                                Approve
-                              </Button>
+                              <div className="flex gap-2 shrink-0">
+                                <Button
+                                  size="sm"
+                                  className="bg-gradient-to-r from-primary to-secondary"
+                                  disabled={actionLoading}
+                                  onClick={async () => {
+                                    setActionLoading(true);
+                                    try {
+                                      const res = await fetch(`/api/collaborations/${application.collaborationId}`, {
+                                        method: 'PATCH',
+                                        headers: { 'Content-Type': 'application/json' },
+                                        body: JSON.stringify({ status: 'NEGOTIATING' }),
+                                      });
+                                      if (res.ok) {
+                                        const updatedApplications = selectedCampaignDetails.applicationsList?.map(app =>
+                                          app.id === application.id ? { ...app, status: 'approved' as const, collaborationStatus: 'NEGOTIATING' } : app
+                                        );
+                                        setSelectedCampaignDetails({ ...selectedCampaignDetails, applicationsList: updatedApplications });
+                                        showToast('Application approved', 'success');
+                                      } else {
+                                        const data = await res.json();
+                                        showToast(data.error || 'Failed to approve', 'error');
+                                      }
+                                    } catch { showToast('Failed to approve', 'error'); }
+                                    finally { setActionLoading(false); }
+                                  }}
+                                >
+                                  <CheckCircle2 className="h-4 w-4 mr-1" />
+                                  Approve
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  className="text-destructive border-destructive/30 hover:bg-destructive/10"
+                                  disabled={actionLoading}
+                                  onClick={async () => {
+                                    setActionLoading(true);
+                                    try {
+                                      const res = await fetch(`/api/collaborations/${application.collaborationId}`, {
+                                        method: 'PATCH',
+                                        headers: { 'Content-Type': 'application/json' },
+                                        body: JSON.stringify({ status: 'CANCELLED' }),
+                                      });
+                                      if (res.ok) {
+                                        const updatedApplications = selectedCampaignDetails.applicationsList?.filter(app =>
+                                          app.id !== application.id
+                                        );
+                                        setSelectedCampaignDetails({ ...selectedCampaignDetails, applicationsList: updatedApplications, applications: (updatedApplications?.length || 0) });
+                                        showToast('Application rejected', 'success');
+                                      } else {
+                                        const data = await res.json();
+                                        showToast(data.error || 'Failed to reject', 'error');
+                                      }
+                                    } catch { showToast('Failed to reject', 'error'); }
+                                    finally { setActionLoading(false); }
+                                  }}
+                                >
+                                  Reject
+                                </Button>
+                              </div>
                             )}
                           </div>
 
