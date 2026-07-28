@@ -17,9 +17,17 @@ export async function DELETE(
 
     const { id } = await params
 
-    const campaign = await prisma.campaign.findUnique({ where: { id } })
+    const campaign = await prisma.campaign.findUnique({
+      where: { id },
+      include: {
+        collaborations: { where: { status: { in: ['AGREED', 'IN_PROGRESS', 'CONTENT_REVIEW', 'REVISION', 'PUBLISHING', 'DELIVERED'] } } },
+      },
+    })
     if (!campaign) {
       return NextResponse.json({ error: 'Campaign not found' }, { status: 404 })
+    }
+    if (campaign.collaborations.length > 0) {
+      return NextResponse.json({ error: 'Cannot delete campaign with active collaborations' }, { status: 400 })
     }
 
     await prisma.campaign.delete({ where: { id } })

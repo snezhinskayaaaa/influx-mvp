@@ -68,9 +68,22 @@ export async function removeAuthCookie(): Promise<void> {
 }
 
 // Get current user from cookies (for server components and API routes)
+// Validates JWT and confirms user still exists with current role from DB
 export async function getCurrentUser(): Promise<TokenPayload | null> {
   const cookieStore = await cookies()
   const token = cookieStore.get(COOKIE_NAME)?.value
   if (!token) return null
-  return verifyToken(token)
+  const payload = await verifyToken(token)
+  if (!payload) return null
+
+  // Verify user still exists and role is current
+  const { default: prisma } = await import('@/lib/prisma')
+  const profile = await prisma.profile.findUnique({
+    where: { id: payload.userId },
+    select: { role: true },
+  })
+  if (!profile) return null
+
+  // Return with current DB role, not stale JWT role
+  return { userId: payload.userId, role: profile.role as TokenPayload['role'] }
 }
