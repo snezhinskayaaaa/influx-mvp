@@ -334,7 +334,7 @@ export function CampaignsTab({
                 source: 'applied' as const,
                 status: c.status === 'APPLIED' ? 'pending' as const : 'approved' as const,
                 collaborationStatus: c.status as string,
-                proposedPriceCPM: `$${(proposedPrice / 100).toFixed(0)}`,
+                proposedPriceCPM: `${(proposedPrice / 100).toFixed(0)}`,
                 agreedPrice: c.agreedPrice ? (c.agreedPrice as number) / 100 : undefined,
                 message: (c.message as string) || '',
                 appliedAt: c.createdAt ? new Date(c.createdAt as string).toLocaleDateString() : 'Unknown',
@@ -1117,22 +1117,6 @@ export function CampaignsTab({
                             <div>
                               <div className="flex items-center gap-2 mb-1">
                                 <h3 className="font-semibold">{application.influencerName}</h3>
-                                <Badge
-                                  variant="outline"
-                                  className={`text-xs ${
-                                    application.source === "invited"
-                                      ? "bg-primary/10 text-primary border-primary/20"
-                                      : "bg-muted text-foreground border-border"
-                                  }`}
-                                >
-                                  {application.source === "invited" ? "Invited" : "Applied"}
-                                </Badge>
-                                {application.status === "approved" && (
-                                  <Badge variant="outline" className="text-xs bg-success/10 text-success border-success/20">
-                                    <CheckCircle2 className="h-3 w-3 mr-1" />
-                                    Approved
-                                  </Badge>
-                                )}
                                 {application.collaborationStatus && getCollaborationStatusBadge(application.collaborationStatus)}
                               </div>
                               <div className="flex items-center gap-3 text-xs text-muted-foreground">
@@ -1164,24 +1148,14 @@ export function CampaignsTab({
                             )}
                           </div>
 
-                          {/* Pricing */}
-                          <div className="flex flex-wrap gap-2 mb-2">
-                            {selectedCampaignDetails.pricingModels.includes("cpm") && application.proposedPriceCPM && (
+                          {/* Proposed Price */}
+                          {application.proposedPriceCPM && (
+                            <div className="flex flex-wrap gap-2 mb-2">
                               <div className="text-xs px-2.5 py-1 rounded-md bg-primary/10 text-primary font-medium border border-primary/20">
-                                CPM: ${application.proposedPriceCPM}
+                                Proposed: ${application.proposedPriceCPM}
                               </div>
-                            )}
-                            {selectedCampaignDetails.pricingModels.includes("cpc") && application.proposedPriceCPC && (
-                              <div className="text-xs px-2.5 py-1 rounded-md bg-secondary/10 text-secondary font-medium border border-secondary/20">
-                                CPC: ${application.proposedPriceCPC}
-                              </div>
-                            )}
-                            {selectedCampaignDetails.pricingModels.includes("cpe") && application.proposedPriceCPE && (
-                              <div className="text-xs px-2.5 py-1 rounded-md bg-muted text-foreground font-medium border border-border">
-                                CPE: ${application.proposedPriceCPE}
-                              </div>
-                            )}
-                          </div>
+                            </div>
+                          )}
 
                           {/* Message */}
                           {application.message && (
