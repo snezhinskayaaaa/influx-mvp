@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
 import { getCurrentUser } from '@/lib/auth'
 import { rateLimit } from '@/lib/rate-limit'
-import { notifyBrandNewApplication, notifyInfluencerApplicationAccepted } from '@/lib/notifications'
+import { notifyBrandNewApplication, notifyInfluencerInvited } from '@/lib/notifications'
 
 export async function GET(request: NextRequest) {
   try {
@@ -185,8 +185,8 @@ export async function POST(request: NextRequest) {
         },
       })
 
-      // Notify the influencer
-      notifyInfluencerApplicationAccepted(influencer.userId, campaign.title)
+      // Notify the influencer about the invitation
+      notifyInfluencerInvited(influencer.userId, campaign.title)
 
       return NextResponse.json({ collaboration }, { status: 201 })
     }

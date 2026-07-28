@@ -80,6 +80,20 @@ export async function notifyBrandAutoRelease(brandUserId: string, campaignTitle:
 
 // --- Influencer notifications ---
 
+export async function notifyInfluencerInvited(influencerUserId: string, campaignTitle: string) {
+  await createInAppNotification(influencerUserId, 'Campaign Invitation', `You've been invited to collaborate on "${campaignTitle}"`, '/dashboard/influencer')
+  const { email, notify } = await shouldNotify(influencerUserId)
+  if (!notify) return
+  await sendCollaborationEmail(
+    email,
+    `You've been invited — "${campaignTitle}"`,
+    'Campaign Invitation',
+    `A Web3 project has invited you to collaborate on "${campaignTitle}". Review the details and apply with your rate.`,
+    'View Invitation',
+    `${APP_URL}/dashboard/influencer`,
+  ).catch(err => console.error('Notification email failed:', err))
+}
+
 export async function notifyInfluencerApplicationAccepted(influencerUserId: string, campaignTitle: string) {
   await createInAppNotification(influencerUserId, 'Application Accepted', `Your application for "${campaignTitle}" was accepted`, '/dashboard/influencer')
   const { email, notify } = await shouldNotify(influencerUserId)
