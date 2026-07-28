@@ -162,12 +162,16 @@ export async function POST(request: NextRequest) {
       targetInfluencerId = influencer.id
       targetInfluencerHandle = influencer.handle
 
-      // Check for existing collaboration
+      // Check for existing active collaboration (allow re-invite after rejection/cancellation)
       const existing = await prisma.collaboration.findUnique({
         where: { campaignId_influencerId: { campaignId, influencerId: targetInfluencerId } },
       })
-      if (existing) {
-        return NextResponse.json({ error: 'This influencer already has a collaboration with this campaign' }, { status: 409 })
+      if (existing && existing.status !== 'CANCELLED') {
+        return NextResponse.json({ error: 'This influencer already has an active collaboration with this campaign' }, { status: 409 })
+      }
+      // Delete cancelled collaboration to allow re-creation (unique constraint)
+      if (existing && existing.status === 'CANCELLED') {
+        await prisma.collaboration.delete({ where: { id: existing.id } })
       }
 
       // Use campaign budgetMin as proposed price for invitations
@@ -213,8 +217,11 @@ export async function POST(request: NextRequest) {
     const existing = await prisma.collaboration.findUnique({
       where: { campaignId_influencerId: { campaignId, influencerId: targetInfluencerId } },
     })
-    if (existing) {
+    if (existing && existing.status !== 'CANCELLED') {
       return NextResponse.json({ error: 'You have already applied to this campaign' }, { status: 409 })
+    }
+    if (existing && existing.status === 'CANCELLED') {
+      await prisma.collaboration.delete({ where: { id: existing.id } })
     }
 
     const proposedPriceCents = Math.round(proposedPrice * 100)

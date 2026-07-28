@@ -422,11 +422,12 @@ export default function BrandDashboard() {
                   });
                   const data = await res.json();
                   if (!res.ok) {
-                    alert(data.error || "Failed to send invitation");
+                    showToast(data.error || "Failed to send invitation", 'error');
                     return;
                   }
                   setShowCollaborateModal(false);
                   setSelectedCampaignId(null);
+                  showToast("Invitation sent!", 'success');
                   // Refresh collaborations
                   const collabRes = await fetch("/api/collaborations");
                   if (collabRes.ok) {
@@ -434,7 +435,7 @@ export default function BrandDashboard() {
                     if (collabData.collaborations) setCollaborations(collabData.collaborations);
                   }
                 } catch {
-                  alert("Failed to send invitation");
+                  showToast("Failed to send invitation", 'error');
                 }
               }}
             >
