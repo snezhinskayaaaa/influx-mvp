@@ -321,18 +321,23 @@ export function CampaignsTab({
             })
             .map((c: Record<string, unknown>) => {
               const inf = c.influencer as Record<string, unknown>;
+              const followers = (inf?.instagramFollowers as number) || 0;
+              const proposedPrice = (c.proposedPrice as number) || 0;
               return {
                 id: inf?.id || '',
-                name: (inf?.handle as string) || 'Unknown',
-                avatar: '👤',
-                followers: `${((inf?.instagramFollowers as number) || 0).toLocaleString()}`,
-                engagement: '0%',
-                category: '',
-                pricePerPost: `$${(((c.proposedPrice as number) || 0) / 100).toFixed(0)}`,
-                status: c.status === 'APPLIED' ? 'pending' as const : 'approved' as const,
                 collaborationId: c.id as string,
+                influencerId: inf?.id || '',
+                influencerName: (inf?.handle as string) || 'Unknown',
+                influencerUsername: `@${(inf?.handle as string) || 'unknown'}`,
+                influencerAvatar: '👤',
+                influencerFollowers: followers > 0 ? followers.toLocaleString() : '0',
+                source: 'applied' as const,
+                status: c.status === 'APPLIED' ? 'pending' as const : 'approved' as const,
                 collaborationStatus: c.status as string,
-                agreedPrice: c.agreedPrice as number | null,
+                proposedPriceCPM: `$${(proposedPrice / 100).toFixed(0)}`,
+                agreedPrice: c.agreedPrice ? (c.agreedPrice as number) / 100 : undefined,
+                message: (c.message as string) || '',
+                appliedAt: c.createdAt ? new Date(c.createdAt as string).toLocaleDateString() : 'Unknown',
                 contentUrl: (c.contentUrl as string) || undefined,
                 revisionCount: (c.revisionCount as number) || 0,
                 revisionNote: (c.revisionNote as string) || undefined,
