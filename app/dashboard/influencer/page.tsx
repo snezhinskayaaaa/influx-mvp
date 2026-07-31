@@ -1526,11 +1526,10 @@ export default function InfluencerDashboard() {
                                           const res = await fetch(`/api/collaborations/${selectedCampaignDetails.collaborationId}`, {
                                             method: 'PATCH',
                                             headers: { 'Content-Type': 'application/json' },
-                                            body: JSON.stringify({ status: 'CANCELLED' }),
+                                            body: JSON.stringify({ influencerAgreed: false }),
                                           });
                                           if (res.ok) {
-                                            showToast('Offer declined. You can re-apply later.', 'success');
-                                            setSelectedCampaignDetails(null);
+                                            showToast('Price declined. Project can propose a new price.', 'success');
                                             await refreshCollaborations();
                                           } else {
                                             const data = await res.json();
@@ -1545,6 +1544,14 @@ export default function InfluencerDashboard() {
                                   </div>
                                 </div>
                               )}
+                            </div>
+                          ) : selectedCampaignDetails.status === "cancelled" ? (
+                            <div className="flex items-center gap-2 px-4 py-3 rounded-lg bg-destructive/10 border border-destructive/20">
+                              <AlertCircle className="h-5 w-5 text-destructive" />
+                              <div>
+                                <p className="text-sm font-medium text-destructive">Collaboration Cancelled</p>
+                                <p className="text-xs text-muted-foreground">This collaboration has been cancelled</p>
+                              </div>
                             </div>
                           ) : (
                             <div className="space-y-3">
@@ -1708,7 +1715,14 @@ export default function InfluencerDashboard() {
                                 <p className="text-sm font-medium text-red-600">Under review by platform team. Remaining payment is held.</p>
                               </div>
                             </div>
-                          ) : (
+                          ) : selectedCampaignDetails.status === "cancelled" ? (
+                            <div className="text-center py-8 bg-muted/30 rounded-lg border border-dashed border-border">
+                              <Clock className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
+                              <p className="text-sm text-muted-foreground">
+                                Collaboration was cancelled
+                              </p>
+                            </div>
+                          ) : ["publishing", "delivered", "completed", "resolved"].includes(selectedCampaignDetails.status) ? (
                             <div className="flex items-center gap-2 px-4 py-3 rounded-lg bg-success/10 border border-success/20">
                               <CheckCircle2 className="h-5 w-5 text-success" />
                               <div className="flex-1">
@@ -1718,7 +1732,7 @@ export default function InfluencerDashboard() {
                                 </p>
                               </div>
                             </div>
-                          )}
+                          ) : null}
                         </div>
                       </div>
 

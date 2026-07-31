@@ -216,6 +216,31 @@
 
 ---
 
+## FIX-019: Decline button should not cancel collaboration
+
+### Changes Made
+- `app/dashboard/influencer/page.tsx:1529` - Changed Decline button from sending `{ status: 'CANCELLED' }` to `{ influencerAgreed: false }`, keeping status as NEGOTIATING so the brand can propose a new price
+- `app/dashboard/influencer/page.tsx:1532` - Updated toast message to "Price declined. Project can propose a new price."
+- `app/dashboard/influencer/page.tsx:1533` - Removed `setSelectedCampaignDetails(null)` so the negotiation view stays open
+
+### Verification
+- [x] Linter passes
+- [x] No new lint errors introduced
+
+---
+
+## FIX-020: Stage display shows "Terms Approved" and "Content Approved" for wrong statuses
+
+### Changes Made
+- `app/dashboard/influencer/page.tsx:1556-1564` - Added explicit "cancelled" status check in Stage 1 that shows "Collaboration Cancelled" message instead of falling through to "Terms Approved"
+- `app/dashboard/influencer/page.tsx:1718-1736` - Added explicit "cancelled" check in Stage 2 and restricted "Content Approved" to only show for statuses that actually mean content was approved: publishing, delivered, completed, resolved
+
+### Verification
+- [x] Linter passes
+- [x] No new lint errors introduced
+
+---
+
 ## Summary
 
 | ID | File | Status |
@@ -238,3 +263,5 @@
 | FIX-016 | next.config.ts | done |
 | FIX-017 | .env.example | done |
 | FIX-018 | campaigns-tab.tsx | done |
+| FIX-019 | app/dashboard/influencer/page.tsx | done |
+| FIX-020 | app/dashboard/influencer/page.tsx | done |
