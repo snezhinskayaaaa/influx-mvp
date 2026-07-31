@@ -455,7 +455,7 @@ export default function InfluencerDashboard() {
       case "applied":
         return "bg-yellow-500/10 text-yellow-600 border-yellow-500/30";
       case "approved":
-        return "bg-green-500/10 text-green-600 border-green-500/30";
+        return "bg-amber-500/10 text-amber-600 border-amber-500/30";
       case "active":
         return "bg-primary/10 text-primary border-primary/30";
       case "content_review":
@@ -483,7 +483,7 @@ export default function InfluencerDashboard() {
     switch (status) {
       case "open": return "Open";
       case "applied": return "Pending";
-      case "approved": return "Approved";
+      case "approved": return "Negotiating";
       case "active": return "In Progress";
       case "content_review": return "Under Review";
       case "revision": return "Revision Requested";
@@ -501,7 +501,7 @@ export default function InfluencerDashboard() {
     switch (status) {
       case "active": return "bg-success";
       case "applied": return "bg-yellow-600";
-      case "approved": return "bg-primary";
+      case "approved": return "bg-amber-500";
       case "content_review": return "bg-blue-600";
       case "revision": return "bg-orange-600";
       case "publishing": return "bg-purple-600";
