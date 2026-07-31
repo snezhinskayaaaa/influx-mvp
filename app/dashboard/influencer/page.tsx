@@ -162,6 +162,9 @@ export default function InfluencerDashboard() {
   const [withdrawAmount, setWithdrawAmount] = useState("");
   const [walletAddress, setWalletAddress] = useState("");
   const [withdrawCurrency, setWithdrawCurrency] = useState("USDT (TRC20)");
+  const [withdrawingApplication, setWithdrawingApplication] = useState<Campaign | null>(null);
+  const [withdrawAppConfirmText, setWithdrawAppConfirmText] = useState("");
+  const [withdrawAppLoading, setWithdrawAppLoading] = useState(false);
   const [pendingDeposits, setPendingDeposits] = useState(0);
   const [pendingWithdrawals, setPendingWithdrawals] = useState(0);
   const [showVerifyPopup, setShowVerifyPopup] = useState(false);
@@ -1983,25 +1986,10 @@ export default function InfluencerDashboard() {
                               variant="ghost"
                               className="h-8 w-8 p-0 hover:text-red-600"
                               title="Withdraw application"
-                              onClick={async (e) => {
+                              onClick={(e) => {
                                 e.stopPropagation();
-                                if (!confirm("Withdraw your application?")) return;
-                                try {
-                                  const res = await fetch(`/api/collaborations/${campaign.collaborationId}`, {
-                                    method: "PATCH",
-                                    headers: { "Content-Type": "application/json" },
-                                    body: JSON.stringify({ status: "CANCELLED" }),
-                                  });
-                                  if (res.ok) {
-                                    showToast("Application withdrawn", "success");
-                                    await refreshCollaborations();
-                                  } else {
-                                    const data = await res.json();
-                                    showToast(data.error || "Failed to withdraw", "error");
-                                  }
-                                } catch {
-                                  showToast("Failed to withdraw", "error");
-                                }
+                                setWithdrawingApplication(campaign);
+                                setWithdrawAppConfirmText("");
                               }}
                             >
                               <XCircle className="h-4 w-4" />
@@ -2592,6 +2580,66 @@ export default function InfluencerDashboard() {
                   {applyLoading ? "Submitting..." : "Submit Application"}
                 </Button>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Withdraw Application Modal */}
+      {withdrawingApplication && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+          <div className="bg-background border border-border rounded-2xl p-6 w-full max-w-md mx-4 shadow-2xl">
+            <h3 className="text-lg font-bold mb-1">Withdraw Application</h3>
+            <p className="text-sm text-muted-foreground mb-4">
+              This will cancel your application for <span className="font-semibold text-foreground">{withdrawingApplication.title}</span>. You can re-apply later.
+            </p>
+            <p className="text-sm mb-2">
+              Type <span className="font-semibold">{withdrawingApplication.title}</span> to confirm:
+            </p>
+            <input
+              type="text"
+              value={withdrawAppConfirmText}
+              onChange={(e) => setWithdrawAppConfirmText(e.target.value)}
+              placeholder={withdrawingApplication.title}
+              className="w-full px-3 py-2 border border-border rounded-lg text-sm mb-4 bg-background focus:outline-none focus:ring-2 focus:ring-destructive/50"
+              autoFocus
+            />
+            <div className="flex gap-3 justify-end">
+              <button
+                onClick={() => { setWithdrawingApplication(null); setWithdrawAppConfirmText(""); }}
+                className="px-4 py-2 text-sm rounded-lg border border-border hover:bg-muted transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={async () => {
+                  setWithdrawAppLoading(true);
+                  try {
+                    const res = await fetch(`/api/collaborations/${withdrawingApplication.collaborationId}`, {
+                      method: "PATCH",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({ status: "CANCELLED" }),
+                    });
+                    if (res.ok) {
+                      showToast("Application withdrawn", "success");
+                      await refreshCollaborations();
+                    } else {
+                      const data = await res.json();
+                      showToast(data.error || "Failed to withdraw", "error");
+                    }
+                  } catch {
+                    showToast("Failed to withdraw", "error");
+                  } finally {
+                    setWithdrawAppLoading(false);
+                    setWithdrawingApplication(null);
+                    setWithdrawAppConfirmText("");
+                  }
+                }}
+                disabled={withdrawAppConfirmText !== withdrawingApplication.title || withdrawAppLoading}
+                className="px-4 py-2 text-sm rounded-lg bg-destructive text-destructive-foreground hover:bg-destructive/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {withdrawAppLoading ? 'Withdrawing...' : 'Withdraw Application'}
+              </button>
             </div>
           </div>
         </div>
