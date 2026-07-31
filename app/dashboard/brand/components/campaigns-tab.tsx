@@ -1151,26 +1151,36 @@ export function CampaignsTab({
                                   size="sm"
                                   className="bg-gradient-to-r from-primary to-secondary"
                                   disabled={actionLoading}
-                                  onClick={async () => {
-                                    setActionLoading(true);
-                                    try {
-                                      const res = await fetch(`/api/collaborations/${application.collaborationId}`, {
-                                        method: 'PATCH',
-                                        headers: { 'Content-Type': 'application/json' },
-                                        body: JSON.stringify({ status: 'NEGOTIATING' }),
-                                      });
-                                      if (res.ok) {
-                                        const updatedApplications = selectedCampaignDetails.applicationsList?.map(app =>
-                                          app.id === application.id ? { ...app, status: 'approved' as const, collaborationStatus: 'NEGOTIATING' as CollaborationStatus } : app
-                                        );
-                                        setSelectedCampaignDetails({ ...selectedCampaignDetails, applicationsList: updatedApplications });
-                                        showToast('Application approved', 'success');
-                                      } else {
-                                        const data = await res.json();
-                                        showToast(data.error || 'Failed to approve', 'error');
-                                      }
-                                    } catch { showToast('Failed to approve', 'error'); }
-                                    finally { setActionLoading(false); }
+                                  onClick={() => {
+                                    // Show price negotiation input
+                                    const price = prompt(`Approve and set your offer price.\n\nCreator proposed: $${application.proposedPriceCPM}\n\nEnter your agreed price ($):`, application.proposedPriceCPM || '');
+                                    if (price === null) return;
+                                    const priceNum = parseFloat(price);
+                                    if (isNaN(priceNum) || priceNum <= 0) {
+                                      showToast('Please enter a valid price', 'error');
+                                      return;
+                                    }
+                                    (async () => {
+                                      setActionLoading(true);
+                                      try {
+                                        const res = await fetch(`/api/collaborations/${application.collaborationId}`, {
+                                          method: 'PATCH',
+                                          headers: { 'Content-Type': 'application/json' },
+                                          body: JSON.stringify({ status: 'NEGOTIATING', agreedPrice: priceNum }),
+                                        });
+                                        if (res.ok) {
+                                          const updatedApplications = selectedCampaignDetails.applicationsList?.map(app =>
+                                            app.id === application.id ? { ...app, status: 'approved' as const, collaborationStatus: 'NEGOTIATING' as CollaborationStatus, agreedPrice: priceNum } : app
+                                          );
+                                          setSelectedCampaignDetails({ ...selectedCampaignDetails, applicationsList: updatedApplications });
+                                          showToast(`Approved with offer of $${priceNum}`, 'success');
+                                        } else {
+                                          const data = await res.json();
+                                          showToast(data.error || 'Failed to approve', 'error');
+                                        }
+                                      } catch { showToast('Failed to approve', 'error'); }
+                                      finally { setActionLoading(false); }
+                                    })();
                                   }}
                                 >
                                   <CheckCircle2 className="h-4 w-4 mr-1" />

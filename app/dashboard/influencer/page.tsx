@@ -153,6 +153,7 @@ export default function InfluencerDashboard() {
   const [applyError, setApplyError] = useState("");
   const [applySuccess] = useState("");
   const [submitLoading, setSubmitLoading] = useState(false);
+  const [actionLoading, setActionLoading] = useState(false);
 
   const [discoverCampaigns, setDiscoverCampaigns] = useState<Campaign[]>([]);
   const [myCampaigns, setMyCampaigns] = useState<Campaign[]>([]);
@@ -258,7 +259,7 @@ export default function InfluencerDashboard() {
           if (data.collaborations && data.collaborations.length > 0) {
             const statusMap: Record<string, CampaignStatus> = {
               APPLIED: 'applied',
-              NEGOTIATING: 'applied',
+              NEGOTIATING: 'approved',
               AGREED: 'approved',
               IN_PROGRESS: 'active',
               CONTENT_REVIEW: 'content_review',
@@ -1452,17 +1453,80 @@ export default function InfluencerDashboard() {
                               )}
 
                               {/* Approval Status */}
-                              <div className="flex items-center gap-2 px-4 py-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
-                                <Clock className="h-5 w-5 text-yellow-600" />
-                                <div>
-                                  <p className="text-sm font-medium text-yellow-600">
-                                    Waiting for Brand Approval
-                                  </p>
-                                  <p className="text-xs text-muted-foreground">
-                                    Your application is under review
-                                  </p>
+                              {selectedCampaignDetails.status === "applied" && (
+                                <div className="flex items-center gap-2 px-4 py-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
+                                  <Clock className="h-5 w-5 text-yellow-600" />
+                                  <div>
+                                    <p className="text-sm font-medium text-yellow-600">Waiting for Project Approval</p>
+                                    <p className="text-xs text-muted-foreground">Your application is under review</p>
+                                  </div>
                                 </div>
-                              </div>
+                              )}
+
+                              {selectedCampaignDetails.status === "approved" && (
+                                <div className="space-y-3">
+                                  <div className="px-4 py-3 rounded-lg bg-primary/10 border border-primary/20">
+                                    <p className="text-sm font-medium text-primary mb-1">Project has approved your application!</p>
+                                    <p className="text-sm">
+                                      Offered price: <span className="font-bold text-lg">${selectedCampaignDetails.budget}</span>
+                                    </p>
+                                  </div>
+                                  <div className="flex gap-2">
+                                    <Button
+                                      size="sm"
+                                      className="flex-1 bg-gradient-to-r from-primary to-secondary"
+                                      disabled={actionLoading}
+                                      onClick={async () => {
+                                        setActionLoading(true);
+                                        try {
+                                          // Accept: set both sides agreed, trigger agree flow
+                                          const res = await fetch(`/api/collaborations/${selectedCampaignDetails.collaborationId}`, {
+                                            method: 'PATCH',
+                                            headers: { 'Content-Type': 'application/json' },
+                                            body: JSON.stringify({ influencerAgreed: true, brandAgreed: true }),
+                                          });
+                                          if (res.ok) {
+                                            showToast('Price accepted! Waiting for project to start the campaign.', 'success');
+                                            await refreshCollaborations();
+                                          } else {
+                                            const data = await res.json();
+                                            showToast(data.error || 'Failed to accept', 'error');
+                                          }
+                                        } catch { showToast('Failed to accept', 'error'); }
+                                        finally { setActionLoading(false); }
+                                      }}
+                                    >
+                                      Accept Price
+                                    </Button>
+                                    <Button
+                                      size="sm"
+                                      variant="outline"
+                                      className="flex-1 text-destructive border-destructive/30 hover:bg-destructive/10"
+                                      disabled={actionLoading}
+                                      onClick={async () => {
+                                        setActionLoading(true);
+                                        try {
+                                          const res = await fetch(`/api/collaborations/${selectedCampaignDetails.collaborationId}`, {
+                                            method: 'PATCH',
+                                            headers: { 'Content-Type': 'application/json' },
+                                            body: JSON.stringify({ status: 'CANCELLED' }),
+                                          });
+                                          if (res.ok) {
+                                            showToast('Offer declined', 'success');
+                                            await refreshCollaborations();
+                                          } else {
+                                            const data = await res.json();
+                                            showToast(data.error || 'Failed to decline', 'error');
+                                          }
+                                        } catch { showToast('Failed to decline', 'error'); }
+                                        finally { setActionLoading(false); }
+                                      }}
+                                    >
+                                      Decline
+                                    </Button>
+                                  </div>
+                                </div>
+                              )}
                             </div>
                           ) : (
                             <div className="space-y-3">
