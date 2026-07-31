@@ -172,7 +172,7 @@ export default function InfluencerDashboard() {
   const [campaignUpdates, setCampaignUpdates] = useState(true);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [emailVerified, setEmailVerified] = useState(true);
-  const [influencerStatus, setInfluencerStatus] = useState<string>('PENDING');
+  const [influencerStatus, setInfluencerStatus] = useState<string>('');
   const [profileData, setProfileData] = useState<{
     displayName: string
     bio: string
@@ -865,29 +865,23 @@ export default function InfluencerDashboard() {
 
         {/* Main Content */}
         <main className="flex-1 p-4 sm:p-6 lg:p-8 pb-24 lg:pb-8 overflow-auto">
-          {/* Moderation Status Banner */}
+          {/* Moderation Status Banner — only shown for non-approved statuses */}
           {influencerStatus === 'PENDING' && (
-            <div className="mb-4 rounded-xl border border-yellow-200 bg-yellow-50 p-4 flex items-start gap-3">
-              <Clock className="h-5 w-5 text-yellow-600 shrink-0 mt-0.5" />
+            <div className="mb-4 rounded-xl border border-amber-500/30 bg-amber-500/5 p-4 flex items-start gap-3">
+              <Clock className="h-5 w-5 text-amber-500 shrink-0 mt-0.5" />
               <div>
-                <h4 className="font-semibold text-yellow-800 text-sm">Profile Under Review</h4>
-                <p className="text-yellow-700 text-xs mt-1">Your profile is being reviewed by our team. Once approved, you&apos;ll appear in the marketplace and can start receiving campaign offers. This usually takes 24-48 hours.</p>
+                <h4 className="font-semibold text-sm">Profile Under Review</h4>
+                <p className="text-muted-foreground text-xs mt-1">Your profile is being reviewed by our team. Once approved, you&apos;ll appear in the marketplace and can start receiving campaign offers. This usually takes 24-48 hours.</p>
               </div>
             </div>
           )}
           {influencerStatus === 'REJECTED' && (
-            <div className="mb-4 rounded-xl border border-red-200 bg-red-50 p-4 flex items-start gap-3">
-              <AlertCircle className="h-5 w-5 text-red-600 shrink-0 mt-0.5" />
+            <div className="mb-4 rounded-xl border border-destructive/30 bg-destructive/5 p-4 flex items-start gap-3">
+              <AlertCircle className="h-5 w-5 text-destructive shrink-0 mt-0.5" />
               <div>
-                <h4 className="font-semibold text-red-800 text-sm">Profile Not Approved</h4>
-                <p className="text-red-700 text-xs mt-1">Your profile was not approved. Please update your profile information and contact support@aiinflux.io for more details.</p>
+                <h4 className="font-semibold text-sm">Profile Not Approved</h4>
+                <p className="text-muted-foreground text-xs mt-1">Your profile was not approved. Please update your profile information and contact support@aiinflux.io for more details.</p>
               </div>
-            </div>
-          )}
-          {influencerStatus === 'APPROVED' && activeTab === 'discover' && (
-            <div className="mb-4 rounded-xl border border-green-200 bg-green-50 p-3 flex items-center gap-2">
-              <CheckCircle2 className="h-4 w-4 text-green-600 shrink-0" />
-              <p className="text-green-700 text-xs">Your profile is live in the marketplace. Brands can find and contact you.</p>
             </div>
           )}
           <AnimatePresence mode="wait">
