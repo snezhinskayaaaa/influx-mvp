@@ -2504,15 +2504,9 @@ export default function InfluencerDashboard() {
             {/* Campaign details summary */}
             <div className="bg-muted/50 rounded-xl p-3 mb-4 space-y-2 text-sm">
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Budget range</span>
+                <span className="text-muted-foreground">Budget</span>
                 <span className="font-medium">${applyingCampaign.budgetMin || 0} – ${applyingCampaign.budgetMax || 0} / creator</span>
               </div>
-              {applyingCampaign.pricingModels && applyingCampaign.pricingModels.length > 0 && (
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Pricing model</span>
-                  <span className="font-medium">{applyingCampaign.pricingModels.map(m => m.toUpperCase()).join(', ')}</span>
-                </div>
-              )}
               {applyingCampaign.platforms && applyingCampaign.platforms.length > 0 && (
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Platforms</span>
@@ -2521,7 +2515,7 @@ export default function InfluencerDashboard() {
               )}
               {applyingCampaign.contentFormats && applyingCampaign.contentFormats.length > 0 && (
                 <div className="flex justify-between items-start">
-                  <span className="text-muted-foreground">Content needed</span>
+                  <span className="text-muted-foreground">Deliverables</span>
                   <span className="font-medium text-right">{applyingCampaign.contentFormats.map(f => f.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase())).join(', ')}</span>
                 </div>
               )}
@@ -2533,21 +2527,43 @@ export default function InfluencerDashboard() {
               )}
             </div>
 
+            {/* Target metrics — what the project expects */}
+            {(applyingCampaign.targetViews || applyingCampaign.targetClicks || applyingCampaign.targetEngagements) && (
+              <div className="bg-primary/5 border border-primary/20 rounded-xl p-3 mb-4 space-y-2 text-sm">
+                <p className="text-xs font-semibold text-primary mb-1">Target Metrics (project expectations)</p>
+                {applyingCampaign.targetViews && (
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Target views</span>
+                    <span className="font-medium">{Number(applyingCampaign.targetViews).toLocaleString()}</span>
+                  </div>
+                )}
+                {applyingCampaign.targetClicks && (
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Target clicks</span>
+                    <span className="font-medium">{Number(applyingCampaign.targetClicks).toLocaleString()}</span>
+                  </div>
+                )}
+                {applyingCampaign.targetEngagements && (
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Target engagements</span>
+                    <span className="font-medium">{Number(applyingCampaign.targetEngagements).toLocaleString()}</span>
+                  </div>
+                )}
+              </div>
+            )}
+
             <div className="space-y-4">
               <div>
-                <label className="text-sm font-medium mb-1 block">
-                  Your Price ($){applyingCampaign.pricingModels && applyingCampaign.pricingModels.length > 0 ? ` — ${applyingCampaign.pricingModels.map(m => m.toUpperCase()).join('/')} rate` : ''}
-                </label>
+                <label className="text-sm font-medium mb-1 block">Your Price ($) for this collaboration</label>
                 <input
                   type="number"
                   value={proposedPrice}
                   onChange={(e) => setProposedPrice(e.target.value)}
-                  placeholder={applyingCampaign.pricingModels?.includes('cpm') ? 'Your CPM rate in USD (per 1,000 views)' : applyingCampaign.pricingModels?.includes('cpc') ? 'Your CPC rate in USD (per click)' : 'Enter your total price in USD'}
+                  placeholder="Total price for all deliverables"
                   className="w-full px-3 py-2 rounded-lg border border-border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary"
                 />
                 <p className="text-xs text-muted-foreground mt-1">
-                  {applyingCampaign.pricingModels?.includes('cpm') ? 'Price per 1,000 views' : applyingCampaign.pricingModels?.includes('cpc') ? 'Price per click' : applyingCampaign.pricingModels?.includes('cpe') ? 'Price per engagement' : 'Total price for the campaign'}
-                  {' '}within project budget of ${applyingCampaign.budgetMin || 0} – ${applyingCampaign.budgetMax || 0}.
+                  Fixed price for the full collaboration. Project budget: ${applyingCampaign.budgetMin || 0} – ${applyingCampaign.budgetMax || 0}. Payment: 50% advance on start, 50% on delivery.
                 </p>
               </div>
               <div>
