@@ -67,6 +67,7 @@ export default function BrandDashboard() {
   const [showInsufficientFundsDialog, setShowInsufficientFundsDialog] = useState(false);
   const [showVerifyPopup, setShowVerifyPopup] = useState(false);
   const [emailVerified, setEmailVerified] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
 
   // Fetch real data from API — mock data serves as fallback
   useEffect(() => {
@@ -267,8 +268,19 @@ export default function BrandDashboard() {
       }
     };
 
-    fetchData();
+    fetchData().finally(() => setIsLoading(false));
   }, []);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-10 h-10 border-4 border-primary/30 border-t-primary rounded-full animate-spin" />
+          <p className="text-sm text-muted-foreground">Loading dashboard...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background">
