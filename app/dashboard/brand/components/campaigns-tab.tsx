@@ -1302,12 +1302,16 @@ export function CampaignsTab({
                                 }`}
                               >
                                 <div className="flex items-center gap-2">
-                                  <div className="w-6 h-6 rounded-full bg-gradient-to-r from-primary to-secondary flex items-center justify-center text-xs shrink-0">
-                                    {influencer.influencerAvatar}
+                                  <div className="w-6 h-6 rounded-full bg-gradient-to-r from-primary to-secondary flex items-center justify-center text-xs shrink-0 overflow-hidden">
+                                    {influencer.influencerAvatar?.startsWith('data:') ? (
+                                      <img src={influencer.influencerAvatar} alt="" className="w-full h-full object-cover" />
+                                    ) : (
+                                      <span className="text-white text-[10px]">{influencer.influencerName?.charAt(0) || '?'}</span>
+                                    )}
                                   </div>
                                   <div className="flex-1 min-w-0">
                                     <p className="text-sm font-medium truncate">{influencer.influencerName}</p>
-                                    <p className="text-xs text-muted-foreground truncate">@{influencer.influencerUsername}</p>
+                                    <p className="text-xs text-muted-foreground truncate">{influencer.influencerUsername}</p>
                                   </div>
                                 </div>
                               </button>
@@ -1363,7 +1367,11 @@ export function CampaignsTab({
                         {/* Influencer Info */}
                         <div className="flex items-center gap-3 pb-3 border-b">
                           <div className="w-10 h-10 rounded-full bg-gradient-to-r from-primary to-secondary flex items-center justify-center text-sm shrink-0">
-                            {selectedInfluencerForPipeline.influencerAvatar}
+                            {selectedInfluencerForPipeline.influencerAvatar?.startsWith('data:') ? (
+                              <img src={selectedInfluencerForPipeline.influencerAvatar} alt="" className="w-full h-full object-cover rounded-full" />
+                            ) : (
+                              <span className="text-white text-xs">{selectedInfluencerForPipeline.influencerName?.charAt(0) || '?'}</span>
+                            )}
                           </div>
                           <div className="flex-1">
                             <h3 className="font-semibold">
@@ -1839,7 +1847,11 @@ export function CampaignsTab({
                       <div className="space-y-4">
                         <div className="flex items-center gap-3 pb-3 border-b">
                           <div className="w-10 h-10 rounded-full bg-gradient-to-r from-primary to-secondary flex items-center justify-center text-sm shrink-0">
-                            {selectedInfluencerForPipeline.influencerAvatar}
+                            {selectedInfluencerForPipeline.influencerAvatar?.startsWith('data:') ? (
+                              <img src={selectedInfluencerForPipeline.influencerAvatar} alt="" className="w-full h-full object-cover rounded-full" />
+                            ) : (
+                              <span className="text-white text-xs">{selectedInfluencerForPipeline.influencerName?.charAt(0) || '?'}</span>
+                            )}
                           </div>
                           <div className="flex-1">
                             <h3 className="font-semibold">
@@ -2150,7 +2162,11 @@ export function CampaignsTab({
                       <div className="space-y-4">
                         <div className="flex items-center gap-3 pb-3 border-b">
                           <div className="w-10 h-10 rounded-full bg-gradient-to-r from-primary to-secondary flex items-center justify-center text-sm shrink-0">
-                            {selectedInfluencerForPipeline.influencerAvatar}
+                            {selectedInfluencerForPipeline.influencerAvatar?.startsWith('data:') ? (
+                              <img src={selectedInfluencerForPipeline.influencerAvatar} alt="" className="w-full h-full object-cover rounded-full" />
+                            ) : (
+                              <span className="text-white text-xs">{selectedInfluencerForPipeline.influencerName?.charAt(0) || '?'}</span>
+                            )}
                           </div>
                           <div className="flex-1">
                             <h3 className="font-semibold">
