@@ -1425,7 +1425,7 @@ export default function InfluencerDashboard() {
                             Review campaign details and approve collaboration terms
                           </p>
 
-                          {selectedCampaignDetails.status === "applied" ? (
+                          {(selectedCampaignDetails.status === "applied" || selectedCampaignDetails.status === "approved") ? (
                             <div className="space-y-4">
                               {/* Influencer Terms Input */}
                               <div className="space-y-2">
