@@ -2953,25 +2953,29 @@ export function CampaignsTab({
               )}
             </div>
 
-            <div className="space-y-2 mb-4">
+            <div className="grid grid-cols-2 gap-2 mb-4">
               {(viewingProfile.influencerTwitter as string) && (
-                <a href={`https://x.com/${(viewingProfile.influencerTwitter as string).replace('@', '')}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-sm text-primary hover:underline">
-                  X (Twitter): {viewingProfile.influencerTwitter as string}
+                <a href={(viewingProfile.influencerTwitter as string).startsWith('http') ? viewingProfile.influencerTwitter as string : `https://x.com/${(viewingProfile.influencerTwitter as string).replace('@', '')}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 px-3 py-2 rounded-lg border border-border hover:border-primary/50 hover:bg-primary/5 transition-all text-sm">
+                  <XIcon className="h-4 w-4 shrink-0" />
+                  <span className="truncate">{(viewingProfile.influencerTwitter as string).replace(/https?:\/\/(www\.)?x\.com\/|https?:\/\/(www\.)?twitter\.com\//g, '@')}</span>
                 </a>
               )}
               {(viewingProfile.influencerInstagram as string) && (
-                <a href={(viewingProfile.influencerInstagram as string).startsWith('http') ? viewingProfile.influencerInstagram as string : `https://instagram.com/${viewingProfile.influencerInstagram as string}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-sm text-primary hover:underline">
-                  Instagram: {viewingProfile.influencerInstagram as string}
+                <a href={(viewingProfile.influencerInstagram as string).startsWith('http') ? viewingProfile.influencerInstagram as string : `https://instagram.com/${viewingProfile.influencerInstagram as string}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 px-3 py-2 rounded-lg border border-border hover:border-primary/50 hover:bg-primary/5 transition-all text-sm">
+                  <Instagram className="h-4 w-4 shrink-0" />
+                  <span className="truncate">{(viewingProfile.influencerInstagram as string).replace(/https?:\/\/(www\.)?instagram\.com\//g, '@').split('?')[0]}</span>
                 </a>
               )}
               {(viewingProfile.influencerTiktok as string) && (
-                <a href={(viewingProfile.influencerTiktok as string).startsWith('http') ? viewingProfile.influencerTiktok as string : `https://tiktok.com/@${viewingProfile.influencerTiktok as string}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-sm text-primary hover:underline">
-                  TikTok: {viewingProfile.influencerTiktok as string}
+                <a href={(viewingProfile.influencerTiktok as string).startsWith('http') ? viewingProfile.influencerTiktok as string : `https://tiktok.com/@${viewingProfile.influencerTiktok as string}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 px-3 py-2 rounded-lg border border-border hover:border-primary/50 hover:bg-primary/5 transition-all text-sm">
+                  <svg className="h-4 w-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5" /></svg>
+                  <span className="truncate">{(viewingProfile.influencerTiktok as string).replace(/https?:\/\/(www\.)?tiktok\.com\//g, '').split('?')[0]}</span>
                 </a>
               )}
               {(viewingProfile.influencerYoutube as string) && (
-                <a href={(viewingProfile.influencerYoutube as string).startsWith('http') ? viewingProfile.influencerYoutube as string : `https://youtube.com/${viewingProfile.influencerYoutube as string}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-sm text-primary hover:underline">
-                  YouTube: {viewingProfile.influencerYoutube as string}
+                <a href={(viewingProfile.influencerYoutube as string).startsWith('http') ? viewingProfile.influencerYoutube as string : `https://youtube.com/${viewingProfile.influencerYoutube as string}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 px-3 py-2 rounded-lg border border-border hover:border-primary/50 hover:bg-primary/5 transition-all text-sm">
+                  <Youtube className="h-4 w-4 shrink-0" />
+                  <span className="truncate">{(viewingProfile.influencerYoutube as string).replace(/https?:\/\/(www\.)?youtube\.com\//g, '').split('?')[0]}</span>
                 </a>
               )}
             </div>
