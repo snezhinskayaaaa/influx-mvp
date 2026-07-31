@@ -248,6 +248,13 @@ export default function BrandDashboard() {
           // Store collaborations in state for use in campaign views
           if (collabData.collaborations) {
             setCollaborations(collabData.collaborations);
+            // Update campaign application counts
+            setCampaigns(prev => prev.map(camp => {
+              const campCollabs = collabData.collaborations.filter(
+                (c: Record<string, unknown>) => (c.campaign as Record<string, unknown>)?.id === camp.id
+              );
+              return { ...camp, applications: campCollabs.length };
+            }));
           }
         }
       } catch (error) {
@@ -270,6 +277,13 @@ export default function BrandDashboard() {
     };
 
     fetchData().finally(() => setIsLoading(false));
+
+    // Poll for updates every 30 seconds
+    const interval = setInterval(() => {
+      fetchData();
+    }, 30000);
+
+    return () => clearInterval(interval);
   }, []);
 
   return (
