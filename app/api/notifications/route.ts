@@ -59,6 +59,20 @@ export async function PATCH(request: NextRequest) {
       return NextResponse.json({ success: true })
     }
 
+    if (body.action === 'clearAll') {
+      await prisma.notification.deleteMany({
+        where: { userId: user.userId },
+      })
+      return NextResponse.json({ success: true })
+    }
+
+    if (body.action === 'clearRead') {
+      await prisma.notification.deleteMany({
+        where: { userId: user.userId, isRead: true },
+      })
+      return NextResponse.json({ success: true })
+    }
+
     return NextResponse.json({ error: 'Invalid request' }, { status: 400 })
   } catch (error) {
     console.error('Failed to update notifications:', error)
