@@ -60,7 +60,15 @@ export async function GET(request: NextRequest) {
           where,
           include: {
             campaign: { select: { id: true, title: true } },
-            influencer: { select: { id: true, handle: true, instagramFollowers: true, pricePerPost: true, userId: true, profile: { select: { avatarUrl: true } } } },
+            influencer: {
+              select: {
+                id: true, handle: true, bio: true, niche: true,
+                instagramFollowers: true, tiktokFollowers: true, youtubeSubscribers: true, twitterFollowers: true,
+                instagramHandle: true, tiktokHandle: true, youtubeHandle: true, twitterHandle: true,
+                pricePerPost: true, userId: true,
+                profile: { select: { avatarUrl: true } },
+              },
+            },
           },
           orderBy: { createdAt: 'desc' },
           skip,

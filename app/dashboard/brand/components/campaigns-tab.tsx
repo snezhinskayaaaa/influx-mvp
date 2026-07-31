@@ -114,6 +114,7 @@ export function CampaignsTab({
   const [showRevisionInput, setShowRevisionInput] = useState(false);
   const [showDisputeInput, setShowDisputeInput] = useState(false);
   const [actionLoading, setActionLoading] = useState(false);
+  const [viewingProfile, setViewingProfile] = useState<Record<string, unknown> | null>(null);
   const [deletingCampaign, setDeletingCampaign] = useState<Campaign | null>(null);
   const [deleteConfirmText, setDeleteConfirmText] = useState("");
 
@@ -341,6 +342,16 @@ export function CampaignsTab({
                 contentUrl: (c.contentUrl as string) || undefined,
                 revisionCount: (c.revisionCount as number) || 0,
                 revisionNote: (c.revisionNote as string) || undefined,
+                // Profile details for popup
+                influencerBio: (inf?.bio as string) || '',
+                influencerNiche: Array.isArray(inf?.niche) ? (inf.niche as string[]).join(', ') : '',
+                influencerInstagram: (inf?.instagramHandle as string) || '',
+                influencerTiktok: (inf?.tiktokHandle as string) || '',
+                influencerYoutube: (inf?.youtubeHandle as string) || '',
+                influencerTwitter: (inf?.twitterHandle as string) || '',
+                influencerTiktokFollowers: (inf?.tiktokFollowers as number) || 0,
+                influencerYoutubeSubscribers: (inf?.youtubeSubscribers as number) || 0,
+                influencerTwitterFollowers: (inf?.twitterFollowers as number) || 0,
               };
             });
           setSelectedCampaignDetails({ ...campaign, applicationsList: campaignCollabs, applications: campaignCollabs.length });
@@ -1106,21 +1117,24 @@ export function CampaignsTab({
                       } transition-colors`}
                     >
                       <div className="flex items-start gap-4">
-                        {/* Avatar */}
-                        <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center text-2xl shrink-0 overflow-hidden">
+                        {/* Avatar — clickable to view profile */}
+                        <button
+                          onClick={() => setViewingProfile(application as unknown as Record<string, unknown>)}
+                          className="w-12 h-12 rounded-full bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center text-2xl shrink-0 overflow-hidden hover:ring-2 hover:ring-primary/50 transition-all cursor-pointer"
+                        >
                           {application.influencerAvatar && application.influencerAvatar.startsWith('data:') ? (
                             <img src={application.influencerAvatar} alt={application.influencerName} className="w-full h-full object-cover" />
                           ) : (
                             application.influencerAvatar || '👤'
                           )}
-                        </div>
+                        </button>
 
                         {/* Info */}
                         <div className="flex-1 min-w-0">
                           <div className="flex items-start justify-between gap-4 mb-2">
                             <div>
                               <div className="flex items-center gap-2 mb-1">
-                                <h3 className="font-semibold">{application.influencerName}</h3>
+                                <button onClick={() => setViewingProfile(application as unknown as Record<string, unknown>)} className="font-semibold hover:text-primary transition-colors cursor-pointer">{application.influencerName}</button>
                                 {application.collaborationStatus && getCollaborationStatusBadge(application.collaborationStatus)}
                               </div>
                               <div className="flex items-center gap-3 text-xs text-muted-foreground">
@@ -2772,6 +2786,89 @@ export function CampaignsTab({
       )}
         </>
       )}
+      {/* Creator Profile Modal */}
+      {viewingProfile && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+          <div className="bg-background border border-border rounded-2xl p-6 w-full max-w-md mx-4 shadow-2xl">
+            <div className="flex items-start gap-4 mb-4">
+              <div className="w-16 h-16 rounded-full bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center text-3xl shrink-0 overflow-hidden">
+                {(viewingProfile.influencerAvatar as string)?.startsWith('data:') ? (
+                  <img src={viewingProfile.influencerAvatar as string} alt="" className="w-full h-full object-cover" />
+                ) : '👤'}
+              </div>
+              <div>
+                <h3 className="text-lg font-bold">{viewingProfile.influencerName as string}</h3>
+                <p className="text-sm text-muted-foreground">{viewingProfile.influencerUsername as string}</p>
+                {(viewingProfile.influencerNiche as string) && (
+                  <p className="text-xs text-primary mt-1">{viewingProfile.influencerNiche as string}</p>
+                )}
+              </div>
+            </div>
+
+            {(viewingProfile.influencerBio as string) && (
+              <p className="text-sm text-muted-foreground mb-4">{viewingProfile.influencerBio as string}</p>
+            )}
+
+            <div className="grid grid-cols-2 gap-3 mb-4">
+              {Number(viewingProfile.influencerFollowers) > 0 && (
+                <div className="bg-muted/50 rounded-lg p-2 text-center">
+                  <p className="text-sm font-semibold">{viewingProfile.influencerFollowers as string}</p>
+                  <p className="text-xs text-muted-foreground">Instagram</p>
+                </div>
+              )}
+              {Number(viewingProfile.influencerTwitterFollowers) > 0 && (
+                <div className="bg-muted/50 rounded-lg p-2 text-center">
+                  <p className="text-sm font-semibold">{(viewingProfile.influencerTwitterFollowers as number).toLocaleString()}</p>
+                  <p className="text-xs text-muted-foreground">X (Twitter)</p>
+                </div>
+              )}
+              {Number(viewingProfile.influencerTiktokFollowers) > 0 && (
+                <div className="bg-muted/50 rounded-lg p-2 text-center">
+                  <p className="text-sm font-semibold">{(viewingProfile.influencerTiktokFollowers as number).toLocaleString()}</p>
+                  <p className="text-xs text-muted-foreground">TikTok</p>
+                </div>
+              )}
+              {Number(viewingProfile.influencerYoutubeSubscribers) > 0 && (
+                <div className="bg-muted/50 rounded-lg p-2 text-center">
+                  <p className="text-sm font-semibold">{(viewingProfile.influencerYoutubeSubscribers as number).toLocaleString()}</p>
+                  <p className="text-xs text-muted-foreground">YouTube</p>
+                </div>
+              )}
+            </div>
+
+            <div className="space-y-2 mb-4">
+              {(viewingProfile.influencerTwitter as string) && (
+                <a href={`https://x.com/${(viewingProfile.influencerTwitter as string).replace('@', '')}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-sm text-primary hover:underline">
+                  X (Twitter): {viewingProfile.influencerTwitter as string}
+                </a>
+              )}
+              {(viewingProfile.influencerInstagram as string) && (
+                <a href={(viewingProfile.influencerInstagram as string).startsWith('http') ? viewingProfile.influencerInstagram as string : `https://instagram.com/${viewingProfile.influencerInstagram as string}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-sm text-primary hover:underline">
+                  Instagram: {viewingProfile.influencerInstagram as string}
+                </a>
+              )}
+              {(viewingProfile.influencerTiktok as string) && (
+                <a href={(viewingProfile.influencerTiktok as string).startsWith('http') ? viewingProfile.influencerTiktok as string : `https://tiktok.com/@${viewingProfile.influencerTiktok as string}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-sm text-primary hover:underline">
+                  TikTok: {viewingProfile.influencerTiktok as string}
+                </a>
+              )}
+              {(viewingProfile.influencerYoutube as string) && (
+                <a href={(viewingProfile.influencerYoutube as string).startsWith('http') ? viewingProfile.influencerYoutube as string : `https://youtube.com/${viewingProfile.influencerYoutube as string}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-sm text-primary hover:underline">
+                  YouTube: {viewingProfile.influencerYoutube as string}
+                </a>
+              )}
+            </div>
+
+            <button
+              onClick={() => setViewingProfile(null)}
+              className="w-full px-4 py-2 text-sm rounded-lg border border-border hover:bg-muted transition-colors"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Delete Campaign Modal */}
       {deletingCampaign && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
