@@ -1399,10 +1399,10 @@ export default function InfluencerDashboard() {
                       <h2 className="text-xl font-bold">Campaign Progress</h2>
                     </div>
 
-                    {/* Download Agreement — available from AGREED (approved) onwards */}
-                    {["approved", "active", "content_review", "revision", "publishing", "delivered", "completed", "disputed", "resolved"].includes(selectedCampaignDetails?.status || "") && selectedCampaignDetails?.id && (
+                    {/* Download Agreement — available after negotiation is complete */}
+                    {["active", "content_review", "revision", "publishing", "delivered", "completed", "disputed", "resolved"].includes(selectedCampaignDetails?.status || "") && selectedCampaignDetails?.collaborationId && (
                       <a
-                        href={`/api/collaborations/${selectedCampaignDetails.id}/agreement`}
+                        href={`/api/collaborations/${selectedCampaignDetails.collaborationId}/agreement`}
                         download
                         className="inline-flex items-center gap-2 text-sm text-primary hover:underline mb-4"
                       >
@@ -1486,17 +1486,27 @@ export default function InfluencerDashboard() {
                                       onClick={async () => {
                                         setActionLoading(true);
                                         try {
-                                          // Accept: set both sides agreed, trigger agree flow
-                                          const res = await fetch(`/api/collaborations/${selectedCampaignDetails.collaborationId}`, {
+                                          // Step 1: Set influencerAgreed
+                                          const patchRes = await fetch(`/api/collaborations/${selectedCampaignDetails.collaborationId}`, {
                                             method: 'PATCH',
                                             headers: { 'Content-Type': 'application/json' },
-                                            body: JSON.stringify({ influencerAgreed: true, brandAgreed: true }),
+                                            body: JSON.stringify({ influencerAgreed: true }),
                                           });
-                                          if (res.ok) {
+                                          if (!patchRes.ok) {
+                                            const data = await patchRes.json();
+                                            showToast(data.error || 'Failed to accept', 'error');
+                                            return;
+                                          }
+                                          // Step 2: Trigger agree flow (freeze funds)
+                                          const agreeRes = await fetch(`/api/collaborations/${selectedCampaignDetails.collaborationId}/agree`, {
+                                            method: 'POST',
+                                            headers: { 'Content-Type': 'application/json' },
+                                          });
+                                          if (agreeRes.ok) {
                                             showToast('Price accepted! Waiting for project to start the campaign.', 'success');
                                             await refreshCollaborations();
                                           } else {
-                                            const data = await res.json();
+                                            const data = await agreeRes.json();
                                             showToast(data.error || 'Failed to accept', 'error');
                                           }
                                         } catch { showToast('Failed to accept', 'error'); }

@@ -43,8 +43,10 @@ export async function POST(
       return NextResponse.json({ error: 'Collaboration not found' }, { status: 404 })
     }
 
-    // Only brand owner or admin can trigger the freeze
-    if (collaboration.campaign.brand.userId !== user.userId && user.role !== 'ADMIN') {
+    // Brand owner, the influencer on this collaboration, or admin can trigger the freeze
+    const isBrandOwner = collaboration.campaign.brand.userId === user.userId
+    const isInfluencer = collaboration.influencer.userId === user.userId
+    if (!isBrandOwner && !isInfluencer && user.role !== 'ADMIN') {
       return NextResponse.json({ error: 'Access denied' }, { status: 403 })
     }
 

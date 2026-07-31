@@ -1166,7 +1166,7 @@ export function CampaignsTab({
                                         const res = await fetch(`/api/collaborations/${application.collaborationId}`, {
                                           method: 'PATCH',
                                           headers: { 'Content-Type': 'application/json' },
-                                          body: JSON.stringify({ status: 'NEGOTIATING', agreedPrice: priceNum }),
+                                          body: JSON.stringify({ status: 'NEGOTIATING', agreedPrice: priceNum, brandAgreed: true }),
                                         });
                                         if (res.ok) {
                                           const updatedApplications = selectedCampaignDetails.applicationsList?.map(app =>
