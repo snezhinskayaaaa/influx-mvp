@@ -104,7 +104,7 @@ export async function POST(
     } catch (txError) {
       if (txError instanceof Error && txError.message === 'INSUFFICIENT_BALANCE') {
         return NextResponse.json(
-          { error: 'Insufficient balance to confirm this collaboration.' },
+          { error: 'Insufficient balance. The project needs to deposit funds before the collaboration can start.' },
           { status: 400 },
         )
       }

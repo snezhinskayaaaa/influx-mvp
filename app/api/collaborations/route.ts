@@ -58,7 +58,12 @@ export async function GET(request: NextRequest) {
       const [collaborations, total] = await Promise.all([
         prisma.collaboration.findMany({
           where,
-          include: {
+          select: {
+            id: true, status: true, proposedPrice: true, agreedPrice: true,
+            message: true, deliverables: true, createdAt: true, updatedAt: true,
+            contentUrl: true, revisionCount: true, revisionNote: true,
+            publishedUrl: true, disputeReason: true, frozenAt: true,
+            influencerAgreed: true, brandAgreed: true,
             campaign: { select: { id: true, title: true } },
             influencer: {
               select: {

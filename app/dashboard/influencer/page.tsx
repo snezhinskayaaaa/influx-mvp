@@ -125,6 +125,8 @@ interface Campaign {
   revisionCount?: number;
   contentUrl?: string;
   disputeReason?: string;
+  /** Collaboration message (may contain invitation text) */
+  collaborationMessage?: string;
 }
 
 
@@ -304,6 +306,7 @@ export default function InfluencerDashboard() {
                 contentUrl: (collab.contentUrl as string) || undefined,
                 publishedUrl: (collab.publishedUrl as string) || undefined,
                 disputeReason: (collab.disputeReason as string) || undefined,
+                collaborationMessage: (collab.message as string) || undefined,
               };
             });
             setMyCampaigns(mapped);
@@ -583,6 +586,7 @@ export default function InfluencerDashboard() {
               contentUrl: (collab.contentUrl as string) || undefined,
               publishedUrl: (collab.publishedUrl as string) || undefined,
               disputeReason: (collab.disputeReason as string) || undefined,
+              collaborationMessage: (collab.message as string) || undefined,
             };
           });
           setMyCampaigns(mapped);
@@ -721,6 +725,7 @@ export default function InfluencerDashboard() {
               contentUrl: (collab.contentUrl as string) || undefined,
               publishedUrl: (collab.publishedUrl as string) || undefined,
               disputeReason: (collab.disputeReason as string) || undefined,
+              collaborationMessage: (collab.message as string) || undefined,
             };
           });
           setMyCampaigns(mapped);
@@ -1198,6 +1203,12 @@ export default function InfluencerDashboard() {
                         <Badge variant="outline" className="bg-muted text-foreground border-border">
                           ${selectedCampaignDetails.budget.toLocaleString()} ({selectedCampaignDetails.pricingModel})
                         </Badge>
+                        {selectedCampaignDetails.collaborationMessage?.includes('invited') && (
+                          <Badge variant="outline" className="bg-purple-500/10 text-purple-600 border-purple-500/20">
+                            <Mail className="h-3 w-3 mr-1" />
+                            Invited
+                          </Badge>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -1518,7 +1529,7 @@ export default function InfluencerDashboard() {
                                     <Button
                                       size="sm"
                                       variant="outline"
-                                      className="flex-1 text-destructive border-destructive/30 hover:bg-destructive/10"
+                                      className="flex-1 text-amber-600 border-amber-500/30 hover:bg-amber-500/10"
                                       disabled={actionLoading}
                                       onClick={async () => {
                                         setActionLoading(true);
@@ -1539,9 +1550,37 @@ export default function InfluencerDashboard() {
                                         finally { setActionLoading(false); }
                                       }}
                                     >
-                                      Decline
+                                      Decline Price
                                     </Button>
                                   </div>
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    className="w-full mt-2 text-destructive border-destructive/30 hover:bg-destructive/10"
+                                    disabled={actionLoading}
+                                    onClick={async () => {
+                                      setActionLoading(true);
+                                      try {
+                                        const res = await fetch(`/api/collaborations/${selectedCampaignDetails.collaborationId}`, {
+                                          method: 'PATCH',
+                                          headers: { 'Content-Type': 'application/json' },
+                                          body: JSON.stringify({ status: 'CANCELLED' }),
+                                        });
+                                        if (res.ok) {
+                                          showToast('Collaboration cancelled.', 'success');
+                                          await refreshCollaborations();
+                                          setSelectedCampaignDetails(null);
+                                        } else {
+                                          const data = await res.json();
+                                          showToast(data.error || 'Failed to cancel', 'error');
+                                        }
+                                      } catch { showToast('Failed to cancel collaboration', 'error'); }
+                                      finally { setActionLoading(false); }
+                                    }}
+                                  >
+                                    <XCircle className="h-4 w-4 mr-1" />
+                                    Cancel Collaboration
+                                  </Button>
                                 </div>
                               )}
                             </div>

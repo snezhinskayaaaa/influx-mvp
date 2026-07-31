@@ -241,6 +241,67 @@
 
 ---
 
+## FIX-021: Specific error message for insufficient balance on agree
+
+### Changes Made
+- `app/api/collaborations/[id]/agree/route.ts:107` - Changed generic "Insufficient balance" message to "Insufficient balance. The project needs to deposit funds before the collaboration can start."
+
+### Verification
+- [x] Linter passes
+- [x] No new lint errors introduced
+
+---
+
+## FIX-022: Brand can see KOL declined and propose new price
+
+### Changes Made
+- `app/api/collaborations/route.ts:61-66` - Changed brand collaboration query from `include` to `select` and added `influencerAgreed` and `brandAgreed` fields
+- `app/dashboard/brand/components/types.ts:116-119` - Added `influencerAgreed` and `brandAgreed` to `CampaignApplication` interface
+- `app/dashboard/brand/components/campaigns-tab.tsx:341-342` - Added `influencerAgreed` and `brandAgreed` to the handleOpenCampaign mapper
+- `app/dashboard/brand/components/campaigns-tab.tsx:1560-1610` - Added "Creator declined your offer" message with "Propose New Price" button when `collaborationStatus === "NEGOTIATING"` and `influencerAgreed === false`
+
+### Verification
+- [x] Linter passes
+- [x] No new lint errors introduced
+
+---
+
+## FIX-023: Brand can cancel negotiation
+
+### Changes Made
+- `app/dashboard/brand/components/campaigns-tab.tsx:1613-1641` - Added "Cancel Negotiation" button in pipeline view for NEGOTIATING status; sends PATCH `{ status: 'CANCELLED' }`, removes from pipeline, shows toast
+
+### Verification
+- [x] Linter passes
+- [x] No new lint errors introduced
+
+---
+
+## FIX-024: KOL has separate Decline Price and Cancel Collaboration buttons
+
+### Changes Made
+- `app/dashboard/influencer/page.tsx:1518-1521` - Changed Decline button to amber styling ("Decline Price")
+- `app/dashboard/influencer/page.tsx:1545-1567` - Added separate "Cancel Collaboration" button (red) that sends `{ status: 'CANCELLED' }` and fully exits the collaboration
+
+### Verification
+- [x] Linter passes
+- [x] No new lint errors introduced
+
+---
+
+## FIX-025: Invitation message visible for KOL
+
+### Changes Made
+- `app/dashboard/influencer/page.tsx:129` - Added `collaborationMessage` field to Campaign interface
+- `app/dashboard/influencer/page.tsx:307,586,728` - Added `collaborationMessage` mapping in all three collaboration mappers (initial fetch, refreshCollaborations, post-apply)
+- `app/dashboard/influencer/page.tsx:1205-1209` - Added "Invited" badge (purple) next to campaign title when collaboration message contains "invited"
+
+### Verification
+- [x] Linter passes
+- [x] No new lint errors introduced
+
+---
+
 ## Summary
 
 | ID | File | Status |
@@ -265,3 +326,8 @@
 | FIX-018 | campaigns-tab.tsx | done |
 | FIX-019 | app/dashboard/influencer/page.tsx | done |
 | FIX-020 | app/dashboard/influencer/page.tsx | done |
+| FIX-021 | app/api/collaborations/[id]/agree/route.ts | done |
+| FIX-022 | collaborations/route.ts, types.ts, campaigns-tab.tsx | done |
+| FIX-023 | campaigns-tab.tsx | done |
+| FIX-024 | app/dashboard/influencer/page.tsx | done |
+| FIX-025 | app/dashboard/influencer/page.tsx | done |

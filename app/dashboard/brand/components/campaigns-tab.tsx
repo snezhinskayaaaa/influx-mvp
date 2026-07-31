@@ -337,6 +337,8 @@ export function CampaignsTab({
                 collaborationStatus: c.status as string,
                 proposedPriceCPM: `${(proposedPrice / 100).toFixed(0)}`,
                 agreedPrice: c.agreedPrice ? (c.agreedPrice as number) / 100 : undefined,
+                influencerAgreed: (c.influencerAgreed as boolean) ?? undefined,
+                brandAgreed: (c.brandAgreed as boolean) ?? undefined,
                 message: (c.message as string) || '',
                 appliedAt: c.createdAt ? new Date(c.createdAt as string).toLocaleDateString() : 'Unknown',
                 contentUrl: (c.contentUrl as string) || undefined,
@@ -1552,6 +1554,95 @@ export function CampaignsTab({
                                 </div>
                               </>
                             )}
+                          </div>
+                        )}
+
+                        {/* Creator declined the price — brand can propose a new one */}
+                        {selectedInfluencerForPipeline.collaborationStatus === "NEGOTIATING" && selectedInfluencerForPipeline.influencerAgreed === false && (
+                          <div className="space-y-3 pt-3 border-t">
+                            <div className="flex items-center gap-2 px-4 py-3 rounded-lg bg-amber-500/10 border border-amber-500/20">
+                              <AlertCircle className="h-5 w-5 text-amber-600" />
+                              <div>
+                                <p className="text-sm font-medium text-amber-600">
+                                  Creator declined your offer of ${selectedInfluencerForPipeline.agreedPrice ?? 0}
+                                </p>
+                                <p className="text-xs text-muted-foreground">You can propose a new price or cancel the negotiation</p>
+                              </div>
+                            </div>
+                            <Button
+                              size="sm"
+                              className="w-full bg-gradient-to-r from-primary to-secondary"
+                              disabled={actionLoading}
+                              onClick={() => {
+                                const price = prompt(`Creator declined $${selectedInfluencerForPipeline.agreedPrice ?? 0}.\n\nEnter a new offer price ($):`, String(selectedInfluencerForPipeline.agreedPrice ?? ''));
+                                if (price === null) return;
+                                const priceNum = parseFloat(price);
+                                if (isNaN(priceNum) || priceNum <= 0) {
+                                  showToast('Please enter a valid price', 'error');
+                                  return;
+                                }
+                                (async () => {
+                                  setActionLoading(true);
+                                  try {
+                                    const res = await fetch(`/api/collaborations/${selectedInfluencerForPipeline.collaborationId}`, {
+                                      method: 'PATCH',
+                                      headers: { 'Content-Type': 'application/json' },
+                                      body: JSON.stringify({ agreedPrice: priceNum }),
+                                    });
+                                    if (res.ok) {
+                                      const updatedApplications = selectedCampaignDetails.applicationsList?.map(app =>
+                                        app.id === selectedInfluencerForPipeline.id ? { ...app, agreedPrice: priceNum, influencerAgreed: undefined } : app
+                                      );
+                                      setSelectedCampaignDetails({ ...selectedCampaignDetails, applicationsList: updatedApplications });
+                                      setSelectedInfluencerForPipeline({ ...selectedInfluencerForPipeline, agreedPrice: priceNum, influencerAgreed: undefined });
+                                      showToast(`New offer of $${priceNum} sent to creator`, 'success');
+                                    } else {
+                                      const data = await res.json();
+                                      showToast(data.error || 'Failed to update price', 'error');
+                                    }
+                                  } catch { showToast('Failed to update price', 'error'); }
+                                  finally { setActionLoading(false); }
+                                })();
+                              }}
+                            >
+                              Propose New Price
+                            </Button>
+                          </div>
+                        )}
+
+                        {/* Cancel Negotiation — available during NEGOTIATING status */}
+                        {selectedInfluencerForPipeline.collaborationStatus === "NEGOTIATING" && selectedInfluencerForPipeline.collaborationId && (
+                          <div className="pt-2">
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              className="w-full text-destructive border-destructive/30 hover:bg-destructive/10"
+                              disabled={actionLoading}
+                              onClick={async () => {
+                                setActionLoading(true);
+                                try {
+                                  const res = await fetch(`/api/collaborations/${selectedInfluencerForPipeline.collaborationId}`, {
+                                    method: 'PATCH',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({ status: 'CANCELLED' }),
+                                  });
+                                  if (res.ok) {
+                                    const updatedApplications = selectedCampaignDetails.applicationsList?.filter(app =>
+                                      app.id !== selectedInfluencerForPipeline.id
+                                    );
+                                    setSelectedCampaignDetails({ ...selectedCampaignDetails, applicationsList: updatedApplications, applications: (updatedApplications?.length || 0) });
+                                    setSelectedInfluencerForPipeline(null);
+                                    showToast('Negotiation ended', 'success');
+                                  } else {
+                                    const data = await res.json();
+                                    showToast(data.error || 'Failed to cancel', 'error');
+                                  }
+                                } catch { showToast('Failed to cancel negotiation', 'error'); }
+                                finally { setActionLoading(false); }
+                              }}
+                            >
+                              Cancel Negotiation
+                            </Button>
                           </div>
                         )}
 

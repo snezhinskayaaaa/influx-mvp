@@ -114,6 +114,10 @@ export interface CampaignApplication {
   proposedPriceCPE?: string;
   /** Agreed price in dollars (converted from cents) */
   agreedPrice?: number;
+  /** Whether the influencer has agreed to the current price */
+  influencerAgreed?: boolean;
+  /** Whether the brand has agreed to the current price */
+  brandAgreed?: boolean;
   message?: string;
   appliedAt: string;
 
