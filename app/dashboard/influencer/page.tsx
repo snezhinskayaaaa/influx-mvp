@@ -541,8 +541,8 @@ export default function InfluencerDashboard() {
         if (collabData.collaborations && collabData.collaborations.length > 0) {
           const statusMap: Record<string, CampaignStatus> = {
             APPLIED: "applied",
-            NEGOTIATING: "applied",
-            AGREED: "approved",
+            NEGOTIATING: "approved",
+            AGREED: "active",
             IN_PROGRESS: "active",
             CONTENT_REVIEW: "content_review",
             REVISION: "revision",
@@ -679,8 +679,8 @@ export default function InfluencerDashboard() {
         if (collabData.collaborations && collabData.collaborations.length > 0) {
           const statusMap: Record<string, CampaignStatus> = {
             APPLIED: "applied",
-            NEGOTIATING: "applied",
-            AGREED: "approved",
+            NEGOTIATING: "approved",
+            AGREED: "active",
             IN_PROGRESS: "active",
             CONTENT_REVIEW: "content_review",
             REVISION: "revision",
@@ -1529,7 +1529,8 @@ export default function InfluencerDashboard() {
                                             body: JSON.stringify({ status: 'CANCELLED' }),
                                           });
                                           if (res.ok) {
-                                            showToast('Offer declined', 'success');
+                                            showToast('Offer declined. You can re-apply later.', 'success');
+                                            setSelectedCampaignDetails(null);
                                             await refreshCollaborations();
                                           } else {
                                             const data = await res.json();
