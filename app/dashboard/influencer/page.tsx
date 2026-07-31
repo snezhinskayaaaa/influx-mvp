@@ -240,6 +240,9 @@ export default function InfluencerDashboard() {
               deadline: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
               status: 'open' as const,
               goal: (c.goal as string) || '',
+              targetViews: (c.targetViews as string) || undefined,
+              targetClicks: (c.targetClicks as string) || undefined,
+              targetEngagements: (c.targetEngagements as string) || undefined,
             }));
             setDiscoverCampaigns(mapped);
           }
@@ -288,6 +291,9 @@ export default function InfluencerDashboard() {
                 deadline: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
                 status: statusMap[(collab.status as string)] || 'applied',
                 goal: (campaign?.goal as string) || '',
+                targetViews: (campaign?.targetViews as string) || undefined,
+                targetClicks: (campaign?.targetClicks as string) || undefined,
+                targetEngagements: (campaign?.targetEngagements as string) || undefined,
                 collaborationId: collab.id as string,
                 revisionNote: (collab.revisionNote as string) || undefined,
                 revisionCount: (collab.revisionCount as number) || 0,
@@ -2528,29 +2534,21 @@ export default function InfluencerDashboard() {
             </div>
 
             {/* Target metrics — what the project expects */}
-            {(applyingCampaign.targetViews || applyingCampaign.targetClicks || applyingCampaign.targetEngagements) && (
-              <div className="bg-primary/5 border border-primary/20 rounded-xl p-3 mb-4 space-y-2 text-sm">
-                <p className="text-xs font-semibold text-primary mb-1">Target Metrics (project expectations)</p>
-                {applyingCampaign.targetViews && (
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Target views</span>
-                    <span className="font-medium">{Number(applyingCampaign.targetViews).toLocaleString()}</span>
-                  </div>
-                )}
-                {applyingCampaign.targetClicks && (
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Target clicks</span>
-                    <span className="font-medium">{Number(applyingCampaign.targetClicks).toLocaleString()}</span>
-                  </div>
-                )}
-                {applyingCampaign.targetEngagements && (
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Target engagements</span>
-                    <span className="font-medium">{Number(applyingCampaign.targetEngagements).toLocaleString()}</span>
-                  </div>
-                )}
+            <div className="bg-primary/5 border border-primary/20 rounded-xl p-3 mb-4 space-y-2 text-sm">
+              <p className="text-xs font-semibold text-primary mb-1">Target Metrics (project expectations)</p>
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Target views</span>
+                <span className="font-medium">{applyingCampaign.targetViews ? Number(applyingCampaign.targetViews).toLocaleString() : 'Not specified'}</span>
               </div>
-            )}
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Target clicks</span>
+                <span className="font-medium">{applyingCampaign.targetClicks ? Number(applyingCampaign.targetClicks).toLocaleString() : 'Not specified'}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Target engagements</span>
+                <span className="font-medium">{applyingCampaign.targetEngagements ? Number(applyingCampaign.targetEngagements).toLocaleString() : 'Not specified'}</span>
+              </div>
+            </div>
 
             <div className="space-y-4">
               <div>
