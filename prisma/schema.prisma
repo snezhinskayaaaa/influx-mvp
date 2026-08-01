@@ -115,6 +115,8 @@ model Influencer {
   twitterHandle      String?  @map("twitter_handle")
   twitterFollowers   Int      @default(0) @map("twitter_followers")
 
+  telegramHandle     String?  @map("telegram_handle")
+
   // Pricing (in cents) — legacy fields, kept for compatibility
   pricePerPost  Int? @map("price_per_post")
   pricePerStory Int? @map("price_per_story")

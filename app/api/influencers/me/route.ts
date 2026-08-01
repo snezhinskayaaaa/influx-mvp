@@ -41,6 +41,7 @@ const STRING_FIELDS = [
   'tiktokHandle',
   'youtubeHandle',
   'twitterHandle',
+  'telegramHandle',
 ] as const
 
 const ARRAY_FIELDS = [

@@ -190,6 +190,7 @@ export default function InfluencerDashboard() {
     tiktokFollowers: string
     twitter: string
     twitterFollowers: string
+    telegram: string
     youtube: string
     youtubeSubscribers: string
     cpmMin: string
@@ -208,6 +209,7 @@ export default function InfluencerDashboard() {
     tiktokFollowers: '',
     twitter: '',
     twitterFollowers: '',
+    telegram: '',
     youtube: '',
     youtubeSubscribers: '',
     cpmMin: '',
@@ -354,6 +356,7 @@ export default function InfluencerDashboard() {
                 tiktokFollowers: inf.tiktokFollowers ? String(inf.tiktokFollowers) : '',
                 twitter: inf.twitterHandle || '',
                 twitterFollowers: inf.twitterFollowers ? String(inf.twitterFollowers) : '',
+                telegram: inf.telegramHandle || '',
                 youtube: inf.youtubeHandle || '',
                 youtubeSubscribers: inf.youtubeSubscribers ? String(inf.youtubeSubscribers) : '',
                 cpmMin: inf.cpmMin ? String(inf.cpmMin / 100) : '',
@@ -2340,6 +2343,38 @@ export default function InfluencerDashboard() {
 
                     <div className="flex gap-2">
                       <div className="relative flex-1">
+                        <XIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                        <Input
+                          placeholder="X URL or @handle"
+                          value={profileData.twitter}
+                          onChange={(e) => setProfileData(p => ({...p, twitter: e.target.value}))}
+                          className="pl-10 h-11"
+                        />
+                      </div>
+                      <Input
+                        type="number"
+                        placeholder="Followers"
+                        value={profileData.twitterFollowers || ''}
+                        onChange={(e) => setProfileData(p => ({...p, twitterFollowers: e.target.value}))}
+                        className="h-11 w-28"
+                        min="0"
+                      />
+                    </div>
+
+                    <div className="flex gap-2">
+                      <div className="relative flex-1">
+                        <Send className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                        <Input
+                          placeholder="Telegram channel URL or @handle"
+                          value={profileData.telegram || ''}
+                          onChange={(e) => setProfileData(p => ({...p, telegram: e.target.value}))}
+                          className="pl-10 h-11"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="flex gap-2">
+                      <div className="relative flex-1">
                         <Instagram className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                         <Input
                           placeholder="Instagram URL or @handle"
@@ -2375,26 +2410,6 @@ export default function InfluencerDashboard() {
                         placeholder="Followers"
                         value={profileData.tiktokFollowers}
                         onChange={(e) => setProfileData(p => ({...p, tiktokFollowers: e.target.value}))}
-                        className="h-11 w-28"
-                        min="0"
-                      />
-                    </div>
-
-                    <div className="flex gap-2">
-                      <div className="relative flex-1">
-                        <XIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                        <Input
-                          placeholder="X URL or @handle"
-                          value={profileData.twitter}
-                          onChange={(e) => setProfileData(p => ({...p, twitter: e.target.value}))}
-                          className="pl-10 h-11"
-                        />
-                      </div>
-                      <Input
-                        type="number"
-                        placeholder="Followers"
-                        value={profileData.twitterFollowers || ''}
-                        onChange={(e) => setProfileData(p => ({...p, twitterFollowers: e.target.value}))}
                         className="h-11 w-28"
                         min="0"
                       />
@@ -2529,6 +2544,7 @@ export default function InfluencerDashboard() {
                               youtubeSubscribers: profileData.youtubeSubscribers ? parseInt(profileData.youtubeSubscribers) : 0,
                               twitterHandle: profileData.twitter,
                               twitterFollowers: profileData.twitterFollowers ? parseInt(profileData.twitterFollowers) : 0,
+                              telegramHandle: profileData.telegram,
                               cpmMin: profileData.cpmMin ? parseFloat(profileData.cpmMin) : undefined,
                               cpmMax: profileData.cpmMax ? parseFloat(profileData.cpmMax) : undefined,
                               cpcMin: profileData.cpcMin ? parseFloat(profileData.cpcMin) : undefined,
