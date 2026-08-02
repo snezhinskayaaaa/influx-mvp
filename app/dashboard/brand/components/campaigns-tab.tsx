@@ -109,6 +109,8 @@ export function CampaignsTab({
   const [selectedInfluencerForPipeline, setSelectedInfluencerForPipeline] = useState<CampaignApplication | null>(null);
   const [showInfluencerSelector, setShowInfluencerSelector] = useState(false);
   const [brandFeedbackText, setBrandFeedbackText] = useState("");
+  const [priceModalData, setPriceModalData] = useState<{ application: CampaignApplication; defaultPrice: string; isNewOffer?: boolean } | null>(null);
+  const [priceModalValue, setPriceModalValue] = useState("");
   const [revisionNoteText, setRevisionNoteText] = useState("");
   const [disputeReasonText, setDisputeReasonText] = useState("");
   const [showRevisionInput, setShowRevisionInput] = useState(false);
@@ -1154,35 +1156,8 @@ export function CampaignsTab({
                                   className="bg-gradient-to-r from-primary to-secondary"
                                   disabled={actionLoading}
                                   onClick={() => {
-                                    // Show price negotiation input
-                                    const price = prompt(`Approve and set your offer price.\n\nCreator proposed: $${application.proposedPriceCPM}\n\nEnter your agreed price ($):`, application.proposedPriceCPM || '');
-                                    if (price === null) return;
-                                    const priceNum = parseFloat(price);
-                                    if (isNaN(priceNum) || priceNum <= 0) {
-                                      showToast('Please enter a valid price', 'error');
-                                      return;
-                                    }
-                                    (async () => {
-                                      setActionLoading(true);
-                                      try {
-                                        const res = await fetch(`/api/collaborations/${application.collaborationId}`, {
-                                          method: 'PATCH',
-                                          headers: { 'Content-Type': 'application/json' },
-                                          body: JSON.stringify({ status: 'NEGOTIATING', agreedPrice: priceNum, brandAgreed: true }),
-                                        });
-                                        if (res.ok) {
-                                          const updatedApplications = selectedCampaignDetails.applicationsList?.map(app =>
-                                            app.id === application.id ? { ...app, status: 'approved' as const, collaborationStatus: 'NEGOTIATING' as CollaborationStatus, agreedPrice: priceNum } : app
-                                          );
-                                          setSelectedCampaignDetails({ ...selectedCampaignDetails, applicationsList: updatedApplications });
-                                          showToast(`Approved with offer of $${priceNum}`, 'success');
-                                        } else {
-                                          const data = await res.json();
-                                          showToast(data.error || 'Failed to approve', 'error');
-                                        }
-                                      } catch { showToast('Failed to approve', 'error'); }
-                                      finally { setActionLoading(false); }
-                                    })();
+                                    setPriceModalData({ application, defaultPrice: application.proposedPriceCPM || '0' });
+                                    setPriceModalValue(application.proposedPriceCPM || '0');
                                   }}
                                 >
                                   <CheckCircle2 className="h-4 w-4 mr-1" />
@@ -1574,35 +1549,8 @@ export function CampaignsTab({
                               className="w-full bg-gradient-to-r from-primary to-secondary"
                               disabled={actionLoading}
                               onClick={() => {
-                                const price = prompt(`Creator declined $${selectedInfluencerForPipeline.agreedPrice ?? 0}.\n\nEnter a new offer price ($):`, String(selectedInfluencerForPipeline.agreedPrice ?? ''));
-                                if (price === null) return;
-                                const priceNum = parseFloat(price);
-                                if (isNaN(priceNum) || priceNum <= 0) {
-                                  showToast('Please enter a valid price', 'error');
-                                  return;
-                                }
-                                (async () => {
-                                  setActionLoading(true);
-                                  try {
-                                    const res = await fetch(`/api/collaborations/${selectedInfluencerForPipeline.collaborationId}`, {
-                                      method: 'PATCH',
-                                      headers: { 'Content-Type': 'application/json' },
-                                      body: JSON.stringify({ agreedPrice: priceNum }),
-                                    });
-                                    if (res.ok) {
-                                      const updatedApplications = selectedCampaignDetails.applicationsList?.map(app =>
-                                        app.id === selectedInfluencerForPipeline.id ? { ...app, agreedPrice: priceNum, influencerAgreed: undefined } : app
-                                      );
-                                      setSelectedCampaignDetails({ ...selectedCampaignDetails, applicationsList: updatedApplications });
-                                      setSelectedInfluencerForPipeline({ ...selectedInfluencerForPipeline, agreedPrice: priceNum, influencerAgreed: undefined });
-                                      showToast(`New offer of $${priceNum} sent to creator`, 'success');
-                                    } else {
-                                      const data = await res.json();
-                                      showToast(data.error || 'Failed to update price', 'error');
-                                    }
-                                  } catch { showToast('Failed to update price', 'error'); }
-                                  finally { setActionLoading(false); }
-                                })();
+                                setPriceModalData({ application: selectedInfluencerForPipeline, defaultPrice: String(selectedInfluencerForPipeline.agreedPrice ?? '0'), isNewOffer: true });
+                                setPriceModalValue(String(selectedInfluencerForPipeline.agreedPrice ?? '0'));
                               }}
                             >
                               Propose New Price
@@ -2903,6 +2851,87 @@ export function CampaignsTab({
       )}
         </>
       )}
+      {/* Price Offer Modal */}
+      {priceModalData && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+          <div className="bg-background border border-border rounded-2xl p-6 w-full max-w-sm mx-4 shadow-2xl">
+            <h3 className="text-lg font-bold mb-1">
+              {priceModalData.isNewOffer ? 'Propose New Price' : 'Approve & Set Price'}
+            </h3>
+            <p className="text-sm text-muted-foreground mb-4">
+              {priceModalData.isNewOffer
+                ? `Creator declined your previous offer. Enter a new price.`
+                : `Creator proposed $${priceModalData.defaultPrice}. You can accept or adjust.`}
+            </p>
+            <div className="mb-4">
+              <label className="text-sm font-medium mb-1 block">Your offer price ($)</label>
+              <input
+                type="number"
+                value={priceModalValue}
+                onChange={(e) => setPriceModalValue(e.target.value)}
+                placeholder="Enter price"
+                className="w-full px-3 py-2 border border-border rounded-lg text-sm bg-background focus:outline-none focus:ring-2 focus:ring-primary/50"
+                autoFocus
+                min="1"
+              />
+            </div>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setPriceModalData(null)}
+                className="flex-1 px-4 py-2 text-sm rounded-lg border border-border hover:bg-muted transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={async () => {
+                  const priceNum = parseFloat(priceModalValue);
+                  if (isNaN(priceNum) || priceNum <= 0) {
+                    showToast('Please enter a valid price', 'error');
+                    return;
+                  }
+                  setActionLoading(true);
+                  try {
+                    const body = priceModalData.isNewOffer
+                      ? { agreedPrice: priceNum }
+                      : { status: 'NEGOTIATING', agreedPrice: priceNum, brandAgreed: true };
+                    const res = await fetch(`/api/collaborations/${priceModalData.application.collaborationId}`, {
+                      method: 'PATCH',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify(body),
+                    });
+                    if (res.ok) {
+                      const updatedApplications = selectedCampaignDetails?.applicationsList?.map(app =>
+                        app.id === priceModalData.application.id
+                          ? { ...app, status: 'approved' as const, collaborationStatus: 'NEGOTIATING' as CollaborationStatus, agreedPrice: priceNum, influencerAgreed: undefined }
+                          : app
+                      );
+                      if (selectedCampaignDetails) {
+                        setSelectedCampaignDetails({ ...selectedCampaignDetails, applicationsList: updatedApplications });
+                      }
+                      if (selectedInfluencerForPipeline?.id === priceModalData.application.id) {
+                        setSelectedInfluencerForPipeline({ ...selectedInfluencerForPipeline, agreedPrice: priceNum, influencerAgreed: undefined });
+                      }
+                      showToast(priceModalData.isNewOffer ? `New offer of $${priceNum} sent` : `Approved with offer of $${priceNum}`, 'success');
+                    } else {
+                      const data = await res.json();
+                      showToast(data.error || 'Failed', 'error');
+                    }
+                  } catch { showToast('Failed', 'error'); }
+                  finally {
+                    setActionLoading(false);
+                    setPriceModalData(null);
+                  }
+                }}
+                disabled={actionLoading || !priceModalValue || parseFloat(priceModalValue) <= 0}
+                className="flex-1 px-4 py-2 text-sm rounded-lg bg-gradient-to-r from-primary to-secondary text-white hover:opacity-90 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {actionLoading ? 'Sending...' : priceModalData.isNewOffer ? 'Send Offer' : 'Approve'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Creator Profile Modal */}
       {viewingProfile && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
