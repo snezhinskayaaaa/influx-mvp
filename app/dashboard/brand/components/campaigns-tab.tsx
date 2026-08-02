@@ -1608,12 +1608,48 @@ export function CampaignsTab({
                           </a>
                         )}
 
-                        {/* AGREED: Start Campaign button */}
+                        {/* Creator accepted price — Start Campaign (freeze + advance) */}
+                        {selectedInfluencerForPipeline.collaborationStatus === "NEGOTIATING" && selectedInfluencerForPipeline.influencerAgreed === true && selectedInfluencerForPipeline.collaborationId && (
+                          <div className="space-y-3 pt-3 border-t">
+                            <div className="p-3 rounded-lg bg-success/10 border border-success/20">
+                              <p className="text-sm font-medium text-success mb-1">Creator accepted the price!</p>
+                              <p className="text-xs text-muted-foreground">
+                                ${selectedInfluencerForPipeline.agreedPrice ?? 0} will be frozen from your balance. 50% advance (${selectedInfluencerForPipeline.agreedPrice ? (selectedInfluencerForPipeline.agreedPrice / 2).toFixed(0) : '...'}) will be paid to the creator.
+                              </p>
+                            </div>
+                            <Button
+                              onClick={async () => {
+                                setActionLoading(true);
+                                try {
+                                  // Step 1: Agree (freeze funds)
+                                  const agreeRes = await fetch(`/api/collaborations/${selectedInfluencerForPipeline.collaborationId}/agree`, {
+                                    method: 'POST',
+                                  });
+                                  if (!agreeRes.ok) {
+                                    const data = await agreeRes.json();
+                                    showToast(data.error || 'Failed to start campaign', 'error');
+                                    return;
+                                  }
+                                  // Step 2: Start (IN_PROGRESS + 50% advance)
+                                  await handleStartCampaign(selectedInfluencerForPipeline.collaborationId!);
+                                } catch { showToast('Failed to start campaign', 'error'); }
+                                finally { setActionLoading(false); }
+                              }}
+                              disabled={actionLoading}
+                              className="w-full bg-gradient-to-r from-primary to-secondary"
+                            >
+                              <Rocket className="h-4 w-4 mr-2" />
+                              {actionLoading ? "Starting..." : "Start Campaign"}
+                            </Button>
+                          </div>
+                        )}
+
+                        {/* AGREED: Start Campaign button (legacy — if somehow in AGREED status) */}
                         {selectedInfluencerForPipeline.collaborationStatus === "AGREED" && selectedInfluencerForPipeline.collaborationId && (
                           <div className="space-y-3 pt-3 border-t">
                             <div className="p-3 rounded-lg bg-primary/5 border border-primary/20">
                               <p className="text-xs text-muted-foreground">
-                                50% advance (${selectedInfluencerForPipeline.agreedPrice ? (selectedInfluencerForPipeline.agreedPrice / 2).toFixed(2) : '...'}) will be paid to the creator when you start.
+                                50% advance (${selectedInfluencerForPipeline.agreedPrice ? (selectedInfluencerForPipeline.agreedPrice / 2).toFixed(0) : '...'}) will be paid to the creator when you start.
                               </p>
                             </div>
                             <Button
