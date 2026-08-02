@@ -121,6 +121,7 @@ interface Campaign {
   };
   // Collaboration lifecycle fields
   collaborationId?: string;
+  influencerAgreed?: boolean;
   revisionNote?: string;
   revisionCount?: number;
   contentUrl?: string;
@@ -303,6 +304,7 @@ export default function InfluencerDashboard() {
                 targetClicks: (campaign?.targetClicks as string) || undefined,
                 targetEngagements: (campaign?.targetEngagements as string) || undefined,
                 collaborationId: collab.id as string,
+                influencerAgreed: collab.influencerAgreed as boolean | undefined,
                 revisionNote: (collab.revisionNote as string) || undefined,
                 revisionCount: (collab.revisionCount as number) || 0,
                 contentUrl: (collab.contentUrl as string) || undefined,
@@ -1484,7 +1486,15 @@ export default function InfluencerDashboard() {
                                 </div>
                               )}
 
-                              {selectedCampaignDetails.status === "approved" && (
+                              {selectedCampaignDetails.status === "approved" && selectedCampaignDetails.influencerAgreed === false && (
+                                <div className="px-4 py-3 rounded-lg bg-amber-500/10 border border-amber-500/20">
+                                  <Clock className="h-5 w-5 text-amber-500 inline mr-2" />
+                                  <p className="text-sm font-medium text-amber-600 inline">Price declined — waiting for new offer</p>
+                                  <p className="text-xs text-muted-foreground mt-1">You declined the offer of ${selectedCampaignDetails.budget}. The project can propose a new price.</p>
+                                </div>
+                              )}
+
+                              {selectedCampaignDetails.status === "approved" && selectedCampaignDetails.influencerAgreed !== false && (
                                 <div className="space-y-3">
                                   <div className="px-4 py-3 rounded-lg bg-primary/10 border border-primary/20">
                                     <p className="text-sm font-medium text-primary mb-1">Project has approved your application!</p>
