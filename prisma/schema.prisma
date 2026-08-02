@@ -250,7 +250,7 @@ model Collaboration {
   // Status & agreement
   status           CollaborationStatus @default(APPLIED)
   brandAgreed      Boolean             @default(false) @map("brand_agreed")
-  influencerAgreed Boolean             @default(false) @map("influencer_agreed")
+  influencerAgreed Boolean?             @map("influencer_agreed")
 
   // Details
   deliverables String[] @default([])

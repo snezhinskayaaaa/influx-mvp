@@ -86,6 +86,8 @@ export async function PATCH(
           return NextResponse.json({ error: 'Agreed price must be a positive number up to 1,000,000' }, { status: 400 })
         }
         updateData.agreedPrice = Math.round(body.agreedPrice * 100)
+        // Reset influencerAgreed when brand proposes a new price (null = pending response)
+        updateData.influencerAgreed = null
       }
       if (body.brandAgreed !== undefined) {
         updateData.brandAgreed = body.brandAgreed
