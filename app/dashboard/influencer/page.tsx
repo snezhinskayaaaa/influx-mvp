@@ -311,6 +311,8 @@ export default function InfluencerDashboard() {
                 publishedUrl: (collab.publishedUrl as string) || undefined,
                 disputeReason: (collab.disputeReason as string) || undefined,
                 collaborationMessage: (collab.message as string) || undefined,
+                brandTerms: (collab.brandTerms as string) || undefined,
+                influencerTerms: (collab.influencerTerms as string) || undefined,
               };
             });
             setMyCampaigns(mapped);
@@ -592,6 +594,8 @@ export default function InfluencerDashboard() {
               publishedUrl: (collab.publishedUrl as string) || undefined,
               disputeReason: (collab.disputeReason as string) || undefined,
               collaborationMessage: (collab.message as string) || undefined,
+              brandTerms: (collab.brandTerms as string) || undefined,
+              influencerTerms: (collab.influencerTerms as string) || undefined,
             };
           });
           setMyCampaigns(mapped);
@@ -731,6 +735,8 @@ export default function InfluencerDashboard() {
               publishedUrl: (collab.publishedUrl as string) || undefined,
               disputeReason: (collab.disputeReason as string) || undefined,
               collaborationMessage: (collab.message as string) || undefined,
+              brandTerms: (collab.brandTerms as string) || undefined,
+              influencerTerms: (collab.influencerTerms as string) || undefined,
             };
           });
           setMyCampaigns(mapped);
@@ -1450,9 +1456,9 @@ export default function InfluencerDashboard() {
 
                           {(selectedCampaignDetails.status === "applied" || selectedCampaignDetails.status === "approved") ? (
                             <div className="space-y-4">
-                              {/* Influencer Terms Input */}
+                              {/* Creator Terms Input */}
                               <div className="space-y-2">
-                                <Label className="text-sm font-medium">Your Terms (Optional)</Label>
+                                <Label className="text-sm font-medium">Creator Terms (Optional)</Label>
                                 <Textarea
                                   className="resize-none"
                                   placeholder="Add any specific terms or requirements for this collaboration..."
@@ -1461,14 +1467,23 @@ export default function InfluencerDashboard() {
                                     ...selectedCampaignDetails,
                                     influencerTerms: e.target.value
                                   })}
+                                  onBlur={() => {
+                                    if (selectedCampaignDetails.collaborationId) {
+                                      fetch(`/api/collaborations/${selectedCampaignDetails.collaborationId}`, {
+                                        method: 'PATCH',
+                                        headers: { 'Content-Type': 'application/json' },
+                                        body: JSON.stringify({ influencerTerms: selectedCampaignDetails.influencerTerms || '' }),
+                                      });
+                                    }
+                                  }}
                                   rows={3}
                                 />
                               </div>
 
-                              {/* Brand Terms (Read-only) */}
+                              {/* Project Terms (Read-only) */}
                               {selectedCampaignDetails.brandTerms && (
                                 <div className="space-y-2">
-                                  <Label className="text-sm font-medium">Brand Terms</Label>
+                                  <Label className="text-sm font-medium">Project Terms</Label>
                                   <div className="px-3 py-2 rounded-lg border border-border bg-muted/50 text-sm">
                                     {selectedCampaignDetails.brandTerms}
                                   </div>
@@ -1521,7 +1536,7 @@ export default function InfluencerDashboard() {
                                           const res = await fetch(`/api/collaborations/${selectedCampaignDetails.collaborationId}`, {
                                             method: 'PATCH',
                                             headers: { 'Content-Type': 'application/json' },
-                                            body: JSON.stringify({ influencerAgreed: true }),
+                                            body: JSON.stringify({ influencerAgreed: true, ...(selectedCampaignDetails.influencerTerms ? { influencerTerms: selectedCampaignDetails.influencerTerms } : {}) }),
                                           });
                                           if (res.ok) {
                                             showToast('Price accepted! Waiting for project to start the campaign.', 'success');

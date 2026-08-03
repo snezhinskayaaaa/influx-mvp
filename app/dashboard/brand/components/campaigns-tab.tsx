@@ -116,6 +116,8 @@ export function CampaignsTab({
   const [showRevisionInput, setShowRevisionInput] = useState(false);
   const [showDisputeInput, setShowDisputeInput] = useState(false);
   const [actionLoading, setActionLoading] = useState(false);
+  const [termsAccepted, setTermsAccepted] = useState(false);
+  const [termsHighlight, setTermsHighlight] = useState(false);
   const [viewingProfile, setViewingProfile] = useState<Record<string, unknown> | null>(null);
   const [deletingCampaign, setDeletingCampaign] = useState<Campaign | null>(null);
   const [deleteConfirmText, setDeleteConfirmText] = useState("");
@@ -346,6 +348,8 @@ export function CampaignsTab({
                 contentUrl: (c.contentUrl as string) || undefined,
                 revisionCount: (c.revisionCount as number) || 0,
                 revisionNote: (c.revisionNote as string) || undefined,
+                brandTerms: (c.brandTerms as string) || undefined,
+                influencerTerms: (c.influencerTerms as string) || undefined,
                 // Profile details for popup
                 influencerBio: (inf?.bio as string) || '',
                 influencerNiche: Array.isArray(inf?.niche) ? (inf.niche as string[]).join(', ') : '',
@@ -1280,6 +1284,8 @@ export function CampaignsTab({
                                 key={influencer.id}
                                 onClick={() => {
                                   setSelectedInfluencerForPipeline(influencer);
+                                  setTermsAccepted(false);
+                                  setTermsHighlight(false);
                                   setShowInfluencerSelector(false);
                                 }}
                                 className={`w-full text-left px-3 py-2 rounded-md hover:bg-muted transition-colors ${
@@ -1392,12 +1398,12 @@ export function CampaignsTab({
                           </div>
                         </div>
 
-                        {/* Brand Terms */}
+                        {/* Project Terms */}
                         <div className="space-y-2">
-                          <Label className="text-sm font-medium">Brand Terms (Optional)</Label>
+                          <Label className="text-sm font-medium">Project Terms (Optional)</Label>
                           <textarea
                             className="w-full min-h-[80px] px-3 py-2 rounded-lg border border-border bg-background text-sm resize-none focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"
-                            placeholder="Additional collaboration terms from brand..."
+                            placeholder="Additional collaboration terms from project..."
                             value={selectedInfluencerForPipeline.brandTerms || ""}
                             onChange={(e) => {
                               const updatedApplications = selectedCampaignDetails.applicationsList?.map(app =>
@@ -1414,19 +1420,28 @@ export function CampaignsTab({
                                 brandTerms: e.target.value,
                               });
                             }}
+                            onBlur={() => {
+                              if (selectedInfluencerForPipeline.collaborationId) {
+                                fetch(`/api/collaborations/${selectedInfluencerForPipeline.collaborationId}`, {
+                                  method: 'PATCH',
+                                  headers: { 'Content-Type': 'application/json' },
+                                  body: JSON.stringify({ brandTerms: selectedInfluencerForPipeline.brandTerms || '' }),
+                                });
+                              }
+                            }}
                           />
                         </div>
 
-                        {/* Influencer Terms */}
+                        {/* Creator Terms */}
                         <div className="space-y-2">
-                          <Label className="text-sm font-medium">Influencer Terms (Optional)</Label>
+                          <Label className="text-sm font-medium">Creator Terms</Label>
                           <textarea
                             className="w-full min-h-[80px] px-3 py-2 rounded-lg border border-border bg-muted/50 text-sm resize-none"
-                            placeholder="Additional collaboration terms from influencer..."
+                            placeholder="Additional terms from creator..."
                             value={selectedInfluencerForPipeline.influencerTerms || ""}
                             disabled
                           />
-                          <p className="text-xs text-muted-foreground">Influencer can add their terms when reviewing</p>
+                          <p className="text-xs text-muted-foreground">Creator can add their terms when reviewing</p>
                         </div>
 
 
@@ -1542,8 +1557,36 @@ export function CampaignsTab({
                                 ${selectedInfluencerForPipeline.agreedPrice ?? 0} will be frozen from your balance. 50% advance (${selectedInfluencerForPipeline.agreedPrice ? (selectedInfluencerForPipeline.agreedPrice / 2).toFixed(0) : '...'}) will be paid to the creator.
                               </p>
                             </div>
+
+                            {/* Creator's additional terms (if any) */}
+                            {selectedInfluencerForPipeline.influencerTerms && (
+                              <div className="p-3 rounded-lg bg-muted/50 border border-border">
+                                <p className="text-xs font-medium mb-1">Creator Terms</p>
+                                <p className="text-sm text-muted-foreground">{selectedInfluencerForPipeline.influencerTerms}</p>
+                              </div>
+                            )}
+
+                            {/* Terms agreement checkbox */}
+                            <label className={`flex items-start gap-2 cursor-pointer p-3 rounded-lg border transition-all ${termsHighlight ? 'border-destructive bg-destructive/5 animate-pulse' : 'border-border'}`}>
+                              <input
+                                type="checkbox"
+                                checked={termsAccepted}
+                                onChange={(e) => { setTermsAccepted(e.target.checked); setTermsHighlight(false); }}
+                                className="mt-0.5 rounded"
+                              />
+                              <span className="text-xs text-muted-foreground">
+                                I agree to the campaign terms, agreed price, and any additional terms from both parties
+                              </span>
+                            </label>
+
                             <Button
                               onClick={async () => {
+                                if (!termsAccepted) {
+                                  setTermsHighlight(true);
+                                  setTimeout(() => setTermsHighlight(false), 2000);
+                                  showToast('Please accept the terms first', 'error');
+                                  return;
+                                }
                                 setActionLoading(true);
                                 try {
                                   // Step 1: Agree (freeze funds)
@@ -2852,9 +2895,10 @@ export function CampaignsTab({
                   }
                   setActionLoading(true);
                   try {
+                    const brandTermsValue = priceModalData.application.brandTerms || undefined;
                     const body = priceModalData.isNewOffer
-                      ? { agreedPrice: priceNum }
-                      : { status: 'NEGOTIATING', agreedPrice: priceNum, brandAgreed: true };
+                      ? { agreedPrice: priceNum, ...(brandTermsValue ? { brandTerms: brandTermsValue } : {}) }
+                      : { status: 'NEGOTIATING', agreedPrice: priceNum, brandAgreed: true, ...(brandTermsValue ? { brandTerms: brandTermsValue } : {}) };
                     const res = await fetch(`/api/collaborations/${priceModalData.application.collaborationId}`, {
                       method: 'PATCH',
                       headers: { 'Content-Type': 'application/json' },

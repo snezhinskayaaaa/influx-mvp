@@ -64,6 +64,7 @@ export async function GET(request: NextRequest) {
             contentUrl: true, revisionCount: true, revisionNote: true,
             publishedUrl: true, disputeReason: true, frozenAt: true,
             influencerAgreed: true, brandAgreed: true,
+            brandTerms: true, influencerTerms: true,
             campaign: { select: { id: true, title: true } },
             influencer: {
               select: {

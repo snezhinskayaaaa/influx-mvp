@@ -253,8 +253,10 @@ model Collaboration {
   influencerAgreed Boolean?             @map("influencer_agreed")
 
   // Details
-  deliverables String[] @default([])
-  message      String? // influencer's application message
+  deliverables    String[]  @default([])
+  message         String?   // influencer's application message
+  brandTerms      String?   @map("brand_terms")
+  influencerTerms String?   @map("influencer_terms")
 
   // Content review
   contentUrl     String?   @map("content_url")

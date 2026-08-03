@@ -302,6 +302,32 @@
 
 ---
 
+## FIX-026: Collaboration terms fields rename, persistence, and agreement checkbox
+
+### Changes Made
+- `prisma/schema.prisma:258-259` - Added `brandTerms` and `influencerTerms` optional String fields to Collaboration model
+- `prisma/migrations/0012_collaboration_terms/migration.sql` - Created migration to add `brand_terms` and `influencer_terms` columns
+- `app/api/collaborations/[id]/route.ts:97-99` - Brand can now save `brandTerms` via PATCH (max 2000 chars)
+- `app/api/collaborations/[id]/route.ts:106-108` - Influencer can now save `influencerTerms` via PATCH (max 2000 chars)
+- `app/api/collaborations/route.ts:66` - Added `brandTerms` and `influencerTerms` to brand's collaboration SELECT query
+- `app/dashboard/brand/components/campaigns-tab.tsx:119-120` - Added `termsAccepted` and `termsHighlight` state for agreement checkbox
+- `app/dashboard/brand/components/campaigns-tab.tsx:1397-1430` - Renamed "Brand Terms" to "Project Terms", "Influencer Terms" to "Creator Terms"
+- `app/dashboard/brand/components/campaigns-tab.tsx:1418-1424` - Added onBlur save for brandTerms via PATCH API
+- `app/dashboard/brand/components/campaigns-tab.tsx:1559-1580` - Added Creator Terms display and agreement checkbox before Start Campaign button
+- `app/dashboard/brand/components/campaigns-tab.tsx:1585-1589` - Added terms acceptance check with highlight animation before starting campaign
+- `app/dashboard/brand/components/campaigns-tab.tsx:348-349` - Added brandTerms and influencerTerms to brand mapper
+- `app/dashboard/brand/components/campaigns-tab.tsx:2858` - Included brandTerms in price proposal PATCH body
+- `app/dashboard/influencer/page.tsx:315-316,598-599,739-740` - Added brandTerms and influencerTerms to all three influencer mappers
+- `app/dashboard/influencer/page.tsx:1455-1468` - Renamed "Your Terms" to "Creator Terms", added onBlur save via PATCH API
+- `app/dashboard/influencer/page.tsx:1481-1486` - Renamed "Brand Terms" to "Project Terms" in read-only display
+- `app/dashboard/influencer/page.tsx:1539` - Included influencerTerms in Accept Price PATCH body
+
+### Verification
+- [x] Linter passes (0 errors, 8 pre-existing warnings)
+- [x] No new lint errors introduced
+
+---
+
 ## Summary
 
 | ID | File | Status |
@@ -331,3 +357,4 @@
 | FIX-023 | campaigns-tab.tsx | done |
 | FIX-024 | app/dashboard/influencer/page.tsx | done |
 | FIX-025 | app/dashboard/influencer/page.tsx | done |
+| FIX-026 | schema, API, campaigns-tab.tsx, influencer/page.tsx | done |

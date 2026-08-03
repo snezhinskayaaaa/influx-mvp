@@ -95,12 +95,18 @@ export async function PATCH(
       if (body.status === 'NEGOTIATING' && collaboration.status === 'APPLIED') {
         updateData.status = 'NEGOTIATING'
       }
+      if (typeof body.brandTerms === 'string') {
+        updateData.brandTerms = body.brandTerms.slice(0, 2000)
+      }
     }
 
-    // Influencer can set influencerAgreed
+    // Influencer can set influencerAgreed and influencerTerms
     if (isInfluencer || isAdmin) {
       if (body.influencerAgreed !== undefined) {
         updateData.influencerAgreed = body.influencerAgreed
+      }
+      if (typeof body.influencerTerms === 'string') {
+        updateData.influencerTerms = body.influencerTerms.slice(0, 2000)
       }
     }
 
