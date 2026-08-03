@@ -157,6 +157,8 @@ export default function InfluencerDashboard() {
   const [applySuccess] = useState("");
   const [submitLoading, setSubmitLoading] = useState(false);
   const [actionLoading, setActionLoading] = useState(false);
+  const [termsAccepted, setTermsAccepted] = useState(false);
+  const [termsHighlight, setTermsHighlight] = useState(false);
 
   const [discoverCampaigns, setDiscoverCampaigns] = useState<Campaign[]>([]);
   const [myCampaigns, setMyCampaigns] = useState<Campaign[]>([]);
@@ -1481,14 +1483,12 @@ export default function InfluencerDashboard() {
                               </div>
 
                               {/* Project Terms (Read-only) */}
-                              {selectedCampaignDetails.brandTerms && (
-                                <div className="space-y-2">
-                                  <Label className="text-sm font-medium">Project Terms</Label>
-                                  <div className="px-3 py-2 rounded-lg border border-border bg-muted/50 text-sm">
-                                    {selectedCampaignDetails.brandTerms}
-                                  </div>
+                              <div className="space-y-2">
+                                <Label className="text-sm font-medium">Project Terms</Label>
+                                <div className="px-3 py-2 rounded-lg border border-border bg-muted/50 text-sm min-h-[60px]">
+                                  {selectedCampaignDetails.brandTerms || <span className="text-muted-foreground italic">No additional terms from project</span>}
                                 </div>
-                              )}
+                              </div>
 
                               {/* Approval Status */}
                               {selectedCampaignDetails.status === "applied" && (
@@ -1525,12 +1525,31 @@ export default function InfluencerDashboard() {
                                       Offered price: <span className="font-bold text-lg">${selectedCampaignDetails.budget}</span>
                                     </p>
                                   </div>
+                                  {/* Terms agreement checkbox */}
+                                  <label className={`flex items-start gap-2 cursor-pointer p-3 rounded-lg border transition-all ${termsHighlight ? 'border-destructive bg-destructive/5 animate-pulse' : 'border-border'}`}>
+                                    <input
+                                      type="checkbox"
+                                      checked={termsAccepted}
+                                      onChange={(e) => { setTermsAccepted(e.target.checked); setTermsHighlight(false); }}
+                                      className="mt-0.5 rounded"
+                                    />
+                                    <span className="text-xs text-muted-foreground">
+                                      I agree to the campaign terms, offered price, and any additional terms from the project
+                                    </span>
+                                  </label>
+
                                   <div className="flex gap-2">
                                     <Button
                                       size="sm"
                                       className="flex-1 bg-gradient-to-r from-primary to-secondary"
                                       disabled={actionLoading}
                                       onClick={async () => {
+                                        if (!termsAccepted) {
+                                          setTermsHighlight(true);
+                                          setTimeout(() => setTermsHighlight(false), 2000);
+                                          showToast('Please accept the terms first', 'error');
+                                          return;
+                                        }
                                         setActionLoading(true);
                                         try {
                                           const res = await fetch(`/api/collaborations/${selectedCampaignDetails.collaborationId}`, {
@@ -1540,6 +1559,7 @@ export default function InfluencerDashboard() {
                                           });
                                           if (res.ok) {
                                             showToast('Price accepted! Waiting for project to start the campaign.', 'success');
+                                            setTermsAccepted(false);
                                             await refreshCollaborations();
                                           } else {
                                             const data = await res.json();
