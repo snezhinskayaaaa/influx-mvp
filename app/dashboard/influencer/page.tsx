@@ -1560,6 +1560,7 @@ export default function InfluencerDashboard() {
                                           if (res.ok) {
                                             showToast('Price accepted! Waiting for project to start the campaign.', 'success');
                                             setTermsAccepted(false);
+                                            setSelectedCampaignDetails({ ...selectedCampaignDetails, influencerAgreed: true });
                                             await refreshCollaborations();
                                           } else {
                                             const data = await res.json();
