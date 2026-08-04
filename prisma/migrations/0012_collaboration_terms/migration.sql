@@ -1,3 +1,2 @@
--- AlterTable
-ALTER TABLE "Collaboration" ADD COLUMN "brand_terms" TEXT,
-ADD COLUMN "influencer_terms" TEXT;
+ALTER TABLE "collaborations" ADD COLUMN IF NOT EXISTS "brand_terms" TEXT;
+ALTER TABLE "collaborations" ADD COLUMN IF NOT EXISTS "influencer_terms" TEXT;
