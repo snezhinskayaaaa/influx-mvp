@@ -155,7 +155,11 @@ export function CampaignsTab({
       });
       if (!res.ok) {
         const data = await res.json();
-        showToast(data.error || 'Failed to start campaign', 'error');
+        const errorMsg = data.error || 'Failed to start campaign';
+        showToast(errorMsg, 'error');
+        if (errorMsg.toLowerCase().includes('insufficient balance')) {
+          setShowInsufficientFundsDialog(true);
+        }
         return;
       }
       showToast('Campaign started. 50% advance paid to creator.', 'success');
@@ -1584,7 +1588,11 @@ export function CampaignsTab({
                                   });
                                   if (!agreeRes.ok) {
                                     const data = await agreeRes.json();
-                                    showToast(data.error || 'Failed to start campaign', 'error');
+                                    const errorMsg = data.error || 'Failed to start campaign';
+                                    showToast(errorMsg, 'error');
+                                    if (errorMsg.toLowerCase().includes('insufficient balance')) {
+                                      setShowInsufficientFundsDialog(true);
+                                    }
                                     return;
                                   }
                                   // Step 2: Start (IN_PROGRESS + 50% advance)
