@@ -63,6 +63,20 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 
+/** Label maps for content format values */
+const FORMAT_LABELS: Record<string, string> = {
+  "twitter-post": "X Post",
+  "twitter-thread": "X Thread",
+  "telegram-post": "Telegram Post",
+  "telegram-ama": "Telegram AMA",
+  "instagram-post": "Instagram Post",
+  "instagram-story": "Instagram Story",
+  "instagram-reel": "Instagram Reel",
+  "tiktok-video": "TikTok Video",
+  "youtube-video": "YouTube Video",
+  "youtube-short": "YouTube Short",
+};
+
 type CampaignStatus =
   | "open"
   | "applied"
@@ -113,6 +127,7 @@ interface Campaign {
   currentContentUrl?: string;
   contentApproved?: boolean;
   publishedUrl?: string;
+  publishedUrls?: string[];
   publicMetrics?: {
     views?: number;
     likes?: number;
@@ -148,7 +163,7 @@ export default function InfluencerDashboard() {
   const [selectedCampaignDetails, setSelectedCampaignDetails] = useState<Campaign | null>(null);
   const [isCampaignDetailsExpanded, setIsCampaignDetailsExpanded] = useState(false);
   const [contentLinkInput, setContentLinkInput] = useState("");
-  const [publishedLinkInput, setPublishedLinkInput] = useState("");
+  const [publishedLinks, setPublishedLinks] = useState<Record<string, string>>({});
   const [applyingCampaign, setApplyingCampaign] = useState<Campaign | null>(null);
   const [proposedPrice, setProposedPrice] = useState("");
   const [applicationMessage, setApplicationMessage] = useState("");
@@ -311,6 +326,7 @@ export default function InfluencerDashboard() {
                 revisionCount: (collab.revisionCount as number) || 0,
                 contentUrl: (collab.contentUrl as string) || undefined,
                 publishedUrl: (collab.publishedUrl as string) || undefined,
+                publishedUrls: Array.isArray(collab.publishedUrls) ? collab.publishedUrls as string[] : [],
                 disputeReason: (collab.disputeReason as string) || undefined,
                 collaborationMessage: (collab.message as string) || undefined,
                 brandTerms: (collab.brandTerms as string) || undefined,
@@ -634,7 +650,7 @@ export default function InfluencerDashboard() {
   };
 
   /** Handle content/published URL submission */
-  const handleSubmitContent = async (collaborationId: string | number, payload: { contentUrl?: string; publishedUrl?: string }) => {
+  const handleSubmitContent = async (collaborationId: string | number, payload: { contentUrl?: string; publishedUrl?: string; publishedUrls?: string[] }) => {
     setSubmitLoading(true);
     try {
       const res = await fetch(`/api/collaborations/${collaborationId}/submit`, {
@@ -648,11 +664,11 @@ export default function InfluencerDashboard() {
         return;
       }
       showToast(
-        payload.publishedUrl ? "Published link submitted!" : "Content submitted for review!",
+        (payload.publishedUrl || payload.publishedUrls) ? "Published links submitted!" : "Content submitted for review!",
         "success"
       );
       setContentLinkInput("");
-      setPublishedLinkInput("");
+      setPublishedLinks({});
       await refreshCollaborations();
     } catch {
       showToast("Something went wrong. Please try again.", "error");
@@ -1875,33 +1891,49 @@ export default function InfluencerDashboard() {
                               <div className="flex items-center gap-2 px-4 py-3 rounded-lg bg-purple-500/10 border border-purple-500/20">
                                 <CheckCircle2 className="h-5 w-5 text-purple-600" />
                                 <div>
-                                  <p className="text-sm font-medium text-purple-600">Content approved! Publish it and share the link.</p>
+                                  <p className="text-sm font-medium text-purple-600">Content approved! Publish it and share the links.</p>
                                 </div>
                               </div>
-                              <div className="space-y-2">
-                                <Label className="text-sm font-medium">Submit Published Link</Label>
-                                <p className="text-xs text-muted-foreground mb-2">
-                                  Share the link to your live published post
+                              <div className="space-y-3">
+                                <Label className="text-sm font-medium">Published Links</Label>
+                                <p className="text-xs text-muted-foreground">
+                                  Submit a link for each content format
                                 </p>
-                                <div className="flex gap-2">
-                                  <div className="relative flex-1">
-                                    <ExternalLink className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                                    <Input
-                                      placeholder="https://instagram.com/p/..."
-                                      value={publishedLinkInput}
-                                      onChange={(e) => setPublishedLinkInput(e.target.value)}
-                                      className="pl-10 h-11"
-                                    />
+                                {(selectedCampaignDetails.contentFormats.length > 0
+                                  ? selectedCampaignDetails.contentFormats
+                                  : ["post"]
+                                ).map((format) => (
+                                  <div key={format} className="space-y-1">
+                                    <Label className="text-xs text-muted-foreground">
+                                      {FORMAT_LABELS[format] || format.replace(/-/g, " ").replace(/\b\w/g, c => c.toUpperCase())}
+                                    </Label>
+                                    <div className="relative">
+                                      <ExternalLink className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                                      <Input
+                                        placeholder={`https://...`}
+                                        value={publishedLinks[format] || ""}
+                                        onChange={(e) => setPublishedLinks(prev => ({ ...prev, [format]: e.target.value }))}
+                                        className="pl-10 h-11"
+                                      />
+                                    </div>
                                   </div>
-                                  <Button
-                                    className="bg-gradient-to-r from-secondary to-primary"
-                                    disabled={submitLoading || !publishedLinkInput.trim()}
-                                    onClick={() => handleSubmitContent(selectedCampaignDetails.id, { publishedUrl: publishedLinkInput.trim() })}
-                                  >
-                                    <Rocket className="h-4 w-4 mr-2" />
-                                    {submitLoading ? "Submitting..." : "Submit Published Link"}
-                                  </Button>
-                                </div>
+                                ))}
+                                <Button
+                                  className="w-full bg-gradient-to-r from-secondary to-primary"
+                                  disabled={
+                                    submitLoading ||
+                                    (selectedCampaignDetails.contentFormats.length > 0
+                                      ? selectedCampaignDetails.contentFormats.some(f => !publishedLinks[f]?.trim())
+                                      : !publishedLinks["post"]?.trim())
+                                  }
+                                  onClick={() => {
+                                    const urls = Object.values(publishedLinks).map(u => u.trim()).filter(u => u.length > 0);
+                                    handleSubmitContent(selectedCampaignDetails.id, { publishedUrls: urls });
+                                  }}
+                                >
+                                  <Rocket className="h-4 w-4 mr-2" />
+                                  {submitLoading ? "Submitting..." : "Submit All Links"}
+                                </Button>
                               </div>
                               <div className="flex items-center gap-2 px-4 py-3 rounded-lg bg-primary/10 border border-primary/20">
                                 <Wallet className="h-5 w-5 text-primary" />
@@ -1924,7 +1956,34 @@ export default function InfluencerDashboard() {
                                   <p className="text-sm font-medium text-green-600">Waiting for brand approval. Auto-release in 7 days.</p>
                                 </div>
                               </div>
-                              {selectedCampaignDetails.publishedUrl && (
+                              {(selectedCampaignDetails.publishedUrls && selectedCampaignDetails.publishedUrls.length > 0) ? (
+                                <div className="bg-background rounded-lg p-4 border border-border">
+                                  <div className="flex items-center gap-2 mb-2">
+                                    <Rocket className="h-4 w-4 text-success" />
+                                    <span className="text-sm font-medium">Published Content</span>
+                                  </div>
+                                  <div className="space-y-2">
+                                    {selectedCampaignDetails.publishedUrls.map((url, idx) => {
+                                      const format = selectedCampaignDetails.contentFormats[idx];
+                                      const label = format ? (FORMAT_LABELS[format] || format.replace(/-/g, " ").replace(/\b\w/g, c => c.toUpperCase())) : `Link ${idx + 1}`;
+                                      return (
+                                        <div key={idx}>
+                                          <span className="text-xs text-muted-foreground">{label}</span>
+                                          <a
+                                            href={url}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="text-sm text-primary hover:underline break-all flex items-center gap-1"
+                                          >
+                                            {url}
+                                            <ExternalLink className="h-3 w-3" />
+                                          </a>
+                                        </div>
+                                      );
+                                    })}
+                                  </div>
+                                </div>
+                              ) : selectedCampaignDetails.publishedUrl ? (
                                 <div className="bg-background rounded-lg p-4 border border-border">
                                   <div className="flex items-center gap-2 mb-2">
                                     <Rocket className="h-4 w-4 text-success" />
@@ -1940,7 +1999,7 @@ export default function InfluencerDashboard() {
                                     <ExternalLink className="h-3 w-3" />
                                   </a>
                                 </div>
-                              )}
+                              ) : null}
                             </div>
                           ) : selectedCampaignDetails.status === "disputed" ? (
                             <div className="flex items-center gap-2 px-4 py-3 rounded-lg bg-red-500/10 border border-red-500/20">
@@ -1951,7 +2010,34 @@ export default function InfluencerDashboard() {
                             </div>
                           ) : (selectedCampaignDetails.status === "completed" || selectedCampaignDetails.status === "resolved") ? (
                             <div className="space-y-3">
-                              {selectedCampaignDetails.publishedUrl && (
+                              {(selectedCampaignDetails.publishedUrls && selectedCampaignDetails.publishedUrls.length > 0) ? (
+                                <div className="bg-background rounded-lg p-4 border border-border">
+                                  <div className="flex items-center gap-2 mb-2">
+                                    <Rocket className="h-4 w-4 text-success" />
+                                    <span className="text-sm font-medium">Published Content</span>
+                                  </div>
+                                  <div className="space-y-2">
+                                    {selectedCampaignDetails.publishedUrls.map((url, idx) => {
+                                      const format = selectedCampaignDetails.contentFormats[idx];
+                                      const label = format ? (FORMAT_LABELS[format] || format.replace(/-/g, " ").replace(/\b\w/g, c => c.toUpperCase())) : `Link ${idx + 1}`;
+                                      return (
+                                        <div key={idx}>
+                                          <span className="text-xs text-muted-foreground">{label}</span>
+                                          <a
+                                            href={url}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="text-sm text-primary hover:underline break-all flex items-center gap-1"
+                                          >
+                                            {url}
+                                            <ExternalLink className="h-3 w-3" />
+                                          </a>
+                                        </div>
+                                      );
+                                    })}
+                                  </div>
+                                </div>
+                              ) : selectedCampaignDetails.publishedUrl ? (
                                 <div className="bg-background rounded-lg p-4 border border-border">
                                   <div className="flex items-center gap-2 mb-2">
                                     <Rocket className="h-4 w-4 text-success" />
@@ -1967,7 +2053,7 @@ export default function InfluencerDashboard() {
                                     <ExternalLink className="h-3 w-3" />
                                   </a>
                                 </div>
-                              )}
+                              ) : null}
 
                               {/* Public Metrics */}
                               {selectedCampaignDetails.publicMetrics && (

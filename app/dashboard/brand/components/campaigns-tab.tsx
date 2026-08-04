@@ -360,6 +360,8 @@ export function CampaignsTab({
                 message: (c.message as string) || '',
                 appliedAt: c.createdAt ? new Date(c.createdAt as string).toLocaleDateString() : 'Unknown',
                 contentUrl: (c.contentUrl as string) || undefined,
+                publishedUrl: (c.publishedUrl as string) || undefined,
+                publishedUrls: Array.isArray(c.publishedUrls) ? c.publishedUrls as string[] : [],
                 revisionCount: (c.revisionCount as number) || 0,
                 revisionNote: (c.revisionNote as string) || undefined,
                 brandTerms: (c.brandTerms as string) || undefined,
@@ -2091,9 +2093,11 @@ export function CampaignsTab({
               <div className="flex gap-4">
                 <div className="flex flex-col items-center">
                   <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold ${
-                    (selectedCampaignDetails.currentStage || 1) >= 3
-                      ? "bg-success text-success-foreground"
-                      : "bg-muted text-muted-foreground"
+                    selectedInfluencerForPipeline && ["PUBLISHING", "DELIVERED", "COMPLETED", "RESOLVED"].includes(selectedInfluencerForPipeline.collaborationStatus ?? "")
+                      ? "bg-primary text-primary-foreground"
+                      : (selectedCampaignDetails.currentStage || 1) >= 3
+                        ? "bg-success text-success-foreground"
+                        : "bg-muted text-muted-foreground"
                   }`}>
                     3
                   </div>
@@ -2141,7 +2145,7 @@ export function CampaignsTab({
                         <div className="flex items-center justify-between py-2">
                           <span>Published</span>
                           <span className="font-semibold">
-                            {selectedCampaignDetails.applicationsList?.filter(app => app.publishedUrl).length || 0}
+                            {selectedCampaignDetails.applicationsList?.filter(app => (app.publishedUrls && app.publishedUrls.length > 0) || app.publishedUrl).length || 0}
                           </span>
                         </div>
                         <div className="flex items-center justify-between py-2">
@@ -2180,7 +2184,7 @@ export function CampaignsTab({
                           )}
                         </div>
 
-                        {!selectedInfluencerForPipeline.contentApproved ? (
+                        {!selectedInfluencerForPipeline.contentApproved && !["PUBLISHING", "DELIVERED", "COMPLETED", "RESOLVED"].includes(selectedInfluencerForPipeline.collaborationStatus ?? "") ? (
                           <div className="text-center py-8 bg-muted/30 rounded-lg border border-dashed border-border">
                             <Clock className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
                             <p className="text-sm text-muted-foreground">
@@ -2189,24 +2193,47 @@ export function CampaignsTab({
                           </div>
                         ) : (
                           <>
-                            {/* Published URL */}
-                            {selectedInfluencerForPipeline.publishedUrl ? (
+                            {/* Published URLs */}
+                            {(selectedInfluencerForPipeline.publishedUrls && selectedInfluencerForPipeline.publishedUrls.length > 0) || selectedInfluencerForPipeline.publishedUrl ? (
                               <div className="space-y-3">
                                 <div className="bg-background rounded-lg p-4 border border-border">
                                   <div className="flex items-center gap-2 mb-2">
                                     <Rocket className="h-4 w-4 text-success" />
                                     <span className="text-sm font-medium">Published Content</span>
                                   </div>
-                                  <a
-                                    href={selectedInfluencerForPipeline.publishedUrl}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="text-sm text-primary hover:underline break-all flex items-center gap-1"
-                                  >
-                                    {selectedInfluencerForPipeline.publishedUrl}
-                                    <ExternalLink className="h-3 w-3" />
-                                  </a>
-                                  <p className="text-xs text-muted-foreground mt-1">
+                                  {selectedInfluencerForPipeline.publishedUrls && selectedInfluencerForPipeline.publishedUrls.length > 0 ? (
+                                    <div className="space-y-2">
+                                      {selectedInfluencerForPipeline.publishedUrls.map((url, idx) => {
+                                        const format = selectedCampaignDetails.contentFormats[idx];
+                                        const label = format ? (FORMAT_LABELS[format] || format.replace(/-/g, " ").replace(/\b\w/g, c => c.toUpperCase())) : `Link ${idx + 1}`;
+                                        return (
+                                          <div key={idx}>
+                                            <span className="text-xs text-muted-foreground">{label}</span>
+                                            <a
+                                              href={url}
+                                              target="_blank"
+                                              rel="noopener noreferrer"
+                                              className="text-sm text-primary hover:underline break-all flex items-center gap-1"
+                                            >
+                                              {url}
+                                              <ExternalLink className="h-3 w-3" />
+                                            </a>
+                                          </div>
+                                        );
+                                      })}
+                                    </div>
+                                  ) : selectedInfluencerForPipeline.publishedUrl ? (
+                                    <a
+                                      href={selectedInfluencerForPipeline.publishedUrl}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="text-sm text-primary hover:underline break-all flex items-center gap-1"
+                                    >
+                                      {selectedInfluencerForPipeline.publishedUrl}
+                                      <ExternalLink className="h-3 w-3" />
+                                    </a>
+                                  ) : null}
+                                  <p className="text-xs text-muted-foreground mt-2">
                                     Published {selectedInfluencerForPipeline.publishedAt &&
                                       new Date(selectedInfluencerForPipeline.publishedAt).toLocaleDateString('en-US', {
                                         month: 'short',
@@ -2217,6 +2244,64 @@ export function CampaignsTab({
                                     }
                                   </p>
                                 </div>
+
+                                {/* Approve & Pay / Dispute buttons for DELIVERED status */}
+                                {selectedInfluencerForPipeline.collaborationStatus === "DELIVERED" && selectedInfluencerForPipeline.collaborationId && (
+                                  <div className="space-y-3">
+                                    <div className="flex items-center gap-2 px-4 py-3 rounded-lg bg-amber-500/10 border border-amber-500/20">
+                                      <Clock className="h-5 w-5 text-amber-600" />
+                                      <p className="text-xs text-muted-foreground">
+                                        Auto-release in 7 days if no action is taken
+                                      </p>
+                                    </div>
+                                    {!showDisputeInput ? (
+                                      <div className="flex gap-2">
+                                        <Button
+                                          className="flex-1 bg-gradient-to-r from-secondary to-primary"
+                                          disabled={actionLoading}
+                                          onClick={() => handleApproveDelivery(selectedInfluencerForPipeline.collaborationId!)}
+                                        >
+                                          <CheckCircle2 className="h-4 w-4 mr-2" />
+                                          {actionLoading ? "Processing..." : "Approve & Pay (50%)"}
+                                        </Button>
+                                        <Button
+                                          variant="outline"
+                                          className="border-red-500/30 text-red-600 hover:bg-red-500/10"
+                                          disabled={actionLoading}
+                                          onClick={() => setShowDisputeInput(true)}
+                                        >
+                                          <AlertCircle className="h-4 w-4 mr-2" />
+                                          Dispute
+                                        </Button>
+                                      </div>
+                                    ) : (
+                                      <div className="space-y-2">
+                                        <Textarea
+                                          placeholder="Describe the issue..."
+                                          value={disputeReasonText}
+                                          onChange={(e) => setDisputeReasonText(e.target.value)}
+                                          className="min-h-[80px]"
+                                        />
+                                        <div className="flex gap-2">
+                                          <Button
+                                            variant="outline"
+                                            className="border-red-500/30 text-red-600 hover:bg-red-500/10"
+                                            disabled={actionLoading || !disputeReasonText.trim()}
+                                            onClick={() => handleDispute(selectedInfluencerForPipeline.collaborationId!, disputeReasonText.trim())}
+                                          >
+                                            {actionLoading ? "Filing..." : "File Dispute"}
+                                          </Button>
+                                          <Button
+                                            variant="ghost"
+                                            onClick={() => { setShowDisputeInput(false); setDisputeReasonText(""); }}
+                                          >
+                                            Cancel
+                                          </Button>
+                                        </div>
+                                      </div>
+                                    )}
+                                  </div>
+                                )}
 
                                 {/* Public Metrics */}
                                 {selectedInfluencerForPipeline.publicMetrics && (

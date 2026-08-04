@@ -39,7 +39,11 @@ export async function POST(
       return NextResponse.json({ error: 'Access denied' }, { status: 403 })
     }
 
-    const { contentUrl, publishedUrl } = body as { contentUrl?: string; publishedUrl?: string }
+    const { contentUrl, publishedUrl, publishedUrls } = body as {
+      contentUrl?: string
+      publishedUrl?: string
+      publishedUrls?: string[]
+    }
 
     // Submit draft content (IN_PROGRESS or REVISION -> CONTENT_REVIEW)
     if (collaboration.status === 'IN_PROGRESS' || collaboration.status === 'REVISION') {
@@ -61,16 +65,24 @@ export async function POST(
       return NextResponse.json({ collaboration: updated })
     }
 
-    // Submit published post (PUBLISHING -> DELIVERED)
+    // Submit published post(s) (PUBLISHING -> DELIVERED)
     if (collaboration.status === 'PUBLISHING') {
-      if (!publishedUrl || typeof publishedUrl !== 'string' || publishedUrl.trim().length === 0) {
-        return NextResponse.json({ error: 'publishedUrl is required' }, { status: 400 })
+      // Accept publishedUrls (array) or publishedUrl (single, backwards compat)
+      const urls: string[] = Array.isArray(publishedUrls)
+        ? publishedUrls.map(u => (typeof u === 'string' ? u.trim() : '')).filter(u => u.length > 0)
+        : (publishedUrl && typeof publishedUrl === 'string' && publishedUrl.trim().length > 0)
+          ? [publishedUrl.trim()]
+          : []
+
+      if (urls.length === 0) {
+        return NextResponse.json({ error: 'At least one published URL is required' }, { status: 400 })
       }
 
       const updated = await prisma.collaboration.update({
         where: { id },
         data: {
-          publishedUrl: publishedUrl.trim(),
+          publishedUrls: urls,
+          publishedUrl: urls[0], // Keep legacy field in sync
           status: 'DELIVERED',
           deliveredAt: new Date(),
         },

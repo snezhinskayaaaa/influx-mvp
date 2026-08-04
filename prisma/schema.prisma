@@ -260,7 +260,8 @@ model Collaboration {
 
   // Content review
   contentUrl     String?   @map("content_url")
-  publishedUrl   String?   @map("published_url")
+  publishedUrl   String?   @map("published_url") // Legacy: single URL, kept for backwards compatibility
+  publishedUrls  String[]  @default([]) @map("published_urls") // Array of published URLs per content format
   revisionNote   String?   @map("revision_note")
   revisionCount  Int       @default(0) @map("revision_count")
 

@@ -150,6 +150,7 @@ export interface CampaignApplication {
 
   // Publication and metrics
   publishedUrl?: string;
+  publishedUrls?: string[];
   publishedAt?: string;
   publicMetrics?: PublicMetrics;
   insightsScreenshots?: InsightsScreenshot[];
