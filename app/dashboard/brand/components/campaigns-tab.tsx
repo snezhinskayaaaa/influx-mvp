@@ -1416,37 +1416,20 @@ export function CampaignsTab({
 
                           </div>
                         ) : selectedInfluencerForPipeline.collaborationStatus === "AGREED" ? (
-                          /* AGREED: read-only terms, waiting to start */
+                          /* AGREED: funds frozen, ready to start */
                           <div className="space-y-3">
-                            <div className="bg-muted/50 rounded-lg p-4">
-                              <h4 className="text-sm font-semibold mb-2">Agreed Price</h4>
-                              <div className="text-lg font-bold text-primary">
-                                ${selectedInfluencerForPipeline.agreedPrice ?? '0'}
-                              </div>
-                            </div>
-
-                            {selectedInfluencerForPipeline.brandTerms && (
-                              <div className="space-y-1">
-                                <Label className="text-sm font-medium text-muted-foreground">Project Terms</Label>
-                                <p className="text-sm px-3 py-2 rounded-lg bg-muted/50 border border-border">
-                                  {selectedInfluencerForPipeline.brandTerms}
-                                </p>
-                              </div>
-                            )}
-                            {selectedInfluencerForPipeline.influencerTerms && (
-                              <div className="space-y-1">
-                                <Label className="text-sm font-medium text-muted-foreground">Creator Terms</Label>
-                                <p className="text-sm px-3 py-2 rounded-lg bg-muted/50 border border-border">
-                                  {selectedInfluencerForPipeline.influencerTerms}
-                                </p>
-                              </div>
-                            )}
-
                             <div className="flex items-center gap-2 px-4 py-3 rounded-lg bg-success/10 border border-success/20">
                               <CheckCircle2 className="h-5 w-5 text-success" />
                               <div>
-                                <p className="text-sm font-medium text-success">Terms Agreed</p>
-                                <p className="text-xs text-muted-foreground">Funds frozen. Ready to start campaign.</p>
+                                <p className="text-sm font-medium text-success">Terms Approved</p>
+                                <p className="text-xs text-muted-foreground">Both parties have approved the collaboration terms</p>
+                              </div>
+                            </div>
+                            <div className="flex items-center gap-2 px-4 py-3 rounded-lg bg-primary/10 border border-primary/20">
+                              <Wallet className="h-5 w-5 text-primary" />
+                              <div>
+                                <p className="text-sm font-medium text-primary">Funds Frozen (${selectedInfluencerForPipeline.agreedPrice ?? 0})</p>
+                                <p className="text-xs text-muted-foreground">Ready to start campaign</p>
                               </div>
                             </div>
                           </div>
@@ -1970,7 +1953,7 @@ export function CampaignsTab({
               </div>
 
               {/* Stage 2: Content Review & Approval */}
-              <div className="flex gap-4">
+              <div className={`flex gap-4 ${selectedInfluencerForPipeline ? 'hidden' : ''}`}
                 <div className="flex flex-col items-center">
                   <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold ${
                     (selectedCampaignDetails.currentStage || 1) >= 2
@@ -2259,7 +2242,7 @@ export function CampaignsTab({
               </div>
 
               {/* Stage 3: Publication & Delivery */}
-              <div className="flex gap-4">
+              <div className={`flex gap-4 ${selectedInfluencerForPipeline ? 'hidden' : ''}`}
                 <div className="flex flex-col items-center">
                   <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold ${
                     (selectedCampaignDetails.currentStage || 1) >= 3
