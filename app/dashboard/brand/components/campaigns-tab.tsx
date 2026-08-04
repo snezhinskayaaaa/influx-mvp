@@ -1676,8 +1676,6 @@ export function CampaignsTab({
                           </div>
                         )}
 
-                        )}
-
                         {/* DISPUTED: Under review */}
                         {selectedInfluencerForPipeline.collaborationStatus === "DISPUTED" && (
                           <div className="space-y-3 pt-3 border-t">
