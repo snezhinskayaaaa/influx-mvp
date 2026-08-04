@@ -1586,6 +1586,7 @@ export default function InfluencerDashboard() {
                                           });
                                           if (res.ok) {
                                             showToast('Price declined. Project can propose a new price.', 'success');
+                                            setSelectedCampaignDetails({ ...selectedCampaignDetails, influencerAgreed: false });
                                             await refreshCollaborations();
                                           } else {
                                             const data = await res.json();
