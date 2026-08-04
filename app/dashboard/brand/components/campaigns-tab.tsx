@@ -1444,6 +1444,18 @@ export function CampaignsTab({
                           <p className="text-xs text-muted-foreground">Creator can add their terms when reviewing</p>
                         </div>
 
+                        {/* Terms agreement checkbox */}
+                        <label className={`flex items-start gap-2 cursor-pointer p-3 rounded-lg border transition-all ${termsHighlight ? 'border-destructive bg-destructive/5 animate-pulse' : 'border-border'}`}>
+                          <input
+                            type="checkbox"
+                            checked={termsAccepted}
+                            onChange={(e) => { setTermsAccepted(e.target.checked); setTermsHighlight(false); }}
+                            className="mt-0.5 rounded"
+                          />
+                          <span className="text-xs text-muted-foreground">
+                            I agree to the campaign terms, agreed price, and any additional terms from both parties
+                          </span>
+                        </label>
 
                         {/* Funds Verification Status */}
                         {selectedInfluencerForPipeline.brandApprovedTerms && selectedInfluencerForPipeline.influencerApprovedTerms && (
