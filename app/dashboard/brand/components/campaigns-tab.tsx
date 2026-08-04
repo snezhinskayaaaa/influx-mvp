@@ -164,7 +164,7 @@ export function CampaignsTab({
       }
       showToast('Campaign started. 50% advance paid to creator.', 'success');
       // Refresh page to reflect changes
-      window.location.reload();
+      if (selectedCampaignDetails) await handleOpenCampaign(selectedCampaignDetails);
     } catch {
       showToast('Failed to start campaign', 'error');
     } finally {
@@ -187,7 +187,10 @@ export function CampaignsTab({
         return;
       }
       showToast('Content approved. Waiting for creator to publish.', 'success');
-      window.location.reload();
+      // Refresh pipeline data inline instead of full page reload
+      if (selectedCampaignDetails) {
+        await handleOpenCampaign(selectedCampaignDetails);
+      }
     } catch {
       showToast('Failed to approve content', 'error');
     } finally {
@@ -212,7 +215,7 @@ export function CampaignsTab({
       showToast('Revision requested.', 'success');
       setRevisionNoteText("");
       setShowRevisionInput(false);
-      window.location.reload();
+      if (selectedCampaignDetails) await handleOpenCampaign(selectedCampaignDetails);
     } catch {
       showToast('Failed to request revision', 'error');
     } finally {
@@ -235,7 +238,7 @@ export function CampaignsTab({
         return;
       }
       showToast('Delivery approved. Final payment released.', 'success');
-      window.location.reload();
+      if (selectedCampaignDetails) await handleOpenCampaign(selectedCampaignDetails);
     } catch {
       showToast('Failed to approve delivery', 'error');
     } finally {
@@ -260,7 +263,7 @@ export function CampaignsTab({
       showToast('Dispute filed. Platform team will review.', 'success');
       setDisputeReasonText("");
       setShowDisputeInput(false);
-      window.location.reload();
+      if (selectedCampaignDetails) await handleOpenCampaign(selectedCampaignDetails);
     } catch {
       showToast('Failed to file dispute', 'error');
     } finally {
