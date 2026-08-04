@@ -1676,33 +1676,6 @@ export function CampaignsTab({
                           </div>
                         )}
 
-                        {/* Stage 2: Content Review */}
-                        {["IN_PROGRESS", "CONTENT_REVIEW", "REVISION", "PUBLISHING", "DELIVERED", "COMPLETED", "RESOLVED"].includes(selectedInfluencerForPipeline.collaborationStatus ?? "") && (
-                          <div className="pt-4 border-t">
-                            <div className="flex items-center gap-3 mb-3">
-                              <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold ${
-                                ["CONTENT_REVIEW", "REVISION", "PUBLISHING", "DELIVERED", "COMPLETED", "RESOLVED"].includes(selectedInfluencerForPipeline.collaborationStatus ?? "")
-                                  ? "bg-primary text-primary-foreground"
-                                  : "bg-muted text-muted-foreground"
-                              }`}>2</div>
-                              <div>
-                                <h4 className="text-sm font-semibold">Content Creation & Review</h4>
-                                <p className="text-xs text-muted-foreground">
-                                  {selectedInfluencerForPipeline.collaborationStatus === "IN_PROGRESS"
-                                    ? "Waiting for creator to submit content"
-                                    : selectedInfluencerForPipeline.collaborationStatus === "CONTENT_REVIEW"
-                                    ? "Review the submitted content"
-                                    : selectedInfluencerForPipeline.collaborationStatus === "REVISION"
-                                    ? "Waiting for creator to revise content"
-                                    : ["PUBLISHING", "DELIVERED", "COMPLETED", "RESOLVED"].includes(selectedInfluencerForPipeline.collaborationStatus ?? "")
-                                    ? "Content approved"
-                                    : ""}
-                                </p>
-                              </div>
-                            </div>
-                          </div>
-                        )}
-
                         {/* CONTENT_REVIEW: View content + Approve / Revision */}
                         {selectedInfluencerForPipeline.collaborationStatus === "CONTENT_REVIEW" && selectedInfluencerForPipeline.collaborationId && (
                           <div className="space-y-3 pt-3 border-t">
@@ -1786,31 +1759,6 @@ export function CampaignsTab({
                               <div>
                                 <p className="text-sm font-medium text-purple-600">Content Approved</p>
                                 <p className="text-xs text-muted-foreground">Waiting for creator to publish.</p>
-                              </div>
-                            </div>
-                          </div>
-                        )}
-
-                        {/* Stage 3: Publication & Completion */}
-                        {["PUBLISHING", "DELIVERED", "COMPLETED", "RESOLVED"].includes(selectedInfluencerForPipeline.collaborationStatus ?? "") && (
-                          <div className="pt-4 border-t">
-                            <div className="flex items-center gap-3 mb-3">
-                              <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold ${
-                                ["DELIVERED", "COMPLETED", "RESOLVED"].includes(selectedInfluencerForPipeline.collaborationStatus ?? "")
-                                  ? "bg-primary text-primary-foreground"
-                                  : "bg-muted text-muted-foreground"
-                              }`}>3</div>
-                              <div>
-                                <h4 className="text-sm font-semibold">Publication & Completion</h4>
-                                <p className="text-xs text-muted-foreground">
-                                  {selectedInfluencerForPipeline.collaborationStatus === "PUBLISHING"
-                                    ? "Waiting for creator to publish"
-                                    : selectedInfluencerForPipeline.collaborationStatus === "DELIVERED"
-                                    ? "Review published content and approve"
-                                    : selectedInfluencerForPipeline.collaborationStatus === "COMPLETED"
-                                    ? "Campaign completed"
-                                    : "Resolved"}
-                                </p>
                               </div>
                             </div>
                           </div>
@@ -1953,7 +1901,7 @@ export function CampaignsTab({
               </div>
 
               {/* Stage 2: Content Review & Approval */}
-              <div className={`flex gap-4 ${selectedInfluencerForPipeline ? 'hidden' : ''}`}>
+              <div className="flex gap-4">
                 <div className="flex flex-col items-center">
                   <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold ${
                     (selectedCampaignDetails.currentStage || 1) >= 2
@@ -2242,7 +2190,7 @@ export function CampaignsTab({
               </div>
 
               {/* Stage 3: Publication & Delivery */}
-              <div className={`flex gap-4 ${selectedInfluencerForPipeline ? 'hidden' : ''}`}>
+              <div className="flex gap-4">
                 <div className="flex flex-col items-center">
                   <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold ${
                     (selectedCampaignDetails.currentStage || 1) >= 3
