@@ -1904,7 +1904,9 @@ export function CampaignsTab({
               <div className="flex gap-4">
                 <div className="flex flex-col items-center">
                   <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold ${
-                    (selectedCampaignDetails.currentStage || 1) >= 2
+                    selectedInfluencerForPipeline && ["IN_PROGRESS", "CONTENT_REVIEW", "REVISION", "PUBLISHING", "DELIVERED", "COMPLETED", "RESOLVED"].includes(selectedInfluencerForPipeline.collaborationStatus ?? "")
+                      ? "bg-primary text-primary-foreground"
+                      : (selectedCampaignDetails.currentStage || 1) >= 2
                       ? "bg-blue-500 text-white"
                       : "bg-muted text-muted-foreground"
                   }`}>
