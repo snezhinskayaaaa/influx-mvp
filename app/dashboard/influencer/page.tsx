@@ -1741,19 +1741,37 @@ export default function InfluencerDashboard() {
                               </div>
                               {selectedCampaignDetails.contentUrl && (
                                 <div className="bg-background rounded-lg p-4 border border-border">
-                                  <div className="flex items-center gap-2 mb-2">
-                                    <LinkIcon className="h-4 w-4 text-primary" />
-                                    <span className="text-sm font-medium">Submitted Content</span>
+                                  <div className="flex items-center justify-between mb-2">
+                                    <div className="flex items-center gap-2">
+                                      <LinkIcon className="h-4 w-4 text-primary" />
+                                      <span className="text-sm font-medium">Submitted Content</span>
+                                    </div>
                                   </div>
                                   <a
                                     href={selectedCampaignDetails.contentUrl}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="text-sm text-primary hover:underline break-all flex items-center gap-1"
+                                    className="text-sm text-primary hover:underline break-all flex items-center gap-1 mb-3"
                                   >
                                     {selectedCampaignDetails.contentUrl}
                                     <ExternalLink className="h-3 w-3" />
                                   </a>
+                                  <div className="flex gap-2">
+                                    <input
+                                      type="text"
+                                      value={contentLinkInput}
+                                      onChange={(e) => setContentLinkInput(e.target.value)}
+                                      placeholder="Update content link..."
+                                      className="flex-1 px-3 py-1.5 rounded-lg border border-border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                                    />
+                                    <Button
+                                      size="sm"
+                                      disabled={submitLoading || !contentLinkInput.trim()}
+                                      onClick={() => handleSubmitContent(selectedCampaignDetails.collaborationId || selectedCampaignDetails.id, { contentUrl: contentLinkInput.trim() })}
+                                    >
+                                      {submitLoading ? "..." : "Update"}
+                                    </Button>
+                                  </div>
                                 </div>
                               )}
                             </div>

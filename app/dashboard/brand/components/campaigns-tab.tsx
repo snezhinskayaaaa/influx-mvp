@@ -1810,9 +1810,64 @@ export function CampaignsTab({
                         </div>
 
                         {/* Content Revisions History */}
-                        {selectedInfluencerForPipeline.contentRevisions && selectedInfluencerForPipeline.contentRevisions.length > 0 ? (
+                        {(selectedInfluencerForPipeline.contentUrl || (selectedInfluencerForPipeline.contentRevisions && selectedInfluencerForPipeline.contentRevisions.length > 0)) ? (
                           <div className="space-y-3">
-                            <h4 className="text-sm font-semibold">Revision History</h4>
+                            {/* Show contentUrl directly if no revisions history */}
+                            {(!selectedInfluencerForPipeline.contentRevisions || selectedInfluencerForPipeline.contentRevisions.length === 0) && selectedInfluencerForPipeline.contentUrl && (
+                              <div className="space-y-3">
+                                <div className="p-3 rounded-lg bg-blue-50 border border-blue-200">
+                                  <div className="flex items-center gap-2 mb-1">
+                                    <ExternalLink className="h-3.5 w-3.5 text-blue-600" />
+                                    <span className="text-xs font-medium text-blue-600">Submitted Content</span>
+                                  </div>
+                                  <a href={selectedInfluencerForPipeline.contentUrl} target="_blank" rel="noopener noreferrer" className="text-sm text-primary hover:underline break-all">
+                                    {selectedInfluencerForPipeline.contentUrl}
+                                  </a>
+                                </div>
+                                <div className="text-xs text-muted-foreground">
+                                  Revision {selectedInfluencerForPipeline.revisionCount ?? 0}/3
+                                </div>
+                                <div className="flex gap-2">
+                                  <Button
+                                    onClick={() => handleApproveContent(selectedInfluencerForPipeline.collaborationId!)}
+                                    disabled={actionLoading}
+                                    className="flex-1 bg-gradient-to-r from-green-500 to-green-600 text-white"
+                                  >
+                                    <CheckCircle2 className="h-4 w-4 mr-2" />
+                                    {actionLoading ? "Approving..." : "Approve Content"}
+                                  </Button>
+                                  <Button
+                                    variant="outline"
+                                    onClick={() => setShowRevisionInput(true)}
+                                    disabled={actionLoading || (selectedInfluencerForPipeline.revisionCount ?? 0) >= 3}
+                                    className="flex-1 border-amber-500 text-amber-600 hover:bg-amber-50"
+                                  >
+                                    <MessageSquare className="h-4 w-4 mr-2" />
+                                    Request Revision
+                                  </Button>
+                                </div>
+                                {showRevisionInput && (
+                                  <div className="space-y-2">
+                                    <textarea
+                                      className="w-full min-h-[80px] px-3 py-2 rounded-lg border border-border bg-background text-sm resize-none focus:outline-none focus:ring-2 focus:ring-ring"
+                                      placeholder="Describe what needs to be changed..."
+                                      value={revisionNoteText}
+                                      onChange={(e) => setRevisionNoteText(e.target.value)}
+                                    />
+                                    <div className="flex gap-2">
+                                      <Button variant="outline" size="sm" onClick={() => { setShowRevisionInput(false); setRevisionNoteText(""); }} className="flex-1">Cancel</Button>
+                                      <Button size="sm" disabled={actionLoading || !revisionNoteText.trim()} onClick={() => handleRequestRevision(selectedInfluencerForPipeline.collaborationId!, revisionNoteText)} className="flex-1 bg-amber-500 hover:bg-amber-600 text-white">
+                                        {actionLoading ? "Sending..." : "Send Revision"}
+                                      </Button>
+                                    </div>
+                                  </div>
+                                )}
+                              </div>
+                            )}
+
+                            {/* Legacy revision history */}
+                            {selectedInfluencerForPipeline.contentRevisions && selectedInfluencerForPipeline.contentRevisions.length > 0 && (
+                            <><h4 className="text-sm font-semibold">Revision History</h4>
 
                             {selectedInfluencerForPipeline.contentRevisions.map((revision, index) => (
                               <div
@@ -1887,6 +1942,7 @@ export function CampaignsTab({
                                 )}
                               </div>
                             ))}
+                            </>)}
                           </div>
                         ) : (
                           <div className="text-center py-8 bg-muted/30 rounded-lg border border-dashed border-border">
