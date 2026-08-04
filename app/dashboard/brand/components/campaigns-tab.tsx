@@ -377,6 +377,11 @@ export function CampaignsTab({
               };
             });
           setSelectedCampaignDetails({ ...campaign, applicationsList: campaignCollabs, applications: campaignCollabs.length });
+          // Update selected influencer for pipeline if one is selected
+          if (selectedInfluencerForPipeline) {
+            const updated = campaignCollabs.find((c: CampaignApplication) => c.id === selectedInfluencerForPipeline.id);
+            if (updated) setSelectedInfluencerForPipeline(updated);
+          }
           // Also update the campaigns list count
           setCampaigns(campaigns.map(camp =>
             camp.id === campaign.id ? { ...camp, applications: campaignCollabs.length } : camp
