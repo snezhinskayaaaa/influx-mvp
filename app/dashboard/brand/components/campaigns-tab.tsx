@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { XIcon } from "@/components/x-icon";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
