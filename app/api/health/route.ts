@@ -6,7 +6,7 @@ export async function GET() {
     // Verify database connectivity with a simple query
     await prisma.$queryRaw`SELECT 1`
 
-    return NextResponse.json({ status: 'ok', timestamp: new Date().toISOString() })
+    return NextResponse.json({ status: 'ok', timestamp: new Date().toISOString(), build: '20260804' })
   } catch (error) {
     console.error('Health check failed - database unreachable:', error)
     return NextResponse.json(
