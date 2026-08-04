@@ -1382,7 +1382,9 @@ export function CampaignsTab({
                           </div>
                           <div className="flex-1">
                             <h3 className="font-semibold">
-                              Negotiation with {selectedInfluencerForPipeline.influencerName}
+                              {selectedInfluencerForPipeline.collaborationStatus === "NEGOTIATING"
+                                ? `Negotiation with ${selectedInfluencerForPipeline.influencerName}`
+                                : `Collaboration with ${selectedInfluencerForPipeline.influencerName}`}
                             </h3>
                             <p className="text-sm text-muted-foreground">
                               {selectedInfluencerForPipeline.influencerUsername} • {selectedInfluencerForPipeline.influencerFollowers} followers
@@ -1390,162 +1392,250 @@ export function CampaignsTab({
                           </div>
                         </div>
 
-                        {/* Current Price */}
-                        <div className="bg-muted/50 rounded-lg p-4">
-                          <h4 className="text-sm font-semibold mb-2">
-                            {selectedInfluencerForPipeline.agreedPrice ? 'Agreed Price' : 'Proposed Price'}
-                          </h4>
-                          <div className="text-lg font-bold text-primary">
-                            ${selectedInfluencerForPipeline.agreedPrice ?? selectedInfluencerForPipeline.proposedPriceCPM ?? '0'}
-                          </div>
-                        </div>
-
-                        {/* Project Terms */}
-                        <div className="space-y-2">
-                          <Label className="text-sm font-medium">Project Terms (Optional)</Label>
-                          <textarea
-                            className="w-full min-h-[80px] px-3 py-2 rounded-lg border border-border bg-background text-sm resize-none focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"
-                            placeholder="Additional collaboration terms from project..."
-                            value={selectedInfluencerForPipeline.brandTerms || ""}
-                            onChange={(e) => {
-                              const updatedApplications = selectedCampaignDetails.applicationsList?.map(app =>
-                                app.id === selectedInfluencerForPipeline.id
-                                  ? { ...app, brandTerms: e.target.value }
-                                  : app
-                              );
-                              setSelectedCampaignDetails({
-                                ...selectedCampaignDetails,
-                                applicationsList: updatedApplications,
-                              });
-                              setSelectedInfluencerForPipeline({
-                                ...selectedInfluencerForPipeline,
-                                brandTerms: e.target.value,
-                              });
-                            }}
-                            onBlur={() => {
-                              if (selectedInfluencerForPipeline.collaborationId) {
-                                fetch(`/api/collaborations/${selectedInfluencerForPipeline.collaborationId}`, {
-                                  method: 'PATCH',
-                                  headers: { 'Content-Type': 'application/json' },
-                                  body: JSON.stringify({ brandTerms: selectedInfluencerForPipeline.brandTerms || '' }),
-                                });
-                              }
-                            }}
-                          />
-                        </div>
-
-                        {/* Creator Terms */}
-                        <div className="space-y-2">
-                          <Label className="text-sm font-medium">Creator Terms</Label>
-                          <textarea
-                            className="w-full min-h-[80px] px-3 py-2 rounded-lg border border-border bg-muted/50 text-sm resize-none"
-                            placeholder="Additional terms from creator..."
-                            value={selectedInfluencerForPipeline.influencerTerms || ""}
-                            disabled
-                          />
-                          <p className="text-xs text-muted-foreground">Creator can add their terms when reviewing</p>
-                        </div>
-
-                        {/* Terms agreement checkbox */}
-                        <label className={`flex items-start gap-2 cursor-pointer p-3 rounded-lg border transition-all ${termsHighlight ? 'border-destructive bg-destructive/5 animate-pulse' : 'border-border'}`}>
-                          <input
-                            type="checkbox"
-                            checked={termsAccepted}
-                            onChange={(e) => { setTermsAccepted(e.target.checked); setTermsHighlight(false); }}
-                            className="mt-0.5 rounded"
-                          />
-                          <span className="text-xs text-muted-foreground">
-                            I agree to the campaign terms, agreed price, and any additional terms from both parties
-                          </span>
-                        </label>
-
-                        {/* Funds Verification Status */}
-                        {selectedInfluencerForPipeline.brandApprovedTerms && selectedInfluencerForPipeline.influencerApprovedTerms && (
-                          <div className={`flex items-center gap-2 px-4 py-3 rounded-lg border ${
-                            selectedInfluencerForPipeline.fundsVerified
-                              ? "bg-success/10 border-success/20"
-                              : "bg-warning/10 border-warning/20"
-                          }`}>
-                            {selectedInfluencerForPipeline.fundsVerified ? (
-                              <>
-                                <CheckCircle2 className="h-5 w-5 text-success" />
-                                <div>
-                                  <p className="text-sm font-medium text-success">Funds Verified</p>
-                                  <p className="text-xs text-muted-foreground">Ready to proceed to next stage</p>
-                                </div>
-                              </>
-                            ) : (
-                              <>
-                                <AlertCircle className="h-5 w-5 text-warning" />
-                                <div>
-                                  <p className="text-sm font-medium text-warning">Verifying Funds</p>
-                                  <p className="text-xs text-muted-foreground">Please wait...</p>
-                                </div>
-                              </>
-                            )}
-                          </div>
-                        )}
-
-                        {/* Creator declined the price — brand can propose a new one */}
-                        {selectedInfluencerForPipeline.collaborationStatus === "NEGOTIATING" && selectedInfluencerForPipeline.influencerAgreed === false && (
-                          <div className="space-y-3 pt-3 border-t">
-                            <div className="flex items-center gap-2 px-4 py-3 rounded-lg bg-amber-500/10 border border-amber-500/20">
-                              <AlertCircle className="h-5 w-5 text-amber-600" />
+                        {/* Stage 1 content: status-aware rendering */}
+                        {["IN_PROGRESS", "CONTENT_REVIEW", "REVISION", "PUBLISHING", "DELIVERED", "COMPLETED", "RESOLVED"].includes(selectedInfluencerForPipeline.collaborationStatus ?? "") ? (
+                          /* Completed Stage 1: read-only summary with badges */
+                          <div className="space-y-3">
+                            <div className="flex items-center gap-2 px-4 py-3 rounded-lg bg-success/10 border border-success/20">
+                              <CheckCircle2 className="h-5 w-5 text-success" />
                               <div>
-                                <p className="text-sm font-medium text-amber-600">
-                                  Creator declined your offer of ${selectedInfluencerForPipeline.agreedPrice ?? 0}
-                                </p>
-                                <p className="text-xs text-muted-foreground">You can propose a new price or cancel the negotiation</p>
+                                <p className="text-sm font-medium text-success">Terms Approved</p>
+                                <p className="text-xs text-muted-foreground">Both parties have approved the collaboration terms</p>
                               </div>
                             </div>
-                            <Button
-                              size="sm"
-                              className="w-full bg-gradient-to-r from-primary to-secondary"
-                              disabled={actionLoading}
-                              onClick={() => {
-                                setPriceModalData({ application: selectedInfluencerForPipeline, defaultPrice: String(selectedInfluencerForPipeline.agreedPrice ?? '0'), isNewOffer: true });
-                                setPriceModalValue(String(selectedInfluencerForPipeline.agreedPrice ?? '0'));
-                              }}
-                            >
-                              Propose New Price
-                            </Button>
-                          </div>
-                        )}
 
-                        {/* Cancel Negotiation — available during NEGOTIATING status */}
-                        {selectedInfluencerForPipeline.collaborationStatus === "NEGOTIATING" && selectedInfluencerForPipeline.collaborationId && (
-                          <div className="pt-2">
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              className="w-full text-destructive border-destructive/30 hover:bg-destructive/10"
-                              disabled={actionLoading}
-                              onClick={async () => {
-                                setActionLoading(true);
-                                try {
-                                  const res = await fetch(`/api/collaborations/${selectedInfluencerForPipeline.collaborationId}`, {
-                                    method: 'PATCH',
-                                    headers: { 'Content-Type': 'application/json' },
-                                    body: JSON.stringify({ status: 'CANCELLED' }),
-                                  });
-                                  if (res.ok) {
-                                    const updatedApplications = selectedCampaignDetails.applicationsList?.filter(app =>
-                                      app.id !== selectedInfluencerForPipeline.id
-                                    );
-                                    setSelectedCampaignDetails({ ...selectedCampaignDetails, applicationsList: updatedApplications, applications: (updatedApplications?.length || 0) });
-                                    setSelectedInfluencerForPipeline(null);
-                                    showToast('Negotiation ended', 'success');
-                                  } else {
-                                    const data = await res.json();
-                                    showToast(data.error || 'Failed to cancel', 'error');
-                                  }
-                                } catch { showToast('Failed to cancel negotiation', 'error'); }
-                                finally { setActionLoading(false); }
-                              }}
-                            >
-                              Cancel Negotiation
-                            </Button>
+                            <div className="flex items-center gap-2 px-4 py-3 rounded-lg bg-primary/10 border border-primary/20">
+                              <Wallet className="h-5 w-5 text-primary" />
+                              <div>
+                                <p className="text-sm font-medium text-primary">Advance Payment Secured (50%)</p>
+                                <p className="text-xs text-muted-foreground">
+                                  ${selectedInfluencerForPipeline.agreedPrice ? (selectedInfluencerForPipeline.agreedPrice / 2).toFixed(0) : '0'} advance paid to creator
+                                </p>
+                              </div>
+                            </div>
+
+                            {/* Read-only agreed price */}
+                            <div className="bg-muted/50 rounded-lg p-4">
+                              <h4 className="text-sm font-semibold mb-2">Agreed Price</h4>
+                              <div className="text-lg font-bold text-primary">
+                                ${selectedInfluencerForPipeline.agreedPrice ?? '0'}
+                              </div>
+                            </div>
+
+                            {/* Read-only terms (if any were set) */}
+                            {selectedInfluencerForPipeline.brandTerms && (
+                              <div className="space-y-1">
+                                <Label className="text-sm font-medium text-muted-foreground">Project Terms</Label>
+                                <p className="text-sm px-3 py-2 rounded-lg bg-muted/50 border border-border">
+                                  {selectedInfluencerForPipeline.brandTerms}
+                                </p>
+                              </div>
+                            )}
+                            {selectedInfluencerForPipeline.influencerTerms && (
+                              <div className="space-y-1">
+                                <Label className="text-sm font-medium text-muted-foreground">Creator Terms</Label>
+                                <p className="text-sm px-3 py-2 rounded-lg bg-muted/50 border border-border">
+                                  {selectedInfluencerForPipeline.influencerTerms}
+                                </p>
+                              </div>
+                            )}
                           </div>
+                        ) : selectedInfluencerForPipeline.collaborationStatus === "AGREED" ? (
+                          /* AGREED: read-only terms, waiting to start */
+                          <div className="space-y-3">
+                            <div className="bg-muted/50 rounded-lg p-4">
+                              <h4 className="text-sm font-semibold mb-2">Agreed Price</h4>
+                              <div className="text-lg font-bold text-primary">
+                                ${selectedInfluencerForPipeline.agreedPrice ?? '0'}
+                              </div>
+                            </div>
+
+                            {selectedInfluencerForPipeline.brandTerms && (
+                              <div className="space-y-1">
+                                <Label className="text-sm font-medium text-muted-foreground">Project Terms</Label>
+                                <p className="text-sm px-3 py-2 rounded-lg bg-muted/50 border border-border">
+                                  {selectedInfluencerForPipeline.brandTerms}
+                                </p>
+                              </div>
+                            )}
+                            {selectedInfluencerForPipeline.influencerTerms && (
+                              <div className="space-y-1">
+                                <Label className="text-sm font-medium text-muted-foreground">Creator Terms</Label>
+                                <p className="text-sm px-3 py-2 rounded-lg bg-muted/50 border border-border">
+                                  {selectedInfluencerForPipeline.influencerTerms}
+                                </p>
+                              </div>
+                            )}
+
+                            <div className="flex items-center gap-2 px-4 py-3 rounded-lg bg-success/10 border border-success/20">
+                              <CheckCircle2 className="h-5 w-5 text-success" />
+                              <div>
+                                <p className="text-sm font-medium text-success">Terms Agreed</p>
+                                <p className="text-xs text-muted-foreground">Funds frozen. Ready to start campaign.</p>
+                              </div>
+                            </div>
+                          </div>
+                        ) : (
+                          /* NEGOTIATING: full editable negotiation UI */
+                          <>
+                            {/* Current Price */}
+                            <div className="bg-muted/50 rounded-lg p-4">
+                              <h4 className="text-sm font-semibold mb-2">
+                                {selectedInfluencerForPipeline.agreedPrice ? 'Agreed Price' : 'Proposed Price'}
+                              </h4>
+                              <div className="text-lg font-bold text-primary">
+                                ${selectedInfluencerForPipeline.agreedPrice ?? selectedInfluencerForPipeline.proposedPriceCPM ?? '0'}
+                              </div>
+                            </div>
+
+                            {/* Project Terms */}
+                            <div className="space-y-2">
+                              <Label className="text-sm font-medium">Project Terms (Optional)</Label>
+                              <textarea
+                                className="w-full min-h-[80px] px-3 py-2 rounded-lg border border-border bg-background text-sm resize-none focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"
+                                placeholder="Additional collaboration terms from project..."
+                                value={selectedInfluencerForPipeline.brandTerms || ""}
+                                onChange={(e) => {
+                                  const updatedApplications = selectedCampaignDetails.applicationsList?.map(app =>
+                                    app.id === selectedInfluencerForPipeline.id
+                                      ? { ...app, brandTerms: e.target.value }
+                                      : app
+                                  );
+                                  setSelectedCampaignDetails({
+                                    ...selectedCampaignDetails,
+                                    applicationsList: updatedApplications,
+                                  });
+                                  setSelectedInfluencerForPipeline({
+                                    ...selectedInfluencerForPipeline,
+                                    brandTerms: e.target.value,
+                                  });
+                                }}
+                                onBlur={() => {
+                                  if (selectedInfluencerForPipeline.collaborationId) {
+                                    fetch(`/api/collaborations/${selectedInfluencerForPipeline.collaborationId}`, {
+                                      method: 'PATCH',
+                                      headers: { 'Content-Type': 'application/json' },
+                                      body: JSON.stringify({ brandTerms: selectedInfluencerForPipeline.brandTerms || '' }),
+                                    });
+                                  }
+                                }}
+                              />
+                            </div>
+
+                            {/* Creator Terms */}
+                            <div className="space-y-2">
+                              <Label className="text-sm font-medium">Creator Terms</Label>
+                              <textarea
+                                className="w-full min-h-[80px] px-3 py-2 rounded-lg border border-border bg-muted/50 text-sm resize-none"
+                                placeholder="Additional terms from creator..."
+                                value={selectedInfluencerForPipeline.influencerTerms || ""}
+                                disabled
+                              />
+                              <p className="text-xs text-muted-foreground">Creator can add their terms when reviewing</p>
+                            </div>
+
+                            {/* Terms agreement checkbox */}
+                            <label className={`flex items-start gap-2 cursor-pointer p-3 rounded-lg border transition-all ${termsHighlight ? 'border-destructive bg-destructive/5 animate-pulse' : 'border-border'}`}>
+                              <input
+                                type="checkbox"
+                                checked={termsAccepted}
+                                onChange={(e) => { setTermsAccepted(e.target.checked); setTermsHighlight(false); }}
+                                className="mt-0.5 rounded"
+                              />
+                              <span className="text-xs text-muted-foreground">
+                                I agree to the campaign terms, agreed price, and any additional terms from both parties
+                              </span>
+                            </label>
+
+                            {/* Funds Verification Status */}
+                            {selectedInfluencerForPipeline.brandApprovedTerms && selectedInfluencerForPipeline.influencerApprovedTerms && (
+                              <div className={`flex items-center gap-2 px-4 py-3 rounded-lg border ${
+                                selectedInfluencerForPipeline.fundsVerified
+                                  ? "bg-success/10 border-success/20"
+                                  : "bg-warning/10 border-warning/20"
+                              }`}>
+                                {selectedInfluencerForPipeline.fundsVerified ? (
+                                  <>
+                                    <CheckCircle2 className="h-5 w-5 text-success" />
+                                    <div>
+                                      <p className="text-sm font-medium text-success">Funds Verified</p>
+                                      <p className="text-xs text-muted-foreground">Ready to proceed to next stage</p>
+                                    </div>
+                                  </>
+                                ) : (
+                                  <>
+                                    <AlertCircle className="h-5 w-5 text-warning" />
+                                    <div>
+                                      <p className="text-sm font-medium text-warning">Verifying Funds</p>
+                                      <p className="text-xs text-muted-foreground">Please wait...</p>
+                                    </div>
+                                  </>
+                                )}
+                              </div>
+                            )}
+
+                            {/* Creator declined the price — brand can propose a new one */}
+                            {selectedInfluencerForPipeline.influencerAgreed === false && (
+                              <div className="space-y-3 pt-3 border-t">
+                                <div className="flex items-center gap-2 px-4 py-3 rounded-lg bg-amber-500/10 border border-amber-500/20">
+                                  <AlertCircle className="h-5 w-5 text-amber-600" />
+                                  <div>
+                                    <p className="text-sm font-medium text-amber-600">
+                                      Creator declined your offer of ${selectedInfluencerForPipeline.agreedPrice ?? 0}
+                                    </p>
+                                    <p className="text-xs text-muted-foreground">You can propose a new price or cancel the negotiation</p>
+                                  </div>
+                                </div>
+                                <Button
+                                  size="sm"
+                                  className="w-full bg-gradient-to-r from-primary to-secondary"
+                                  disabled={actionLoading}
+                                  onClick={() => {
+                                    setPriceModalData({ application: selectedInfluencerForPipeline, defaultPrice: String(selectedInfluencerForPipeline.agreedPrice ?? '0'), isNewOffer: true });
+                                    setPriceModalValue(String(selectedInfluencerForPipeline.agreedPrice ?? '0'));
+                                  }}
+                                >
+                                  Propose New Price
+                                </Button>
+                              </div>
+                            )}
+
+                            {/* Cancel Negotiation */}
+                            {selectedInfluencerForPipeline.collaborationId && (
+                              <div className="pt-2">
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  className="w-full text-destructive border-destructive/30 hover:bg-destructive/10"
+                                  disabled={actionLoading}
+                                  onClick={async () => {
+                                    setActionLoading(true);
+                                    try {
+                                      const res = await fetch(`/api/collaborations/${selectedInfluencerForPipeline.collaborationId}`, {
+                                        method: 'PATCH',
+                                        headers: { 'Content-Type': 'application/json' },
+                                        body: JSON.stringify({ status: 'CANCELLED' }),
+                                      });
+                                      if (res.ok) {
+                                        const updatedApplications = selectedCampaignDetails.applicationsList?.filter(app =>
+                                          app.id !== selectedInfluencerForPipeline.id
+                                        );
+                                        setSelectedCampaignDetails({ ...selectedCampaignDetails, applicationsList: updatedApplications, applications: (updatedApplications?.length || 0) });
+                                        setSelectedInfluencerForPipeline(null);
+                                        showToast('Negotiation ended', 'success');
+                                      } else {
+                                        const data = await res.json();
+                                        showToast(data.error || 'Failed to cancel', 'error');
+                                      }
+                                    } catch { showToast('Failed to cancel negotiation', 'error'); }
+                                    finally { setActionLoading(false); }
+                                  }}
+                                >
+                                  Cancel Negotiation
+                                </Button>
+                              </div>
+                            )}
+                          </>
                         )}
 
                         {/* === Collaboration Lifecycle Actions === */}

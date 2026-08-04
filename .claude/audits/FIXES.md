@@ -328,6 +328,21 @@
 
 ---
 
+## FIX-027: Brand pipeline shows negotiation UI for post-negotiation statuses
+
+### Changes Made
+- `app/dashboard/brand/components/campaigns-tab.tsx:1393-1550` - Wrapped the negotiation section (price, terms, checkboxes, cancel button) in status-aware conditional rendering:
+  - **IN_PROGRESS, CONTENT_REVIEW, REVISION, PUBLISHING, DELIVERED, COMPLETED, RESOLVED**: Shows completed Stage 1 with green "Terms Approved" badge, blue "Advance Payment Secured (50%)" badge with amount, and read-only agreed price/terms
+  - **AGREED**: Shows read-only agreed price/terms with "Terms Agreed" badge indicating funds are frozen
+  - **NEGOTIATING**: Keeps existing editable negotiation UI (price, terms, checkboxes, decline/cancel buttons)
+- `app/dashboard/brand/components/campaigns-tab.tsx:1385` - Updated header from always showing "Negotiation with X" to "Collaboration with X" for post-negotiation statuses
+
+### Verification
+- [x] Linter passes (0 errors, 7 pre-existing warnings)
+- [x] No new lint errors introduced
+
+---
+
 ## Summary
 
 | ID | File | Status |
@@ -358,3 +373,4 @@
 | FIX-024 | app/dashboard/influencer/page.tsx | done |
 | FIX-025 | app/dashboard/influencer/page.tsx | done |
 | FIX-026 | schema, API, campaigns-tab.tsx, influencer/page.tsx | done |
+| FIX-027 | campaigns-tab.tsx | done |
