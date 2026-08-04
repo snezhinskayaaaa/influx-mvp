@@ -406,6 +406,7 @@ export default function InfluencerDashboard() {
     // Poll for updates every 30 seconds
     const interval = setInterval(() => {
       fetchData();
+      refreshCollaborations();
     }, 30000);
 
     return () => clearInterval(interval);
