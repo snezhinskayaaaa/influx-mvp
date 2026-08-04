@@ -1953,7 +1953,7 @@ export function CampaignsTab({
               </div>
 
               {/* Stage 2: Content Review & Approval */}
-              <div className={`flex gap-4 ${selectedInfluencerForPipeline ? 'hidden' : ''}`}
+              <div className={`flex gap-4 ${selectedInfluencerForPipeline ? 'hidden' : ''}`}>
                 <div className="flex flex-col items-center">
                   <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold ${
                     (selectedCampaignDetails.currentStage || 1) >= 2
@@ -2242,7 +2242,7 @@ export function CampaignsTab({
               </div>
 
               {/* Stage 3: Publication & Delivery */}
-              <div className={`flex gap-4 ${selectedInfluencerForPipeline ? 'hidden' : ''}`}
+              <div className={`flex gap-4 ${selectedInfluencerForPipeline ? 'hidden' : ''}`}>
                 <div className="flex flex-col items-center">
                   <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold ${
                     (selectedCampaignDetails.currentStage || 1) >= 3
