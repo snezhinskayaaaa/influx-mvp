@@ -1676,8 +1676,8 @@ export function CampaignsTab({
                           </div>
                         )}
 
-                        {/* CONTENT_REVIEW actions moved to Stage 2 — hidden here */}
-                        {false && selectedInfluencerForPipeline.collaborationStatus === "CONTENT_REVIEW" && selectedInfluencerForPipeline.collaborationId && (
+                        {/* CONTENT_REVIEW actions handled in Stage 2 */}
+                        {selectedInfluencerForPipeline && false && selectedInfluencerForPipeline.collaborationStatus === "CONTENT_REVIEW" && selectedInfluencerForPipeline.collaborationId && (
                           <div className="space-y-3 pt-3 border-t">
                             {selectedInfluencerForPipeline.contentUrl && (
                               <div className="p-3 rounded-lg bg-blue-50 border border-blue-200">
@@ -1751,8 +1751,8 @@ export function CampaignsTab({
                           </div>
                         )}
 
-                        {/* PUBLISHING moved to Stage 3 — hidden here */}
-                        {false && selectedInfluencerForPipeline.collaborationStatus === "PUBLISHING" && (
+                        {/* PUBLISHING handled in Stage 3 */}
+                        {selectedInfluencerForPipeline && false && selectedInfluencerForPipeline.collaborationStatus === "PUBLISHING" && (
                           <div className="pt-3 border-t">
                             <div className="flex items-center gap-2 px-4 py-3 rounded-lg bg-purple-500/10 border border-purple-500/20">
                               <Clock className="h-5 w-5 text-purple-600" />
@@ -1764,8 +1764,8 @@ export function CampaignsTab({
                           </div>
                         )}
 
-                        {/* DELIVERED moved to Stage 3 — hidden here */}
-                        {false && selectedInfluencerForPipeline.collaborationStatus === "DELIVERED" && selectedInfluencerForPipeline.collaborationId && (
+                        {/* DELIVERED handled in Stage 3 */}
+                        {selectedInfluencerForPipeline && false && selectedInfluencerForPipeline.collaborationStatus === "DELIVERED" && selectedInfluencerForPipeline.collaborationId && (
                           <div className="space-y-3 pt-3 border-t">
                             {selectedInfluencerForPipeline.publishedUrl && (
                               <div className="p-3 rounded-lg bg-green-50 border border-green-200">
