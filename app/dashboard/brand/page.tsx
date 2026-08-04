@@ -52,6 +52,7 @@ export default function BrandDashboard() {
 
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
   const [balance, setBalance] = useState(0);
+  const [frozenBalance, setFrozenBalance] = useState(0);
 
   const [showCollaborateModal, setShowCollaborateModal] = useState(false);
   const [selectedInfluencer, setSelectedInfluencer] = useState<Influencer | null>(null);
@@ -218,6 +219,7 @@ export default function BrandDashboard() {
           const data = await walletRes.json();
           if (data.wallet && typeof data.wallet.balance === 'number') {
             setBalance(data.wallet.balance / 100);
+            setFrozenBalance((data.wallet.frozenBalance || 0) / 100);
           }
         }
       } catch (error) {
@@ -299,6 +301,7 @@ export default function BrandDashboard() {
           setActiveTab={setActiveTab}
           balance={balance}
           setBalance={setBalance}
+          frozenBalance={frozenBalance}
           externalShowTopUp={showTopUpModal}
           setExternalShowTopUp={setShowTopUpModal}
         />

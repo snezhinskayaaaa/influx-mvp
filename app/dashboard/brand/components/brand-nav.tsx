@@ -38,6 +38,7 @@ import {
   Copy,
   CheckCircle2,
   AlertCircle,
+  Lock,
 } from "lucide-react";
 import type { Tab } from "./types";
 
@@ -78,6 +79,7 @@ interface BrandSidebarProps {
   setActiveTab: (tab: Tab) => void;
   balance: number;
   setBalance: (balance: number) => void;
+  frozenBalance?: number;
   externalShowTopUp?: boolean;
   setExternalShowTopUp?: (show: boolean) => void;
 }
@@ -86,6 +88,7 @@ export function BrandSidebar({
   activeTab,
   setActiveTab,
   balance,
+  frozenBalance = 0,
   externalShowTopUp,
   setExternalShowTopUp,
 }: BrandSidebarProps) {
@@ -151,6 +154,12 @@ export function BrandSidebar({
                 <div className="text-2xl font-bold text-primary text-left">
                   ${balance.toFixed(2)}
                 </div>
+                {frozenBalance > 0 && (
+                  <div className="text-xs text-muted-foreground mt-1 flex items-center gap-1">
+                    <Lock className="h-3 w-3" />
+                    Frozen: ${frozenBalance.toFixed(2)}
+                  </div>
+                )}
                 {(pendingDeposits > 0 || pendingWithdrawals > 0) && (
                   <div className="text-xs text-muted-foreground mt-1 space-y-0.5">
                     {pendingDeposits > 0 && (
