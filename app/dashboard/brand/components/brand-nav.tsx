@@ -78,12 +78,16 @@ interface BrandSidebarProps {
   setActiveTab: (tab: Tab) => void;
   balance: number;
   setBalance: (balance: number) => void;
+  externalShowTopUp?: boolean;
+  setExternalShowTopUp?: (show: boolean) => void;
 }
 
 export function BrandSidebar({
   activeTab,
   setActiveTab,
   balance,
+  externalShowTopUp,
+  setExternalShowTopUp,
 }: BrandSidebarProps) {
   const [toast, setToast] = useState<{ message: string; variant: 'success' | 'error' } | null>(null);
 
@@ -92,7 +96,12 @@ export function BrandSidebar({
     setTimeout(() => setToast(null), 4000);
   };
 
-  const [showTopUpModal, setShowTopUpModal] = useState(false);
+  const [showTopUpModalInternal, setShowTopUpModalInternal] = useState(false);
+  const showTopUpModal = externalShowTopUp || showTopUpModalInternal;
+  const setShowTopUpModal = (v: boolean) => {
+    setShowTopUpModalInternal(v);
+    if (setExternalShowTopUp) setExternalShowTopUp(v);
+  };
   const [topUpMethod, setTopUpMethod] = useState<"card" | "crypto" | null>(null);
   const [topUpAmount, setTopUpAmount] = useState("");
   const [selectedCrypto, setSelectedCrypto] = useState("");

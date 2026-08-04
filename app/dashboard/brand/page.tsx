@@ -66,6 +66,7 @@ export default function BrandDashboard() {
   const [counterOfferInfluencer] = useState<CampaignInfluencer | null>(null);
   const [counterOfferPrice, setCounterOfferPrice] = useState("");
   const [showInsufficientFundsDialog, setShowInsufficientFundsDialog] = useState(false);
+  const [showTopUpModal, setShowTopUpModal] = useState(false);
   const [showVerifyPopup, setShowVerifyPopup] = useState(false);
   const [emailVerified, setEmailVerified] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
@@ -298,6 +299,8 @@ export default function BrandDashboard() {
           setActiveTab={setActiveTab}
           balance={balance}
           setBalance={setBalance}
+          externalShowTopUp={showTopUpModal}
+          setExternalShowTopUp={setShowTopUpModal}
         />
 
         {/* Main Content */}
@@ -847,7 +850,7 @@ export default function BrandDashboard() {
               <Button
                 onClick={() => {
                   setShowInsufficientFundsDialog(false);
-                  setActiveTab("settings")
+                  setShowTopUpModal(true);
                 }}
                 className="w-full bg-gradient-to-r from-primary to-secondary"
               >
