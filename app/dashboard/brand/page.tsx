@@ -836,8 +836,8 @@ export default function BrandDashboard() {
                 <div className="space-y-1">
                   <p className="text-sm font-medium">Why we verify funds</p>
                   <p className="text-xs text-muted-foreground">
-                    We verify the availability of funds to ensure security and trust for both brands and influencers.
-                    This protects influencers from unpaid work and ensures brands can fulfill their commitments.
+                    We verify the availability of funds to ensure security and trust for both projects and creators.
+                    This protects creators from unpaid work and ensures projects can fulfill their commitments.
                   </p>
                 </div>
               </div>
