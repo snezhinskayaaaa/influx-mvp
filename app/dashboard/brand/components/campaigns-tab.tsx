@@ -122,6 +122,16 @@ export function CampaignsTab({
   const [deletingCampaign, setDeletingCampaign] = useState<Campaign | null>(null);
   const [deleteConfirmText, setDeleteConfirmText] = useState("");
 
+  // Auto-refresh applications when campaign is open (every 15s)
+  useEffect(() => {
+    if (!selectedCampaignDetails) return;
+    const interval = setInterval(() => {
+      handleOpenCampaign(selectedCampaignDetails);
+    }, 15000);
+    return () => clearInterval(interval);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedCampaignDetails?.id]);
+
   /** Helper to get collaboration status badge */
   const getCollaborationStatusBadge = (collabStatus: CollaborationStatus | undefined) => {
     if (!collabStatus) return null;
@@ -1371,30 +1381,18 @@ export function CampaignsTab({
                               Negotiation with {selectedInfluencerForPipeline.influencerName}
                             </h3>
                             <p className="text-sm text-muted-foreground">
-                              @{selectedInfluencerForPipeline.influencerUsername} • {selectedInfluencerForPipeline.influencerFollowers} followers
+                              {selectedInfluencerForPipeline.influencerUsername} • {selectedInfluencerForPipeline.influencerFollowers} followers
                             </p>
                           </div>
                         </div>
 
-                        {/* Proposed Pricing */}
+                        {/* Current Price */}
                         <div className="bg-muted/50 rounded-lg p-4">
-                          <h4 className="text-sm font-semibold mb-2">Proposed Pricing</h4>
-                          <div className="flex flex-wrap gap-2">
-                            {selectedCampaignDetails.pricingModels.includes("cpm") && selectedInfluencerForPipeline.proposedPriceCPM && (
-                              <div className="text-xs px-2.5 py-1 rounded-md bg-primary/10 text-primary font-medium border border-primary/20">
-                                CPM: ${selectedInfluencerForPipeline.proposedPriceCPM}
-                              </div>
-                            )}
-                            {selectedCampaignDetails.pricingModels.includes("cpc") && selectedInfluencerForPipeline.proposedPriceCPC && (
-                              <div className="text-xs px-2.5 py-1 rounded-md bg-secondary/10 text-secondary font-medium border border-secondary/20">
-                                CPC: ${selectedInfluencerForPipeline.proposedPriceCPC}
-                              </div>
-                            )}
-                            {selectedCampaignDetails.pricingModels.includes("cpe") && selectedInfluencerForPipeline.proposedPriceCPE && (
-                              <div className="text-xs px-2.5 py-1 rounded-md bg-muted text-foreground font-medium border border-border">
-                                CPE: ${selectedInfluencerForPipeline.proposedPriceCPE}
-                              </div>
-                            )}
+                          <h4 className="text-sm font-semibold mb-2">
+                            {selectedInfluencerForPipeline.agreedPrice ? 'Agreed Price' : 'Proposed Price'}
+                          </h4>
+                          <div className="text-lg font-bold text-primary">
+                            ${selectedInfluencerForPipeline.agreedPrice ?? selectedInfluencerForPipeline.proposedPriceCPM ?? '0'}
                           </div>
                         </div>
 
