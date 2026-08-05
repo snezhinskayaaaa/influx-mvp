@@ -85,6 +85,80 @@ const PRICING_LABELS: Record<string, string> = {
   "cpe": "CPE",
 };
 
+/** Stages for the text-based progress indicator */
+const COLLAB_STAGES = ["Negotiating", "In Progress", "Content", "Published", "Completed"] as const;
+
+/** Map collaborationStatus → which stage index (0-4) the collab is at */
+function getStageIndex(status: string | undefined): number {
+  switch (status) {
+    case "APPLIED":
+    case "NEGOTIATING":
+      return 0;
+    case "AGREED":
+    case "IN_PROGRESS":
+      return 1;
+    case "CONTENT_REVIEW":
+    case "REVISION":
+      return 2;
+    case "PUBLISHING":
+    case "DELIVERED":
+      return 3;
+    case "COMPLETED":
+    case "RESOLVED":
+      return 4;
+    case "DISPUTED":
+      return 3; // still in publish/delivery phase
+    default:
+      return 0;
+  }
+}
+
+/** Get action status for a collaboration */
+function getActionInfo(app: CampaignApplication): { type: "action" | "waiting" | "done"; text: string } {
+  const status = app.collaborationStatus;
+  switch (status) {
+    case "APPLIED":
+      return { type: "action", text: "New application — review and approve or reject" };
+    case "NEGOTIATING":
+      if (app.influencerAgreed === true)
+        return { type: "action", text: `Creator accepted $${app.agreedPrice ?? 0} — start campaign` };
+      if (app.influencerAgreed === false)
+        return { type: "action", text: "Creator declined — propose new price or cancel" };
+      return { type: "waiting", text: `Price offer $${app.agreedPrice ?? 0} sent — waiting for response` };
+    case "AGREED":
+      return { type: "action", text: "Agreement signed — start campaign to freeze funds" };
+    case "IN_PROGRESS":
+      return { type: "waiting", text: "Campaign started — waiting for content submission" };
+    case "CONTENT_REVIEW":
+      return { type: "action", text: "Content submitted — review and approve or request revision" };
+    case "REVISION":
+      return { type: "waiting", text: `Revision requested (${app.revisionCount ?? 0}/3) — waiting for update` };
+    case "PUBLISHING":
+      return { type: "waiting", text: "Content approved — waiting for publication links" };
+    case "DELIVERED":
+      return { type: "action", text: "Content published — approve & pay or dispute" };
+    case "COMPLETED":
+    case "RESOLVED":
+      return { type: "done", text: "Completed — all payments processed" };
+    case "DISPUTED":
+      return { type: "waiting", text: "Dispute filed — under admin review" };
+    default:
+      return { type: "waiting", text: "Pending" };
+  }
+}
+
+/** Count collaborations at each pipeline stage */
+function getPipelineCounts(apps: CampaignApplication[] | undefined): number[] {
+  const counts = [0, 0, 0, 0, 0]; // negotiating, in_progress, content, published, completed
+  if (!apps) return counts;
+  for (const app of apps) {
+    if (app.status !== "approved") continue;
+    const idx = getStageIndex(app.collaborationStatus);
+    counts[idx]++;
+  }
+  return counts;
+}
+
 export function CampaignsTab({
   campaigns,
   setCampaigns,
@@ -1342,7 +1416,204 @@ export function CampaignsTab({
             </div>
 
             <div className="space-y-6">
+              {/* General Pipeline View — Creator Progress List */}
+              {!selectedInfluencerForPipeline && (
+                <div className="space-y-4">
+                  {/* Campaign Progress Header */}
+                  {(() => {
+                    const approvedApps = selectedCampaignDetails.applicationsList?.filter(a => a.status === "approved") || [];
+                    const needed = parseInt(selectedCampaignDetails.influencerCount || "0") || 0;
+                    const completed = approvedApps.filter(a => a.collaborationStatus === "COMPLETED" || a.collaborationStatus === "RESOLVED").length;
+                    const actionCount = approvedApps.filter(a => getActionInfo(a).type === "action").length;
+                    // Also count pending (unapproved) applications as actions
+                    const pendingApps = selectedCampaignDetails.applicationsList?.filter(a => a.status === "pending") || [];
+                    const totalActions = actionCount + pendingApps.length;
+
+                    return (
+                      <>
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <h3 className="font-semibold text-lg">Campaign Progress</h3>
+                            <p className="text-sm text-muted-foreground">
+                              {completed} of {needed || approvedApps.length} completed
+                            </p>
+                          </div>
+                          {totalActions > 0 && (
+                            <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-amber-500/10 border border-amber-500/20">
+                              <AlertCircle className="h-4 w-4 text-amber-600" />
+                              <span className="text-sm font-medium text-amber-600">
+                                {totalActions} action{totalActions > 1 ? 's' : ''} needed
+                              </span>
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Progress bar */}
+                        {needed > 0 && (
+                          <div className="w-full bg-muted rounded-full h-2">
+                            <div
+                              className="bg-primary rounded-full h-2 transition-all duration-500"
+                              style={{ width: `${Math.min((completed / needed) * 100, 100)}%` }}
+                            />
+                          </div>
+                        )}
+
+                        {/* Pending applications */}
+                        {pendingApps.length > 0 && (
+                          <div className="space-y-2">
+                            {pendingApps.map((app) => (
+                              <div
+                                key={app.id}
+                                className="rounded-lg border border-border p-4 hover:bg-muted/30 transition-colors cursor-pointer"
+                                onClick={() => {
+                                  // Scroll to applications section or handle
+                                }}
+                              >
+                                <div className="flex items-center gap-3 mb-2">
+                                  <div className="w-8 h-8 rounded-full bg-gradient-to-r from-primary to-secondary flex items-center justify-center text-xs shrink-0 overflow-hidden">
+                                    {app.influencerAvatar?.startsWith('data:') ? (
+                                      <img src={app.influencerAvatar} alt="" className="w-full h-full object-cover" />
+                                    ) : (
+                                      <span className="text-white text-[10px]">{app.influencerName?.charAt(0) || '?'}</span>
+                                    )}
+                                  </div>
+                                  <div className="flex-1 min-w-0">
+                                    <p className="text-sm font-medium truncate">{app.influencerName}</p>
+                                    <p className="text-xs text-muted-foreground">New application</p>
+                                  </div>
+                                </div>
+                                <div className="px-3 py-2 rounded-md bg-amber-500/10 border border-amber-500/20">
+                                  <p className="text-xs font-medium text-amber-600">
+                                    ACTION NEEDED
+                                  </p>
+                                  <p className="text-xs text-muted-foreground">
+                                    Review application — approve or reject
+                                  </p>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+
+                        {/* Approved collaborations */}
+                        {approvedApps.length > 0 && (
+                          <div className="space-y-2">
+                            {approvedApps.map((app) => {
+                              const stageIdx = getStageIndex(app.collaborationStatus);
+                              const action = getActionInfo(app);
+                              return (
+                                <div
+                                  key={app.id}
+                                  className="rounded-lg border border-border p-4 hover:bg-muted/30 transition-colors cursor-pointer"
+                                  onClick={() => {
+                                    setSelectedInfluencerForPipeline(app);
+                                    setTermsAccepted(false);
+                                    setTermsHighlight(false);
+                                    setShowInfluencerSelector(false);
+                                  }}
+                                >
+                                  <div className="flex items-center gap-3 mb-3">
+                                    <div className="w-8 h-8 rounded-full bg-gradient-to-r from-primary to-secondary flex items-center justify-center text-xs shrink-0 overflow-hidden">
+                                      {app.influencerAvatar?.startsWith('data:') ? (
+                                        <img src={app.influencerAvatar} alt="" className="w-full h-full object-cover" />
+                                      ) : (
+                                        <span className="text-white text-[10px]">{app.influencerName?.charAt(0) || '?'}</span>
+                                      )}
+                                    </div>
+                                    <div className="flex-1 min-w-0">
+                                      <p className="text-sm font-medium truncate">{app.influencerName}</p>
+                                      <p className="text-xs text-muted-foreground">{app.influencerUsername}</p>
+                                    </div>
+                                    {app.agreedPrice && (
+                                      <span className="text-sm font-medium">${app.agreedPrice}</span>
+                                    )}
+                                  </div>
+
+                                  {/* Stage labels */}
+                                  <div className="flex items-center gap-1 mb-3">
+                                    {COLLAB_STAGES.map((stage, idx) => (
+                                      <div key={stage} className="contents">
+                                        {idx > 0 && (
+                                          <span className="text-muted-foreground/30 text-[10px]">/</span>
+                                        )}
+                                        <span className={`text-[11px] ${
+                                          idx < stageIdx
+                                            ? "text-foreground font-medium"
+                                            : idx === stageIdx
+                                            ? "text-foreground font-semibold"
+                                            : "text-muted-foreground/40"
+                                        }`}>
+                                          {stage}
+                                        </span>
+                                      </div>
+                                    ))}
+                                  </div>
+
+                                  {/* Action status */}
+                                  {action.type === "action" ? (
+                                    <div className="px-3 py-2 rounded-md bg-amber-500/10 border border-amber-500/20">
+                                      <p className="text-xs font-medium text-amber-600">
+                                        ACTION NEEDED
+                                      </p>
+                                      <p className="text-xs text-muted-foreground">
+                                        {action.text}
+                                      </p>
+                                    </div>
+                                  ) : action.type === "waiting" ? (
+                                    <div className="px-3 py-2 rounded-md bg-muted/50 border border-border">
+                                      <p className="text-xs font-medium text-muted-foreground">
+                                        WAITING FOR CREATOR
+                                      </p>
+                                      <p className="text-xs text-muted-foreground">
+                                        {action.text}
+                                      </p>
+                                    </div>
+                                  ) : (
+                                    <div className="px-3 py-2 rounded-md bg-success/10 border border-success/20">
+                                      <p className="text-xs font-medium text-success">
+                                        COMPLETED
+                                      </p>
+                                      <p className="text-xs text-muted-foreground">
+                                        {action.text}
+                                      </p>
+                                    </div>
+                                  )}
+                                </div>
+                              );
+                            })}
+                          </div>
+                        )}
+
+                        {/* Empty spots */}
+                        {needed > 0 && approvedApps.length < needed && (
+                          <div className="rounded-lg border border-dashed border-border p-4 text-center">
+                            <p className="text-sm text-muted-foreground">
+                              {needed - approvedApps.length} more creator{needed - approvedApps.length > 1 ? 's' : ''} needed
+                            </p>
+                            <p className="text-xs text-muted-foreground mt-1">
+                              Share your campaign or wait for applications
+                            </p>
+                          </div>
+                        )}
+
+                        {/* No applications at all */}
+                        {(!selectedCampaignDetails.applicationsList || selectedCampaignDetails.applicationsList.length === 0) && (
+                          <div className="text-center py-8 bg-muted/30 rounded-lg border border-dashed border-border">
+                            <Users className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
+                            <p className="text-sm text-muted-foreground mb-1">No applications yet</p>
+                            <p className="text-xs text-muted-foreground">
+                              Creators will apply when they discover your campaign
+                            </p>
+                          </div>
+                        )}
+                      </>
+                    );
+                  })()}
+                </div>
+              )}
+
               {/* Stage 1: Negotiation */}
+              {selectedInfluencerForPipeline && (
               <div className="flex gap-4">
                 <div className="flex flex-col items-center">
                   <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold ${
@@ -1355,29 +1626,6 @@ export function CampaignsTab({
                   <div className="w-0.5 h-full bg-border mt-2" />
                 </div>
                 <div className="flex-1 pb-6">
-                  {!selectedInfluencerForPipeline ? (
-                    <>
-                      {/* General Pipeline View */}
-                      <h3 className="font-semibold mb-2">Negotiation</h3>
-                      <p className="text-sm text-muted-foreground mb-3">
-                        Find and negotiate with influencers for your campaign
-                      </p>
-                      <div className="text-sm text-muted-foreground">
-                        <div className="flex items-center justify-between py-2">
-                          <span>Applications received</span>
-                          <span className="font-semibold">
-                            {selectedCampaignDetails.applicationsList?.length || 0}
-                          </span>
-                        </div>
-                        <div className="flex items-center justify-between py-2">
-                          <span>Approved</span>
-                          <span className="font-semibold">
-                            {selectedCampaignDetails.applicationsList?.filter(a => a.status === "approved").length || 0}
-                          </span>
-                        </div>
-                      </div>
-                    </>
-                  ) : (
                     <>
                       {/* Personalized Pipeline View */}
                       <div className="space-y-4">
@@ -1741,18 +1989,17 @@ export function CampaignsTab({
                         )}
                       </div>
                     </>
-                  )}
                 </div>
               </div>
+              )}
 
               {/* Stage 2: Content Review & Approval */}
+              {selectedInfluencerForPipeline && (
               <div className="flex gap-4">
                 <div className="flex flex-col items-center">
                   <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold ${
-                    selectedInfluencerForPipeline && ["IN_PROGRESS", "CONTENT_REVIEW", "REVISION", "PUBLISHING", "DELIVERED", "COMPLETED", "RESOLVED"].includes(selectedInfluencerForPipeline.collaborationStatus ?? "")
+                    ["IN_PROGRESS", "CONTENT_REVIEW", "REVISION", "PUBLISHING", "DELIVERED", "COMPLETED", "RESOLVED"].includes(selectedInfluencerForPipeline.collaborationStatus ?? "")
                       ? "bg-primary text-primary-foreground"
-                      : (selectedCampaignDetails.currentStage || 1) >= 2
-                      ? "bg-blue-500 text-white"
                       : "bg-muted text-muted-foreground"
                   }`}>
                     2
@@ -1760,33 +2007,6 @@ export function CampaignsTab({
                   <div className="w-0.5 h-full bg-border mt-2" />
                 </div>
                 <div className="flex-1 pb-6">
-                  {!selectedInfluencerForPipeline ? (
-                    <>
-                      {/* General View */}
-                      <h3 className="font-semibold mb-2">Content Approval</h3>
-                      <p className="text-sm text-muted-foreground mb-3">
-                        Review content links from influencers and provide feedback
-                      </p>
-                      <div className="text-sm text-muted-foreground">
-                        <div className="flex items-center justify-between py-2">
-                          <span>Drafts pending review</span>
-                          <span className="font-semibold">
-                            {selectedCampaignDetails.applicationsList?.filter(
-                              app => app.status === "approved" && app.currentContentUrl && !app.contentApproved
-                            ).length || 0}
-                          </span>
-                        </div>
-                        <div className="flex items-center justify-between py-2">
-                          <span>Approved</span>
-                          <span className="font-semibold">
-                            {selectedCampaignDetails.applicationsList?.filter(
-                              app => app.contentApproved
-                            ).length || 0}
-                          </span>
-                        </div>
-                      </div>
-                    </>
-                  ) : (
                     <>
                       {/* Personalized View */}
                       <div className="space-y-4">
@@ -1986,78 +2206,23 @@ export function CampaignsTab({
                         )}
                       </div>
                     </>
-                  )}
                 </div>
               </div>
+              )}
 
               {/* Stage 3: Publication & Delivery */}
+              {selectedInfluencerForPipeline && (
               <div className="flex gap-4">
                 <div className="flex flex-col items-center">
                   <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold ${
-                    selectedInfluencerForPipeline && ["PUBLISHING", "DELIVERED", "COMPLETED", "RESOLVED"].includes(selectedInfluencerForPipeline.collaborationStatus ?? "")
+                    ["PUBLISHING", "DELIVERED", "COMPLETED", "RESOLVED"].includes(selectedInfluencerForPipeline.collaborationStatus ?? "")
                       ? "bg-primary text-primary-foreground"
-                      : (selectedCampaignDetails.currentStage || 1) >= 3
-                        ? "bg-success text-success-foreground"
-                        : "bg-muted text-muted-foreground"
+                      : "bg-muted text-muted-foreground"
                   }`}>
                     3
                   </div>
                 </div>
                 <div className="flex-1">
-                  {!selectedInfluencerForPipeline ? (
-                    <>
-                      {/* General View */}
-                      <h3 className="font-semibold mb-2">Publication & Metrics</h3>
-                      <p className="text-sm text-muted-foreground mb-3">
-                        Content is published and metrics are tracked
-                      </p>
-
-                      {/* Campaign Goals */}
-                      {(selectedCampaignDetails.targetViews || selectedCampaignDetails.targetClicks ||
-                        selectedCampaignDetails.targetEngagements) && (
-                        <div className="mb-4 border-b pb-4">
-                          <h4 className="text-xs font-semibold text-muted-foreground mb-2 uppercase tracking-wide">Campaign Goals</h4>
-                          <div className="text-sm">
-                            {selectedCampaignDetails.targetViews && (
-                              <div className="flex items-center justify-between py-2">
-                                <span className="text-muted-foreground">Target Views</span>
-                                <span className="font-semibold text-primary">{parseInt(selectedCampaignDetails.targetViews).toLocaleString()}</span>
-                              </div>
-                            )}
-                            {selectedCampaignDetails.targetClicks && (
-                              <div className="flex items-center justify-between py-2">
-                                <span className="text-muted-foreground">Target Clicks</span>
-                                <span className="font-semibold text-primary">{parseInt(selectedCampaignDetails.targetClicks).toLocaleString()}</span>
-                              </div>
-                            )}
-                            {selectedCampaignDetails.targetEngagements && (
-                              <div className="flex items-center justify-between py-2">
-                                <span className="text-muted-foreground">Target Engagements</span>
-                                <span className="font-semibold text-primary">{parseInt(selectedCampaignDetails.targetEngagements).toLocaleString()}</span>
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      )}
-
-                      {/* Current Progress */}
-                      <div className="text-sm text-muted-foreground">
-                        <h4 className="text-xs font-semibold text-muted-foreground mb-2 uppercase tracking-wide">Current Progress</h4>
-                        <div className="flex items-center justify-between py-2">
-                          <span>Published</span>
-                          <span className="font-semibold">
-                            {selectedCampaignDetails.applicationsList?.filter(app => (app.publishedUrls && app.publishedUrls.length > 0) || app.publishedUrl).length || 0}
-                          </span>
-                        </div>
-                        <div className="flex items-center justify-between py-2">
-                          <span>Metrics verified</span>
-                          <span className="font-semibold">
-                            {selectedCampaignDetails.applicationsList?.filter(app => app.metricsTargetReached).length || 0}
-                          </span>
-                        </div>
-                      </div>
-                    </>
-                  ) : (
                     <>
                       {/* Personalized View */}
                       <div className="space-y-4">
@@ -2233,9 +2398,9 @@ export function CampaignsTab({
                         )}
                       </div>
                     </>
-                  )}
                 </div>
               </div>
+              )}
             </div>
           </Card>
         </>
@@ -2373,85 +2538,40 @@ export function CampaignsTab({
 
               {/* Pipeline Column */}
               <div className="flex-1">
-                <div className="flex items-center gap-1 mb-2">
-                  {/* Stage 1: Agreement */}
-                  <div className="flex flex-col items-center gap-1 flex-1">
-                    <span className="text-[9px] font-semibold text-muted-foreground uppercase tracking-wider">
-                      Agreed
-                    </span>
-                    <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold ${
-                      (campaign.currentStage || 1) >= 1
-                        ? "bg-primary/10 text-primary"
-                        : "bg-muted/50 text-muted-foreground"
-                    }`}>
-                      0
+                {(() => {
+                  const counts = getPipelineCounts(campaign.applicationsList);
+                  const stageLabels = ["Negotiating", "In Progress", "Content", "Published", "Done"];
+                  const stageColors = [
+                    { active: "bg-primary/10 text-primary", label: "text-foreground" },
+                    { active: "bg-secondary/10 text-secondary", label: "text-foreground" },
+                    { active: "bg-blue-500/10 text-blue-600", label: "text-foreground" },
+                    { active: "bg-purple-500/10 text-purple-600", label: "text-foreground" },
+                    { active: "bg-success/10 text-success", label: "text-foreground" },
+                  ];
+                  return (
+                    <div className="flex items-center gap-1 mb-2">
+                      {stageLabels.map((label, idx) => (
+                        <div key={label} className="contents">
+                          {idx > 0 && <ArrowRight className="h-3 w-3 text-muted-foreground/40 mt-4" />}
+                          <div className="flex flex-col items-center gap-1 flex-1">
+                            <span className={`text-[9px] font-semibold uppercase tracking-wider ${
+                              counts[idx] > 0 ? stageColors[idx].label : "text-muted-foreground"
+                            }`}>
+                              {label}
+                            </span>
+                            <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold ${
+                              counts[idx] > 0
+                                ? stageColors[idx].active
+                                : "bg-muted/50 text-muted-foreground"
+                            }`}>
+                              {counts[idx]}
+                            </div>
+                          </div>
+                        </div>
+                      ))}
                     </div>
-                  </div>
-
-                  <ArrowRight className="h-3 w-3 text-muted-foreground/40 mt-4" />
-
-                  {/* Stage 2: Advance */}
-                  <div className="flex flex-col items-center gap-1 flex-1">
-                    <span className="text-[9px] font-semibold text-muted-foreground uppercase tracking-wider">
-                      Advance
-                    </span>
-                    <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold ${
-                      (campaign.currentStage || 1) >= 2
-                        ? "bg-secondary/10 text-secondary"
-                        : "bg-muted/50 text-muted-foreground"
-                    }`}>
-                      0
-                    </div>
-                  </div>
-
-                  <ArrowRight className="h-3 w-3 text-muted-foreground/40 mt-4" />
-
-                  {/* Stage 3: Content */}
-                  <div className="flex flex-col items-center gap-1 flex-1">
-                    <span className="text-[9px] font-semibold text-muted-foreground uppercase tracking-wider">
-                      Content
-                    </span>
-                    <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold ${
-                      (campaign.currentStage || 1) >= 3
-                        ? "bg-blue-500/10 text-blue-600"
-                        : "bg-muted/50 text-muted-foreground"
-                    }`}>
-                      0
-                    </div>
-                  </div>
-
-                  <ArrowRight className="h-3 w-3 text-muted-foreground/40 mt-4" />
-
-                  {/* Stage 4: Publish */}
-                  <div className="flex flex-col items-center gap-1 flex-1">
-                    <span className="text-[9px] font-semibold text-muted-foreground uppercase tracking-wider">
-                      Publish
-                    </span>
-                    <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold ${
-                      (campaign.currentStage || 1) >= 4
-                        ? "bg-purple-500/10 text-purple-600"
-                        : "bg-muted/50 text-muted-foreground"
-                    }`}>
-                      0
-                    </div>
-                  </div>
-
-                  <ArrowRight className="h-3 w-3 text-muted-foreground/40 mt-4" />
-
-                  {/* Stage 5: Done */}
-                  <div className="flex flex-col items-center gap-1 flex-1">
-                    <span className="text-[9px] font-semibold text-muted-foreground uppercase tracking-wider">
-                      Done
-                    </span>
-                    <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold ${
-                      (campaign.currentStage || 1) >= 5
-                        ? "bg-success/10 text-success"
-                        : "bg-muted/50 text-muted-foreground"
-                    }`}>
-                      0
-                    </div>
-                  </div>
-                </div>
+                  );
+                })()}
               </div>
 
               {/* Actions Column */}
@@ -2577,62 +2697,36 @@ export function CampaignsTab({
 
                     <div>
                       <div className="text-muted-foreground text-xs mb-2">Pipeline</div>
-                      <div className="flex items-center gap-1">
-                        <div className="flex flex-col items-center gap-1 flex-1">
-                          <div className={`w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-semibold ${
-                            (campaign.currentStage || 1) >= 1
-                              ? "bg-primary/10 text-primary"
-                              : "bg-muted/50 text-muted-foreground"
-                          }`}>
-                            0
+                      {(() => {
+                        const counts = getPipelineCounts(campaign.applicationsList);
+                        const labels = ["Negotiating", "In Progress", "Content", "Published", "Done"];
+                        const colors = [
+                          { active: "bg-primary/10 text-primary", label: "text-foreground" },
+                          { active: "bg-secondary/10 text-secondary", label: "text-foreground" },
+                          { active: "bg-blue-500/10 text-blue-600", label: "text-foreground" },
+                          { active: "bg-purple-500/10 text-purple-600", label: "text-foreground" },
+                          { active: "bg-success/10 text-success", label: "text-foreground" },
+                        ];
+                        return (
+                          <div className="flex items-center gap-1">
+                            {labels.map((label, idx) => (
+                              <div key={label} className="contents">
+                                {idx > 0 && <ArrowRight className="h-2.5 w-2.5 text-muted-foreground/40 mb-3" />}
+                                <div className="flex flex-col items-center gap-1 flex-1">
+                                  <div className={`w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-semibold ${
+                                    counts[idx] > 0 ? colors[idx].active : "bg-muted/50 text-muted-foreground"
+                                  }`}>
+                                    {counts[idx]}
+                                  </div>
+                                  <span className={`text-[8px] font-medium ${
+                                    counts[idx] > 0 ? colors[idx].label : "text-muted-foreground"
+                                  }`}>{label}</span>
+                                </div>
+                              </div>
+                            ))}
                           </div>
-                          <span className="text-[8px] font-medium text-muted-foreground">Agreed</span>
-                        </div>
-                        <ArrowRight className="h-2.5 w-2.5 text-muted-foreground/40 mb-3" />
-                        <div className="flex flex-col items-center gap-1 flex-1">
-                          <div className={`w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-semibold ${
-                            (campaign.currentStage || 1) >= 2
-                              ? "bg-secondary/10 text-secondary"
-                              : "bg-muted/50 text-muted-foreground"
-                          }`}>
-                            0
-                          </div>
-                          <span className="text-[8px] font-medium text-muted-foreground">Advance</span>
-                        </div>
-                        <ArrowRight className="h-2.5 w-2.5 text-muted-foreground/40 mb-3" />
-                        <div className="flex flex-col items-center gap-1 flex-1">
-                          <div className={`w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-semibold ${
-                            (campaign.currentStage || 1) >= 3
-                              ? "bg-blue-500/10 text-blue-600"
-                              : "bg-muted/50 text-muted-foreground"
-                          }`}>
-                            0
-                          </div>
-                          <span className="text-[8px] font-medium text-muted-foreground">Content</span>
-                        </div>
-                        <ArrowRight className="h-2.5 w-2.5 text-muted-foreground/40 mb-3" />
-                        <div className="flex flex-col items-center gap-1 flex-1">
-                          <div className={`w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-semibold ${
-                            (campaign.currentStage || 1) >= 4
-                              ? "bg-purple-500/10 text-purple-600"
-                              : "bg-muted/50 text-muted-foreground"
-                          }`}>
-                            0
-                          </div>
-                          <span className="text-[8px] font-medium text-muted-foreground">Publish</span>
-                        </div>
-                        <ArrowRight className="h-2.5 w-2.5 text-muted-foreground/40 mb-3" />
-                        <div className="flex flex-col items-center gap-1 flex-1">
-                          <div className={`w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-semibold ${
-                            (campaign.currentStage || 1) >= 5
-                              ? "bg-success/10 text-success"
-                              : "bg-muted/50 text-muted-foreground"
-                          }`}>
-                            0
-                          </div>
-                          <span className="text-[8px] font-medium text-muted-foreground">Done</span>
-                        </div>
-                      </div>
+                        );
+                      })()}
                     </div>
                   </div>
                 </Card>
