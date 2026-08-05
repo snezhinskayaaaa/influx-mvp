@@ -404,7 +404,11 @@ export function CampaignsTab({
 
   /** Open campaign detail view and fetch applications */
   const handleOpenCampaign = async (campaign: Campaign) => {
-    setSelectedCampaignDetails(campaign);
+    // Only set campaign immediately on first open (no applicationsList yet)
+    // On refresh, skip this to avoid flickering
+    if (!selectedCampaignDetails || selectedCampaignDetails.id !== campaign.id) {
+      setSelectedCampaignDetails(campaign);
+    }
     try {
       const res = await fetch('/api/collaborations');
       if (res.ok) {
