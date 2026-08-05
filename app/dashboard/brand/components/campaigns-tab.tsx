@@ -1814,8 +1814,32 @@ export function CampaignsTab({
                           )}
                         </div>
 
-                        {/* Content Revisions History */}
-                        {(selectedInfluencerForPipeline.contentUrl || (selectedInfluencerForPipeline.contentRevisions && selectedInfluencerForPipeline.contentRevisions.length > 0)) ? (
+                        {/* Content review - show different UI based on collaboration status */}
+                        {["PUBLISHING", "DELIVERED", "COMPLETED", "RESOLVED"].includes(selectedInfluencerForPipeline.collaborationStatus ?? "") ? (
+                          /* Content already approved - show completed state */
+                          <div className="space-y-3">
+                            <div className="flex items-center gap-2 px-4 py-3 rounded-lg bg-success/10 border border-success/20">
+                              <CheckCircle2 className="h-5 w-5 text-success" />
+                              <div className="flex-1">
+                                <p className="text-sm font-medium text-success">Content Approved</p>
+                                <p className="text-xs text-muted-foreground">
+                                  Creator is now publishing the content
+                                </p>
+                              </div>
+                            </div>
+                            {selectedInfluencerForPipeline.contentUrl && (
+                              <div className="p-3 rounded-lg bg-muted/30 border border-border">
+                                <div className="flex items-center gap-2 mb-1">
+                                  <ExternalLink className="h-3.5 w-3.5 text-muted-foreground" />
+                                  <span className="text-xs font-medium text-muted-foreground">Submitted Content</span>
+                                </div>
+                                <a href={selectedInfluencerForPipeline.contentUrl} target="_blank" rel="noopener noreferrer" className="text-sm text-primary hover:underline break-all">
+                                  {selectedInfluencerForPipeline.contentUrl}
+                                </a>
+                              </div>
+                            )}
+                          </div>
+                        ) : (selectedInfluencerForPipeline.contentUrl || (selectedInfluencerForPipeline.contentRevisions && selectedInfluencerForPipeline.contentRevisions.length > 0)) ? (
                           <div className="space-y-3">
                             {/* Show contentUrl directly if no revisions history */}
                             {(!selectedInfluencerForPipeline.contentRevisions || selectedInfluencerForPipeline.contentRevisions.length === 0) && selectedInfluencerForPipeline.contentUrl && (
@@ -1958,132 +1982,6 @@ export function CampaignsTab({
                             <p className="text-xs text-muted-foreground">
                               Influencer will provide a link to their content (Google Drive, Dropbox, etc.)
                             </p>
-                          </div>
-                        )}
-
-                        {/* Feedback Input - Only show if there's current content and not approved */}
-                        {selectedInfluencerForPipeline.currentContentUrl && !selectedInfluencerForPipeline.contentApproved && (
-                          <div className="space-y-3 pt-3 border-t">
-                            <Label className="text-sm font-medium">Provide Feedback</Label>
-                            <textarea
-                              className="w-full min-h-[100px] px-3 py-2 rounded-lg border border-border bg-background text-sm resize-none focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"
-                              placeholder="Share your thoughts on the content, suggest improvements..."
-                              value={brandFeedbackText}
-                              onChange={(e) => setBrandFeedbackText(e.target.value)}
-                            />
-
-                            <div className="flex gap-2">
-                              <Button
-                                variant="outline"
-                                onClick={() => {
-                                  if (!brandFeedbackText.trim()) {
-                                    showToast("Please provide feedback before requesting revisions", 'error');
-                                    return;
-                                  }
-
-                                  // Add feedback to current revision
-                                  const updatedRevisions = selectedInfluencerForPipeline.contentRevisions?.map((rev, idx) =>
-                                    idx === 0
-                                      ? {
-                                          ...rev,
-                                          brandFeedback: brandFeedbackText,
-                                          feedbackAt: new Date().toISOString(),
-                                        }
-                                      : rev
-                                  );
-
-                                  const updatedApplications = selectedCampaignDetails.applicationsList?.map(app =>
-                                    app.id === selectedInfluencerForPipeline.id
-                                      ? { ...app, contentRevisions: updatedRevisions }
-                                      : app
-                                  );
-
-                                  setSelectedCampaignDetails({
-                                    ...selectedCampaignDetails,
-                                    applicationsList: updatedApplications,
-                                  });
-
-                                  setSelectedInfluencerForPipeline({
-                                    ...selectedInfluencerForPipeline,
-                                    contentRevisions: updatedRevisions,
-                                  });
-
-                                  setBrandFeedbackText("");
-                                }}
-                                className="flex-1"
-                              >
-                                <MessageSquare className="h-4 w-4 mr-2" />
-                                Request Revisions
-                              </Button>
-
-                              <Button
-                                onClick={() => {
-                                  // Approve content and send 25% payment
-                                  const updatedApplications = selectedCampaignDetails.applicationsList?.map(app =>
-                                    app.id === selectedInfluencerForPipeline.id
-                                      ? {
-                                          ...app,
-                                          contentApproved: true,
-                                          contentApprovedAt: new Date().toISOString(),
-                                          contentApprovalPaymentSent: true, // Send 25% payment
-                                        }
-                                      : app
-                                  );
-
-                                  setSelectedCampaignDetails({
-                                    ...selectedCampaignDetails,
-                                    applicationsList: updatedApplications,
-                                  });
-
-                                  setSelectedInfluencerForPipeline({
-                                    ...selectedInfluencerForPipeline,
-                                    contentApproved: true,
-                                    contentApprovedAt: new Date().toISOString(),
-                                    contentApprovalPaymentSent: true,
-                                  });
-
-                                  setBrandFeedbackText("");
-                                }}
-                                className="flex-1 bg-gradient-to-r from-secondary to-primary"
-                              >
-                                <CheckCircle2 className="h-4 w-4 mr-2" />
-                                Approve Content
-                              </Button>
-                            </div>
-                          </div>
-                        )}
-
-                        {/* Approved State */}
-                        {selectedInfluencerForPipeline.contentApproved && (
-                          <div className="space-y-3">
-                            <div className="flex items-center gap-2 px-4 py-3 rounded-lg bg-success/10 border border-success/20">
-                              <CheckCircle2 className="h-5 w-5 text-success" />
-                              <div className="flex-1">
-                                <p className="text-sm font-medium text-success">Content Approved</p>
-                                <p className="text-xs text-muted-foreground">
-                                  Approved on {selectedInfluencerForPipeline.contentApprovedAt &&
-                                    new Date(selectedInfluencerForPipeline.contentApprovedAt).toLocaleDateString('en-US', {
-                                      month: 'short',
-                                      day: 'numeric',
-                                      hour: '2-digit',
-                                      minute: '2-digit'
-                                    })
-                                  }
-                                </p>
-                              </div>
-                            </div>
-
-                            {selectedInfluencerForPipeline.contentApprovalPaymentSent && (
-                              <div className="flex items-center gap-2 px-4 py-3 rounded-lg bg-primary/10 border border-primary/20">
-                                <Wallet className="h-5 w-5 text-primary" />
-                                <div>
-                                  <p className="text-sm font-medium text-primary">Payment Sent (25%)</p>
-                                  <p className="text-xs text-muted-foreground">
-                                    Content approval payment released
-                                  </p>
-                                </div>
-                              </div>
-                            )}
                           </div>
                         )}
                       </div>
@@ -2306,156 +2204,15 @@ export function CampaignsTab({
                                   </div>
                                 )}
 
-                                {/* Public Metrics */}
-                                {selectedInfluencerForPipeline.publicMetrics && (
-                                  <div className="bg-background rounded-lg p-4 border border-border">
-                                    <div className="flex items-center justify-between mb-3">
-                                      <h4 className="text-sm font-semibold">Public Metrics</h4>
-                                      <Badge variant="outline" className="text-xs">
-                                        Auto-parsed
-                                      </Badge>
-                                    </div>
-                                    <div className="grid grid-cols-2 gap-3">
-                                      {selectedInfluencerForPipeline.publicMetrics.views !== undefined && (
-                                        <div className="flex items-center gap-2 p-2 rounded-md bg-muted/50">
-                                          <Eye className="h-4 w-4 text-muted-foreground" />
-                                          <div>
-                                            <p className="text-xs text-muted-foreground">Views</p>
-                                            <p className="text-sm font-semibold">
-                                              {selectedInfluencerForPipeline.publicMetrics.views.toLocaleString()}
-                                            </p>
-                                          </div>
-                                        </div>
-                                      )}
-                                      {selectedInfluencerForPipeline.publicMetrics.likes !== undefined && (
-                                        <div className="flex items-center gap-2 p-2 rounded-md bg-muted/50">
-                                          <Heart className="h-4 w-4 text-muted-foreground" />
-                                          <div>
-                                            <p className="text-xs text-muted-foreground">Likes</p>
-                                            <p className="text-sm font-semibold">
-                                              {selectedInfluencerForPipeline.publicMetrics.likes.toLocaleString()}
-                                            </p>
-                                          </div>
-                                        </div>
-                                      )}
-                                      {selectedInfluencerForPipeline.publicMetrics.comments !== undefined && (
-                                        <div className="flex items-center gap-2 p-2 rounded-md bg-muted/50">
-                                          <MessageCircle className="h-4 w-4 text-muted-foreground" />
-                                          <div>
-                                            <p className="text-xs text-muted-foreground">Comments</p>
-                                            <p className="text-sm font-semibold">
-                                              {selectedInfluencerForPipeline.publicMetrics.comments.toLocaleString()}
-                                            </p>
-                                          </div>
-                                        </div>
-                                      )}
-                                      {selectedInfluencerForPipeline.publicMetrics.shares !== undefined && (
-                                        <div className="flex items-center gap-2 p-2 rounded-md bg-muted/50">
-                                          <ArrowRight className="h-4 w-4 text-muted-foreground" />
-                                          <div>
-                                            <p className="text-xs text-muted-foreground">Shares</p>
-                                            <p className="text-sm font-semibold">
-                                              {selectedInfluencerForPipeline.publicMetrics.shares.toLocaleString()}
-                                            </p>
-                                          </div>
-                                        </div>
-                                      )}
-                                    </div>
-                                    {selectedInfluencerForPipeline.publicMetrics.lastUpdated && (
-                                      <p className="text-xs text-muted-foreground mt-3">
-                                        Last updated: {new Date(selectedInfluencerForPipeline.publicMetrics.lastUpdated).toLocaleDateString('en-US', {
-                                          month: 'short',
-                                          day: 'numeric',
-                                          hour: '2-digit',
-                                          minute: '2-digit'
-                                        })}
-                                      </p>
-                                    )}
-                                  </div>
-                                )}
 
-                                {/* Insights Screenshots */}
-                                <div className="bg-background rounded-lg p-4 border border-border">
-                                  <div className="flex items-center justify-between mb-3">
-                                    <h4 className="text-sm font-semibold">Private Metrics (Insights)</h4>
-                                    <Badge variant="outline" className="text-xs">
-                                      Screenshots required
-                                    </Badge>
-                                  </div>
-
-                                  {selectedInfluencerForPipeline.insightsScreenshots && selectedInfluencerForPipeline.insightsScreenshots.length > 0 ? (
-                                    <div className="space-y-2">
-                                      {selectedInfluencerForPipeline.insightsScreenshots.map((screenshot) => (
-                                        <div key={screenshot.id} className="p-3 rounded-md border border-border bg-muted/20">
-                                          <div className="flex items-start justify-between mb-2">
-                                            <div className="flex items-center gap-2">
-                                              <span className="text-sm font-medium capitalize">{screenshot.metricType.replace('_', ' ')}</span>
-                                              {screenshot.verified && (
-                                                <Badge className="text-xs bg-success/10 text-success border-success/20">
-                                                  Verified
-                                                </Badge>
-                                              )}
-                                            </div>
-                                            <span className="text-sm font-semibold">{screenshot.value.toLocaleString()}</span>
-                                          </div>
-                                          <a
-                                            href={screenshot.screenshotUrl}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            className="text-xs text-primary hover:underline flex items-center gap-1"
-                                          >
-                                            <Eye className="h-3 w-3" />
-                                            View Screenshot
-                                          </a>
-                                          <p className="text-xs text-muted-foreground mt-1">
-                                            Submitted {new Date(screenshot.submittedAt).toLocaleDateString('en-US', {
-                                              month: 'short',
-                                              day: 'numeric',
-                                              hour: '2-digit',
-                                              minute: '2-digit'
-                                            })}
-                                          </p>
-                                        </div>
-                                      ))}
-                                    </div>
-                                  ) : (
-                                    <div className="text-center py-6 bg-muted/30 rounded-md border border-dashed">
-                                      <Camera className="h-6 w-6 text-muted-foreground mx-auto mb-2" />
-                                      <p className="text-xs text-muted-foreground">
-                                        Waiting for influencer to submit insights screenshots
-                                      </p>
-                                      <p className="text-xs text-muted-foreground mt-1">
-                                        (Impressions, Reach, Saves, Profile Visits)
-                                      </p>
-                                    </div>
-                                  )}
-                                </div>
-
-                                {/* Target Achievement Status */}
-                                {selectedInfluencerForPipeline.metricsTargetReached ? (
+                                {/* Completed status */}
+                                {selectedInfluencerForPipeline.collaborationStatus === "COMPLETED" && (
                                   <div className="flex items-center gap-2 px-4 py-3 rounded-lg bg-success/10 border border-success/20">
                                     <CheckCircle2 className="h-5 w-5 text-success" />
                                     <div className="flex-1">
-                                      <p className="text-sm font-medium text-success">Target Metrics Reached</p>
+                                      <p className="text-sm font-medium text-success">Collaboration Completed</p>
                                       <p className="text-xs text-muted-foreground">
-                                        Verified on {selectedInfluencerForPipeline.metricsVerifiedAt &&
-                                          new Date(selectedInfluencerForPipeline.metricsVerifiedAt).toLocaleDateString('en-US', {
-                                            month: 'short',
-                                            day: 'numeric',
-                                            hour: '2-digit',
-                                            minute: '2-digit'
-                                          })
-                                        }
-                                      </p>
-                                    </div>
-                                  </div>
-                                ) : (
-                                  <div className="flex items-center gap-2 px-4 py-3 rounded-lg bg-warning/10 border border-warning/20">
-                                    <Clock className="h-5 w-5 text-warning" />
-                                    <div>
-                                      <p className="text-sm font-medium text-warning">Tracking Metrics</p>
-                                      <p className="text-xs text-muted-foreground">
-                                        Waiting to reach target metrics
+                                        Final payment released to creator
                                       </p>
                                     </div>
                                   </div>

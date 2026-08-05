@@ -62,7 +62,7 @@ export async function GET(request: NextRequest) {
             id: true, status: true, proposedPrice: true, agreedPrice: true,
             message: true, deliverables: true, createdAt: true, updatedAt: true,
             contentUrl: true, revisionCount: true, revisionNote: true,
-            publishedUrl: true, disputeReason: true, frozenAt: true,
+            publishedUrl: true, publishedUrls: true, disputeReason: true, frozenAt: true,
             influencerAgreed: true, brandAgreed: true,
             brandTerms: true, influencerTerms: true,
             campaign: { select: { id: true, title: true } },
