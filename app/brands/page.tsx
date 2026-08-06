@@ -477,7 +477,7 @@ export default function BrandsPage() {
               Built for crypto growth
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              The only platform where you pay for actual performance, not promises
+              Everything you need to run KOL campaigns — from discovery to payment
             </p>
           </div>
 
@@ -486,9 +486,9 @@ export default function BrandsPage() {
               <div className="w-12 h-12 lg:w-16 lg:h-16 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-3 lg:mb-4">
                 <Target className="h-6 w-6 lg:h-8 lg:w-8 text-primary" />
               </div>
-              <h3 className="text-base lg:text-xl font-semibold mb-2 lg:mb-3">Web3-native targeting</h3>
+              <h3 className="text-base lg:text-xl font-semibold mb-2 lg:mb-3">Crypto-native creators</h3>
               <p className="text-muted-foreground text-xs lg:text-sm">
-                Match with creators whose holders and community fit your token and narrative.
+                Access KOLs across DeFi, NFT, GameFi, L2 and other Web3 verticals who speak your audience&#39;s language.
               </p>
             </Card>
 
@@ -496,9 +496,9 @@ export default function BrandsPage() {
               <div className="w-12 h-12 lg:w-16 lg:h-16 rounded-2xl bg-secondary/10 flex items-center justify-center mx-auto mb-3 lg:mb-4">
                 <TrendingUp className="h-6 w-6 lg:h-8 lg:w-8 text-secondary" />
               </div>
-              <h3 className="text-base lg:text-xl font-semibold mb-2 lg:mb-3">Measurable Results</h3>
+              <h3 className="text-base lg:text-xl font-semibold mb-2 lg:mb-3">50/50 safe payments</h3>
               <p className="text-muted-foreground text-xs lg:text-sm">
-                Track campaign performance with real-time analytics and detailed insights
+                50% advance on start, 50% on delivery. Funds are frozen until work is done — both sides are protected.
               </p>
             </Card>
 
@@ -506,9 +506,9 @@ export default function BrandsPage() {
               <div className="w-12 h-12 lg:w-16 lg:h-16 rounded-2xl bg-muted/80 flex items-center justify-center mx-auto mb-3 lg:mb-4">
                 <Zap className="h-6 w-6 lg:h-8 lg:w-8 text-foreground" />
               </div>
-              <h3 className="text-base lg:text-xl font-semibold mb-2 lg:mb-3">Fast Deployment</h3>
+              <h3 className="text-base lg:text-xl font-semibold mb-2 lg:mb-3">Fast deployment</h3>
               <p className="text-muted-foreground text-xs lg:text-sm">
-                Launch in days, not weeks of DM back-and-forth.
+                Launch campaigns in days, not weeks of DM back-and-forth. Negotiate, agree, and start — all in one place.
               </p>
             </Card>
 
