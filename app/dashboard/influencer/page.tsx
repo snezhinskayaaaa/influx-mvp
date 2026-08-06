@@ -2948,7 +2948,7 @@ export default function InfluencerDashboard() {
                           else showToast(data.error || 'Failed', 'error');
                         } catch { showToast('Failed to disable 2FA', 'error'); }
                       }} className="flex gap-2">
-                        <Input name="disableCode" type="text" placeholder="Password, authenticator code, or backup code" className="h-9 flex-1" required />
+                        <Input name="disableCode" type="text" placeholder="Enter password, app code, or backup code to disable 2FA" className="h-9 flex-1" required />
                         <Button type="submit" variant="outline" size="sm" className="text-red-600 border-red-200 hover:bg-red-50 text-xs h-9 shrink-0">Disable</Button>
                       </form>
                     </div>
