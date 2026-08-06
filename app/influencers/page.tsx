@@ -482,7 +482,7 @@ export default function InfluencersPage() {
               </div>
               <h3 className="text-base lg:text-xl font-semibold mb-2 lg:mb-3">Secure Payments</h3>
               <p className="text-muted-foreground text-xs lg:text-sm">
-                50% advance upfront, remaining 50% auto-releases after 7 days.
+                50% advance upfront. Remaining 50% after publication and project approval, or auto-releases in 7 days.
               </p>
             </Card>
 
