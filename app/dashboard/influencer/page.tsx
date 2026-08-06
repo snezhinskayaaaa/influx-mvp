@@ -149,7 +149,7 @@ interface Campaign {
 
 
 export default function InfluencerDashboard() {
-  const [activeTab, setActiveTab] = useState<"discover" | "my-campaigns" | "profile" | "settings">("discover");
+  const [activeTab, setActiveTab] = useState<"discover" | "my-campaigns" | "wallet" | "profile" | "settings">("discover");
   const activeTabRef = useRef(activeTab);
   useEffect(() => { activeTabRef.current = activeTab; }, [activeTab]);
   const [toast, setToast] = useState<{ message: string; variant: 'success' | 'error' } | null>(null);
@@ -183,6 +183,11 @@ export default function InfluencerDashboard() {
   const [walletBalance, setWalletBalance] = useState<number | null>(null);
   const [walletPending] = useState<number | null>(null);
   const [walletTotalEarned, setWalletTotalEarned] = useState<number | null>(null);
+  const [walletTransactions, setWalletTransactions] = useState<Array<{
+    id: string; type: string; amount: number; fee: number;
+    description: string | null; status: string; createdAt: string;
+    currency?: string; network?: string;
+  }>>([]);
   const [showWithdrawModal, setShowWithdrawModal] = useState(false);
   const [withdrawAmount, setWithdrawAmount] = useState("");
   const [walletAddress, setWalletAddress] = useState("");
@@ -412,6 +417,7 @@ export default function InfluencerDashboard() {
             setWalletBalance(Math.round((data.wallet.balance || 0) / 100));
           }
           if (data.transactions) {
+            setWalletTransactions(data.transactions);
             const txs = data.transactions as Array<{ type: string; status: string; amount: number }>;
             const payouts = txs
               .filter((t) => t.type === 'CAMPAIGN_PAYOUT')
@@ -895,7 +901,6 @@ export default function InfluencerDashboard() {
               </div>
               <div className="text-xs text-muted-foreground space-y-1">
                 <div>Pending: ${walletPending !== null ? walletPending.toLocaleString() : '0'}</div>
-                <div>Total Earned: ${walletTotalEarned !== null ? walletTotalEarned.toLocaleString() : '0'}</div>
                 {pendingDeposits > 0 && (
                   <div className="text-amber-600">Pending deposit: ${pendingDeposits.toLocaleString()}</div>
                 )}
@@ -940,6 +945,18 @@ export default function InfluencerDashboard() {
             >
               <BarChart3 className="h-4 w-4" />
               My Campaigns
+            </button>
+
+            <button
+              onClick={() => setActiveTab("wallet")}
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all ${
+                activeTab === "wallet"
+                  ? "bg-primary/10 text-primary border-2 border-primary/30"
+                  : "text-muted-foreground hover:bg-muted hover:text-foreground"
+              }`}
+            >
+              <Wallet className="h-4 w-4" />
+              Wallet
             </button>
 
             <button
@@ -988,6 +1005,15 @@ export default function InfluencerDashboard() {
             >
               <BarChart3 className="h-5 w-5" />
               <span className="text-xs font-medium">Campaigns</span>
+            </button>
+            <button
+              onClick={() => setActiveTab("wallet")}
+              className={`flex flex-col items-center gap-1 px-3 py-2 rounded-lg transition-colors ${
+                activeTab === "wallet" ? "text-primary" : "text-muted-foreground"
+              }`}
+            >
+              <Wallet className="h-5 w-5" />
+              <span className="text-xs font-medium">Wallet</span>
             </button>
             <button
               onClick={() => setActiveTab("profile")}
@@ -2456,6 +2482,98 @@ export default function InfluencerDashboard() {
               )}
                 </>
               )}
+            </motion.div>
+          )}
+
+          {/* Wallet Tab */}
+          {activeTab === "wallet" && (
+            <motion.div
+              key="wallet"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.3 }}
+            >
+              <div className="mb-6">
+                <h1 className="text-2xl sm:text-3xl font-bold mb-2">Wallet</h1>
+                <p className="text-muted-foreground text-sm sm:text-base">Your earnings and transaction history</p>
+              </div>
+
+              <div className="max-w-3xl space-y-6">
+                {/* Balance Overview */}
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  <Card className="p-5">
+                    <p className="text-xs text-muted-foreground mb-1">Available Balance</p>
+                    <p className="text-2xl font-bold text-primary">
+                      ${walletBalance !== null ? walletBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '0.00'}
+                    </p>
+                  </Card>
+                  <Card className="p-5">
+                    <p className="text-xs text-muted-foreground mb-1">Pending</p>
+                    <p className="text-2xl font-bold text-amber-600">
+                      ${walletPending !== null ? walletPending.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '0.00'}
+                    </p>
+                  </Card>
+                  <Card className="p-5">
+                    <Button className="w-full h-full min-h-[60px]" onClick={() => setShowWithdrawModal(true)}>
+                      Withdraw
+                    </Button>
+                  </Card>
+                </div>
+
+                {/* Transaction History */}
+                <Card className="p-5">
+                  <h3 className="text-sm font-semibold mb-4">Transaction History</h3>
+                  {walletTransactions.length === 0 ? (
+                    <div className="text-center py-8">
+                      <Wallet className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
+                      <p className="text-sm text-muted-foreground">No transactions yet</p>
+                      <p className="text-xs text-muted-foreground mt-1">Your earnings and withdrawals will appear here</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-1">
+                      {walletTransactions.map(tx => {
+                        const typeLabels: Record<string, string> = {
+                          deposit: 'Deposit', withdrawal: 'Withdrawal',
+                          campaign_advance: 'Advance Payment', campaign_payout: 'Final Payment',
+                          campaign_payout_auto: 'Auto-release Payment', campaign_freeze: 'Funds Frozen',
+                          campaign_unfreeze: 'Funds Released', advance_refund: 'Advance Refund',
+                          dispute_payout: 'Dispute Payout', dispute_refund: 'Dispute Refund',
+                        };
+                        const isIncoming = ['deposit', 'campaign_advance', 'campaign_payout', 'campaign_payout_auto', 'advance_refund', 'dispute_payout'].includes(tx.type);
+                        return (
+                          <div key={tx.id} className="flex items-center justify-between py-3 border-b border-border last:border-0">
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-2">
+                                <span className={`text-sm font-medium ${isIncoming ? 'text-success' : 'text-foreground'}`}>
+                                  {typeLabels[tx.type] || tx.type}
+                                </span>
+                                {tx.status === 'PENDING' && (
+                                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-600 font-medium">Pending</span>
+                                )}
+                              </div>
+                              <p className="text-xs text-muted-foreground truncate mt-0.5">
+                                {tx.description || (tx.currency ? `${tx.currency.toUpperCase()} via ${tx.network || 'crypto'}` : '')}
+                              </p>
+                              <p className="text-[10px] text-muted-foreground">
+                                {new Date(tx.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                              </p>
+                            </div>
+                            <div className="text-right shrink-0 ml-4">
+                              <p className={`text-sm font-semibold ${isIncoming ? 'text-success' : 'text-red-600'}`}>
+                                {isIncoming ? '+' : '-'}${(tx.amount / 100).toFixed(2)}
+                              </p>
+                              {tx.fee > 0 && (
+                                <p className="text-[10px] text-muted-foreground">Fee: ${(tx.fee / 100).toFixed(2)}</p>
+                              )}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+                </Card>
+              </div>
             </motion.div>
           )}
 
