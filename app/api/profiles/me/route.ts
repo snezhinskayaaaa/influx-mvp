@@ -10,6 +10,8 @@ const PROFILE_SELECT = {
   avatarUrl: true,
   emailVerified: true,
   totpEnabled: true,
+  emailNotifications: true,
+  campaignUpdates: true,
   createdAt: true,
 } as const
 

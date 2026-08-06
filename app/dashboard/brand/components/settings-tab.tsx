@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { motion } from "framer-motion";
+import { CheckCircle2 } from "lucide-react";
 
 export function SettingsTab() {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -14,6 +15,33 @@ export function SettingsTab() {
   const [deleteError, setDeleteError] = useState('');
   const [emailNotifications, setEmailNotifications] = useState(true);
   const [campaignUpdates, setCampaignUpdates] = useState(true);
+  const [userEmail, setUserEmail] = useState('');
+  const [emailVerified, setEmailVerified] = useState(false);
+  const [totpEnabled, setTotpEnabled] = useState(false);
+  const [totpSetup, setTotpSetup] = useState<{ qrCode: string; secret: string } | null>(null);
+  const [totpVerifyCode, setTotpVerifyCode] = useState('');
+  const [totpBackupCodes, setTotpBackupCodes] = useState<string[] | null>(null);
+  const [toast, setToast] = useState<{ message: string; variant: 'success' | 'error' } | null>(null);
+
+  const showToast = (message: string, variant: 'success' | 'error' = 'success') => {
+    setToast({ message, variant });
+    setTimeout(() => setToast(null), 4000);
+  };
+
+  useEffect(() => {
+    fetch('/api/profiles/me')
+      .then(res => res.json())
+      .then(data => {
+        if (data.profile) {
+          setUserEmail(data.profile.email || '');
+          setEmailVerified(data.profile.emailVerified || false);
+          setTotpEnabled(data.profile.totpEnabled || false);
+          setEmailNotifications(data.profile.emailNotifications ?? true);
+          setCampaignUpdates(data.profile.campaignUpdates ?? true);
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   const handleNotificationToggle = async (field: 'emailNotifications' | 'campaignUpdates', value: boolean) => {
     if (field === 'emailNotifications') setEmailNotifications(value);
@@ -26,7 +54,6 @@ export function SettingsTab() {
         body: JSON.stringify({ [field]: value }),
       });
     } catch {
-      // Revert on error
       if (field === 'emailNotifications') setEmailNotifications(!value);
       else setCampaignUpdates(!value);
     }
@@ -40,77 +67,181 @@ export function SettingsTab() {
       exit={{ opacity: 0, y: -20 }}
       transition={{ duration: 0.3 }}
     >
+      {toast && (
+        <div className={`fixed top-4 right-4 z-50 px-4 py-2 rounded-lg text-sm font-medium shadow-lg ${toast.variant === 'success' ? 'bg-success text-white' : 'bg-destructive text-white'}`}>
+          {toast.message}
+        </div>
+      )}
+
       <div className="mb-6">
         <h1 className="text-2xl sm:text-3xl font-bold mb-2">Settings</h1>
-        <p className="text-muted-foreground text-sm sm:text-base">Manage your account settings and preferences</p>
+        <p className="text-muted-foreground text-sm sm:text-base">Manage your account preferences</p>
       </div>
 
-      <Card className="p-6 max-w-3xl">
-        <div className="space-y-6">
-          <div className="pb-6 border-b">
-            <h3 className="text-lg font-semibold mb-4">Account Settings</h3>
-            <div className="space-y-4">
-              <div>
-                <Label htmlFor="email" className="text-sm font-medium mb-2 block">
-                  Email Address
-                </Label>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="your@email.com"
-                  className="h-11"
-                />
-              </div>
-              <div>
-                <Label htmlFor="password" className="text-sm font-medium mb-2 block">
-                  Change Password
-                </Label>
-                <Button type="button" variant="outline" size="sm">
-                  Update Password
-                </Button>
+      <div className="space-y-4 max-w-2xl">
+        {/* Account */}
+        <Card className="p-5">
+          <h3 className="text-sm font-semibold mb-3">Account</h3>
+          <div className="space-y-4">
+            <div>
+              <Label className="text-xs text-muted-foreground">Email</Label>
+              <div className="flex items-center gap-2 mt-1">
+                <Input value={userEmail} readOnly className="h-10 bg-muted/50" />
+                {emailVerified && <CheckCircle2 className="h-4 w-4 text-success shrink-0" />}
               </div>
             </div>
-          </div>
 
-          <div className="pb-6 border-b">
-            <h3 className="text-lg font-semibold mb-4">Notifications</h3>
+            <div className="border-t pt-4">
+              <Label className="text-xs font-medium mb-2 block">Change Password</Label>
+              <form onSubmit={async (e) => {
+                e.preventDefault();
+                const form = e.currentTarget;
+                const currentPw = (form.elements.namedItem('currentPassword') as HTMLInputElement).value;
+                const newPw = (form.elements.namedItem('newPassword') as HTMLInputElement).value;
+                const confirmPw = (form.elements.namedItem('confirmPassword') as HTMLInputElement).value;
+                if (newPw !== confirmPw) { showToast('Passwords do not match', 'error'); return; }
+                if (newPw.length < 8) { showToast('Password must be at least 8 characters', 'error'); return; }
+                try {
+                  const res = await fetch('/api/auth/change-password', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ currentPassword: currentPw, newPassword: newPw }),
+                  });
+                  const data = await res.json();
+                  if (res.ok) { showToast('Password changed successfully', 'success'); form.reset(); }
+                  else showToast(data.error || 'Failed to change password', 'error');
+                } catch { showToast('Failed to change password', 'error'); }
+              }} className="space-y-2">
+                <Input name="currentPassword" type="password" placeholder="Current password" className="h-10" required />
+                <Input name="newPassword" type="password" placeholder="New password" className="h-10" required minLength={8} />
+                <Input name="confirmPassword" type="password" placeholder="Confirm new password" className="h-10" required minLength={8} />
+                <Button type="submit" size="sm">Change Password</Button>
+              </form>
+            </div>
+          </div>
+        </Card>
+
+        {/* Notifications */}
+        <Card className="p-5">
+          <h3 className="text-sm font-semibold mb-3">Notifications</h3>
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="text-sm font-medium">Email Notifications</div>
+                <div className="text-xs text-muted-foreground">Receive email updates about your campaigns</div>
+              </div>
+              <input
+                type="checkbox"
+                checked={emailNotifications}
+                onChange={(e) => handleNotificationToggle('emailNotifications', e.target.checked)}
+                className="rounded"
+              />
+            </div>
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="text-sm font-medium">Campaign Updates</div>
+                <div className="text-xs text-muted-foreground">Get notified when creators apply or accept invitations</div>
+              </div>
+              <input
+                type="checkbox"
+                checked={campaignUpdates}
+                onChange={(e) => handleNotificationToggle('campaignUpdates', e.target.checked)}
+                className="rounded"
+              />
+            </div>
+          </div>
+        </Card>
+
+        {/* Two-Factor Authentication */}
+        <Card className="p-5">
+          <h3 className="text-sm font-semibold mb-3">Two-Factor Authentication</h3>
+          {totpBackupCodes ? (
             <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium">Email Notifications</p>
-                  <p className="text-xs text-muted-foreground">Receive email updates about your campaigns</p>
-                </div>
-                <input
-                  type="checkbox"
-                  checked={emailNotifications}
-                  onChange={(e) => handleNotificationToggle('emailNotifications', e.target.checked)}
-                  className="h-4 w-4"
-                />
+              <div className="flex items-center gap-2">
+                <CheckCircle2 className="h-4 w-4 text-success" />
+                <span className="text-sm font-medium text-success">2FA enabled successfully</span>
               </div>
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium">Campaign Updates</p>
-                  <p className="text-xs text-muted-foreground">Get notified when influencers apply or accept invitations</p>
+              <div className="p-3 rounded-lg bg-amber-50 border border-amber-200">
+                <p className="text-xs font-medium text-amber-800 mb-2">Save these backup codes in a safe place. Each can be used once if you lose access to your authenticator app.</p>
+                <div className="grid grid-cols-2 gap-1">
+                  {totpBackupCodes.map((code) => (
+                    <code key={code} className="text-xs bg-white px-2 py-1 rounded border text-center font-mono">{code}</code>
+                  ))}
                 </div>
-                <input
-                  type="checkbox"
-                  checked={campaignUpdates}
-                  onChange={(e) => handleNotificationToggle('campaignUpdates', e.target.checked)}
-                  className="h-4 w-4"
-                />
               </div>
+              <Button size="sm" onClick={() => { setTotpBackupCodes(null); setTotpSetup(null); setTotpEnabled(true); }}>
+                I saved my backup codes
+              </Button>
             </div>
-          </div>
+          ) : totpEnabled ? (
+            <div className="space-y-3">
+              <div className="flex items-center gap-2">
+                <CheckCircle2 className="h-4 w-4 text-success" />
+                <span className="text-sm font-medium text-success">2FA is enabled</span>
+              </div>
+              <p className="text-xs text-muted-foreground">Your account is protected with an authenticator app.</p>
+              <form onSubmit={async (e) => {
+                e.preventDefault();
+                const code = (e.currentTarget.elements.namedItem('disableCode') as HTMLInputElement).value;
+                try {
+                  const res = await fetch('/api/auth/2fa/disable', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ code }) });
+                  const data = await res.json();
+                  if (res.ok) { setTotpEnabled(false); showToast('2FA disabled', 'success'); e.currentTarget.reset(); }
+                  else showToast(data.error || 'Failed', 'error');
+                } catch { showToast('Failed to disable 2FA', 'error'); }
+              }} className="flex gap-2">
+                <Input name="disableCode" type="text" placeholder="Enter password, app code, or backup code to disable 2FA" className="h-9 flex-1" required />
+                <Button type="submit" variant="outline" size="sm" className="text-red-600 border-red-200 hover:bg-red-50 text-xs h-9 shrink-0">Disable</Button>
+              </form>
+            </div>
+          ) : totpSetup ? (
+            <div className="space-y-3">
+              <p className="text-xs text-muted-foreground">Scan this QR code with your authenticator app:</p>
+              <div className="flex justify-center">
+                <img src={totpSetup.qrCode} alt="QR Code" className="w-48 h-48 rounded-lg border" />
+              </div>
+              <p className="text-[10px] text-muted-foreground text-center">
+                Or enter manually: <code className="bg-muted px-1 py-0.5 rounded text-[10px]">{totpSetup.secret}</code>
+              </p>
+              <form onSubmit={async (e) => {
+                e.preventDefault();
+                try {
+                  const res = await fetch('/api/auth/2fa/verify', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ code: totpVerifyCode }) });
+                  const data = await res.json();
+                  if (res.ok && data.enabled) setTotpBackupCodes(data.backupCodes);
+                  else showToast(data.error || 'Invalid code', 'error');
+                } catch { showToast('Failed to verify', 'error'); }
+              }} className="flex gap-2">
+                <Input type="text" inputMode="numeric" placeholder="Enter 6-digit code" value={totpVerifyCode} onChange={(e) => setTotpVerifyCode(e.target.value)} className="h-9 flex-1 text-center tracking-widest" maxLength={6} required />
+                <Button type="submit" size="sm" className="shrink-0">Verify</Button>
+              </form>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              <p className="text-xs text-muted-foreground">Add an extra layer of security with an authenticator app (Google Authenticator, Authy, etc.)</p>
+              <Button size="sm" variant="outline" onClick={async () => {
+                try {
+                  const res = await fetch('/api/auth/2fa/setup', { method: 'POST' });
+                  const data = await res.json();
+                  if (res.ok) setTotpSetup({ qrCode: data.qrCode, secret: data.secret });
+                  else showToast(data.error || 'Failed to setup 2FA', 'error');
+                } catch { showToast('Failed to setup 2FA', 'error'); }
+              }}>Enable 2FA</Button>
+            </div>
+          )}
+        </Card>
 
+        {/* Delete Account */}
+        <div className="flex items-center justify-between px-4 py-3 rounded-lg border border-muted">
           <div>
-            <h3 className="text-lg font-semibold mb-4 text-destructive">Danger Zone</h3>
-            <Button variant="destructive" size="sm" onClick={() => setShowDeleteModal(true)}>
-              Delete Account
-            </Button>
-            <p className="text-xs text-muted-foreground mt-2">This action cannot be undone</p>
+            <p className="text-sm font-medium text-muted-foreground">Delete Account</p>
+            <p className="text-xs text-muted-foreground">Permanently delete your account and all data</p>
           </div>
+          <Button variant="outline" size="sm" className="text-red-600 border-red-200 hover:bg-red-50 hover:text-red-700 text-xs" onClick={() => setShowDeleteModal(true)}>
+            Delete
+          </Button>
         </div>
-      </Card>
+      </div>
 
       {/* Delete Account Modal */}
       {showDeleteModal && (
