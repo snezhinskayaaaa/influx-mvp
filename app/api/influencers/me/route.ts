@@ -52,9 +52,13 @@ const ARRAY_FIELDS = [
 
 const INT_FIELDS = [
   'instagramFollowers',
+  'instagramAvgViews',
   'tiktokFollowers',
+  'tiktokAvgViews',
   'youtubeSubscribers',
+  'youtubeAvgViews',
   'twitterFollowers',
+  'twitterAvgViews',
 ] as const
 
 const ENGAGEMENT_FIELDS = [
@@ -73,6 +77,10 @@ const PRICE_FIELDS = [
   'cpcMax',
   'cpeMin',
   'cpeMax',
+  'cpmRate',
+  'cpcRate',
+  'cpeRate',
+  'averagePostPrice',
 ] as const
 
 export async function PATCH(request: NextRequest) {

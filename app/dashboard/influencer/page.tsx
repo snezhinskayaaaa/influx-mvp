@@ -206,38 +206,42 @@ export default function InfluencerDashboard() {
     category: string
     instagram: string
     instagramFollowers: string
+    instagramAvgViews: string
     tiktok: string
     tiktokFollowers: string
+    tiktokAvgViews: string
     twitter: string
     twitterFollowers: string
+    twitterAvgViews: string
     telegram: string
     youtube: string
     youtubeSubscribers: string
-    cpmMin: string
-    cpmMax: string
-    cpcMin: string
-    cpcMax: string
-    cpeMin: string
-    cpeMax: string
+    youtubeAvgViews: string
+    cpmRate: string
+    cpcRate: string
+    cpeRate: string
+    averagePostPrice: string
   }>({
     displayName: '',
     bio: '',
     category: '',
     instagram: '',
     instagramFollowers: '',
+    instagramAvgViews: '',
     tiktok: '',
     tiktokFollowers: '',
+    tiktokAvgViews: '',
     twitter: '',
     twitterFollowers: '',
+    twitterAvgViews: '',
     telegram: '',
     youtube: '',
     youtubeSubscribers: '',
-    cpmMin: '',
-    cpmMax: '',
-    cpcMin: '',
-    cpcMax: '',
-    cpeMin: '',
-    cpeMax: '',
+    youtubeAvgViews: '',
+    cpmRate: '',
+    cpcRate: '',
+    cpeRate: '',
+    averagePostPrice: '',
   })
 
   const [isLoading, setIsLoading] = useState(true);
@@ -377,19 +381,21 @@ export default function InfluencerDashboard() {
                 category: inf.niche?.[0] || '',
                 instagram: inf.instagramHandle || '',
                 instagramFollowers: inf.instagramFollowers ? String(inf.instagramFollowers) : '',
+                instagramAvgViews: inf.instagramAvgViews ? String(inf.instagramAvgViews) : '',
                 tiktok: inf.tiktokHandle || '',
                 tiktokFollowers: inf.tiktokFollowers ? String(inf.tiktokFollowers) : '',
+                tiktokAvgViews: inf.tiktokAvgViews ? String(inf.tiktokAvgViews) : '',
                 twitter: inf.twitterHandle || '',
                 twitterFollowers: inf.twitterFollowers ? String(inf.twitterFollowers) : '',
+                twitterAvgViews: inf.twitterAvgViews ? String(inf.twitterAvgViews) : '',
                 telegram: inf.telegramHandle || '',
                 youtube: inf.youtubeHandle || '',
                 youtubeSubscribers: inf.youtubeSubscribers ? String(inf.youtubeSubscribers) : '',
-                cpmMin: inf.cpmMin ? String(inf.cpmMin / 100) : '',
-                cpmMax: inf.cpmMax ? String(inf.cpmMax / 100) : '',
-                cpcMin: inf.cpcMin ? String(inf.cpcMin / 100) : '',
-                cpcMax: inf.cpcMax ? String(inf.cpcMax / 100) : '',
-                cpeMin: inf.cpeMin ? String(inf.cpeMin / 100) : '',
-                cpeMax: inf.cpeMax ? String(inf.cpeMax / 100) : '',
+                youtubeAvgViews: inf.youtubeAvgViews ? String(inf.youtubeAvgViews) : '',
+                cpmRate: inf.cpmRate ? String(inf.cpmRate / 100) : '',
+                cpcRate: inf.cpcRate ? String(inf.cpcRate / 100) : '',
+                cpeRate: inf.cpeRate ? String(inf.cpeRate / 100) : '',
+                averagePostPrice: inf.averagePostPrice ? String(inf.averagePostPrice / 100) : '',
               })
             }
           }
@@ -2500,110 +2506,78 @@ export default function InfluencerDashboard() {
                     </Select>
                   </div>
 
-                  <div className="space-y-3">
+                  <div className="space-y-4">
                     <Label className="text-sm font-medium">Social Media</Label>
 
-                    <div className="flex gap-2">
-                      <div className="relative flex-1">
-                        <XIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                        <Input
-                          placeholder="X URL or @handle"
-                          value={profileData.twitter}
-                          onChange={(e) => setProfileData(p => ({...p, twitter: e.target.value}))}
-                          className="pl-10 h-11"
-                        />
+                    {/* X (Twitter) */}
+                    <div className="rounded-lg border border-border p-3 space-y-2">
+                      <div className="flex items-center gap-2">
+                        <XIcon className="h-4 w-4 text-muted-foreground" />
+                        <span className="text-xs font-medium">X (Twitter)</span>
                       </div>
-                      <Input
-                        type="number"
-                        placeholder="Followers"
-                        value={profileData.twitterFollowers || ''}
-                        onChange={(e) => setProfileData(p => ({...p, twitterFollowers: e.target.value}))}
-                        className="h-11 w-28"
-                        min="0"
-                      />
-                    </div>
-
-                    <div className="flex gap-2">
-                      <div className="relative flex-1">
-                        <Send className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                        <Input
-                          placeholder="Telegram channel URL or @handle"
-                          value={profileData.telegram || ''}
-                          onChange={(e) => setProfileData(p => ({...p, telegram: e.target.value}))}
-                          className="pl-10 h-11"
-                        />
+                      <div className="grid grid-cols-3 gap-2">
+                        <Input placeholder="@handle" value={profileData.twitter} onChange={(e) => setProfileData(p => ({...p, twitter: e.target.value}))} className="h-10 col-span-3 sm:col-span-1" />
+                        <Input type="number" placeholder="Followers" value={profileData.twitterFollowers || ''} onChange={(e) => setProfileData(p => ({...p, twitterFollowers: e.target.value}))} className="h-10" min="0" />
+                        <Input type="number" placeholder="Avg. views" value={profileData.twitterAvgViews || ''} onChange={(e) => setProfileData(p => ({...p, twitterAvgViews: e.target.value}))} className="h-10" min="0" />
                       </div>
                     </div>
 
-                    <div className="flex gap-2">
-                      <div className="relative flex-1">
-                        <Instagram className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                        <Input
-                          placeholder="Instagram URL or @handle"
-                          value={profileData.instagram}
-                          onChange={(e) => setProfileData(p => ({...p, instagram: e.target.value}))}
-                          className="pl-10 h-11"
-                        />
+                    {/* Telegram */}
+                    <div className="rounded-lg border border-border p-3 space-y-2">
+                      <div className="flex items-center gap-2">
+                        <Send className="h-4 w-4 text-muted-foreground" />
+                        <span className="text-xs font-medium">Telegram</span>
                       </div>
-                      <Input
-                        type="number"
-                        placeholder="Followers"
-                        value={profileData.instagramFollowers}
-                        onChange={(e) => setProfileData(p => ({...p, instagramFollowers: e.target.value}))}
-                        className="h-11 w-28"
-                        min="0"
-                      />
+                      <Input placeholder="@channel or @handle" value={profileData.telegram || ''} onChange={(e) => setProfileData(p => ({...p, telegram: e.target.value}))} className="h-10" />
                     </div>
 
-                    <div className="flex gap-2">
-                      <div className="relative flex-1">
-                        <svg className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    {/* Instagram */}
+                    <div className="rounded-lg border border-border p-3 space-y-2">
+                      <div className="flex items-center gap-2">
+                        <Instagram className="h-4 w-4 text-muted-foreground" />
+                        <span className="text-xs font-medium">Instagram</span>
+                      </div>
+                      <div className="grid grid-cols-3 gap-2">
+                        <Input placeholder="@handle" value={profileData.instagram} onChange={(e) => setProfileData(p => ({...p, instagram: e.target.value}))} className="h-10 col-span-3 sm:col-span-1" />
+                        <Input type="number" placeholder="Followers" value={profileData.instagramFollowers} onChange={(e) => setProfileData(p => ({...p, instagramFollowers: e.target.value}))} className="h-10" min="0" />
+                        <Input type="number" placeholder="Avg. views" value={profileData.instagramAvgViews || ''} onChange={(e) => setProfileData(p => ({...p, instagramAvgViews: e.target.value}))} className="h-10" min="0" />
+                      </div>
+                    </div>
+
+                    {/* TikTok */}
+                    <div className="rounded-lg border border-border p-3 space-y-2">
+                      <div className="flex items-center gap-2">
+                        <svg className="h-4 w-4 text-muted-foreground" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                           <path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5" />
                         </svg>
-                        <Input
-                          placeholder="TikTok URL or @handle"
-                          value={profileData.tiktok}
-                          onChange={(e) => setProfileData(p => ({...p, tiktok: e.target.value}))}
-                          className="pl-10 h-11"
-                        />
+                        <span className="text-xs font-medium">TikTok</span>
                       </div>
-                      <Input
-                        type="number"
-                        placeholder="Followers"
-                        value={profileData.tiktokFollowers}
-                        onChange={(e) => setProfileData(p => ({...p, tiktokFollowers: e.target.value}))}
-                        className="h-11 w-28"
-                        min="0"
-                      />
+                      <div className="grid grid-cols-3 gap-2">
+                        <Input placeholder="@handle" value={profileData.tiktok} onChange={(e) => setProfileData(p => ({...p, tiktok: e.target.value}))} className="h-10 col-span-3 sm:col-span-1" />
+                        <Input type="number" placeholder="Followers" value={profileData.tiktokFollowers} onChange={(e) => setProfileData(p => ({...p, tiktokFollowers: e.target.value}))} className="h-10" min="0" />
+                        <Input type="number" placeholder="Avg. views" value={profileData.tiktokAvgViews || ''} onChange={(e) => setProfileData(p => ({...p, tiktokAvgViews: e.target.value}))} className="h-10" min="0" />
+                      </div>
                     </div>
 
-                    <div className="flex gap-2">
-                      <div className="relative flex-1">
-                        <Youtube className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                        <Input
-                          placeholder="YouTube URL or @channel"
-                          value={profileData.youtube}
-                          onChange={(e) => setProfileData(p => ({...p, youtube: e.target.value}))}
-                          className="pl-10 h-11"
-                        />
+                    {/* YouTube */}
+                    <div className="rounded-lg border border-border p-3 space-y-2">
+                      <div className="flex items-center gap-2">
+                        <Youtube className="h-4 w-4 text-muted-foreground" />
+                        <span className="text-xs font-medium">YouTube</span>
                       </div>
-                      <Input
-                        type="number"
-                        placeholder="Subscribers"
-                        value={profileData.youtubeSubscribers}
-                        onChange={(e) => setProfileData(p => ({...p, youtubeSubscribers: e.target.value}))}
-                        className="h-11 w-28"
-                        min="0"
-                        readOnly
-                      />
+                      <div className="grid grid-cols-3 gap-2">
+                        <Input placeholder="@channel" value={profileData.youtube} onChange={(e) => setProfileData(p => ({...p, youtube: e.target.value}))} className="h-10 col-span-3 sm:col-span-1" />
+                        <Input type="number" placeholder="Subscribers" value={profileData.youtubeSubscribers} onChange={(e) => setProfileData(p => ({...p, youtubeSubscribers: e.target.value}))} className="h-10" min="0" readOnly />
+                        <Input type="number" placeholder="Avg. views" value={profileData.youtubeAvgViews || ''} onChange={(e) => setProfileData(p => ({...p, youtubeAvgViews: e.target.value}))} className="h-10" min="0" />
+                      </div>
                       <Button
                         type="button"
                         variant="outline"
                         size="sm"
-                        className="h-11 px-3 shrink-0 text-xs"
+                        className="h-8 px-3 text-xs w-full"
                         onClick={async () => {
                           if (!profileData.youtube) {
-                            showToast('Enter a YouTube URL first', 'error')
+                            showToast('Enter a YouTube channel first', 'error')
                             return
                           }
                           showToast('Fetching YouTube stats...', 'success')
@@ -2616,7 +2590,7 @@ export default function InfluencerDashboard() {
                             const data = await res.json()
                             if (res.ok) {
                               setProfileData(p => ({ ...p, youtubeSubscribers: String(data.subscribers) }))
-                              showToast(`Found: ${data.title} — ${data.subscribers.toLocaleString()} subscribers`, 'success')
+                              showToast(`Verified: ${data.title} — ${data.subscribers.toLocaleString()} subscribers`, 'success')
                             } else {
                               showToast(data.error || 'Channel not found', 'error')
                             }
@@ -2625,61 +2599,45 @@ export default function InfluencerDashboard() {
                           }
                         }}
                       >
-                        Verify
+                        Verify subscribers via YouTube API
                       </Button>
                     </div>
                   </div>
 
                   <div className="space-y-4 pt-2">
-                    <Label className="text-sm font-medium">Pricing Rates (USD)</Label>
-                    <p className="text-xs text-muted-foreground">Set your rate ranges. Brands see these when browsing your profile. You&apos;ll set exact rates when applying to campaigns.</p>
+                    <Label className="text-sm font-medium">Your Rates (USD)</Label>
+                    <p className="text-xs text-muted-foreground">Optional. Projects see these when browsing your profile. Fill in what makes sense for you. Final price is negotiated per campaign.</p>
 
-                    <div className="grid grid-cols-1 gap-5">
-                      <div className="rounded-lg border border-border p-4">
-                        <Label className="text-xs font-semibold mb-1 block">CPM — Cost Per 1,000 Views</Label>
-                        <p className="text-xs text-muted-foreground mb-3">What you charge per 1,000 views/impressions on your content</p>
-                        <div className="flex items-center gap-3">
-                          <div className="relative flex-1">
-                            <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                            <Input type="number" placeholder="Min" value={profileData.cpmMin} onChange={(e) => setProfileData(p => ({...p, cpmMin: e.target.value}))} className="pl-10 h-11" min="0" step="0.01" />
-                          </div>
-                          <span className="text-muted-foreground font-medium">—</span>
-                          <div className="relative flex-1">
-                            <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                            <Input type="number" placeholder="Max" value={profileData.cpmMax} onChange={(e) => setProfileData(p => ({...p, cpmMax: e.target.value}))} className="pl-10 h-11" min="0" step="0.01" />
-                          </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div className="rounded-lg border border-border p-3">
+                        <Label className="text-xs font-medium mb-2 block">CPM (per 1K views)</Label>
+                        <div className="relative">
+                          <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                          <Input type="number" placeholder="e.g. 10" value={profileData.cpmRate} onChange={(e) => setProfileData(p => ({...p, cpmRate: e.target.value}))} className="pl-10 h-10" min="0" step="0.01" />
                         </div>
                       </div>
 
-                      <div className="rounded-lg border border-border p-4">
-                        <Label className="text-xs font-semibold mb-1 block">CPC — Cost Per Click</Label>
-                        <p className="text-xs text-muted-foreground mb-3">What you charge per click on links in your content</p>
-                        <div className="flex items-center gap-3">
-                          <div className="relative flex-1">
-                            <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                            <Input type="number" placeholder="Min" value={profileData.cpcMin} onChange={(e) => setProfileData(p => ({...p, cpcMin: e.target.value}))} className="pl-10 h-11" min="0" step="0.01" />
-                          </div>
-                          <span className="text-muted-foreground font-medium">—</span>
-                          <div className="relative flex-1">
-                            <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                            <Input type="number" placeholder="Max" value={profileData.cpcMax} onChange={(e) => setProfileData(p => ({...p, cpcMax: e.target.value}))} className="pl-10 h-11" min="0" step="0.01" />
-                          </div>
+                      <div className="rounded-lg border border-border p-3">
+                        <Label className="text-xs font-medium mb-2 block">CPC (per click)</Label>
+                        <div className="relative">
+                          <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                          <Input type="number" placeholder="e.g. 0.50" value={profileData.cpcRate} onChange={(e) => setProfileData(p => ({...p, cpcRate: e.target.value}))} className="pl-10 h-10" min="0" step="0.01" />
                         </div>
                       </div>
 
-                      <div className="rounded-lg border border-border p-4">
-                        <Label className="text-xs font-semibold mb-1 block">CPE — Cost Per Engagement</Label>
-                        <p className="text-xs text-muted-foreground mb-3">What you charge per engagement (like, comment, share, save)</p>
-                        <div className="flex items-center gap-3">
-                          <div className="relative flex-1">
-                            <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                            <Input type="number" placeholder="Min" value={profileData.cpeMin} onChange={(e) => setProfileData(p => ({...p, cpeMin: e.target.value}))} className="pl-10 h-11" min="0" step="0.01" />
-                          </div>
-                          <span className="text-muted-foreground font-medium">—</span>
-                          <div className="relative flex-1">
-                            <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                            <Input type="number" placeholder="Max" value={profileData.cpeMax} onChange={(e) => setProfileData(p => ({...p, cpeMax: e.target.value}))} className="pl-10 h-11" min="0" step="0.01" />
-                          </div>
+                      <div className="rounded-lg border border-border p-3">
+                        <Label className="text-xs font-medium mb-2 block">CPE (per engagement)</Label>
+                        <div className="relative">
+                          <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                          <Input type="number" placeholder="e.g. 0.20" value={profileData.cpeRate} onChange={(e) => setProfileData(p => ({...p, cpeRate: e.target.value}))} className="pl-10 h-10" min="0" step="0.01" />
+                        </div>
+                      </div>
+
+                      <div className="rounded-lg border border-border p-3">
+                        <Label className="text-xs font-medium mb-2 block">Average post price</Label>
+                        <div className="relative">
+                          <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                          <Input type="number" placeholder="e.g. 200" value={profileData.averagePostPrice} onChange={(e) => setProfileData(p => ({...p, averagePostPrice: e.target.value}))} className="pl-10 h-10" min="0" step="1" />
                         </div>
                       </div>
                     </div>
@@ -2700,19 +2658,21 @@ export default function InfluencerDashboard() {
                               niche: profileData.category ? [profileData.category] : [],
                               instagramHandle: profileData.instagram,
                               instagramFollowers: profileData.instagramFollowers ? parseInt(profileData.instagramFollowers) : 0,
+                              instagramAvgViews: profileData.instagramAvgViews ? parseInt(profileData.instagramAvgViews) : 0,
                               tiktokHandle: profileData.tiktok,
                               tiktokFollowers: profileData.tiktokFollowers ? parseInt(profileData.tiktokFollowers) : 0,
+                              tiktokAvgViews: profileData.tiktokAvgViews ? parseInt(profileData.tiktokAvgViews) : 0,
                               youtubeHandle: profileData.youtube,
                               youtubeSubscribers: profileData.youtubeSubscribers ? parseInt(profileData.youtubeSubscribers) : 0,
+                              youtubeAvgViews: profileData.youtubeAvgViews ? parseInt(profileData.youtubeAvgViews) : 0,
                               twitterHandle: profileData.twitter,
                               twitterFollowers: profileData.twitterFollowers ? parseInt(profileData.twitterFollowers) : 0,
+                              twitterAvgViews: profileData.twitterAvgViews ? parseInt(profileData.twitterAvgViews) : 0,
                               telegramHandle: profileData.telegram,
-                              cpmMin: profileData.cpmMin ? parseFloat(profileData.cpmMin) : undefined,
-                              cpmMax: profileData.cpmMax ? parseFloat(profileData.cpmMax) : undefined,
-                              cpcMin: profileData.cpcMin ? parseFloat(profileData.cpcMin) : undefined,
-                              cpcMax: profileData.cpcMax ? parseFloat(profileData.cpcMax) : undefined,
-                              cpeMin: profileData.cpeMin ? parseFloat(profileData.cpeMin) : undefined,
-                              cpeMax: profileData.cpeMax ? parseFloat(profileData.cpeMax) : undefined,
+                              cpmRate: profileData.cpmRate ? parseFloat(profileData.cpmRate) : undefined,
+                              cpcRate: profileData.cpcRate ? parseFloat(profileData.cpcRate) : undefined,
+                              cpeRate: profileData.cpeRate ? parseFloat(profileData.cpeRate) : undefined,
+                              averagePostPrice: profileData.averagePostPrice ? parseFloat(profileData.averagePostPrice) : undefined,
                             }),
                           })
                           if (res.ok) {
