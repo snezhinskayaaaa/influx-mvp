@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { XIcon } from "@/components/x-icon";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -51,6 +51,14 @@ const staggerContainer = {
 export default function PricingPage() {
   const [userType, setUserType] = useState<"brands" | "creators">("brands");
   const [openFaq, setOpenFaq] = useState<number | null>(null);
+  const [foundingStats, setFoundingStats] = useState({ projects: 0, creators: 0 });
+
+  useEffect(() => {
+    fetch('/api/founding/stats')
+      .then(res => res.json())
+      .then(data => setFoundingStats({ projects: data.projects ?? 0, creators: data.creators ?? 0 }))
+      .catch(() => {});
+  }, []);
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -140,11 +148,11 @@ export default function PricingPage() {
             <div className="flex items-center justify-center gap-6">
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20">
                 <Building2 className="h-4 w-4 text-primary" />
-                <span className="text-sm font-medium text-primary">0 / 10 projects</span>
+                <span className="text-sm font-medium text-primary">{foundingStats.projects} / 10 projects</span>
               </div>
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-secondary/10 border border-secondary/20">
                 <Sparkles className="h-4 w-4 text-secondary" />
-                <span className="text-sm font-medium text-secondary">0 / 20 creators</span>
+                <span className="text-sm font-medium text-secondary">{foundingStats.creators} / 20 creators</span>
               </div>
             </div>
           </div>
