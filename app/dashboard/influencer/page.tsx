@@ -196,6 +196,8 @@ export default function InfluencerDashboard() {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleteConfirmText, setDeleteConfirmText] = useState('');
   const [deleteLoading, setDeleteLoading] = useState(false);
+  const [userEmail, setUserEmail] = useState('');
+  const [totpEnabled, setTotpEnabled] = useState(false);
   const [emailNotifications, setEmailNotifications] = useState(true);
   const [campaignUpdates, setCampaignUpdates] = useState(true);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
@@ -477,6 +479,8 @@ export default function InfluencerDashboard() {
         if (profileRes.ok) {
           const profileData = await profileRes.json();
           if (profileData.profile) {
+            if (profileData.profile.email) setUserEmail(profileData.profile.email);
+            if (profileData.profile.totpEnabled) setTotpEnabled(true);
             if (!profileData.profile.emailVerified) {
               setEmailVerified(false);
               setShowVerifyPopup(true);
@@ -2829,16 +2833,42 @@ export default function InfluencerDashboard() {
               <div className="space-y-4 max-w-2xl">
                 <Card className="p-5">
                   <h3 className="text-sm font-semibold mb-3">Account</h3>
-                  <div className="space-y-3">
+                  <div className="space-y-4">
                     <div>
-                      <Label htmlFor="email" className="text-xs text-muted-foreground">Email</Label>
-                      <Input id="email" type="email" defaultValue="" placeholder="your@email.com" className="h-10" />
+                      <Label className="text-xs text-muted-foreground">Email</Label>
+                      <div className="flex items-center gap-2 mt-1">
+                        <Input value={userEmail} readOnly className="h-10 bg-muted/50" />
+                        {emailVerified && <CheckCircle2 className="h-4 w-4 text-success shrink-0" />}
+                      </div>
                     </div>
-                    <div>
-                      <Label htmlFor="password" className="text-xs text-muted-foreground">Password</Label>
-                      <Input id="password" type="password" placeholder="••••••••" className="h-10" />
+
+                    <div className="border-t pt-4">
+                      <Label className="text-xs font-medium mb-2 block">Change Password</Label>
+                      <form onSubmit={async (e) => {
+                        e.preventDefault();
+                        const form = e.currentTarget;
+                        const currentPw = (form.elements.namedItem('currentPassword') as HTMLInputElement).value;
+                        const newPw = (form.elements.namedItem('newPassword') as HTMLInputElement).value;
+                        const confirmPw = (form.elements.namedItem('confirmPassword') as HTMLInputElement).value;
+                        if (newPw !== confirmPw) { showToast('Passwords do not match', 'error'); return; }
+                        if (newPw.length < 8) { showToast('Password must be at least 8 characters', 'error'); return; }
+                        try {
+                          const res = await fetch('/api/auth/change-password', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ currentPassword: currentPw, newPassword: newPw }),
+                          });
+                          const data = await res.json();
+                          if (res.ok) { showToast('Password changed successfully', 'success'); form.reset(); }
+                          else showToast(data.error || 'Failed to change password', 'error');
+                        } catch { showToast('Failed to change password', 'error'); }
+                      }} className="space-y-2">
+                        <Input name="currentPassword" type="password" placeholder="Current password" className="h-10" required />
+                        <Input name="newPassword" type="password" placeholder="New password" className="h-10" required minLength={8} />
+                        <Input name="confirmPassword" type="password" placeholder="Confirm new password" className="h-10" required minLength={8} />
+                        <Button type="submit" size="sm">Change Password</Button>
+                      </form>
                     </div>
-                    <Button size="sm">Update Account</Button>
                   </div>
                 </Card>
 
@@ -2874,6 +2904,83 @@ export default function InfluencerDashboard() {
                       />
                     </div>
                   </div>
+                </Card>
+
+                <Card className="p-5">
+                  <h3 className="text-sm font-semibold mb-3">Two-Factor Authentication</h3>
+                  {totpEnabled ? (
+                    <div className="space-y-3">
+                      <div className="flex items-center gap-2">
+                        <CheckCircle2 className="h-4 w-4 text-success" />
+                        <span className="text-sm font-medium text-success">2FA is enabled</span>
+                      </div>
+                      <p className="text-xs text-muted-foreground">Your account is protected with an authenticator app.</p>
+                      <form onSubmit={async (e) => {
+                        e.preventDefault();
+                        const pw = (e.currentTarget.elements.namedItem('disablePw') as HTMLInputElement).value;
+                        try {
+                          const res = await fetch('/api/auth/2fa/disable', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ password: pw }) });
+                          const data = await res.json();
+                          if (res.ok) { setTotpEnabled(false); showToast('2FA disabled', 'success'); e.currentTarget.reset(); }
+                          else showToast(data.error || 'Failed', 'error');
+                        } catch { showToast('Failed to disable 2FA', 'error'); }
+                      }} className="flex gap-2">
+                        <Input name="disablePw" type="password" placeholder="Enter password to disable" className="h-9 flex-1" required />
+                        <Button type="submit" variant="outline" size="sm" className="text-red-600 border-red-200 hover:bg-red-50 text-xs shrink-0">Disable 2FA</Button>
+                      </form>
+                    </div>
+                  ) : (
+                    <div className="space-y-3" id="totp-setup-section">
+                      <p className="text-xs text-muted-foreground">Add an extra layer of security with an authenticator app (Google Authenticator, Authy, etc.)</p>
+                      <Button size="sm" variant="outline" onClick={async () => {
+                        try {
+                          const res = await fetch('/api/auth/2fa/setup', { method: 'POST' });
+                          const data = await res.json();
+                          if (res.ok) {
+                            const section = document.getElementById('totp-setup-section');
+                            if (section) {
+                              section.innerHTML = '';
+                              const wrapper = document.createElement('div');
+                              wrapper.className = 'space-y-3';
+                              wrapper.innerHTML = `
+                                <p class="text-xs text-muted-foreground">Scan this QR code with your authenticator app:</p>
+                                <div class="flex justify-center"><img src="${data.qrCode}" alt="QR Code" class="w-48 h-48 rounded-lg border" /></div>
+                                <p class="text-[10px] text-muted-foreground text-center">Or enter manually: <code class="bg-muted px-1 py-0.5 rounded text-[10px]">${data.secret}</code></p>
+                                <div id="totp-verify-form"></div>
+                              `;
+                              section.appendChild(wrapper);
+                              // Render verify form with React is complex in innerHTML, so use a simple approach
+                              const formDiv = document.getElementById('totp-verify-form');
+                              if (formDiv) {
+                                formDiv.innerHTML = `
+                                  <form id="verify-totp-form" class="flex gap-2">
+                                    <input name="code" type="text" inputmode="numeric" placeholder="Enter 6-digit code" class="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm text-center tracking-widest" maxlength="6" required />
+                                    <button type="submit" class="inline-flex items-center justify-center rounded-md text-sm font-medium h-9 px-4 bg-primary text-primary-foreground hover:bg-primary/90 shrink-0">Verify</button>
+                                  </form>
+                                `;
+                                document.getElementById('verify-totp-form')?.addEventListener('submit', async (ev) => {
+                                  ev.preventDefault();
+                                  const code = ((ev.target as HTMLFormElement).elements.namedItem('code') as HTMLInputElement).value;
+                                  const vRes = await fetch('/api/auth/2fa/verify', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ code }) });
+                                  const vData = await vRes.json();
+                                  if (vRes.ok && vData.enabled) {
+                                    section.innerHTML = '<div class="p-3 rounded-lg bg-green-50 border border-green-200"><p class="text-sm font-medium text-green-700">2FA enabled successfully!</p><p class="text-xs text-green-600 mt-1">Backup codes: ' + vData.backupCodes.join(', ') + '</p><p class="text-[10px] text-muted-foreground mt-2">Save these backup codes in a safe place. Each can be used once.</p></div>';
+                                    window.location.reload();
+                                  } else {
+                                    const errP = document.createElement('p');
+                                    errP.className = 'text-xs text-red-500 mt-1';
+                                    errP.textContent = vData.error || 'Invalid code';
+                                    formDiv.appendChild(errP);
+                                    setTimeout(() => errP.remove(), 3000);
+                                  }
+                                });
+                              }
+                            }
+                          } else showToast(data.error || 'Failed to setup 2FA', 'error');
+                        } catch { showToast('Failed to setup 2FA', 'error'); }
+                      }}>Enable 2FA</Button>
+                    </div>
+                  )}
                 </Card>
 
                 <div className="flex items-center justify-between px-4 py-3 rounded-lg border border-muted">

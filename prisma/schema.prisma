@@ -80,6 +80,11 @@ model Profile {
   createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz
   updatedAt    DateTime @updatedAt @map("updated_at") @db.Timestamptz
 
+  // Two-Factor Authentication
+  totpSecret    String?  @map("totp_secret")
+  totpEnabled   Boolean  @default(false) @map("totp_enabled")
+  totpBackupCodes String[] @default([]) @map("totp_backup_codes")
+
   // Notification preferences
   emailNotifications Boolean @default(true) @map("email_notifications")
   campaignUpdates    Boolean @default(true) @map("campaign_updates")

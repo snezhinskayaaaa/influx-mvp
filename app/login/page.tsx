@@ -36,6 +36,8 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [, setLoading] = useState(false);
+  const [needs2FA, setNeeds2FA] = useState(false);
+  const [totpCode, setTotpCode] = useState("");
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -45,10 +47,15 @@ export default function LoginPage() {
       const res = await fetch("/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email, password, ...(needs2FA ? { totpCode } : {}) }),
       });
       const data = await res.json();
-      if (!res.ok) {
+      if (data.requires2FA && !needs2FA) {
+        setNeeds2FA(true);
+        setLoading(false);
+        return;
+      }
+      if (!data.success) {
         setError(data.error || "Login failed");
         return;
       }
@@ -223,11 +230,32 @@ export default function LoginPage() {
                 </div>
               </div>
 
+              {needs2FA && (
+                <div className="space-y-1.5 sm:space-y-2">
+                  <Label htmlFor="totpCode" className="text-xs sm:text-sm font-medium">
+                    Two-Factor Code
+                  </Label>
+                  <Input
+                    id="totpCode"
+                    type="text"
+                    inputMode="numeric"
+                    placeholder="Enter 6-digit code or backup code"
+                    value={totpCode}
+                    onChange={(e) => setTotpCode(e.target.value)}
+                    className="h-9 sm:h-10 border-2 focus:border-primary text-sm text-center tracking-widest"
+                    autoFocus
+                    required
+                    maxLength={8}
+                  />
+                  <p className="text-[10px] text-muted-foreground">Open your authenticator app for the code</p>
+                </div>
+              )}
+
               <Button
                 type="submit"
                 className="w-full h-9 sm:h-10 bg-gradient-to-r from-primary to-secondary hover:opacity-90 transition-opacity text-sm"
               >
-                Log in
+                {needs2FA ? 'Verify' : 'Log in'}
                 <ArrowRight className="ml-2 h-3.5 w-3.5 sm:h-4 sm:w-4" />
               </Button>
             </form>

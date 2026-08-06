@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
 import { comparePassword, createToken, setAuthCookie } from '@/lib/auth'
 import { rateLimit } from '@/lib/rate-limit'
+import { verifySync } from 'otplib'
 
 export async function POST(request: NextRequest) {
   try {
@@ -12,7 +13,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json()
-    const { email, password } = body
+    const { email, password, totpCode } = body
 
     // Validation
     if (!email || typeof email !== 'string') {
@@ -58,6 +59,33 @@ export async function POST(request: NextRequest) {
         { success: false, error: 'Invalid email or password' },
         { status: 401 }
       )
+    }
+
+    // Check 2FA if enabled
+    if (profile.totpEnabled && profile.totpSecret) {
+      if (!totpCode) {
+        return NextResponse.json(
+          { success: false, requires2FA: true, error: 'Two-factor authentication code required' },
+          { status: 200 }
+        )
+      }
+      // Check TOTP code
+      const isValidTotp = verifySync({ token: totpCode, secret: profile.totpSecret })
+      // Check backup codes
+      const isBackupCode = !isValidTotp && profile.totpBackupCodes.includes(totpCode.toUpperCase())
+      if (!isValidTotp && !isBackupCode) {
+        return NextResponse.json(
+          { success: false, requires2FA: true, error: 'Invalid 2FA code' },
+          { status: 401 }
+        )
+      }
+      // If backup code used, remove it
+      if (isBackupCode) {
+        await prisma.profile.update({
+          where: { id: profile.id },
+          data: { totpBackupCodes: profile.totpBackupCodes.filter(c => c !== totpCode.toUpperCase()) },
+        })
+      }
     }
 
     // Create token and set cookie

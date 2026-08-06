@@ -9,6 +9,7 @@ const PROFILE_SELECT = {
   role: true,
   avatarUrl: true,
   emailVerified: true,
+  totpEnabled: true,
   createdAt: true,
 } as const
 
