@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { LoadingScreen } from "@/components/loading-screen";
 import { XIcon } from "@/components/x-icon";
 import Link from "next/link";
@@ -150,6 +150,8 @@ interface Campaign {
 
 export default function InfluencerDashboard() {
   const [activeTab, setActiveTab] = useState<"discover" | "my-campaigns" | "profile" | "settings">("discover");
+  const activeTabRef = useRef(activeTab);
+  useEffect(() => { activeTabRef.current = activeTab; }, [activeTab]);
   const [toast, setToast] = useState<{ message: string; variant: 'success' | 'error' } | null>(null);
 
   const showToast = (message: string, variant: 'success' | 'error' = 'success') => {
@@ -259,6 +261,46 @@ export default function InfluencerDashboard() {
   })
 
   const [isLoading, setIsLoading] = useState(true);
+
+  // Auto-save profile on blur (when user leaves a field)
+  const profileDataRef = useRef(profileData);
+  useEffect(() => { profileDataRef.current = profileData; }, [profileData]);
+
+  const autoSaveProfile = useCallback(async () => {
+    const p = profileDataRef.current;
+    try {
+      await fetch('/api/influencers/me', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          handle: p.displayName,
+          bio: p.bio,
+          niche: p.category ? [p.category] : [],
+          instagramHandle: p.instagram,
+          instagramFollowers: p.instagramFollowers ? parseInt(p.instagramFollowers) : 0,
+          instagramAvgViews: p.instagramAvgViews ? parseInt(p.instagramAvgViews) : 0,
+          tiktokHandle: p.tiktok,
+          tiktokFollowers: p.tiktokFollowers ? parseInt(p.tiktokFollowers) : 0,
+          tiktokAvgViews: p.tiktokAvgViews ? parseInt(p.tiktokAvgViews) : 0,
+          youtubeHandle: p.youtube,
+          youtubeSubscribers: p.youtubeSubscribers ? parseInt(p.youtubeSubscribers) : 0,
+          youtubeAvgViews: p.youtubeAvgViews ? parseInt(p.youtubeAvgViews) : 0,
+          twitterHandle: p.twitter,
+          twitterFollowers: p.twitterFollowers ? parseInt(p.twitterFollowers) : 0,
+          twitterAvgViews: p.twitterAvgViews ? parseInt(p.twitterAvgViews) : 0,
+          telegramHandle: p.telegram,
+          telegramFollowers: p.telegramFollowers ? parseInt(p.telegramFollowers) : 0,
+          telegramAvgViews: p.telegramAvgViews ? parseInt(p.telegramAvgViews) : 0,
+          cpmRate: p.cpmRate ? parseFloat(p.cpmRate) : undefined,
+          cpcRate: p.cpcRate ? parseFloat(p.cpcRate) : undefined,
+          cpeRate: p.cpeRate ? parseFloat(p.cpeRate) : undefined,
+          averagePostPrice: p.averagePostPrice ? parseFloat(p.averagePostPrice) : undefined,
+        }),
+      });
+    } catch {
+      // Silent fail for auto-save
+    }
+  }, []);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -389,7 +431,8 @@ export default function InfluencerDashboard() {
             if (inf) {
               setInfluencerStatus(inf.status || 'PENDING')
               if (inf.foundingMember) setIsFoundingMember(true)
-              setProfileData({
+              // Skip overwriting profile data when user is editing on profile tab
+              if (activeTabRef.current !== 'profile') setProfileData({
                 displayName: inf.handle || '',
                 bio: inf.bio || '',
                 category: inf.niche?.[0] || '',
@@ -2529,10 +2572,10 @@ export default function InfluencerDashboard() {
 
                   <div className="space-y-4">
                     <Label className="text-sm font-medium">Social Media</Label>
-                    <p className="text-xs text-muted-foreground">Fill in your handles and stats. Request verification so projects can trust your numbers.</p>
+                    <p className="text-xs text-muted-foreground">Fill in your handles and stats. Request verification so projects can trust your numbers. Changes save automatically.</p>
 
                     {/* X (Twitter) */}
-                    <div className={`rounded-lg border p-3 space-y-2 ${profileData.twitterVerified ? 'border-success/30 bg-success/5' : 'border-border'}`}>
+                    <div className={`rounded-lg border p-3 space-y-2 ${profileData.twitterVerified ? 'border-success/30 bg-success/5' : 'border-border'}`} onBlur={(e) => { if (!e.currentTarget.contains(e.relatedTarget as Node)) autoSaveProfile(); }}>
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
                           <XIcon className="h-4 w-4 text-muted-foreground" />
@@ -2558,7 +2601,7 @@ export default function InfluencerDashboard() {
                     </div>
 
                     {/* Telegram */}
-                    <div className={`rounded-lg border p-3 space-y-2 ${profileData.telegramVerified ? 'border-success/30 bg-success/5' : 'border-border'}`}>
+                    <div className={`rounded-lg border p-3 space-y-2 ${profileData.telegramVerified ? 'border-success/30 bg-success/5' : 'border-border'}`} onBlur={(e) => { if (!e.currentTarget.contains(e.relatedTarget as Node)) autoSaveProfile(); }}>
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
                           <Send className="h-4 w-4 text-muted-foreground" />
@@ -2584,7 +2627,7 @@ export default function InfluencerDashboard() {
                     </div>
 
                     {/* Instagram */}
-                    <div className={`rounded-lg border p-3 space-y-2 ${profileData.instagramVerified ? 'border-success/30 bg-success/5' : 'border-border'}`}>
+                    <div className={`rounded-lg border p-3 space-y-2 ${profileData.instagramVerified ? 'border-success/30 bg-success/5' : 'border-border'}`} onBlur={(e) => { if (!e.currentTarget.contains(e.relatedTarget as Node)) autoSaveProfile(); }}>
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
                           <Instagram className="h-4 w-4 text-muted-foreground" />
@@ -2610,7 +2653,7 @@ export default function InfluencerDashboard() {
                     </div>
 
                     {/* TikTok */}
-                    <div className={`rounded-lg border p-3 space-y-2 ${profileData.tiktokVerified ? 'border-success/30 bg-success/5' : 'border-border'}`}>
+                    <div className={`rounded-lg border p-3 space-y-2 ${profileData.tiktokVerified ? 'border-success/30 bg-success/5' : 'border-border'}`} onBlur={(e) => { if (!e.currentTarget.contains(e.relatedTarget as Node)) autoSaveProfile(); }}>
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
                           <svg className="h-4 w-4 text-muted-foreground" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -2638,7 +2681,7 @@ export default function InfluencerDashboard() {
                     </div>
 
                     {/* YouTube */}
-                    <div className={`rounded-lg border p-3 space-y-2 ${profileData.youtubeVerified ? 'border-success/30 bg-success/5' : 'border-border'}`}>
+                    <div className={`rounded-lg border p-3 space-y-2 ${profileData.youtubeVerified ? 'border-success/30 bg-success/5' : 'border-border'}`} onBlur={(e) => { if (!e.currentTarget.contains(e.relatedTarget as Node)) autoSaveProfile(); }}>
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
                           <Youtube className="h-4 w-4 text-muted-foreground" />
@@ -2671,7 +2714,7 @@ export default function InfluencerDashboard() {
                     </div>
                   </div>
 
-                  <div className="space-y-4 pt-2">
+                  <div className="space-y-4 pt-2" onBlur={(e) => { if (!e.currentTarget.contains(e.relatedTarget as Node)) autoSaveProfile(); }}>
                     <Label className="text-sm font-medium">Your Rates (USD)</Label>
                     <p className="text-xs text-muted-foreground">Optional. Projects see these when browsing your profile. Fill in what makes sense for you. Final price is negotiated per campaign.</p>
 
