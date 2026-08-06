@@ -319,26 +319,26 @@ export default function PricingPage() {
                       <span className="text-sm md:text-base text-muted-foreground">/month</span>
                     </div>
                     <p className="text-sm text-muted-foreground">
-                      Start monetizing your crypto influence
+                      No fees — you keep what you earn
                     </p>
                   </div>
 
                   <div className="space-y-2.5 md:space-y-3 mb-5 md:mb-8 flex-1">
                     <div className="flex items-start gap-2.5 md:gap-3">
                       <Check className="h-4 w-4 md:h-5 md:w-5 text-primary shrink-0 mt-0.5" />
-                      <span className="text-sm">Unlimited campaign applications</span>
+                      <span className="text-sm">Browse &amp; apply to campaigns</span>
                     </div>
                     <div className="flex items-start gap-2.5 md:gap-3">
                       <Check className="h-4 w-4 md:h-5 md:w-5 text-primary shrink-0 mt-0.5" />
-                      <span className="text-sm">Basic profile & analytics</span>
+                      <span className="text-sm">Price negotiation &amp; 50/50 safe payments</span>
                     </div>
                     <div className="flex items-start gap-2.5 md:gap-3">
                       <Check className="h-4 w-4 md:h-5 md:w-5 text-primary shrink-0 mt-0.5" />
-                      <span className="text-sm">Community support</span>
+                      <span className="text-sm">Withdraw earnings in USDC/USDT</span>
                     </div>
                     <div className="flex items-start gap-2.5 md:gap-3">
                       <Check className="h-4 w-4 md:h-5 md:w-5 text-primary shrink-0 mt-0.5" />
-                      <span className="text-sm">Campaign management tools</span>
+                      <span className="text-sm">Email notifications</span>
                     </div>
                   </div>
 
@@ -421,53 +421,40 @@ export default function PricingPage() {
                 <Card className="p-5 md:p-8 bg-gradient-to-br from-muted/80 to-muted/40 backdrop-blur-sm border-2 border-border hover:border-primary/50 transition-all h-full flex flex-col shadow-xl">
                   <div className="mb-5 md:mb-6">
                     <Building2 className="h-8 w-8 md:h-10 md:w-10 text-primary mb-3 md:mb-4" />
-                    <h3 className="text-xl md:text-2xl font-bold mb-2">Pay-per-Performance</h3>
+                    <h3 className="text-xl md:text-2xl font-bold mb-2">Free</h3>
                     <div className="flex items-baseline gap-1 mb-3 md:mb-4">
                       <span className="text-3xl md:text-4xl font-bold">$0</span>
                       <span className="text-sm md:text-base text-muted-foreground">/month</span>
                     </div>
                     <p className="text-sm text-muted-foreground">
-                      Pay only for results you get
+                      No subscription — just pay creators directly
                     </p>
                   </div>
 
                   <div className="space-y-3 md:space-y-4 mb-5 md:mb-8 flex-1">
-                    <div className="bg-muted/50 p-3 md:p-4 rounded-lg">
-                      <div className="space-y-1.5 md:space-y-2 text-sm">
-                        <div className="flex justify-between">
-                          <span className="text-muted-foreground">CPM</span>
-                          <span className="font-medium">$8-12</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-muted-foreground">CPC</span>
-                          <span className="font-medium">$0.70-1.50</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-muted-foreground">CPE</span>
-                          <span className="font-medium">$0.20-0.80</span>
-                        </div>
-                      </div>
-                    </div>
-
                     <div className="flex items-start gap-2.5 md:gap-3">
                       <Check className="h-4 w-4 md:h-5 md:w-5 text-primary shrink-0 mt-0.5" />
-                      <span className="text-sm">Access to all creators</span>
+                      <span className="text-sm">Create campaigns &amp; receive applications</span>
                     </div>
                     <div className="flex items-start gap-2.5 md:gap-3">
                       <Check className="h-4 w-4 md:h-5 md:w-5 text-primary shrink-0 mt-0.5" />
-                      <span className="text-sm">Basic analytics dashboard</span>
+                      <span className="text-sm">Price negotiation with creators</span>
                     </div>
                     <div className="flex items-start gap-2.5 md:gap-3">
                       <Check className="h-4 w-4 md:h-5 md:w-5 text-primary shrink-0 mt-0.5" />
-                      <span className="text-sm">Campaign management</span>
+                      <span className="text-sm">50/50 safe payments — funds frozen until delivery</span>
                     </div>
                     <div className="flex items-start gap-2.5 md:gap-3">
                       <Check className="h-4 w-4 md:h-5 md:w-5 text-primary shrink-0 mt-0.5" />
-                      <span className="text-sm">Email support</span>
+                      <span className="text-sm">Content review &amp; approval workflow</span>
                     </div>
                     <div className="flex items-start gap-2.5 md:gap-3">
                       <Check className="h-4 w-4 md:h-5 md:w-5 text-primary shrink-0 mt-0.5" />
-                      <span className="text-sm">Min. campaign: $100</span>
+                      <span className="text-sm">Pay in USDC/USDT from your wallet</span>
+                    </div>
+                    <div className="flex items-start gap-2.5 md:gap-3">
+                      <Check className="h-4 w-4 md:h-5 md:w-5 text-primary shrink-0 mt-0.5" />
+                      <span className="text-sm">Email notifications</span>
                     </div>
                   </div>
 
