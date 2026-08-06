@@ -129,6 +129,13 @@ export async function POST(
           // Fire-and-forget notification: final payment received
           notifyInfluencerPaymentReceived(collaboration.influencer.userId, collaboration.campaign.title, remainingPayout)
 
+          // Fire-and-forget: check founding member eligibility for creator
+          fetch(new URL('/api/founding/check', request.url), {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ type: 'creator', influencerId: collaboration.influencer.id }),
+          }).catch(() => {})
+
           return NextResponse.json({ collaboration: result })
         } catch (txError) {
           if (txError instanceof Error && txError.message === 'INSUFFICIENT_FROZEN_BALANCE') {

@@ -39,6 +39,7 @@ import {
   CheckCircle2,
   AlertCircle,
   Lock,
+  Crown,
 } from "lucide-react";
 import type { Tab } from "./types";
 
@@ -82,6 +83,7 @@ interface BrandSidebarProps {
   frozenBalance?: number;
   externalShowTopUp?: boolean;
   setExternalShowTopUp?: (show: boolean) => void;
+  isFoundingMember?: boolean;
 }
 
 export function BrandSidebar({
@@ -91,6 +93,7 @@ export function BrandSidebar({
   frozenBalance = 0,
   externalShowTopUp,
   setExternalShowTopUp,
+  isFoundingMember = false,
 }: BrandSidebarProps) {
   const [toast, setToast] = useState<{ message: string; variant: 'success' | 'error' } | null>(null);
 
@@ -491,6 +494,16 @@ export function BrandSidebar({
               </div>
             </DialogContent>
           </Dialog>
+
+          {isFoundingMember && (
+            <div className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-amber-500/10 border border-amber-500/20 mb-2">
+              <Crown className="h-4 w-4 text-amber-600 shrink-0" />
+              <div>
+                <p className="text-xs font-semibold text-amber-600">Founding Member</p>
+                <p className="text-[10px] text-muted-foreground">2% deposit rate locked</p>
+              </div>
+            </div>
+          )}
 
           <button
             onClick={() => setActiveTab("discover")}

@@ -4,13 +4,13 @@ import prisma from '@/lib/prisma'
 export async function GET() {
   try {
     const [projectCount, creatorCount] = await Promise.all([
-      prisma.brand.count(),
-      prisma.influencer.count(),
+      prisma.brand.count({ where: { foundingMember: true } }),
+      prisma.influencer.count({ where: { foundingMember: true } }),
     ])
 
     return NextResponse.json({
-      projects: Math.min(projectCount, 10),
-      creators: Math.min(creatorCount, 20),
+      projects: projectCount,
+      creators: creatorCount,
     })
   } catch {
     return NextResponse.json({ projects: 0, creators: 0 })

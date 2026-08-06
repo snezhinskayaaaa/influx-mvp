@@ -146,6 +146,10 @@ model Influencer {
   // Wallet
   balance Int @default(0) // earnings balance in cents
 
+  // Founding Member Program
+  foundingMember   Boolean   @default(false) @map("founding_member")
+  foundingMemberAt DateTime? @map("founding_member_at") @db.Timestamptz
+
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
   updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz
 
@@ -177,6 +181,10 @@ model Brand {
   // Wallet
   balance       Int @default(0) // free balance in cents
   frozenBalance Int @default(0) @map("frozen_balance") // frozen for active collaborations in cents
+
+  // Founding Member Program
+  foundingMember   Boolean   @default(false) @map("founding_member")
+  foundingMemberAt DateTime? @map("founding_member_at") @db.Timestamptz
 
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
   updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz

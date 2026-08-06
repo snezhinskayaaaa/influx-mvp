@@ -316,6 +316,13 @@ export async function PATCH(
         // Fire-and-forget notification: advance paid, collaboration in progress
         notifyInfluencerAgreedAndAdvance(collaboration.influencer.userId, collaboration.campaign.title, advance)
 
+        // Fire-and-forget: check founding member eligibility for brand
+        fetch(new URL('/api/founding/check', request.url), {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ type: 'brand', brandId: collaboration.campaign.brandId }),
+        }).catch(() => {})
+
         return NextResponse.json({ collaboration: result })
       } catch (txError) {
         if (txError instanceof Error && txError.message === 'INSUFFICIENT_FROZEN_BALANCE') {

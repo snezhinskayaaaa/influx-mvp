@@ -45,6 +45,7 @@ import {
   Send,
   Video,
   XCircle,
+  Crown,
 } from "lucide-react";
 import {
   Select,
@@ -198,6 +199,7 @@ export default function InfluencerDashboard() {
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [emailVerified, setEmailVerified] = useState(true);
   const [influencerStatus, setInfluencerStatus] = useState<string>('');
+  const [isFoundingMember, setIsFoundingMember] = useState(false);
   const [profileData, setProfileData] = useState<{
     displayName: string
     bio: string
@@ -368,6 +370,7 @@ export default function InfluencerDashboard() {
             const inf = data.influencer
             if (inf) {
               setInfluencerStatus(inf.status || 'PENDING')
+              if (inf.foundingMember) setIsFoundingMember(true)
               setProfileData({
                 displayName: inf.handle || '',
                 bio: inf.bio || '',
@@ -827,6 +830,16 @@ export default function InfluencerDashboard() {
                 Withdraw
               </Button>
             </div>
+
+            {isFoundingMember && (
+              <div className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-amber-500/10 border border-amber-500/20 mb-2">
+                <Crown className="h-4 w-4 text-amber-600 shrink-0" />
+                <div>
+                  <p className="text-xs font-semibold text-amber-600">Founding Creator</p>
+                  <p className="text-[10px] text-muted-foreground">3% withdrawal rate locked</p>
+                </div>
+              </div>
+            )}
 
             <button
               onClick={() => setActiveTab("discover")}

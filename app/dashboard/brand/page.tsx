@@ -53,6 +53,7 @@ export default function BrandDashboard() {
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
   const [balance, setBalance] = useState(0);
   const [frozenBalance, setFrozenBalance] = useState(0);
+  const [isFoundingMember, setIsFoundingMember] = useState(false);
 
   const [showCollaborateModal, setShowCollaborateModal] = useState(false);
   const [selectedInfluencer, setSelectedInfluencer] = useState<Influencer | null>(null);
@@ -237,6 +238,7 @@ export default function BrandDashboard() {
             if (b.description) setCompanyBio(b.description);
             if (b.website) setWebsiteUrl(b.website);
             if (b.industry) setCompanyIndustry(b.industry);
+            if (b.foundingMember) setIsFoundingMember(true);
           }
         }
       } catch (error) {
@@ -304,6 +306,7 @@ export default function BrandDashboard() {
           frozenBalance={frozenBalance}
           externalShowTopUp={showTopUpModal}
           setExternalShowTopUp={setShowTopUpModal}
+          isFoundingMember={isFoundingMember}
         />
 
         {/* Main Content */}
