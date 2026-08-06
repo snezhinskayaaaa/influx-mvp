@@ -556,7 +556,7 @@ export function CreateCampaignTab({ campaigns, setCampaigns, setActiveTab }: Cre
               ))}
             </div>
 
-            {/* Target Goals for Selected Pricing Models */}
+            {/* Target Goals for Selected Pricing Basis */}
             {campaignPricingModels.length > 0 && (
               <div className="mt-4 space-y-3">
                 <Label className="text-sm font-medium block">

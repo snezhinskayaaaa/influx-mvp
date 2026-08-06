@@ -736,9 +736,9 @@ export default function BrandDashboard() {
                   </Badge>
                 </div>
                 <p className="text-xs text-muted-foreground mt-2">
-                  {counterOfferInfluencer.proposedPricingModel === "CPM" && "Cost per 1000 impressions"}
-                  {counterOfferInfluencer.proposedPricingModel === "CPC" && "Cost per click"}
-                  {counterOfferInfluencer.proposedPricingModel === "CPE" && "Cost per engagement"}
+                  {counterOfferInfluencer.proposedPricingModel === "CPM" && "Price is based on views"}
+                  {counterOfferInfluencer.proposedPricingModel === "CPC" && "Price is based on clicks"}
+                  {counterOfferInfluencer.proposedPricingModel === "CPE" && "Price is based on engagement"}
                 </p>
               </div>
 

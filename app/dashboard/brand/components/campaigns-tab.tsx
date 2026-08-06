@@ -894,9 +894,9 @@ export function CampaignsTab({
                     )}
                   </div>
 
-                  {/* Pricing Models */}
+                  {/* Pricing Basis */}
                   <div>
-                    <Label className="text-sm font-semibold mb-2 block">Pricing Models</Label>
+                    <Label className="text-sm font-semibold mb-2 block">Pricing Basis</Label>
                     {isEditingCampaign && editedCampaignData ? (
                       <div className="space-y-2">
                         {Object.entries(PRICING_LABELS).map(([model, label]) => (

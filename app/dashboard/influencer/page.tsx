@@ -1094,7 +1094,7 @@ export default function InfluencerDashboard() {
 
                           <p className="text-sm text-muted-foreground mb-3">{campaign.description}</p>
 
-                          {/* Price, Pricing Models, and Platforms */}
+                          {/* Price, Pricing Basis, and Platforms */}
                           <div className="flex items-center gap-6 mb-3 text-sm">
                             <div className="flex items-center gap-2">
                               <DollarSign className="h-4 w-4 text-primary" />
