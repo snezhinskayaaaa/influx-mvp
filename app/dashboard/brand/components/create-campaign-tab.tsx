@@ -520,16 +520,19 @@ export function CreateCampaignTab({ campaigns, setCampaigns, setActiveTab }: Cre
             </div>
           )}
 
-          {/* Pricing Models */}
+          {/* Pricing Basis */}
           <div>
-            <Label className="text-sm font-medium mb-3 block">
-              Pricing Models
+            <Label className="text-sm font-medium mb-1 block">
+              Pricing Basis
             </Label>
+            <p className="text-xs text-muted-foreground mb-3">
+              Sets the basis for price negotiation. Final price is agreed as a fixed amount.
+            </p>
             <div className="grid grid-cols-2 gap-3">
               {[
-                { id: "cpm", name: "CPM", description: "Cost per 1,000 views" },
-                { id: "cpc", name: "CPC", description: "Cost per click" },
-                { id: "cpe", name: "CPE", description: "Cost per engagement" }
+                { id: "cpm", name: "CPM", description: "Price is based on views" },
+                { id: "cpc", name: "CPC", description: "Price is based on clicks" },
+                { id: "cpe", name: "CPE", description: "Price is based on engagement" }
               ].map((model) => (
                 <button
                   key={model.id}
