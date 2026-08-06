@@ -810,15 +810,16 @@ export default function InfluencersPage() {
                   <span className="text-sm lg:text-base text-muted-foreground">/month</span>
                 </div>
                 <p className="text-xs lg:text-sm text-muted-foreground">
-                  Start earning immediately
+                  No fees — you keep what you earn
                 </p>
               </div>
 
               <div className="mb-4 lg:mb-6 flex-1">
-                <p className="text-xs text-muted-foreground mb-2">Features:</p>
+                <p className="text-xs text-muted-foreground mb-2">What&#39;s included:</p>
                 <div className="text-xs lg:text-sm space-y-1 text-muted-foreground">
-                  <p>Unlimited campaign applications</p>
-                  <p>Basic analytics & community support</p>
+                  <p>Browse &amp; apply to campaigns</p>
+                  <p>Price negotiation &amp; 50/50 safe payments</p>
+                  <p>Withdraw earnings in USDC/USDT</p>
                 </div>
               </div>
 
