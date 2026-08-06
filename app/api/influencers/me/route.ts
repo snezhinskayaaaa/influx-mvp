@@ -133,6 +133,22 @@ export async function PATCH(request: NextRequest) {
       }
     }
 
+    // Reset per-platform verification when social media fields change
+    const platformResetMap: Record<string, string> = {
+      twitterHandle: 'twitterVerified', twitterFollowers: 'twitterVerified', twitterAvgViews: 'twitterVerified',
+      instagramHandle: 'instagramVerified', instagramFollowers: 'instagramVerified', instagramAvgViews: 'instagramVerified',
+      tiktokHandle: 'tiktokVerified', tiktokFollowers: 'tiktokVerified', tiktokAvgViews: 'tiktokVerified',
+      youtubeHandle: 'youtubeVerified', youtubeAvgViews: 'youtubeVerified',
+      telegramHandle: 'telegramVerified', telegramFollowers: 'telegramVerified', telegramAvgViews: 'telegramVerified',
+    }
+    const verifiedToReset = new Set<string>()
+    for (const field of Object.keys(updateData)) {
+      if (platformResetMap[field]) verifiedToReset.add(platformResetMap[field])
+    }
+    for (const vField of verifiedToReset) {
+      updateData[vField] = false
+    }
+
     if ('handle' in body) {
       const existing = await prisma.influencer.findUnique({
         where: { handle: String(body.handle) },
