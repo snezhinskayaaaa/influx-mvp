@@ -2826,29 +2826,29 @@ export default function InfluencerDashboard() {
                 </p>
               </div>
 
-              <div className="space-y-6">
-                <Card className="p-6">
-                  <h3 className="text-lg font-semibold mb-4">Account Settings</h3>
-                  <div className="space-y-4">
+              <div className="space-y-4 max-w-2xl">
+                <Card className="p-5">
+                  <h3 className="text-sm font-semibold mb-3">Account</h3>
+                  <div className="space-y-3">
                     <div>
-                      <Label htmlFor="email">Email</Label>
-                      <Input id="email" type="email" defaultValue="" placeholder="your@email.com" />
+                      <Label htmlFor="email" className="text-xs text-muted-foreground">Email</Label>
+                      <Input id="email" type="email" defaultValue="" placeholder="your@email.com" className="h-10" />
                     </div>
                     <div>
-                      <Label htmlFor="password">Password</Label>
-                      <Input id="password" type="password" placeholder="••••••••" />
+                      <Label htmlFor="password" className="text-xs text-muted-foreground">Password</Label>
+                      <Input id="password" type="password" placeholder="••••••••" className="h-10" />
                     </div>
-                    <Button>Update Account</Button>
+                    <Button size="sm">Update Account</Button>
                   </div>
                 </Card>
 
-                <Card className="p-6">
-                  <h3 className="text-lg font-semibold mb-4">Notifications</h3>
+                <Card className="p-5">
+                  <h3 className="text-sm font-semibold mb-3">Notifications</h3>
                   <div className="space-y-3">
                     <div className="flex items-center justify-between">
                       <div>
-                        <div className="font-medium">Email Notifications</div>
-                        <div className="text-sm text-muted-foreground">
+                        <div className="text-sm font-medium">Email Notifications</div>
+                        <div className="text-xs text-muted-foreground">
                           Receive email updates about your campaigns
                         </div>
                       </div>
@@ -2861,8 +2861,8 @@ export default function InfluencerDashboard() {
                     </div>
                     <div className="flex items-center justify-between">
                       <div>
-                        <div className="font-medium">Campaign Updates</div>
-                        <div className="text-sm text-muted-foreground">
+                        <div className="text-sm font-medium">Campaign Updates</div>
+                        <div className="text-xs text-muted-foreground">
                           Get notified about campaign invitations and application updates
                         </div>
                       </div>
@@ -2876,13 +2876,15 @@ export default function InfluencerDashboard() {
                   </div>
                 </Card>
 
-                <Card className="p-6 border-destructive/20">
-                  <h3 className="text-lg font-semibold mb-4 text-destructive">Danger Zone</h3>
-                  <Button variant="destructive" size="sm" onClick={() => setShowDeleteModal(true)}>
-                    Delete Account
+                <div className="flex items-center justify-between px-4 py-3 rounded-lg border border-muted">
+                  <div>
+                    <p className="text-sm font-medium text-muted-foreground">Delete Account</p>
+                    <p className="text-xs text-muted-foreground">Permanently delete your account and all data</p>
+                  </div>
+                  <Button variant="outline" size="sm" className="text-red-600 border-red-200 hover:bg-red-50 hover:text-red-700 text-xs" onClick={() => setShowDeleteModal(true)}>
+                    Delete
                   </Button>
-                  <p className="text-xs text-muted-foreground mt-2">This action cannot be undone</p>
-                </Card>
+                </div>
               </div>
             </motion.div>
           )}
