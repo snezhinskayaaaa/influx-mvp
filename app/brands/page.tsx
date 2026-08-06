@@ -650,31 +650,27 @@ export default function BrandsPage() {
           </div>
 
           <div className="flex overflow-x-auto gap-4 pb-4 pt-4 md:grid md:grid-cols-2 md:gap-6 md:overflow-visible snap-x snap-mandatory md:snap-none max-w-4xl mx-auto">
-            {/* Pay-per-Performance FREE */}
+            {/* Free Plan */}
             <Card className="p-4 lg:p-6 bg-muted/30 border-2 border-border hover:border-primary/50 transition-all flex flex-col min-w-[280px] md:min-w-0 snap-center">
               <div className="mb-4 lg:mb-6 h-[140px] lg:h-[160px]">
                 <Building2 className="h-6 w-6 lg:h-8 lg:w-8 text-primary mb-2 lg:mb-3" />
-                <h3 className="text-base lg:text-xl font-bold mb-1 lg:mb-2">Pay-per-Performance</h3>
+                <h3 className="text-base lg:text-xl font-bold mb-1 lg:mb-2">Free</h3>
                 <div className="flex items-baseline gap-1 mb-1">
                   <span className="text-2xl lg:text-3xl font-bold">$0</span>
                   <span className="text-sm lg:text-base text-muted-foreground">/month</span>
                 </div>
                 <p className="text-xs lg:text-sm text-muted-foreground">
-                  Pay only for results you get
+                  No subscription — just pay creators directly
                 </p>
               </div>
 
               <div className="mb-4 lg:mb-6 flex-1">
-                <p className="text-xs text-muted-foreground mb-2">Performance rates:</p>
-                <div className="text-xs lg:text-sm space-y-1">
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">CPM $8-12</span>
-                    <span className="text-muted-foreground">•</span>
-                    <span className="text-muted-foreground">CPC $0.70-1.50</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">CPE $0.20-0.80</span>
-                  </div>
+                <p className="text-xs text-muted-foreground mb-2">What&#39;s included:</p>
+                <div className="text-xs lg:text-sm space-y-1 text-muted-foreground">
+                  <p>Create campaigns &amp; receive applications</p>
+                  <p>Price negotiation &amp; 50/50 safe payments</p>
+                  <p>Content review &amp; approval workflow</p>
+                  <p>Pay in USDC/USDT from your wallet</p>
                 </div>
               </div>
 
