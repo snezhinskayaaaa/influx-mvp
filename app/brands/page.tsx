@@ -450,11 +450,11 @@ export default function BrandsPage() {
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-6 text-center">
             <div className="flex items-center gap-2">
               <TrendingUp className="h-5 w-5 text-primary" />
-              <span className="text-lg sm:text-xl font-bold text-foreground">3x Higher Engagement</span>
+              <span className="text-lg sm:text-xl font-bold text-foreground">Crypto-Native KOLs</span>
             </div>
             <span className="hidden sm:block text-muted-foreground">•</span>
             <p className="text-sm sm:text-base text-muted-foreground">
-              Virtual influencers average <span className="font-semibold text-primary">5.9% engagement</span> vs 1.9% for traditional influencers
+              Web3 audiences trust <span className="font-semibold text-primary">KOL recommendations 3x more</span> than traditional ads
             </p>
           </div>
         </div>
