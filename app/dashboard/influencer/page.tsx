@@ -2940,16 +2940,16 @@ export default function InfluencerDashboard() {
                       <p className="text-xs text-muted-foreground">Your account is protected with an authenticator app.</p>
                       <form onSubmit={async (e) => {
                         e.preventDefault();
-                        const pw = (e.currentTarget.elements.namedItem('disablePw') as HTMLInputElement).value;
+                        const code = (e.currentTarget.elements.namedItem('disableCode') as HTMLInputElement).value;
                         try {
-                          const res = await fetch('/api/auth/2fa/disable', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ password: pw }) });
+                          const res = await fetch('/api/auth/2fa/disable', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ code }) });
                           const data = await res.json();
                           if (res.ok) { setTotpEnabled(false); showToast('2FA disabled', 'success'); e.currentTarget.reset(); }
                           else showToast(data.error || 'Failed', 'error');
                         } catch { showToast('Failed to disable 2FA', 'error'); }
-                      }} className="flex gap-2">
-                        <Input name="disablePw" type="password" placeholder="Enter password to disable" className="h-9 flex-1" required />
-                        <Button type="submit" variant="outline" size="sm" className="text-red-600 border-red-200 hover:bg-red-50 text-xs shrink-0">Disable 2FA</Button>
+                      }} className="space-y-2">
+                        <Input name="disableCode" type="text" placeholder="Password, authenticator code, or backup code" className="h-9" required />
+                        <Button type="submit" variant="outline" size="sm" className="text-red-600 border-red-200 hover:bg-red-50 text-xs">Disable 2FA</Button>
                       </form>
                     </div>
                   ) : totpSetup ? (
