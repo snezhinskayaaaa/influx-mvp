@@ -2938,6 +2938,7 @@ export default function InfluencerDashboard() {
                         <span className="text-sm font-medium text-success">2FA is enabled</span>
                       </div>
                       <p className="text-xs text-muted-foreground">Your account is protected with an authenticator app.</p>
+                      <p className="text-xs text-muted-foreground">Enter your password, authenticator code, or backup code to disable.</p>
                       <form onSubmit={async (e) => {
                         e.preventDefault();
                         const code = (e.currentTarget.elements.namedItem('disableCode') as HTMLInputElement).value;
@@ -2947,9 +2948,9 @@ export default function InfluencerDashboard() {
                           if (res.ok) { setTotpEnabled(false); showToast('2FA disabled', 'success'); e.currentTarget.reset(); }
                           else showToast(data.error || 'Failed', 'error');
                         } catch { showToast('Failed to disable 2FA', 'error'); }
-                      }} className="space-y-2">
-                        <Input name="disableCode" type="text" placeholder="Password, authenticator code, or backup code" className="h-9" required />
-                        <Button type="submit" variant="outline" size="sm" className="text-red-600 border-red-200 hover:bg-red-50 text-xs">Disable 2FA</Button>
+                      }} className="flex gap-2">
+                        <Input name="disableCode" type="text" placeholder="Enter code or password" className="h-9 flex-1" required />
+                        <Button type="submit" variant="outline" size="sm" className="text-red-600 border-red-200 hover:bg-red-50 text-xs h-9 shrink-0">Disable</Button>
                       </form>
                     </div>
                   ) : totpSetup ? (
