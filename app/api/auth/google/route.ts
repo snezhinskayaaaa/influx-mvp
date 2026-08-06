@@ -98,6 +98,11 @@ export async function GET(request: NextRequest) {
         })
       }
 
+      // If 2FA is enabled, redirect to login page with 2FA prompt instead of auto-login
+      if (profile.totpEnabled) {
+        return NextResponse.redirect(`${baseUrl}/login?needs2fa=true&email=${encodeURIComponent(cleanEmail)}`)
+      }
+
       const token = await createToken({ userId: profile.id, role: profile.role })
 
       const redirectPath = profile.role === 'ADMIN' ? '/admin'

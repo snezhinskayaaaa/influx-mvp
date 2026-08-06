@@ -77,6 +77,14 @@ export default function LoginPage() {
     } else if (urlError === 'no_email') {
       setError('Could not get email from Google. Please use email sign-in.');
     }
+    // Google login redirect with 2FA required
+    const needs2fa = urlParams.get('needs2fa');
+    const prefillEmail = urlParams.get('email');
+    if (needs2fa === 'true' && prefillEmail) {
+      setEmail(decodeURIComponent(prefillEmail));
+      setNeeds2FA(true);
+      setError('2FA is enabled. Enter your password and authentication code to continue.');
+    }
   }, []);
 
   const handleGoogleLogin = () => {
