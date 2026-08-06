@@ -37,6 +37,7 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const [, setLoading] = useState(false);
   const [needs2FA, setNeeds2FA] = useState(false);
+  const [google2FA, setGoogle2FA] = useState(false);
   const [totpCode, setTotpCode] = useState("");
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -44,6 +45,26 @@ export default function LoginPage() {
     setError("");
     setLoading(true);
     try {
+      // Google 2FA flow — only need email + TOTP code
+      if (google2FA) {
+        const res = await fetch("/api/auth/2fa/google-verify", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, totpCode }),
+        });
+        const data = await res.json();
+        if (!data.success) {
+          setError(data.error || "Invalid code");
+          setLoading(false);
+          return;
+        }
+        if (data.user.role === "ADMIN") router.push("/admin");
+        else if (data.user.role === "BRAND") router.push("/dashboard/brand");
+        else router.push("/dashboard/influencer");
+        return;
+      }
+
+      // Normal email+password flow
       const res = await fetch("/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -82,8 +103,8 @@ export default function LoginPage() {
     const prefillEmail = urlParams.get('email');
     if (needs2fa === 'true' && prefillEmail) {
       setEmail(decodeURIComponent(prefillEmail));
+      setGoogle2FA(true);
       setNeeds2FA(true);
-      setError('2FA is enabled. Enter your password and authentication code to continue.');
     }
   }, []);
 
@@ -183,66 +204,82 @@ export default function LoginPage() {
 
             {/* Email/Password Form */}
             <form onSubmit={handleLogin} className="space-y-3 sm:space-y-4">
-              <div className="space-y-1.5 sm:space-y-2">
-                <Label htmlFor="email" className="text-xs sm:text-sm font-medium">
-                  Email
-                </Label>
-                <div className="relative">
-                  <Mail className="absolute left-2.5 sm:left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 sm:h-4 sm:w-4 text-muted-foreground" />
-                  <Input
-                    id="email"
-                    type="email"
-                    placeholder="you@example.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="pl-8 sm:pl-10 h-9 sm:h-10 border-2 focus:border-primary text-sm"
-                    required
-                  />
+              {google2FA ? (
+                /* Google 2FA — only show 2FA code field */
+                <div className="text-center space-y-2 py-2">
+                  <Lock className="h-8 w-8 text-primary mx-auto" />
+                  <p className="text-sm font-medium">Two-factor authentication</p>
+                  <p className="text-xs text-muted-foreground">
+                    Enter the code from your authenticator app to continue as {email}
+                  </p>
                 </div>
-              </div>
+              ) : (
+                /* Normal login — email + password */
+                <>
+                  <div className="space-y-1.5 sm:space-y-2">
+                    <Label htmlFor="email" className="text-xs sm:text-sm font-medium">
+                      Email
+                    </Label>
+                    <div className="relative">
+                      <Mail className="absolute left-2.5 sm:left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 sm:h-4 sm:w-4 text-muted-foreground" />
+                      <Input
+                        id="email"
+                        type="email"
+                        placeholder="you@example.com"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        className="pl-8 sm:pl-10 h-9 sm:h-10 border-2 focus:border-primary text-sm"
+                        required
+                      />
+                    </div>
+                  </div>
 
-              <div className="space-y-1.5 sm:space-y-2">
-                <div className="flex items-center justify-between">
-                  <Label htmlFor="password" className="text-xs sm:text-sm font-medium">
-                    Password
-                  </Label>
-                  <Link
-                    href="/forgot-password"
-                    className="text-xs text-primary hover:underline"
-                  >
-                    Forgot?
-                  </Link>
-                </div>
-                <div className="relative">
-                  <Lock className="absolute left-2.5 sm:left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 sm:h-4 sm:w-4 text-muted-foreground" />
-                  <Input
-                    id="password"
-                    type={showPassword ? "text" : "password"}
-                    placeholder="Enter your password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="pl-8 sm:pl-10 pr-9 sm:pr-10 h-9 sm:h-10 border-2 focus:border-primary text-sm"
-                    required
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-2.5 sm:right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
-                  >
-                    {showPassword ? (
-                      <EyeOff className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                    ) : (
-                      <Eye className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                    )}
-                  </button>
-                </div>
-              </div>
+                  <div className="space-y-1.5 sm:space-y-2">
+                    <div className="flex items-center justify-between">
+                      <Label htmlFor="password" className="text-xs sm:text-sm font-medium">
+                        Password
+                      </Label>
+                      <Link
+                        href="/forgot-password"
+                        className="text-xs text-primary hover:underline"
+                      >
+                        Forgot?
+                      </Link>
+                    </div>
+                    <div className="relative">
+                      <Lock className="absolute left-2.5 sm:left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 sm:h-4 sm:w-4 text-muted-foreground" />
+                      <Input
+                        id="password"
+                        type={showPassword ? "text" : "password"}
+                        placeholder="Enter your password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        className="pl-8 sm:pl-10 pr-9 sm:pr-10 h-9 sm:h-10 border-2 focus:border-primary text-sm"
+                        required={!google2FA}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute right-2.5 sm:right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                      >
+                        {showPassword ? (
+                          <EyeOff className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                        ) : (
+                          <Eye className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                        )}
+                      </button>
+                    </div>
+                  </div>
+                </>
+              )}
 
-              {needs2FA && (
+              {(needs2FA || google2FA) && (
                 <div className="space-y-1.5 sm:space-y-2">
-                  <Label htmlFor="totpCode" className="text-xs sm:text-sm font-medium">
-                    Two-Factor Code
-                  </Label>
+                  {!google2FA && (
+                    <Label htmlFor="totpCode" className="text-xs sm:text-sm font-medium">
+                      Two-Factor Code
+                    </Label>
+                  )}
                   <Input
                     id="totpCode"
                     type="text"
