@@ -434,11 +434,11 @@ export default function InfluencersPage() {
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-6 text-center">
             <div className="flex items-center gap-2">
               <DollarSign className="h-5 w-5 text-secondary" />
-              <span className="text-lg sm:text-xl font-bold text-foreground">Average $5K+ per campaign</span>
+              <span className="text-lg sm:text-xl font-bold text-foreground">50% upfront, guaranteed</span>
             </div>
             <span className="hidden sm:block text-muted-foreground">•</span>
             <p className="text-sm sm:text-base text-muted-foreground">
-              Crypto-native creators earn <span className="font-semibold text-secondary">2-3x more</span> than traditional creators
+              Get paid <span className="font-semibold text-secondary">before you start</span> — funds are frozen on the platform, no risk of non-payment
             </p>
           </div>
         </div>
