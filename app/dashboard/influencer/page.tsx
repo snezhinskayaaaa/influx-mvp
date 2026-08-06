@@ -217,6 +217,13 @@ export default function InfluencerDashboard() {
     youtube: string
     youtubeSubscribers: string
     youtubeAvgViews: string
+    telegramFollowers: string
+    telegramAvgViews: string
+    twitterVerified: boolean
+    instagramVerified: boolean
+    tiktokVerified: boolean
+    youtubeVerified: boolean
+    telegramVerified: boolean
     cpmRate: string
     cpcRate: string
     cpeRate: string
@@ -238,6 +245,13 @@ export default function InfluencerDashboard() {
     youtube: '',
     youtubeSubscribers: '',
     youtubeAvgViews: '',
+    telegramFollowers: '',
+    telegramAvgViews: '',
+    twitterVerified: false,
+    instagramVerified: false,
+    tiktokVerified: false,
+    youtubeVerified: false,
+    telegramVerified: false,
     cpmRate: '',
     cpcRate: '',
     cpeRate: '',
@@ -392,6 +406,13 @@ export default function InfluencerDashboard() {
                 youtube: inf.youtubeHandle || '',
                 youtubeSubscribers: inf.youtubeSubscribers ? String(inf.youtubeSubscribers) : '',
                 youtubeAvgViews: inf.youtubeAvgViews ? String(inf.youtubeAvgViews) : '',
+                telegramFollowers: inf.telegramFollowers ? String(inf.telegramFollowers) : '',
+                telegramAvgViews: inf.telegramAvgViews ? String(inf.telegramAvgViews) : '',
+                twitterVerified: inf.twitterVerified || false,
+                instagramVerified: inf.instagramVerified || false,
+                tiktokVerified: inf.tiktokVerified || false,
+                youtubeVerified: inf.youtubeVerified || false,
+                telegramVerified: inf.telegramVerified || false,
                 cpmRate: inf.cpmRate ? String(inf.cpmRate / 100) : '',
                 cpcRate: inf.cpcRate ? String(inf.cpcRate / 100) : '',
                 cpeRate: inf.cpeRate ? String(inf.cpeRate / 100) : '',
@@ -2508,99 +2529,145 @@ export default function InfluencerDashboard() {
 
                   <div className="space-y-4">
                     <Label className="text-sm font-medium">Social Media</Label>
+                    <p className="text-xs text-muted-foreground">Fill in your handles and stats. Request verification so projects can trust your numbers.</p>
 
                     {/* X (Twitter) */}
-                    <div className="rounded-lg border border-border p-3 space-y-2">
-                      <div className="flex items-center gap-2">
-                        <XIcon className="h-4 w-4 text-muted-foreground" />
-                        <span className="text-xs font-medium">X (Twitter)</span>
+                    <div className={`rounded-lg border p-3 space-y-2 ${profileData.twitterVerified ? 'border-success/30 bg-success/5' : 'border-border'}`}>
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <XIcon className="h-4 w-4 text-muted-foreground" />
+                          <span className="text-xs font-medium">X (Twitter)</span>
+                        </div>
+                        {profileData.twitterVerified && <CheckCircle2 className="h-4 w-4 text-success" />}
                       </div>
                       <div className="grid grid-cols-3 gap-2">
                         <Input placeholder="@handle" value={profileData.twitter} onChange={(e) => setProfileData(p => ({...p, twitter: e.target.value}))} className="h-10 col-span-3 sm:col-span-1" />
                         <Input type="number" placeholder="Followers" value={profileData.twitterFollowers || ''} onChange={(e) => setProfileData(p => ({...p, twitterFollowers: e.target.value}))} className="h-10" min="0" />
                         <Input type="number" placeholder="Avg. views" value={profileData.twitterAvgViews || ''} onChange={(e) => setProfileData(p => ({...p, twitterAvgViews: e.target.value}))} className="h-10" min="0" />
                       </div>
+                      {!profileData.twitterVerified && profileData.twitter && (
+                        <Button type="button" variant="outline" size="sm" className="h-8 text-xs w-full" onClick={async () => {
+                          try {
+                            const res = await fetch('/api/social/verify', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ platform: 'twitter' }) })
+                            const data = await res.json()
+                            if (res.ok) showToast('Verification requested. Admin will review shortly.', 'success')
+                            else showToast(data.error || 'Failed', 'error')
+                          } catch { showToast('Failed to request verification', 'error') }
+                        }}>Request Verification</Button>
+                      )}
                     </div>
 
                     {/* Telegram */}
-                    <div className="rounded-lg border border-border p-3 space-y-2">
-                      <div className="flex items-center gap-2">
-                        <Send className="h-4 w-4 text-muted-foreground" />
-                        <span className="text-xs font-medium">Telegram</span>
+                    <div className={`rounded-lg border p-3 space-y-2 ${profileData.telegramVerified ? 'border-success/30 bg-success/5' : 'border-border'}`}>
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <Send className="h-4 w-4 text-muted-foreground" />
+                          <span className="text-xs font-medium">Telegram</span>
+                        </div>
+                        {profileData.telegramVerified && <CheckCircle2 className="h-4 w-4 text-success" />}
                       </div>
-                      <Input placeholder="@channel or @handle" value={profileData.telegram || ''} onChange={(e) => setProfileData(p => ({...p, telegram: e.target.value}))} className="h-10" />
+                      <div className="grid grid-cols-3 gap-2">
+                        <Input placeholder="@channel" value={profileData.telegram || ''} onChange={(e) => setProfileData(p => ({...p, telegram: e.target.value}))} className="h-10 col-span-3 sm:col-span-1" />
+                        <Input type="number" placeholder="Subscribers" value={profileData.telegramFollowers || ''} onChange={(e) => setProfileData(p => ({...p, telegramFollowers: e.target.value}))} className="h-10" min="0" />
+                        <Input type="number" placeholder="Avg. views" value={profileData.telegramAvgViews || ''} onChange={(e) => setProfileData(p => ({...p, telegramAvgViews: e.target.value}))} className="h-10" min="0" />
+                      </div>
+                      {!profileData.telegramVerified && profileData.telegram && (
+                        <Button type="button" variant="outline" size="sm" className="h-8 text-xs w-full" onClick={async () => {
+                          try {
+                            const res = await fetch('/api/social/verify', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ platform: 'telegram' }) })
+                            const data = await res.json()
+                            if (res.ok) showToast('Verification requested. Admin will review shortly.', 'success')
+                            else showToast(data.error || 'Failed', 'error')
+                          } catch { showToast('Failed to request verification', 'error') }
+                        }}>Request Verification</Button>
+                      )}
                     </div>
 
                     {/* Instagram */}
-                    <div className="rounded-lg border border-border p-3 space-y-2">
-                      <div className="flex items-center gap-2">
-                        <Instagram className="h-4 w-4 text-muted-foreground" />
-                        <span className="text-xs font-medium">Instagram</span>
+                    <div className={`rounded-lg border p-3 space-y-2 ${profileData.instagramVerified ? 'border-success/30 bg-success/5' : 'border-border'}`}>
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <Instagram className="h-4 w-4 text-muted-foreground" />
+                          <span className="text-xs font-medium">Instagram</span>
+                        </div>
+                        {profileData.instagramVerified && <CheckCircle2 className="h-4 w-4 text-success" />}
                       </div>
                       <div className="grid grid-cols-3 gap-2">
                         <Input placeholder="@handle" value={profileData.instagram} onChange={(e) => setProfileData(p => ({...p, instagram: e.target.value}))} className="h-10 col-span-3 sm:col-span-1" />
                         <Input type="number" placeholder="Followers" value={profileData.instagramFollowers} onChange={(e) => setProfileData(p => ({...p, instagramFollowers: e.target.value}))} className="h-10" min="0" />
                         <Input type="number" placeholder="Avg. views" value={profileData.instagramAvgViews || ''} onChange={(e) => setProfileData(p => ({...p, instagramAvgViews: e.target.value}))} className="h-10" min="0" />
                       </div>
+                      {!profileData.instagramVerified && profileData.instagram && (
+                        <Button type="button" variant="outline" size="sm" className="h-8 text-xs w-full" onClick={async () => {
+                          try {
+                            const res = await fetch('/api/social/verify', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ platform: 'instagram' }) })
+                            const data = await res.json()
+                            if (res.ok) showToast('Verification requested. Admin will review shortly.', 'success')
+                            else showToast(data.error || 'Failed', 'error')
+                          } catch { showToast('Failed to request verification', 'error') }
+                        }}>Request Verification</Button>
+                      )}
                     </div>
 
                     {/* TikTok */}
-                    <div className="rounded-lg border border-border p-3 space-y-2">
-                      <div className="flex items-center gap-2">
-                        <svg className="h-4 w-4 text-muted-foreground" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                          <path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5" />
-                        </svg>
-                        <span className="text-xs font-medium">TikTok</span>
+                    <div className={`rounded-lg border p-3 space-y-2 ${profileData.tiktokVerified ? 'border-success/30 bg-success/5' : 'border-border'}`}>
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <svg className="h-4 w-4 text-muted-foreground" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5" />
+                          </svg>
+                          <span className="text-xs font-medium">TikTok</span>
+                        </div>
+                        {profileData.tiktokVerified && <CheckCircle2 className="h-4 w-4 text-success" />}
                       </div>
                       <div className="grid grid-cols-3 gap-2">
                         <Input placeholder="@handle" value={profileData.tiktok} onChange={(e) => setProfileData(p => ({...p, tiktok: e.target.value}))} className="h-10 col-span-3 sm:col-span-1" />
                         <Input type="number" placeholder="Followers" value={profileData.tiktokFollowers} onChange={(e) => setProfileData(p => ({...p, tiktokFollowers: e.target.value}))} className="h-10" min="0" />
                         <Input type="number" placeholder="Avg. views" value={profileData.tiktokAvgViews || ''} onChange={(e) => setProfileData(p => ({...p, tiktokAvgViews: e.target.value}))} className="h-10" min="0" />
                       </div>
+                      {!profileData.tiktokVerified && profileData.tiktok && (
+                        <Button type="button" variant="outline" size="sm" className="h-8 text-xs w-full" onClick={async () => {
+                          try {
+                            const res = await fetch('/api/social/verify', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ platform: 'tiktok' }) })
+                            const data = await res.json()
+                            if (res.ok) showToast('Verification requested. Admin will review shortly.', 'success')
+                            else showToast(data.error || 'Failed', 'error')
+                          } catch { showToast('Failed to request verification', 'error') }
+                        }}>Request Verification</Button>
+                      )}
                     </div>
 
                     {/* YouTube */}
-                    <div className="rounded-lg border border-border p-3 space-y-2">
-                      <div className="flex items-center gap-2">
-                        <Youtube className="h-4 w-4 text-muted-foreground" />
-                        <span className="text-xs font-medium">YouTube</span>
+                    <div className={`rounded-lg border p-3 space-y-2 ${profileData.youtubeVerified ? 'border-success/30 bg-success/5' : 'border-border'}`}>
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <Youtube className="h-4 w-4 text-muted-foreground" />
+                          <span className="text-xs font-medium">YouTube</span>
+                        </div>
+                        {profileData.youtubeVerified && <CheckCircle2 className="h-4 w-4 text-success" />}
                       </div>
                       <div className="grid grid-cols-3 gap-2">
                         <Input placeholder="@channel" value={profileData.youtube} onChange={(e) => setProfileData(p => ({...p, youtube: e.target.value}))} className="h-10 col-span-3 sm:col-span-1" />
                         <Input type="number" placeholder="Subscribers" value={profileData.youtubeSubscribers} onChange={(e) => setProfileData(p => ({...p, youtubeSubscribers: e.target.value}))} className="h-10" min="0" readOnly />
                         <Input type="number" placeholder="Avg. views" value={profileData.youtubeAvgViews || ''} onChange={(e) => setProfileData(p => ({...p, youtubeAvgViews: e.target.value}))} className="h-10" min="0" />
                       </div>
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        className="h-8 px-3 text-xs w-full"
-                        onClick={async () => {
-                          if (!profileData.youtube) {
-                            showToast('Enter a YouTube channel first', 'error')
-                            return
-                          }
-                          showToast('Fetching YouTube stats...', 'success')
+                      {!profileData.youtubeVerified && profileData.youtube && (
+                        <Button type="button" variant="outline" size="sm" className="h-8 text-xs w-full" onClick={async () => {
                           try {
-                            const res = await fetch('/api/social/youtube', {
-                              method: 'POST',
-                              headers: { 'Content-Type': 'application/json' },
-                              body: JSON.stringify({ youtubeUrl: profileData.youtube }),
-                            })
+                            showToast('Verifying subscribers and sending to admin...', 'success')
+                            const res = await fetch('/api/social/verify', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ platform: 'youtube' }) })
                             const data = await res.json()
                             if (res.ok) {
-                              setProfileData(p => ({ ...p, youtubeSubscribers: String(data.subscribers) }))
-                              showToast(`Verified: ${data.title} — ${data.subscribers.toLocaleString()} subscribers`, 'success')
-                            } else {
-                              showToast(data.error || 'Channel not found', 'error')
-                            }
-                          } catch {
-                            showToast('Failed to fetch YouTube data', 'error')
-                          }
-                        }}
-                      >
-                        Verify subscribers via YouTube API
-                      </Button>
+                              if (data.youtubeAutoResult) {
+                                setProfileData(p => ({ ...p, youtubeSubscribers: String(data.youtubeAutoResult.subscribers) }))
+                                showToast(`Subscribers verified: ${data.youtubeAutoResult.subscribers.toLocaleString()}. Sent to admin for full review.`, 'success')
+                              } else {
+                                showToast('Verification requested. Admin will review shortly.', 'success')
+                              }
+                            } else showToast(data.error || 'Failed', 'error')
+                          } catch { showToast('Failed to request verification', 'error') }
+                        }}>Verify &amp; Request Review</Button>
+                      )}
                     </div>
                   </div>
 
@@ -2669,6 +2736,8 @@ export default function InfluencerDashboard() {
                               twitterFollowers: profileData.twitterFollowers ? parseInt(profileData.twitterFollowers) : 0,
                               twitterAvgViews: profileData.twitterAvgViews ? parseInt(profileData.twitterAvgViews) : 0,
                               telegramHandle: profileData.telegram,
+                              telegramFollowers: profileData.telegramFollowers ? parseInt(profileData.telegramFollowers) : 0,
+                              telegramAvgViews: profileData.telegramAvgViews ? parseInt(profileData.telegramAvgViews) : 0,
                               cpmRate: profileData.cpmRate ? parseFloat(profileData.cpmRate) : undefined,
                               cpcRate: profileData.cpcRate ? parseFloat(profileData.cpcRate) : undefined,
                               cpeRate: profileData.cpeRate ? parseFloat(profileData.cpeRate) : undefined,

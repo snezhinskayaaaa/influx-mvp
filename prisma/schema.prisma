@@ -120,6 +120,15 @@ model Influencer {
   twitterAvgViews    Int      @default(0) @map("twitter_avg_views")
 
   telegramHandle     String?  @map("telegram_handle")
+  telegramFollowers  Int      @default(0) @map("telegram_followers")
+  telegramAvgViews   Int      @default(0) @map("telegram_avg_views")
+
+  // Per-platform verification
+  twitterVerified   Boolean @default(false) @map("twitter_verified")
+  instagramVerified Boolean @default(false) @map("instagram_verified")
+  tiktokVerified    Boolean @default(false) @map("tiktok_verified")
+  youtubeVerified   Boolean @default(false) @map("youtube_verified")
+  telegramVerified  Boolean @default(false) @map("telegram_verified")
 
   // Pricing (in cents) — legacy fields, kept for compatibility
   pricePerPost  Int? @map("price_per_post")

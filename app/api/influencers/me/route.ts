@@ -59,6 +59,8 @@ const INT_FIELDS = [
   'youtubeAvgViews',
   'twitterFollowers',
   'twitterAvgViews',
+  'telegramFollowers',
+  'telegramAvgViews',
 ] as const
 
 const ENGAGEMENT_FIELDS = [

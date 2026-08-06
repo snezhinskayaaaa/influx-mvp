@@ -19,7 +19,8 @@ export async function PATCH(
     const { id } = await params
 
     const body = await request.json()
-    const { status, isVerified, isFeatured, instagramFollowers, tiktokFollowers, youtubeSubscribers, twitterFollowers } = body
+    const { status, isVerified, isFeatured, instagramFollowers, tiktokFollowers, youtubeSubscribers, twitterFollowers,
+      twitterVerified, instagramVerified, tiktokVerified, youtubeVerified, telegramVerified } = body
 
     if (status !== undefined) {
       const statusMap: Record<string, string> = {
@@ -58,6 +59,11 @@ export async function PATCH(
     if (twitterFollowers !== undefined) {
       updateData.twitterFollowers = parseInt(String(twitterFollowers)) || 0
     }
+    if (twitterVerified !== undefined) updateData.twitterVerified = Boolean(twitterVerified)
+    if (instagramVerified !== undefined) updateData.instagramVerified = Boolean(instagramVerified)
+    if (tiktokVerified !== undefined) updateData.tiktokVerified = Boolean(tiktokVerified)
+    if (youtubeVerified !== undefined) updateData.youtubeVerified = Boolean(youtubeVerified)
+    if (telegramVerified !== undefined) updateData.telegramVerified = Boolean(telegramVerified)
 
     if (Object.keys(updateData).length === 0) {
       return NextResponse.json(
