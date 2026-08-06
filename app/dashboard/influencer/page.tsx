@@ -198,6 +198,9 @@ export default function InfluencerDashboard() {
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [userEmail, setUserEmail] = useState('');
   const [totpEnabled, setTotpEnabled] = useState(false);
+  const [totpSetup, setTotpSetup] = useState<{ qrCode: string; secret: string } | null>(null);
+  const [totpVerifyCode, setTotpVerifyCode] = useState('');
+  const [totpBackupCodes, setTotpBackupCodes] = useState<string[] | null>(null);
   const [emailNotifications, setEmailNotifications] = useState(true);
   const [campaignUpdates, setCampaignUpdates] = useState(true);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
@@ -2908,7 +2911,27 @@ export default function InfluencerDashboard() {
 
                 <Card className="p-5">
                   <h3 className="text-sm font-semibold mb-3">Two-Factor Authentication</h3>
-                  {totpEnabled ? (
+                  {totpBackupCodes ? (
+                    /* Step 3: Show backup codes after successful verification */
+                    <div className="space-y-3">
+                      <div className="flex items-center gap-2">
+                        <CheckCircle2 className="h-4 w-4 text-success" />
+                        <span className="text-sm font-medium text-success">2FA enabled successfully</span>
+                      </div>
+                      <div className="p-3 rounded-lg bg-amber-50 border border-amber-200">
+                        <p className="text-xs font-medium text-amber-800 mb-2">Save these backup codes in a safe place. Each can be used once if you lose access to your authenticator app.</p>
+                        <div className="grid grid-cols-2 gap-1">
+                          {totpBackupCodes.map((code) => (
+                            <code key={code} className="text-xs bg-white px-2 py-1 rounded border text-center font-mono">{code}</code>
+                          ))}
+                        </div>
+                      </div>
+                      <Button size="sm" onClick={() => { setTotpBackupCodes(null); setTotpSetup(null); setTotpEnabled(true); }}>
+                        I saved my backup codes
+                      </Button>
+                    </div>
+                  ) : totpEnabled ? (
+                    /* 2FA is enabled — option to disable */
                     <div className="space-y-3">
                       <div className="flex items-center gap-2">
                         <CheckCircle2 className="h-4 w-4 text-success" />
@@ -2929,54 +2952,40 @@ export default function InfluencerDashboard() {
                         <Button type="submit" variant="outline" size="sm" className="text-red-600 border-red-200 hover:bg-red-50 text-xs shrink-0">Disable 2FA</Button>
                       </form>
                     </div>
+                  ) : totpSetup ? (
+                    /* Step 2: QR code shown, verify with code */
+                    <div className="space-y-3">
+                      <p className="text-xs text-muted-foreground">Scan this QR code with your authenticator app:</p>
+                      <div className="flex justify-center">
+                        <img src={totpSetup.qrCode} alt="QR Code" className="w-48 h-48 rounded-lg border" />
+                      </div>
+                      <p className="text-[10px] text-muted-foreground text-center">
+                        Or enter manually: <code className="bg-muted px-1 py-0.5 rounded text-[10px]">{totpSetup.secret}</code>
+                      </p>
+                      <form onSubmit={async (e) => {
+                        e.preventDefault();
+                        try {
+                          const res = await fetch('/api/auth/2fa/verify', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ code: totpVerifyCode }) });
+                          const data = await res.json();
+                          if (res.ok && data.enabled) {
+                            setTotpBackupCodes(data.backupCodes);
+                          } else showToast(data.error || 'Invalid code', 'error');
+                        } catch { showToast('Failed to verify', 'error'); }
+                      }} className="flex gap-2">
+                        <Input type="text" inputMode="numeric" placeholder="Enter 6-digit code" value={totpVerifyCode} onChange={(e) => setTotpVerifyCode(e.target.value)} className="h-9 flex-1 text-center tracking-widest" maxLength={6} required />
+                        <Button type="submit" size="sm" className="shrink-0">Verify</Button>
+                      </form>
+                    </div>
                   ) : (
-                    <div className="space-y-3" id="totp-setup-section">
+                    /* Step 1: Not enabled, show enable button */
+                    <div className="space-y-3">
                       <p className="text-xs text-muted-foreground">Add an extra layer of security with an authenticator app (Google Authenticator, Authy, etc.)</p>
                       <Button size="sm" variant="outline" onClick={async () => {
                         try {
                           const res = await fetch('/api/auth/2fa/setup', { method: 'POST' });
                           const data = await res.json();
-                          if (res.ok) {
-                            const section = document.getElementById('totp-setup-section');
-                            if (section) {
-                              section.innerHTML = '';
-                              const wrapper = document.createElement('div');
-                              wrapper.className = 'space-y-3';
-                              wrapper.innerHTML = `
-                                <p class="text-xs text-muted-foreground">Scan this QR code with your authenticator app:</p>
-                                <div class="flex justify-center"><img src="${data.qrCode}" alt="QR Code" class="w-48 h-48 rounded-lg border" /></div>
-                                <p class="text-[10px] text-muted-foreground text-center">Or enter manually: <code class="bg-muted px-1 py-0.5 rounded text-[10px]">${data.secret}</code></p>
-                                <div id="totp-verify-form"></div>
-                              `;
-                              section.appendChild(wrapper);
-                              // Render verify form with React is complex in innerHTML, so use a simple approach
-                              const formDiv = document.getElementById('totp-verify-form');
-                              if (formDiv) {
-                                formDiv.innerHTML = `
-                                  <form id="verify-totp-form" class="flex gap-2">
-                                    <input name="code" type="text" inputmode="numeric" placeholder="Enter 6-digit code" class="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm text-center tracking-widest" maxlength="6" required />
-                                    <button type="submit" class="inline-flex items-center justify-center rounded-md text-sm font-medium h-9 px-4 bg-primary text-primary-foreground hover:bg-primary/90 shrink-0">Verify</button>
-                                  </form>
-                                `;
-                                document.getElementById('verify-totp-form')?.addEventListener('submit', async (ev) => {
-                                  ev.preventDefault();
-                                  const code = ((ev.target as HTMLFormElement).elements.namedItem('code') as HTMLInputElement).value;
-                                  const vRes = await fetch('/api/auth/2fa/verify', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ code }) });
-                                  const vData = await vRes.json();
-                                  if (vRes.ok && vData.enabled) {
-                                    section.innerHTML = '<div class="p-3 rounded-lg bg-green-50 border border-green-200"><p class="text-sm font-medium text-green-700">2FA enabled successfully!</p><p class="text-xs text-green-600 mt-1">Backup codes: ' + vData.backupCodes.join(', ') + '</p><p class="text-[10px] text-muted-foreground mt-2">Save these backup codes in a safe place. Each can be used once.</p></div>';
-                                    window.location.reload();
-                                  } else {
-                                    const errP = document.createElement('p');
-                                    errP.className = 'text-xs text-red-500 mt-1';
-                                    errP.textContent = vData.error || 'Invalid code';
-                                    formDiv.appendChild(errP);
-                                    setTimeout(() => errP.remove(), 3000);
-                                  }
-                                });
-                              }
-                            }
-                          } else showToast(data.error || 'Failed to setup 2FA', 'error');
+                          if (res.ok) setTotpSetup({ qrCode: data.qrCode, secret: data.secret });
+                          else showToast(data.error || 'Failed to setup 2FA', 'error');
                         } catch { showToast('Failed to setup 2FA', 'error'); }
                       }}>Enable 2FA</Button>
                     </div>

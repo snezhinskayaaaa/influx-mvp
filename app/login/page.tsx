@@ -247,7 +247,7 @@ export default function LoginPage() {
                     id="totpCode"
                     type="text"
                     inputMode="numeric"
-                    placeholder="Enter 6-digit code or backup code"
+                    placeholder="Enter 6-digit code"
                     value={totpCode}
                     onChange={(e) => setTotpCode(e.target.value)}
                     className="h-9 sm:h-10 border-2 focus:border-primary text-sm text-center tracking-widest"
