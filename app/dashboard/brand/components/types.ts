@@ -49,7 +49,9 @@ export interface Influencer {
   avatar: string;
   avatarUrl?: string;
   followers: string;
+  rawFollowers: number;
   engagement: string;
+  rawEngagement: number;
   category: string;
   rate: string;
   verified: boolean;

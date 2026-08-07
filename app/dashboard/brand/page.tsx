@@ -46,6 +46,8 @@ export default function BrandDashboard() {
   const [websiteUrl, setWebsiteUrl] = useState("");
   const [instagramUrl, setInstagramUrl] = useState("");
   const [twitterUrl, setTwitterUrl] = useState("");
+  const [telegramUrl, setTelegramUrl] = useState("");
+  const [brandLogoUrl, setBrandLogoUrl] = useState("");
   const [youtubeUrl, setYoutubeUrl] = useState("");
   const [linkedinUrl, setLinkedinUrl] = useState("");
   const [companyCountry] = useState("United States");
@@ -216,7 +218,9 @@ export default function BrandDashboard() {
                 avatar: handle ? handle.charAt(0).toUpperCase() : '?',
                 avatarUrl: avatarUrl || undefined,
                 followers: followersStr,
+                rawFollowers: totalFollowers,
                 engagement: `${engagement.toFixed(1)}%`,
+                rawEngagement: engagement,
                 category: nicheArr.length > 0 ? nicheArr[0] : 'Other',
                 rate: rateStr,
                 verified: (inf.isVerified as boolean) || false,
@@ -304,9 +308,12 @@ export default function BrandDashboard() {
         const profileRes = await fetch('/api/profiles/me');
         if (profileRes.ok) {
           const profileData = await profileRes.json();
-          if (profileData.profile && !profileData.profile.emailVerified) {
-            setEmailVerified(false);
-            setShowVerifyPopup(true);
+          if (profileData.profile) {
+            if (!profileData.profile.emailVerified) {
+              setEmailVerified(false);
+              setShowVerifyPopup(true);
+            }
+            if (profileData.profile.avatarUrl) setBrandLogoUrl(profileData.profile.avatarUrl);
           }
         }
       } catch (e) {
@@ -385,12 +392,17 @@ export default function BrandDashboard() {
                 setInstagramUrl={setInstagramUrl}
                 twitterUrl={twitterUrl}
                 setTwitterUrl={setTwitterUrl}
+                telegramUrl={telegramUrl}
+                setTelegramUrl={setTelegramUrl}
                 youtubeUrl={youtubeUrl}
                 setYoutubeUrl={setYoutubeUrl}
                 linkedinUrl={linkedinUrl}
                 setLinkedinUrl={setLinkedinUrl}
                 companyCountry={companyCountry}
                 companyIndustry={companyIndustry}
+                logoUrl={brandLogoUrl}
+                setLogoUrl={setBrandLogoUrl}
+                showToast={showToast}
               />
             )}
 

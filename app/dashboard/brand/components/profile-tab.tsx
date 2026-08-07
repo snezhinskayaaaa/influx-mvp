@@ -14,6 +14,7 @@ import {
   Linkedin,
   Camera,
   Save,
+  Send,
   Youtube,
 } from "lucide-react";
 
@@ -28,12 +29,17 @@ interface ProfileTabProps {
   setInstagramUrl: (value: string) => void;
   twitterUrl: string;
   setTwitterUrl: (value: string) => void;
+  telegramUrl: string;
+  setTelegramUrl: (value: string) => void;
   youtubeUrl: string;
   setYoutubeUrl: (value: string) => void;
   linkedinUrl: string;
   setLinkedinUrl: (value: string) => void;
   companyCountry: string;
   companyIndustry: string;
+  logoUrl?: string;
+  setLogoUrl?: (url: string) => void;
+  showToast?: (message: string, variant: 'success' | 'error') => void;
 }
 
 export function ProfileTab({
@@ -47,12 +53,17 @@ export function ProfileTab({
   setInstagramUrl,
   twitterUrl,
   setTwitterUrl,
+  telegramUrl,
+  setTelegramUrl,
   youtubeUrl,
   setYoutubeUrl,
   linkedinUrl,
   setLinkedinUrl,
   companyCountry,
   companyIndustry,
+  logoUrl,
+  setLogoUrl,
+  showToast,
 }: ProfileTabProps) {
   return (
     <motion.div
@@ -70,11 +81,50 @@ export function ProfileTab({
       <Card className="p-6 sm:p-8">
         <form className="space-y-5">
           <div className="flex items-center gap-4 pb-5 border-b">
-            <div className="w-20 h-20 rounded-full bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center">
-              <Building2 className="h-10 w-10 text-primary" />
+            <div className="w-20 h-20 rounded-full bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center overflow-hidden">
+              {logoUrl ? (
+                <img src={logoUrl} alt="Logo" className="w-full h-full object-cover" />
+              ) : (
+                <Building2 className="h-10 w-10 text-primary" />
+              )}
             </div>
             <div>
-              <Button type="button" size="sm" variant="outline">
+              <input
+                type="file"
+                id="logo-upload"
+                accept="image/jpeg,image/png,image/svg+xml,image/webp"
+                className="hidden"
+                onChange={async (e) => {
+                  const file = e.target.files?.[0];
+                  if (!file) return;
+                  if (file.size > 2 * 1024 * 1024) {
+                    showToast?.('Image too large. Maximum 2MB.', 'error');
+                    return;
+                  }
+                  const reader = new FileReader();
+                  reader.onload = async () => {
+                    const base64 = reader.result as string;
+                    try {
+                      const res = await fetch('/api/profiles/avatar', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ avatar: base64 }),
+                      });
+                      if (res.ok) {
+                        setLogoUrl?.(base64);
+                        showToast?.('Logo updated!', 'success');
+                      } else {
+                        const data = await res.json();
+                        showToast?.(data.error || 'Failed to upload', 'error');
+                      }
+                    } catch {
+                      showToast?.('Failed to upload logo', 'error');
+                    }
+                  };
+                  reader.readAsDataURL(file);
+                }}
+              />
+              <Button type="button" size="sm" variant="outline" onClick={() => document.getElementById('logo-upload')?.click()}>
                 <Camera className="h-4 w-4 mr-2" />
                 Upload Logo
               </Button>
@@ -159,6 +209,16 @@ export function ProfileTab({
                 placeholder="X URL"
                 value={twitterUrl}
                 onChange={(e) => setTwitterUrl(e.target.value)}
+                className="pl-10 h-11"
+              />
+            </div>
+
+            <div className="relative">
+              <Send className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Telegram @channel or URL"
+                value={telegramUrl}
+                onChange={(e) => setTelegramUrl(e.target.value)}
                 className="pl-10 h-11"
               />
             </div>

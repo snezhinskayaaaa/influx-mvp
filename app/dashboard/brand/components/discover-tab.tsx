@@ -51,27 +51,29 @@ export function DiscoverTab({ influencers, onCollaborate }: DiscoverTabProps) {
                          influencer.username.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesCategory = selectedCategory === "all" || influencer.category === selectedCategory;
 
-    // Followers filter
+    // Followers filter (using raw number)
     let matchesFollowers = true;
     if (selectedFollowers !== "all") {
-      const followers = parseFloat(influencer.followers.replace(/[KM]/g, ""));
-      const unit = influencer.followers.includes("M") ? "M" : "K";
-
-      if (selectedFollowers === "0-100k" && (unit === "M" || followers > 100)) matchesFollowers = false;
-      if (selectedFollowers === "100k-500k" && (unit === "M" || followers < 100 || followers > 500)) matchesFollowers = false;
-      if (selectedFollowers === "500k-1m" && (unit !== "M" && followers < 500 || (unit === "M" && followers >= 1))) matchesFollowers = false;
-      if (selectedFollowers === "1m+" && (unit !== "M" || followers < 1)) matchesFollowers = false;
+      const f = influencer.rawFollowers || 0;
+      const ranges: Record<string, [number, number]> = {
+        "0-1k": [0, 1000], "1k-5k": [1000, 5000], "5k-10k": [5000, 10000],
+        "10k-50k": [10000, 50000], "50k-100k": [50000, 100000],
+        "100k-500k": [100000, 500000], "500k-1m": [500000, 1000000], "1m+": [1000000, Infinity],
+      };
+      const range = ranges[selectedFollowers];
+      if (range) matchesFollowers = f >= range[0] && f < range[1];
     }
 
-    // Engagement filter
+    // Engagement filter (using raw number)
     let matchesEngagement = true;
     if (selectedEngagement !== "all") {
-      const engagement = parseFloat(influencer.engagement.replace("%", ""));
-
-      if (selectedEngagement === "0-3" && engagement > 3) matchesEngagement = false;
-      if (selectedEngagement === "3-6" && (engagement < 3 || engagement > 6)) matchesEngagement = false;
-      if (selectedEngagement === "6-10" && (engagement < 6 || engagement > 10)) matchesEngagement = false;
-      if (selectedEngagement === "10+" && engagement < 10) matchesEngagement = false;
+      const e = influencer.rawEngagement || 0;
+      const ranges: Record<string, [number, number]> = {
+        "0-1": [0, 1], "1-3": [1, 3], "3-5": [3, 5],
+        "5-8": [5, 8], "8-15": [8, 15], "15+": [15, Infinity],
+      };
+      const range = ranges[selectedEngagement];
+      if (range) matchesEngagement = e >= range[0] && e < range[1];
     }
 
     return matchesSearch && matchesCategory && matchesFollowers && matchesEngagement;
@@ -181,7 +183,11 @@ export function DiscoverTab({ influencers, onCollaborate }: DiscoverTabProps) {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All Ranges</SelectItem>
-                  <SelectItem value="0-100k">0 - 100K</SelectItem>
+                  <SelectItem value="0-1k">0 - 1K</SelectItem>
+                  <SelectItem value="1k-5k">1K - 5K</SelectItem>
+                  <SelectItem value="5k-10k">5K - 10K</SelectItem>
+                  <SelectItem value="10k-50k">10K - 50K</SelectItem>
+                  <SelectItem value="50k-100k">50K - 100K</SelectItem>
                   <SelectItem value="100k-500k">100K - 500K</SelectItem>
                   <SelectItem value="500k-1m">500K - 1M</SelectItem>
                   <SelectItem value="1m+">1M+</SelectItem>
@@ -211,10 +217,12 @@ export function DiscoverTab({ influencers, onCollaborate }: DiscoverTabProps) {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All Rates</SelectItem>
-                  <SelectItem value="0-3">0% - 3%</SelectItem>
-                  <SelectItem value="3-6">3% - 6%</SelectItem>
-                  <SelectItem value="6-10">6% - 10%</SelectItem>
-                  <SelectItem value="10+">10%+</SelectItem>
+                  <SelectItem value="0-1">0% - 1%</SelectItem>
+                  <SelectItem value="1-3">1% - 3%</SelectItem>
+                  <SelectItem value="3-5">3% - 5%</SelectItem>
+                  <SelectItem value="5-8">5% - 8%</SelectItem>
+                  <SelectItem value="8-15">8% - 15%</SelectItem>
+                  <SelectItem value="15+">15%+</SelectItem>
                 </SelectContent>
               </Select>
             </div>
