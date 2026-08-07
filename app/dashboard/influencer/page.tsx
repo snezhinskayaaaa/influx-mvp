@@ -2502,44 +2502,47 @@ export default function InfluencerDashboard() {
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.3 }}
             >
-              <div className="mb-6">
-                <h1 className="text-2xl sm:text-3xl font-bold mb-2">Wallet</h1>
-                <p className="text-muted-foreground text-sm sm:text-base">Your earnings and transaction history</p>
+              <div className="mb-8">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h1 className="text-2xl sm:text-3xl font-bold mb-1">Wallet</h1>
+                    <p className="text-muted-foreground text-sm">Your earnings and transaction history</p>
+                  </div>
+                  <Button size="sm" variant="outline" className="h-9 px-5" onClick={() => setShowWithdrawModal(true)}>
+                    Withdraw
+                  </Button>
+                </div>
               </div>
 
               <div className="space-y-6">
                 {/* Balance Overview */}
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                  <Card className="p-5">
-                    <p className="text-xs text-muted-foreground mb-1">Available Balance</p>
-                    <p className="text-2xl font-bold text-primary">
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="rounded-xl border border-border p-6">
+                    <p className="text-xs text-muted-foreground mb-2">Available Balance</p>
+                    <p className="text-3xl font-bold text-primary">
                       ${walletBalance !== null ? walletBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '0.00'}
                     </p>
-                  </Card>
-                  <Card className="p-5">
-                    <p className="text-xs text-muted-foreground mb-1">Pending</p>
-                    <p className="text-2xl font-bold text-amber-600">
+                  </div>
+                  <div className="rounded-xl border border-border p-6">
+                    <p className="text-xs text-muted-foreground mb-2">Pending</p>
+                    <p className="text-3xl font-bold text-foreground">
                       ${walletPending !== null ? walletPending.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '0.00'}
                     </p>
-                  </Card>
-                  <Card className="p-5">
-                    <Button className="w-full h-full min-h-[60px]" onClick={() => setShowWithdrawModal(true)}>
-                      Withdraw
-                    </Button>
-                  </Card>
+                  </div>
                 </div>
 
                 {/* Transaction History */}
-                <Card className="p-5">
-                  <h3 className="text-sm font-semibold mb-4">Transaction History</h3>
+                <div>
+                  <h3 className="text-sm font-semibold mb-3">Transaction History</h3>
+                  <div className="rounded-xl border border-border">
                   {walletTransactions.length === 0 ? (
-                    <div className="text-center py-8">
+                    <div className="text-center py-12 px-6">
                       <Wallet className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
                       <p className="text-sm text-muted-foreground">No transactions yet</p>
                       <p className="text-xs text-muted-foreground mt-1">Your earnings and withdrawals will appear here</p>
                     </div>
                   ) : (
-                    <div className="space-y-1">
+                    <div>
                       {walletTransactions.map(tx => {
                         const t = tx.type.toLowerCase();
                         const isFailed = tx.status === 'failed';
@@ -2561,7 +2564,7 @@ export default function InfluencerDashboard() {
                           ? `${tx.currency} ${tx.network ? `via ${tx.network}` : ''}`
                           : '';
                         return (
-                          <div key={tx.id} className={`flex items-center justify-between py-3 border-b border-border last:border-0 ${isFailed ? 'opacity-50' : ''}`}>
+                          <div key={tx.id} className={`flex items-center justify-between px-5 py-4 border-b border-border last:border-0 ${isFailed ? 'opacity-50' : ''}`}>
                             <div className="flex-1 min-w-0">
                               <div className="flex items-center gap-2">
                                 <span className={`text-sm font-medium ${isFailed ? 'text-muted-foreground' : isIncoming ? 'text-success' : 'text-foreground'}`}>
@@ -2600,7 +2603,8 @@ export default function InfluencerDashboard() {
                       })}
                     </div>
                   )}
-                </Card>
+                  </div>
+                </div>
               </div>
             </motion.div>
           )}
