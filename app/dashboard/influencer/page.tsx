@@ -1262,7 +1262,7 @@ export default function InfluencerDashboard() {
 
                           {/* Requirements */}
                           <div className="mb-3">
-                            <div className="text-xs font-medium text-muted-foreground mb-2">Requirements:</div>
+                            <div className="text-xs font-medium text-muted-foreground mb-2">Must mention:</div>
                             <div className="flex flex-wrap gap-2">
                               {campaign.requirements.map((req, idx) => (
                                 <span key={idx} className="text-xs bg-muted/50 px-3 py-1.5 rounded-md">
