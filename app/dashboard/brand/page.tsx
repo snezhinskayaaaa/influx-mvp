@@ -466,8 +466,9 @@ export default function BrandDashboard() {
                           const frozenTypes = ['campaign_freeze', 'campaign_unfreeze'];
                           const isIncoming = incomingTypes.includes(t);
                           const isFrozen = frozenTypes.includes(t);
-                          const description = tx.projectName
-                            ? `Campaign: ${tx.projectName}`
+                          const txCampaignName = (tx as Record<string, unknown>).campaignName as string | null;
+                          const description = txCampaignName
+                            ? `Campaign: ${txCampaignName}`
                             : isFailed
                             ? 'Transaction failed — balance refunded'
                             : tx.description || (tx.currency ? `${tx.currency}` : '');

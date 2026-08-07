@@ -30,21 +30,25 @@ export async function GET(request: NextRequest) {
       .map(t => t.referenceId)
       .filter((id): id is string => id !== null);
 
-    const collabMap = new Map<string, string>();
+    const collabMap = new Map<string, { campaignTitle: string; brandName: string }>();
     if (referenceIds.length > 0) {
       const collabs = await prisma.collaboration.findMany({
         where: { id: { in: referenceIds } },
         select: { id: true, campaign: { select: { title: true, brand: { select: { companyName: true } } } } },
       });
       for (const c of collabs) {
-        collabMap.set(c.id, c.campaign.brand.companyName || c.campaign.title);
+        collabMap.set(c.id, { campaignTitle: c.campaign.title, brandName: c.campaign.brand.companyName });
       }
     }
 
-    const transactions = rawTransactions.map(t => ({
-      ...t,
-      projectName: t.referenceId ? collabMap.get(t.referenceId) || null : null,
-    }))
+    const transactions = rawTransactions.map(t => {
+      const ref = t.referenceId ? collabMap.get(t.referenceId) : null;
+      return {
+        ...t,
+        projectName: ref?.brandName || null,
+        campaignName: ref?.campaignTitle || null,
+      };
+    })
 
     if (user.role === 'BRAND') {
       const brand = await prisma.brand.findUnique({
