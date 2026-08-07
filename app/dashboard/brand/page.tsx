@@ -100,7 +100,7 @@ export default function BrandDashboard() {
               applications: (c._count as Record<string, number>)?.collaborations || 0,
               applicationsList: undefined,
               startDate: c.createdAt ? new Date(c.createdAt as string).toISOString().split('T')[0] : '',
-              endDate: '',
+              endDate: c.endDate ? new Date(c.endDate as string).toLocaleDateString() : '',
               influencerCount: String((c.desiredInfluencerCount as number) || 1),
               description: (c.description as string) || '',
               goal: (c.goal as string) || '',

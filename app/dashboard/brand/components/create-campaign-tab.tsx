@@ -227,6 +227,7 @@ export function CreateCampaignTab({ campaigns, setCampaigns, setActiveTab }: Cre
                 brandTag: campaignBrandTag,
                 hashtags: campaignHashtags,
                 creatorScript: campaignCreatorScript,
+                endDate: campaignEndDate ? campaignEndDate.toISOString() : null,
               }),
             });
             if (res.ok) {
@@ -1015,6 +1016,7 @@ export function CreateCampaignTab({ campaigns, setCampaigns, setActiveTab }: Cre
                       brandTag: campaignBrandTag,
                       hashtags: campaignHashtags,
                       creatorScript: campaignCreatorScript,
+                      endDate: campaignEndDate ? campaignEndDate.toISOString() : null,
                     }),
                   });
                   if (res.ok) {

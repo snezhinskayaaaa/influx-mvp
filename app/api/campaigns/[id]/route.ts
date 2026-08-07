@@ -130,6 +130,10 @@ export async function PATCH(
       updateData.budgetMax = Math.round(body.budgetMax * 100)
     }
 
+    if (body.endDate !== undefined) {
+      updateData.endDate = body.endDate ? new Date(body.endDate) : null
+    }
+
     if (body.deliverables !== undefined) {
       if (typeof body.deliverables === 'string') {
         updateData.deliverables = body.deliverables.split('\n').map((d: string) => d.trim()).filter((d: string) => d.length > 0)

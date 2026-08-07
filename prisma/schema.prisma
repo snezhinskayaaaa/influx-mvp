@@ -264,7 +264,8 @@ model Campaign {
   hashtags           String?
   creatorScript      String?  @map("creator_script")
 
-  status CampaignStatus @default(DRAFT)
+  status  CampaignStatus @default(DRAFT)
+  endDate DateTime?      @map("end_date") @db.Timestamptz
 
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
   updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz
