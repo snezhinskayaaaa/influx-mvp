@@ -463,7 +463,9 @@ export default function BrandDashboard() {
                             dispute_payout: 'Dispute Payout', dispute_refund: 'Dispute Refund',
                           };
                           const incomingTypes = ['deposit', 'campaign_unfreeze', 'advance_refund', 'dispute_refund'];
+                          const frozenTypes = ['campaign_freeze', 'campaign_unfreeze'];
                           const isIncoming = incomingTypes.includes(t);
+                          const isFrozen = frozenTypes.includes(t);
                           const description = tx.projectName
                             ? `Campaign: ${tx.projectName}`
                             : isFailed
@@ -473,7 +475,7 @@ export default function BrandDashboard() {
                             <div key={tx.id} className={`flex items-center justify-between px-5 py-4 border-b border-border last:border-0 ${isFailed ? 'opacity-50' : ''}`}>
                               <div className="flex-1 min-w-0">
                                 <div className="flex items-center gap-2">
-                                  <span className={`text-sm font-medium ${isFailed ? 'text-muted-foreground' : isIncoming ? 'text-success' : 'text-foreground'}`}>
+                                  <span className={`text-sm font-medium ${isFailed ? 'text-muted-foreground' : isFrozen ? 'text-primary' : isIncoming ? 'text-success' : 'text-foreground'}`}>
                                     {typeLabels[t] || tx.type}
                                   </span>
                                   {isFailed && <span className="text-[10px] px-1.5 py-0.5 rounded bg-red-500/10 text-red-600 font-medium">Failed</span>}
@@ -489,8 +491,8 @@ export default function BrandDashboard() {
                                   <p className="text-sm font-semibold text-muted-foreground line-through">${(tx.amount / 100).toFixed(2)}</p>
                                 ) : (
                                   <>
-                                    <p className={`text-sm font-semibold ${isIncoming ? 'text-success' : 'text-red-600'}`}>
-                                      {isIncoming ? '+' : '-'}${(tx.amount / 100).toFixed(2)}
+                                    <p className={`text-sm font-semibold ${isFrozen ? 'text-primary' : isIncoming ? 'text-success' : 'text-red-600'}`}>
+                                      {isFrozen ? '' : isIncoming ? '+' : '-'}${(tx.amount / 100).toFixed(2)}
                                     </p>
                                     {tx.fee > 0 && <p className="text-[10px] text-muted-foreground">Fee: ${(tx.fee / 100).toFixed(2)}</p>}
                                   </>
