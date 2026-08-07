@@ -112,6 +112,31 @@ export default function BrandDashboard() {
               createdAt: (c.createdAt as string) || new Date().toISOString(),
               currentStage: 1,
             }));
+            // Fetch collaborations to populate pipeline counts in table
+            try {
+              const collabRes = await fetch('/api/collaborations');
+              if (collabRes.ok) {
+                const collabData = await collabRes.json();
+                if (collabData.collaborations) {
+                  for (const camp of transformedCampaigns) {
+                    const campCollabs = collabData.collaborations
+                      .filter((c: Record<string, unknown>) => {
+                        const colCampaign = c.campaign as Record<string, unknown>;
+                        return colCampaign?.id === camp.id;
+                      })
+                      .map((c: Record<string, unknown>) => ({
+                        id: (c.influencer as Record<string, unknown>)?.id || '',
+                        status: c.status === 'APPLIED' ? 'pending' as const : 'approved' as const,
+                        collaborationStatus: c.status as string,
+                      }));
+                    camp.applicationsList = campCollabs;
+                  }
+                }
+              }
+            } catch {
+              // Pipeline counts will show 0 if collaborations fail to load
+            }
+
             setCampaigns(transformedCampaigns);
           }
         }
