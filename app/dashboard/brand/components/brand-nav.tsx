@@ -540,6 +540,18 @@ export function BrandSidebar({
           </button>
 
           <button
+            onClick={() => setActiveTab("wallet")}
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all ${
+              activeTab === "wallet"
+                ? "bg-primary/10 text-primary border-2 border-primary/30"
+                : "text-muted-foreground hover:bg-muted hover:text-foreground"
+            }`}
+          >
+            <Wallet className="h-4 w-4" />
+            Wallet
+          </button>
+
+          <button
             onClick={() => setActiveTab("profile")}
             className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all ${
               activeTab === "profile"
@@ -621,6 +633,15 @@ export function MobileNav({ activeTab, setActiveTab }: MobileNavProps) {
         >
           <Plus className="h-5 w-5 shrink-0" />
           <span className="text-[8px] font-medium truncate max-w-full text-center">Create</span>
+        </button>
+        <button
+          onClick={() => setActiveTab("wallet")}
+          className={`flex flex-col items-center justify-center gap-0.5 min-w-0 flex-1 transition-colors ${
+            activeTab === "wallet" ? "text-primary" : "text-muted-foreground"
+          }`}
+        >
+          <Wallet className="h-5 w-5 shrink-0" />
+          <span className="text-[8px] font-medium truncate max-w-full text-center">Wallet</span>
         </button>
         <button
           onClick={() => setActiveTab("profile")}

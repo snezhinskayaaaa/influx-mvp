@@ -16,8 +16,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Too many withdrawal attempts. Please wait a minute.' }, { status: 429 })
     }
 
-    if (user.role !== 'INFLUENCER') {
-      return NextResponse.json({ error: 'Only influencers can withdraw funds' }, { status: 403 })
+    if (user.role !== 'INFLUENCER' && user.role !== 'BRAND') {
+      return NextResponse.json({ error: 'Withdrawal not available for this role' }, { status: 403 })
     }
 
     // Check email verification for financial/critical operations
@@ -29,12 +29,22 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Please verify your email before using this feature' }, { status: 403 })
     }
 
-    const influencer = await prisma.influencer.findUnique({
-      where: { userId: user.userId },
-    })
-    if (!influencer) {
-      return NextResponse.json({ error: 'Influencer profile not found' }, { status: 404 })
+    // Get the entity (influencer or brand) for balance check
+    let entityId: string
+    let currentBalance: number
+
+    if (user.role === 'INFLUENCER') {
+      const influencer = await prisma.influencer.findUnique({ where: { userId: user.userId } })
+      if (!influencer) return NextResponse.json({ error: 'Profile not found' }, { status: 404 })
+      entityId = influencer.id
+      currentBalance = influencer.balance
+    } else {
+      const brand = await prisma.brand.findUnique({ where: { userId: user.userId } })
+      if (!brand) return NextResponse.json({ error: 'Profile not found' }, { status: 404 })
+      entityId = brand.id
+      currentBalance = brand.balance
     }
+    void currentBalance // used for context, actual check is atomic
 
     const body = await request.json()
     const { amount, address, currency } = body
@@ -63,9 +73,10 @@ export async function POST(request: NextRequest) {
     let transaction: { id: string }
     try {
       transaction = await prisma.$transaction(async (tx) => {
-        const result = await tx.influencer.updateMany({
+        const model = user.role === 'INFLUENCER' ? tx.influencer : tx.brand
+        const result = await (model as typeof tx.influencer).updateMany({
           where: {
-            id: influencer.id,
+            id: entityId,
             balance: { gte: amountCents },
           },
           data: { balance: { decrement: amountCents } },
@@ -123,9 +134,10 @@ export async function POST(request: NextRequest) {
       // If 0xProcessing API fails, refund balance and mark transaction as failed
       console.error('0xProcessing withdrawal API failed:', apiError)
 
+      const refundModel = user.role === 'INFLUENCER' ? prisma.influencer : prisma.brand
       await prisma.$transaction([
-        prisma.influencer.update({
-          where: { id: influencer.id },
+        (refundModel as typeof prisma.influencer).update({
+          where: { id: entityId },
           data: { balance: { increment: amountCents } },
         }),
         prisma.transaction.update({

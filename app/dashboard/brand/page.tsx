@@ -13,7 +13,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
+import { Card } from "@/components/ui/card";
 import {
   DollarSign,
   CheckCircle2,
@@ -54,6 +55,12 @@ export default function BrandDashboard() {
   const [balance, setBalance] = useState(0);
   const [frozenBalance, setFrozenBalance] = useState(0);
   const [isFoundingMember, setIsFoundingMember] = useState(false);
+  const [walletTransactions, setWalletTransactions] = useState<Array<{
+    id: string; type: string; amount: number; fee: number;
+    description: string | null; status: string; createdAt: string;
+    currency?: string; network?: string; projectName?: string | null;
+  }>>([]);
+  const [showWithdrawModal, setShowWithdrawModal] = useState(false);
 
   const [showCollaborateModal, setShowCollaborateModal] = useState(false);
   const [selectedInfluencer, setSelectedInfluencer] = useState<Influencer | null>(null);
@@ -247,6 +254,7 @@ export default function BrandDashboard() {
             setBalance(data.wallet.balance / 100);
             setFrozenBalance((data.wallet.frozenBalance || 0) / 100);
           }
+          if (data.transactions) setWalletTransactions(data.transactions);
         }
       } catch (error) {
         console.error('Failed to fetch wallet:', error);
@@ -384,6 +392,149 @@ export default function BrandDashboard() {
                 companyCountry={companyCountry}
                 companyIndustry={companyIndustry}
               />
+            )}
+
+            {activeTab === "wallet" && (
+              <motion.div key="wallet" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} transition={{ duration: 0.3 }}>
+                <div className="mb-6">
+                  <h1 className="text-2xl sm:text-3xl font-bold mb-2">Wallet</h1>
+                  <p className="text-muted-foreground text-sm sm:text-base">Manage your funds and view transaction history</p>
+                </div>
+                <div className="max-w-3xl space-y-6">
+                  <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
+                    <Card className="p-5">
+                      <p className="text-xs text-muted-foreground mb-1">Available</p>
+                      <p className="text-2xl font-bold text-primary">${balance.toFixed(2)}</p>
+                    </Card>
+                    <Card className="p-5">
+                      <p className="text-xs text-muted-foreground mb-1">Frozen</p>
+                      <p className="text-2xl font-bold text-foreground">${frozenBalance.toFixed(2)}</p>
+                    </Card>
+                    <Card className="p-5">
+                      <Button className="w-full h-full min-h-[50px]" onClick={() => setShowTopUpModal(true)}>Top Up</Button>
+                    </Card>
+                    <Card className="p-5">
+                      <Button variant="outline" className="w-full h-full min-h-[50px]" onClick={() => setShowWithdrawModal(true)}>Withdraw</Button>
+                    </Card>
+                  </div>
+
+                  <Card className="p-5">
+                    <h3 className="text-sm font-semibold mb-4">Transaction History</h3>
+                    {walletTransactions.length === 0 ? (
+                      <div className="text-center py-8">
+                        <p className="text-sm text-muted-foreground">No transactions yet</p>
+                        <p className="text-xs text-muted-foreground mt-1">Top up your balance to start campaigns</p>
+                      </div>
+                    ) : (
+                      <div className="space-y-1">
+                        {walletTransactions.map(tx => {
+                          const t = tx.type.toLowerCase();
+                          const isFailed = tx.status === 'failed';
+                          const isPending = tx.status === 'pending' || tx.status === 'PENDING';
+                          const typeLabels: Record<string, string> = {
+                            deposit: 'Deposit', withdrawal: 'Withdrawal',
+                            campaign_advance: 'Advance to Creator', campaign_payout: 'Final Payment to Creator',
+                            campaign_payout_auto: 'Auto-release to Creator', campaign_freeze: 'Funds Frozen',
+                            campaign_unfreeze: 'Funds Released', advance_refund: 'Advance Refund',
+                            dispute_payout: 'Dispute Payout', dispute_refund: 'Dispute Refund',
+                          };
+                          const incomingTypes = ['deposit', 'campaign_unfreeze', 'advance_refund', 'dispute_refund'];
+                          const isIncoming = incomingTypes.includes(t);
+                          const description = tx.projectName
+                            ? `Campaign: ${tx.projectName}`
+                            : isFailed
+                            ? 'Transaction failed — balance refunded'
+                            : tx.description || (tx.currency ? `${tx.currency}` : '');
+                          return (
+                            <div key={tx.id} className={`flex items-center justify-between py-3 border-b border-border last:border-0 ${isFailed ? 'opacity-50' : ''}`}>
+                              <div className="flex-1 min-w-0">
+                                <div className="flex items-center gap-2">
+                                  <span className={`text-sm font-medium ${isFailed ? 'text-muted-foreground' : isIncoming ? 'text-success' : 'text-foreground'}`}>
+                                    {typeLabels[t] || tx.type}
+                                  </span>
+                                  {isFailed && <span className="text-[10px] px-1.5 py-0.5 rounded bg-red-500/10 text-red-600 font-medium">Failed</span>}
+                                  {isPending && <span className="text-[10px] px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-600 font-medium">Pending</span>}
+                                </div>
+                                <p className="text-xs text-muted-foreground truncate mt-0.5">{description}</p>
+                                <p className="text-[10px] text-muted-foreground">
+                                  {new Date(tx.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                                </p>
+                              </div>
+                              <div className="text-right shrink-0 ml-4">
+                                {isFailed ? (
+                                  <p className="text-sm font-semibold text-muted-foreground line-through">${(tx.amount / 100).toFixed(2)}</p>
+                                ) : (
+                                  <>
+                                    <p className={`text-sm font-semibold ${isIncoming ? 'text-success' : 'text-red-600'}`}>
+                                      {isIncoming ? '+' : '-'}${(tx.amount / 100).toFixed(2)}
+                                    </p>
+                                    {tx.fee > 0 && <p className="text-[10px] text-muted-foreground">Fee: ${(tx.fee / 100).toFixed(2)}</p>}
+                                  </>
+                                )}
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </Card>
+
+                  <p className="text-xs text-muted-foreground text-center">
+                    Withdrawal fee: 3% (Founding Members: 2%). Minimum withdrawal: $10.
+                  </p>
+                </div>
+
+                {/* Withdraw Modal */}
+                {showWithdrawModal && (
+                  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+                    <div className="bg-background border border-border rounded-2xl p-6 w-full max-w-md mx-4 shadow-2xl">
+                      <div className="flex items-center justify-between mb-4">
+                        <div>
+                          <h3 className="text-lg font-bold">Withdraw Funds</h3>
+                          <p className="text-xs text-muted-foreground">Send funds to your crypto wallet</p>
+                        </div>
+                        <button onClick={() => setShowWithdrawModal(false)} className="text-muted-foreground hover:text-foreground">&times;</button>
+                      </div>
+                      <form onSubmit={async (e) => {
+                        e.preventDefault();
+                        const form = e.currentTarget;
+                        const amount = parseFloat((form.elements.namedItem('wAmount') as HTMLInputElement).value);
+                        const address = (form.elements.namedItem('wAddress') as HTMLInputElement).value;
+                        const currency = (form.elements.namedItem('wCurrency') as HTMLSelectElement).value;
+                        if (amount < 10) { showToast('Minimum withdrawal is $10', 'error'); return; }
+                        if (amount > balance) { showToast('Insufficient balance', 'error'); return; }
+                        try {
+                          const res = await fetch('/api/wallet/withdraw', {
+                            method: 'POST', headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ amount, address, currency }),
+                          });
+                          const data = await res.json();
+                          if (res.ok) { showToast('Withdrawal submitted', 'success'); setShowWithdrawModal(false); }
+                          else showToast(data.error || 'Failed to withdraw', 'error');
+                        } catch { showToast('Failed to withdraw', 'error'); }
+                      }} className="space-y-4">
+                        <div>
+                          <label className="text-sm font-medium mb-1 block">Amount (USD)</label>
+                          <input name="wAmount" type="number" min="10" step="0.01" required className="w-full px-3 py-2 rounded-lg border border-border bg-background text-sm" />
+                        </div>
+                        <div>
+                          <label className="text-sm font-medium mb-1 block">Currency</label>
+                          <select name="wCurrency" className="w-full px-3 py-2 rounded-lg border border-border bg-background text-sm">
+                            <option>USDT (TRC20)</option>
+                            <option>USDC (TRC20)</option>
+                            <option>USDT (ERC20)</option>
+                          </select>
+                        </div>
+                        <div>
+                          <label className="text-sm font-medium mb-1 block">Wallet Address</label>
+                          <input name="wAddress" type="text" required className="w-full px-3 py-2 rounded-lg border border-border bg-background text-sm" placeholder="Your crypto wallet address" />
+                        </div>
+                        <Button type="submit" className="w-full">Submit Withdrawal</Button>
+                      </form>
+                    </div>
+                  </div>
+                )}
+              </motion.div>
             )}
 
             {activeTab === "settings" && (

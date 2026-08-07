@@ -1,4 +1,4 @@
-export type Tab = "discover" | "campaigns" | "profile" | "create-campaign" | "settings";
+export type Tab = "discover" | "campaigns" | "wallet" | "profile" | "create-campaign" | "settings";
 
 export type CollaborationStatus =
   | "APPLIED"
