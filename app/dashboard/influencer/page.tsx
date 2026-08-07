@@ -2534,6 +2534,8 @@ export default function InfluencerDashboard() {
                     <div className="space-y-1">
                       {walletTransactions.map(tx => {
                         const t = tx.type.toLowerCase();
+                        const isFailed = tx.status === 'failed';
+                        const isPending = tx.status === 'pending' || tx.status === 'PENDING';
                         const typeLabels: Record<string, string> = {
                           deposit: 'Deposit', withdrawal: 'Withdrawal',
                           campaign_advance: 'Advance Payment', campaign_payout: 'Final Payment',
@@ -2543,30 +2545,46 @@ export default function InfluencerDashboard() {
                         };
                         const incomingTypes = ['deposit', 'campaign_advance', 'campaign_payout', 'campaign_payout_auto', 'advance_refund', 'dispute_payout'];
                         const isIncoming = incomingTypes.includes(t);
+                        const description = tx.projectName
+                          ? `From: ${tx.projectName}`
+                          : isFailed
+                          ? 'Transaction failed — balance refunded'
+                          : tx.currency
+                          ? `${tx.currency} ${tx.network ? `via ${tx.network}` : ''}`
+                          : '';
                         return (
-                          <div key={tx.id} className="flex items-center justify-between py-3 border-b border-border last:border-0">
+                          <div key={tx.id} className={`flex items-center justify-between py-3 border-b border-border last:border-0 ${isFailed ? 'opacity-50' : ''}`}>
                             <div className="flex-1 min-w-0">
                               <div className="flex items-center gap-2">
-                                <span className={`text-sm font-medium ${isIncoming ? 'text-success' : 'text-foreground'}`}>
+                                <span className={`text-sm font-medium ${isFailed ? 'text-muted-foreground' : isIncoming ? 'text-success' : 'text-foreground'}`}>
                                   {typeLabels[t] || tx.type}
                                 </span>
-                                {tx.status === 'PENDING' && (
+                                {isFailed && (
+                                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-red-500/10 text-red-600 font-medium">Failed</span>
+                                )}
+                                {isPending && (
                                   <span className="text-[10px] px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-600 font-medium">Pending</span>
                                 )}
                               </div>
                               <p className="text-xs text-muted-foreground truncate mt-0.5">
-                                {tx.projectName ? `From: ${tx.projectName}` : tx.description || (tx.currency ? `${tx.currency.toUpperCase()} via ${tx.network || 'crypto'}` : '')}
+                                {description}
                               </p>
                               <p className="text-[10px] text-muted-foreground">
                                 {new Date(tx.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
                               </p>
                             </div>
                             <div className="text-right shrink-0 ml-4">
-                              <p className={`text-sm font-semibold ${isIncoming ? 'text-success' : 'text-red-600'}`}>
-                                {isIncoming ? '+' : '-'}${(tx.amount / 100).toFixed(2)}
-                              </p>
-                              {tx.fee > 0 && (
-                                <p className="text-[10px] text-muted-foreground">Fee: ${(tx.fee / 100).toFixed(2)}</p>
+                              {isFailed ? (
+                                <p className="text-sm font-semibold text-muted-foreground line-through">${(tx.amount / 100).toFixed(2)}</p>
+                              ) : (
+                                <>
+                                  <p className={`text-sm font-semibold ${isIncoming ? 'text-success' : 'text-red-600'}`}>
+                                    {isIncoming ? '+' : '-'}${(tx.amount / 100).toFixed(2)}
+                                  </p>
+                                  {tx.fee > 0 && (
+                                    <p className="text-[10px] text-muted-foreground">Fee: ${(tx.fee / 100).toFixed(2)}</p>
+                                  )}
+                                </>
                               )}
                             </div>
                           </div>
