@@ -157,12 +157,10 @@ export function BrandSidebar({
                 <div className="text-2xl font-bold text-primary text-left">
                   ${balance.toFixed(2)}
                 </div>
-                {frozenBalance > 0 && (
-                  <div className="text-xs text-muted-foreground mt-1 flex items-center gap-1">
-                    <Lock className="h-3 w-3" />
-                    Frozen: ${frozenBalance.toFixed(2)}
-                  </div>
-                )}
+                <div className="text-xs text-muted-foreground mt-1 flex items-center gap-1">
+                  <Lock className="h-3 w-3" />
+                  Frozen: ${frozenBalance.toFixed(2)}
+                </div>
                 {(pendingDeposits > 0 || pendingWithdrawals > 0) && (
                   <div className="text-xs text-muted-foreground mt-1 space-y-0.5">
                     {pendingDeposits > 0 && (
