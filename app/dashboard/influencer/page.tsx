@@ -1068,7 +1068,7 @@ export default function InfluencerDashboard() {
               transition={{ duration: 0.3 }}
             >
               <div className="mb-6">
-                <h1 className="text-2xl sm:text-3xl font-bold mb-2">Discover Campaigns</h1>
+                <h1 className="text-xl sm:text-3xl font-bold mb-2">Discover Campaigns</h1>
                 <p className="text-muted-foreground text-sm sm:text-base">
                   Find and apply to campaigns that match your audience
                 </p>
@@ -1183,11 +1183,11 @@ export default function InfluencerDashboard() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.3 }}
                   >
-                    <Card className="p-6 hover:shadow-lg transition-shadow">
-                      <div className="flex gap-4">
+                    <Card className="p-4 sm:p-6 hover:shadow-lg transition-shadow">
+                      <div className="flex gap-3 sm:gap-4">
                         {/* Brand Avatar */}
                         <div className="flex-shrink-0">
-                          <div className="w-20 h-20 rounded-full bg-gradient-to-br from-primary/10 to-secondary/10 flex items-center justify-center text-3xl overflow-hidden">
+                          <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-gradient-to-br from-primary/10 to-secondary/10 flex items-center justify-center text-xl sm:text-2xl overflow-hidden">
                             {campaign.brandAvatar.startsWith('data:') || campaign.brandAvatar.startsWith('http') ? (
                               <img src={campaign.brandAvatar} alt="" className="w-full h-full object-cover" />
                             ) : (
@@ -1198,9 +1198,9 @@ export default function InfluencerDashboard() {
 
                         {/* Campaign Info */}
                         <div className="flex-1 min-w-0">
-                          <div className="flex items-start justify-between gap-4 mb-2">
+                          <div className="flex items-start justify-between gap-2 sm:gap-4 mb-2">
                             <div className="flex-1 min-w-0">
-                              <h3 className="text-xl font-bold mb-1">{campaign.title}</h3>
+                              <h3 className="text-base sm:text-xl font-bold mb-1 truncate">{campaign.title}</h3>
                               <div className="flex items-center gap-2 text-sm text-muted-foreground">
                                 <span className="font-medium">{campaign.brand}</span>
                                 <span>•</span>
@@ -1212,10 +1212,10 @@ export default function InfluencerDashboard() {
                             </Badge>
                           </div>
 
-                          <p className="text-sm text-muted-foreground mb-3">{campaign.description}</p>
+                          <p className="text-xs sm:text-sm text-muted-foreground mb-3 line-clamp-2">{campaign.description}</p>
 
                           {/* Price, Pricing Basis, and Platforms */}
-                          <div className="flex items-center gap-6 mb-3 text-sm">
+                          <div className="flex flex-wrap items-center gap-3 sm:gap-6 mb-3 text-xs sm:text-sm">
                             <div className="flex items-center gap-2">
                               <DollarSign className="h-4 w-4 text-primary" />
                               <span className="font-bold">
@@ -2502,13 +2502,13 @@ export default function InfluencerDashboard() {
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.3 }}
             >
-              <div className="mb-8">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h1 className="text-2xl sm:text-3xl font-bold mb-1">Wallet</h1>
-                    <p className="text-muted-foreground text-sm">Your earnings and transaction history</p>
+              <div className="mb-6 sm:mb-8">
+                <div className="flex items-center justify-between gap-3">
+                  <div className="min-w-0">
+                    <h1 className="text-xl sm:text-3xl font-bold mb-1">Wallet</h1>
+                    <p className="text-muted-foreground text-xs sm:text-sm">Your earnings and transaction history</p>
                   </div>
-                  <Button size="sm" variant="outline" className="h-9 px-5" onClick={() => setShowWithdrawModal(true)}>
+                  <Button size="sm" variant="outline" className="h-8 sm:h-9 px-4 sm:px-5 text-xs sm:text-sm shrink-0" onClick={() => setShowWithdrawModal(true)}>
                     Withdraw
                   </Button>
                 </div>
@@ -2516,16 +2516,16 @@ export default function InfluencerDashboard() {
 
               <div className="space-y-6">
                 {/* Balance Overview */}
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="rounded-xl border border-border p-6">
-                    <p className="text-xs text-muted-foreground mb-2">Available Balance</p>
-                    <p className="text-3xl font-bold text-primary">
+                <div className="grid grid-cols-2 gap-3 sm:gap-4">
+                  <div className="rounded-xl border border-border p-4 sm:p-6">
+                    <p className="text-[10px] sm:text-xs text-muted-foreground mb-1 sm:mb-2">Available Balance</p>
+                    <p className="text-xl sm:text-3xl font-bold text-primary">
                       ${walletBalance !== null ? walletBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '0.00'}
                     </p>
                   </div>
-                  <div className="rounded-xl border border-border p-6">
-                    <p className="text-xs text-muted-foreground mb-2">Pending</p>
-                    <p className="text-3xl font-bold text-foreground">
+                  <div className="rounded-xl border border-border p-4 sm:p-6">
+                    <p className="text-[10px] sm:text-xs text-muted-foreground mb-1 sm:mb-2">Pending</p>
+                    <p className="text-xl sm:text-3xl font-bold text-foreground">
                       ${walletPending !== null ? walletPending.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '0.00'}
                     </p>
                   </div>
@@ -2564,7 +2564,7 @@ export default function InfluencerDashboard() {
                           ? `${tx.currency} ${tx.network ? `via ${tx.network}` : ''}`
                           : '';
                         return (
-                          <div key={tx.id} className={`flex items-center justify-between px-5 py-4 border-b border-border last:border-0 ${isFailed ? 'opacity-50' : ''}`}>
+                          <div key={tx.id} className={`flex items-center justify-between px-3 sm:px-5 py-3 sm:py-4 border-b border-border last:border-0 ${isFailed ? 'opacity-50' : ''}`}>
                             <div className="flex-1 min-w-0">
                               <div className="flex items-center gap-2">
                                 <span className={`text-sm font-medium ${isFailed ? 'text-muted-foreground' : isIncoming ? 'text-success' : 'text-foreground'}`}>
@@ -2740,7 +2740,7 @@ export default function InfluencerDashboard() {
                         </div>
                         {profileData.twitterVerified && <CheckCircle2 className="h-4 w-4 text-success" />}
                       </div>
-                      <div className="grid grid-cols-3 gap-2">
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                         <Input placeholder="@handle" value={profileData.twitter} onChange={(e) => setProfileData(p => ({...p, twitter: e.target.value}))} className="h-10 col-span-3 sm:col-span-1" />
                         <Input type="number" placeholder="Followers" value={profileData.twitterFollowers || ''} onChange={(e) => setProfileData(p => ({...p, twitterFollowers: e.target.value}))} className="h-10" min="0" />
                         <Input type="number" placeholder="Avg. views" value={profileData.twitterAvgViews || ''} onChange={(e) => setProfileData(p => ({...p, twitterAvgViews: e.target.value}))} className="h-10" min="0" />
@@ -2766,7 +2766,7 @@ export default function InfluencerDashboard() {
                         </div>
                         {profileData.telegramVerified && <CheckCircle2 className="h-4 w-4 text-success" />}
                       </div>
-                      <div className="grid grid-cols-3 gap-2">
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                         <Input placeholder="@channel" value={profileData.telegram || ''} onChange={(e) => setProfileData(p => ({...p, telegram: e.target.value}))} className="h-10 col-span-3 sm:col-span-1" />
                         <Input type="number" placeholder="Subscribers" value={profileData.telegramFollowers || ''} onChange={(e) => setProfileData(p => ({...p, telegramFollowers: e.target.value}))} className="h-10" min="0" />
                         <Input type="number" placeholder="Avg. views" value={profileData.telegramAvgViews || ''} onChange={(e) => setProfileData(p => ({...p, telegramAvgViews: e.target.value}))} className="h-10" min="0" />
@@ -2792,7 +2792,7 @@ export default function InfluencerDashboard() {
                         </div>
                         {profileData.instagramVerified && <CheckCircle2 className="h-4 w-4 text-success" />}
                       </div>
-                      <div className="grid grid-cols-3 gap-2">
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                         <Input placeholder="@handle" value={profileData.instagram} onChange={(e) => setProfileData(p => ({...p, instagram: e.target.value}))} className="h-10 col-span-3 sm:col-span-1" />
                         <Input type="number" placeholder="Followers" value={profileData.instagramFollowers} onChange={(e) => setProfileData(p => ({...p, instagramFollowers: e.target.value}))} className="h-10" min="0" />
                         <Input type="number" placeholder="Avg. views" value={profileData.instagramAvgViews || ''} onChange={(e) => setProfileData(p => ({...p, instagramAvgViews: e.target.value}))} className="h-10" min="0" />
@@ -2820,7 +2820,7 @@ export default function InfluencerDashboard() {
                         </div>
                         {profileData.tiktokVerified && <CheckCircle2 className="h-4 w-4 text-success" />}
                       </div>
-                      <div className="grid grid-cols-3 gap-2">
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                         <Input placeholder="@handle" value={profileData.tiktok} onChange={(e) => setProfileData(p => ({...p, tiktok: e.target.value}))} className="h-10 col-span-3 sm:col-span-1" />
                         <Input type="number" placeholder="Followers" value={profileData.tiktokFollowers} onChange={(e) => setProfileData(p => ({...p, tiktokFollowers: e.target.value}))} className="h-10" min="0" />
                         <Input type="number" placeholder="Avg. views" value={profileData.tiktokAvgViews || ''} onChange={(e) => setProfileData(p => ({...p, tiktokAvgViews: e.target.value}))} className="h-10" min="0" />
@@ -2846,7 +2846,7 @@ export default function InfluencerDashboard() {
                         </div>
                         {profileData.youtubeVerified && <CheckCircle2 className="h-4 w-4 text-success" />}
                       </div>
-                      <div className="grid grid-cols-3 gap-2">
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                         <Input placeholder="@channel" value={profileData.youtube} onChange={(e) => setProfileData(p => ({...p, youtube: e.target.value}))} className="h-10 col-span-3 sm:col-span-1" />
                         <Input type="number" placeholder="Subscribers" value={profileData.youtubeSubscribers} onChange={(e) => setProfileData(p => ({...p, youtubeSubscribers: e.target.value}))} className="h-10" min="0" />
                         <Input type="number" placeholder="Avg. views" value={profileData.youtubeAvgViews || ''} onChange={(e) => setProfileData(p => ({...p, youtubeAvgViews: e.target.value}))} className="h-10" min="0" />
