@@ -195,9 +195,9 @@ export function ProfileTab({
             <p className="text-xs text-muted-foreground">Changes save automatically when you move to the next field.</p>
 
             {[
-              { icon: <Instagram className="h-4 w-4 text-muted-foreground" />, label: 'Instagram', value: instagramUrl, set: setInstagramUrl, placeholder: '@handle or URL', field: 'instagramHandle' },
               { icon: <XIcon className="h-4 w-4 text-muted-foreground" />, label: 'X (Twitter)', value: twitterUrl, set: setTwitterUrl, placeholder: '@handle or URL', field: 'twitterHandle' },
               { icon: <Send className="h-4 w-4 text-muted-foreground" />, label: 'Telegram', value: telegramUrl, set: setTelegramUrl, placeholder: '@channel or URL', field: 'telegramHandle' },
+              { icon: <Instagram className="h-4 w-4 text-muted-foreground" />, label: 'Instagram', value: instagramUrl, set: setInstagramUrl, placeholder: '@handle or URL', field: 'instagramHandle' },
               { icon: <Youtube className="h-4 w-4 text-muted-foreground" />, label: 'YouTube', value: youtubeUrl, set: setYoutubeUrl, placeholder: '@channel or URL', field: 'youtubeHandle' },
               { icon: <Linkedin className="h-4 w-4 text-muted-foreground" />, label: 'LinkedIn', value: linkedinUrl, set: setLinkedinUrl, placeholder: 'URL or handle', field: 'linkedinHandle' },
             ].map(({ icon, label, value, set, placeholder, field }) => (
