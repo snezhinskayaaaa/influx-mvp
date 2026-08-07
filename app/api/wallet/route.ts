@@ -15,7 +15,7 @@ export async function GET(request: NextRequest) {
     const skip = (page - 1) * limit
 
     const transactionWhere = { userId: user.userId }
-    const [transactions, totalTransactions] = await Promise.all([
+    const [rawTransactions, totalTransactions] = await Promise.all([
       prisma.transaction.findMany({
         where: transactionWhere,
         orderBy: { createdAt: 'desc' },
@@ -24,6 +24,27 @@ export async function GET(request: NextRequest) {
       }),
       prisma.transaction.count({ where: transactionWhere }),
     ])
+
+    // Enrich transactions with campaign/project names via referenceId (collaboration ID)
+    const referenceIds = rawTransactions
+      .map(t => t.referenceId)
+      .filter((id): id is string => id !== null);
+
+    const collabMap = new Map<string, string>();
+    if (referenceIds.length > 0) {
+      const collabs = await prisma.collaboration.findMany({
+        where: { id: { in: referenceIds } },
+        select: { id: true, campaign: { select: { title: true, brand: { select: { companyName: true } } } } },
+      });
+      for (const c of collabs) {
+        collabMap.set(c.id, c.campaign.brand.companyName || c.campaign.title);
+      }
+    }
+
+    const transactions = rawTransactions.map(t => ({
+      ...t,
+      projectName: t.referenceId ? collabMap.get(t.referenceId) || null : null,
+    }))
 
     if (user.role === 'BRAND') {
       const brand = await prisma.brand.findUnique({

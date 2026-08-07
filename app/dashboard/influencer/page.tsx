@@ -186,7 +186,7 @@ export default function InfluencerDashboard() {
   const [walletTransactions, setWalletTransactions] = useState<Array<{
     id: string; type: string; amount: number; fee: number;
     description: string | null; status: string; createdAt: string;
-    currency?: string; network?: string;
+    currency?: string; network?: string; projectName?: string | null;
   }>>([]);
   const [showWithdrawModal, setShowWithdrawModal] = useState(false);
   const [withdrawAmount, setWithdrawAmount] = useState("");
@@ -2533,6 +2533,7 @@ export default function InfluencerDashboard() {
                   ) : (
                     <div className="space-y-1">
                       {walletTransactions.map(tx => {
+                        const t = tx.type.toLowerCase();
                         const typeLabels: Record<string, string> = {
                           deposit: 'Deposit', withdrawal: 'Withdrawal',
                           campaign_advance: 'Advance Payment', campaign_payout: 'Final Payment',
@@ -2540,20 +2541,21 @@ export default function InfluencerDashboard() {
                           campaign_unfreeze: 'Funds Released', advance_refund: 'Advance Refund',
                           dispute_payout: 'Dispute Payout', dispute_refund: 'Dispute Refund',
                         };
-                        const isIncoming = ['deposit', 'campaign_advance', 'campaign_payout', 'campaign_payout_auto', 'advance_refund', 'dispute_payout'].includes(tx.type);
+                        const incomingTypes = ['deposit', 'campaign_advance', 'campaign_payout', 'campaign_payout_auto', 'advance_refund', 'dispute_payout'];
+                        const isIncoming = incomingTypes.includes(t);
                         return (
                           <div key={tx.id} className="flex items-center justify-between py-3 border-b border-border last:border-0">
                             <div className="flex-1 min-w-0">
                               <div className="flex items-center gap-2">
                                 <span className={`text-sm font-medium ${isIncoming ? 'text-success' : 'text-foreground'}`}>
-                                  {typeLabels[tx.type] || tx.type}
+                                  {typeLabels[t] || tx.type}
                                 </span>
                                 {tx.status === 'PENDING' && (
                                   <span className="text-[10px] px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-600 font-medium">Pending</span>
                                 )}
                               </div>
                               <p className="text-xs text-muted-foreground truncate mt-0.5">
-                                {tx.description || (tx.currency ? `${tx.currency.toUpperCase()} via ${tx.network || 'crypto'}` : '')}
+                                {tx.projectName ? `From: ${tx.projectName}` : tx.description || (tx.currency ? `${tx.currency.toUpperCase()} via ${tx.network || 'crypto'}` : '')}
                               </p>
                               <p className="text-[10px] text-muted-foreground">
                                 {new Date(tx.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
