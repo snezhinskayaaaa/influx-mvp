@@ -2261,7 +2261,7 @@ export default function InfluencerDashboard() {
               ) : (
                 <>
                   <div className="mb-6">
-                    <h1 className="text-2xl sm:text-3xl font-bold mb-2">My Campaigns</h1>
+                    <h1 className="text-xl sm:text-3xl font-bold mb-2">My Campaigns</h1>
                     <p className="text-muted-foreground text-sm sm:text-base">
                       Track and manage your active collaborations
                     </p>
@@ -2619,11 +2619,11 @@ export default function InfluencerDashboard() {
               transition={{ duration: 0.3 }}
             >
               <div className="mb-6">
-                <h1 className="text-2xl sm:text-3xl font-bold mb-2">Influencer Profile</h1>
+                <h1 className="text-xl sm:text-3xl font-bold mb-2">Influencer Profile</h1>
                 <p className="text-muted-foreground text-sm sm:text-base">Manage your public profile and portfolio</p>
               </div>
 
-              <Card className="p-6 sm:p-8">
+              <Card className="p-4 sm:p-8">
                 <form className="space-y-5">
                   <div className="flex items-center gap-4 pb-5 border-b">
                     <div className="w-20 h-20 rounded-full bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center overflow-hidden">
@@ -2977,7 +2977,7 @@ export default function InfluencerDashboard() {
               transition={{ duration: 0.3 }}
             >
               <div className="mb-6">
-                <h1 className="text-2xl sm:text-3xl font-bold mb-2">Settings</h1>
+                <h1 className="text-xl sm:text-3xl font-bold mb-2">Settings</h1>
                 <p className="text-muted-foreground text-sm sm:text-base">
                   Manage your account preferences
                 </p>

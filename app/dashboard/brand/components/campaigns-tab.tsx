@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
+import { DatePicker } from "@/components/ui/date-picker";
 import {
   Select,
   SelectContent,
@@ -619,11 +620,11 @@ export function CampaignsTab({
                 <div>
                   <Label className="text-xs text-muted-foreground mb-1 block">Start Date</Label>
                   {isEditingCampaign && editedCampaignData ? (
-                    <Input
-                      type="date"
-                      value={editedCampaignData.startDate || ""}
-                      onChange={(e) => setEditedCampaignData({...editedCampaignData, startDate: e.target.value})}
-                      className="h-9"
+                    <DatePicker
+                      date={editedCampaignData.startDate ? new Date(editedCampaignData.startDate) : undefined}
+                      onDateChange={(d) => setEditedCampaignData({...editedCampaignData, startDate: d ? d.toISOString().split('T')[0] : ''})}
+                      placeholder="Select date"
+                      className="h-9 text-sm"
                     />
                   ) : (
                     <div className="text-sm font-medium">
@@ -636,11 +637,11 @@ export function CampaignsTab({
                 <div>
                   <Label className="text-xs text-muted-foreground mb-1 block">End Date</Label>
                   {isEditingCampaign && editedCampaignData ? (
-                    <Input
-                      type="date"
-                      value={editedCampaignData.endDate || ""}
-                      onChange={(e) => setEditedCampaignData({...editedCampaignData, endDate: e.target.value})}
-                      className="h-9"
+                    <DatePicker
+                      date={editedCampaignData.endDate ? new Date(editedCampaignData.endDate) : undefined}
+                      onDateChange={(d) => setEditedCampaignData({...editedCampaignData, endDate: d ? d.toISOString().split('T')[0] : ''})}
+                      placeholder="Select date"
+                      className="h-9 text-sm"
                     />
                   ) : (
                     <div className="text-sm font-medium">
