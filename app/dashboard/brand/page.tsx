@@ -412,7 +412,7 @@ export default function BrandDashboard() {
                   <h1 className="text-2xl sm:text-3xl font-bold mb-2">Wallet</h1>
                   <p className="text-muted-foreground text-sm sm:text-base">Manage your funds and view transaction history</p>
                 </div>
-                <div className="max-w-3xl space-y-6">
+                <div className="space-y-6">
                   <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
                     <Card className="p-5">
                       <p className="text-xs text-muted-foreground mb-1">Available</p>

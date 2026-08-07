@@ -2499,7 +2499,7 @@ export default function InfluencerDashboard() {
                 <p className="text-muted-foreground text-sm sm:text-base">Your earnings and transaction history</p>
               </div>
 
-              <div className="max-w-3xl space-y-6">
+              <div className="space-y-6">
                 {/* Balance Overview */}
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   <Card className="p-5">
