@@ -1170,12 +1170,12 @@ export function CampaignsTab({
                         )}
                       </div>
                       <div>
-                        <Label className="text-xs text-muted-foreground mb-1 block">Detailed Requirements</Label>
+                        <Label className="text-xs text-muted-foreground mb-1 block">Must Mention / Key Talking Points</Label>
                         {isEditingCampaign && editedCampaignData ? (
                           <Textarea
                             value={editedCampaignData.detailedRequirements || ""}
                             onChange={(e) => setEditedCampaignData({...editedCampaignData, detailedRequirements: e.target.value})}
-                            placeholder="Detailed requirements for the campaign..."
+                            placeholder="Key talking points, dos and don'ts, specific mentions..."
                             rows={4}
                             className="resize-none"
                           />

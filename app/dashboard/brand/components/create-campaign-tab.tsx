@@ -820,7 +820,7 @@ export function CreateCampaignTab({ campaigns, setCampaigns, setActiveTab }: Cre
               </div>
               <div>
                 <Label htmlFor="detailed-requirements" className="text-sm mb-2 block">
-                  Detailed requirements and specifications (optional)
+                  Must mention / key talking points (optional)
                 </Label>
                 <Textarea
                   id="detailed-requirements"
