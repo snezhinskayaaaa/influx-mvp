@@ -275,6 +275,11 @@ export default function BrandDashboard() {
             if (b.description) setCompanyBio(b.description);
             if (b.website) setWebsiteUrl(b.website);
             if (b.industry) setCompanyIndustry(b.industry);
+            if (b.instagramHandle) setInstagramUrl(b.instagramHandle);
+            if (b.twitterHandle) setTwitterUrl(b.twitterHandle);
+            if (b.telegramHandle) setTelegramUrl(b.telegramHandle);
+            if (b.youtubeHandle) setYoutubeUrl(b.youtubeHandle);
+            if (b.linkedinHandle) setLinkedinUrl(b.linkedinHandle);
             if (b.foundingMember) setIsFoundingMember(true);
           }
         }

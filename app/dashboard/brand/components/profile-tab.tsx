@@ -192,56 +192,53 @@ export function ProfileTab({
 
           <div className="space-y-3">
             <Label className="text-sm font-medium">Social Media</Label>
+            <p className="text-xs text-muted-foreground">Changes save automatically when you move to the next field.</p>
 
-            <div className="relative">
-              <Instagram className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Instagram URL"
-                value={instagramUrl}
-                onChange={(e) => setInstagramUrl(e.target.value)}
-                className="pl-10 h-11"
-              />
-            </div>
-
-            <div className="relative">
-              <XIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="X URL"
-                value={twitterUrl}
-                onChange={(e) => setTwitterUrl(e.target.value)}
-                className="pl-10 h-11"
-              />
-            </div>
-
-            <div className="relative">
-              <Send className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Telegram @channel or URL"
-                value={telegramUrl}
-                onChange={(e) => setTelegramUrl(e.target.value)}
-                className="pl-10 h-11"
-              />
-            </div>
-
-            <div className="relative">
-              <Youtube className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="YouTube URL"
-                value={youtubeUrl}
-                onChange={(e) => setYoutubeUrl(e.target.value)}
-                className="pl-10 h-11"
-              />
-            </div>
-
-            <div className="relative">
-              <Linkedin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="LinkedIn URL"
-                value={linkedinUrl}
-                onChange={(e) => setLinkedinUrl(e.target.value)}
-                className="pl-10 h-11"
-              />
-            </div>
+            {[
+              { icon: <Instagram className="h-4 w-4 text-muted-foreground" />, label: 'Instagram', value: instagramUrl, set: setInstagramUrl, placeholder: '@handle or URL', field: 'instagramHandle' },
+              { icon: <XIcon className="h-4 w-4 text-muted-foreground" />, label: 'X (Twitter)', value: twitterUrl, set: setTwitterUrl, placeholder: '@handle or URL', field: 'twitterHandle' },
+              { icon: <Send className="h-4 w-4 text-muted-foreground" />, label: 'Telegram', value: telegramUrl, set: setTelegramUrl, placeholder: '@channel or URL', field: 'telegramHandle' },
+              { icon: <Youtube className="h-4 w-4 text-muted-foreground" />, label: 'YouTube', value: youtubeUrl, set: setYoutubeUrl, placeholder: '@channel or URL', field: 'youtubeHandle' },
+              { icon: <Linkedin className="h-4 w-4 text-muted-foreground" />, label: 'LinkedIn', value: linkedinUrl, set: setLinkedinUrl, placeholder: 'URL or handle', field: 'linkedinHandle' },
+            ].map(({ icon, label, value, set, placeholder, field }) => (
+              <div key={field} className="rounded-lg border border-border p-3 space-y-2" onBlur={(e) => {
+                if (!e.currentTarget.contains(e.relatedTarget as Node)) {
+                  fetch('/api/brands/me', {
+                    method: 'PATCH', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ [field]: value || null }),
+                  }).catch(() => {});
+                }
+              }}>
+                <div className="flex items-center gap-2">
+                  {icon}
+                  <span className="text-xs font-medium">{label}</span>
+                </div>
+                <Input
+                  placeholder={placeholder}
+                  value={value}
+                  onChange={(e) => set(e.target.value)}
+                  className="h-10"
+                />
+                {value && (
+                  <Button type="button" variant="outline" size="sm" className="h-8 text-xs w-full" onClick={async () => {
+                    try {
+                      // Save first
+                      await fetch('/api/brands/me', {
+                        method: 'PATCH', headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ [field]: value }),
+                      });
+                      // Request verification via admin notification
+                      const res = await fetch('/api/social/verify', {
+                        method: 'POST', headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ platform: label.toLowerCase().replace(/\s*\(.*\)/, '') }),
+                      });
+                      if (res.ok) showToast?.(`Verification requested for ${label}`, 'success');
+                      else { const d = await res.json(); showToast?.(d.error || 'Failed', 'error'); }
+                    } catch { showToast?.('Failed to request verification', 'error'); }
+                  }}>Request Verification</Button>
+                )}
+              </div>
+            ))}
           </div>
 
           <div className="flex gap-3 pt-4">

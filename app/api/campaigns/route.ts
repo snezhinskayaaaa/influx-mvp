@@ -52,7 +52,7 @@ export async function GET(request: NextRequest) {
         prisma.campaign.findMany({
           where,
           include: {
-            brand: { select: { companyName: true, industry: true } },
+            brand: { select: { companyName: true, industry: true, profile: { select: { avatarUrl: true } } } },
             _count: { select: { collaborations: true } },
           },
           orderBy: { createdAt: 'desc' },

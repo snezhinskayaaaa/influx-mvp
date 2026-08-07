@@ -199,6 +199,13 @@ model Brand {
   contactName  String? @map("contact_name")
   contactEmail String? @map("contact_email")
 
+  // Social Media
+  instagramHandle String? @map("instagram_handle")
+  twitterHandle   String? @map("twitter_handle")
+  telegramHandle  String? @map("telegram_handle")
+  youtubeHandle   String? @map("youtube_handle")
+  linkedinHandle  String? @map("linkedin_handle")
+
   // Budget
   monthlyBudgetRange String? @map("monthly_budget_range")
 

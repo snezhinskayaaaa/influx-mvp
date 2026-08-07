@@ -41,6 +41,11 @@ const UPDATABLE_FIELDS = [
   'contactName',
   'contactEmail',
   'monthlyBudgetRange',
+  'instagramHandle',
+  'twitterHandle',
+  'telegramHandle',
+  'youtubeHandle',
+  'linkedinHandle',
 ] as const
 
 export async function PATCH(request: NextRequest) {

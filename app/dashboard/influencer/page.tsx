@@ -324,7 +324,7 @@ export default function InfluencerDashboard() {
               id: c.id,
               title: (c.title as string) || '',
               brand: ((c as Record<string, unknown>).brand as Record<string, unknown>)?.companyName || 'Unknown Brand',
-              brandAvatar: '🏢',
+              brandAvatar: (((c as Record<string, unknown>).brand as Record<string, unknown>)?.profile as Record<string, unknown>)?.avatarUrl as string || '🏢',
               category: (c.influencerNiches as string[])?.[0] || ((c as Record<string, unknown>).brand as Record<string, string>)?.industry || '',
               budget: Math.round(((c.budgetMax as number) || 0) / 100),
               budgetMin: Math.round(((c.budgetMin as number) || 0) / 100),
@@ -1187,8 +1187,12 @@ export default function InfluencerDashboard() {
                       <div className="flex gap-4">
                         {/* Brand Avatar */}
                         <div className="flex-shrink-0">
-                          <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-primary/10 to-secondary/10 flex items-center justify-center text-3xl">
-                            {campaign.brandAvatar}
+                          <div className="w-20 h-20 rounded-full bg-gradient-to-br from-primary/10 to-secondary/10 flex items-center justify-center text-3xl overflow-hidden">
+                            {campaign.brandAvatar.startsWith('data:') || campaign.brandAvatar.startsWith('http') ? (
+                              <img src={campaign.brandAvatar} alt="" className="w-full h-full object-cover" />
+                            ) : (
+                              <span>{campaign.brandAvatar}</span>
+                            )}
                           </div>
                         </div>
 
@@ -2326,8 +2330,10 @@ export default function InfluencerDashboard() {
                       >
                         {/* Name Column */}
                         <div className="w-[320px] flex items-center gap-3">
-                          <div className="w-12 h-12 rounded-lg bg-muted flex items-center justify-center shrink-0 text-2xl">
-                            {campaign.brandAvatar}
+                          <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center shrink-0 text-2xl overflow-hidden">
+                            {campaign.brandAvatar.startsWith('data:') || campaign.brandAvatar.startsWith('http') ? (
+                              <img src={campaign.brandAvatar} alt="" className="w-full h-full object-cover" />
+                            ) : campaign.brandAvatar}
                           </div>
                           <div className="min-w-0 flex-1">
                             <h3 className="text-sm font-semibold mb-1.5 truncate">{campaign.title}</h3>
@@ -2423,8 +2429,10 @@ export default function InfluencerDashboard() {
                         className="p-4 cursor-pointer hover:bg-muted/20 transition-colors"
                       >
                         <div className="flex items-start gap-3 mb-3">
-                          <div className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center shrink-0 text-xl">
-                            {campaign.brandAvatar}
+                          <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center shrink-0 text-xl overflow-hidden">
+                            {campaign.brandAvatar.startsWith('data:') || campaign.brandAvatar.startsWith('http') ? (
+                              <img src={campaign.brandAvatar} alt="" className="w-full h-full object-cover" />
+                            ) : campaign.brandAvatar}
                           </div>
                           <div className="flex-1 min-w-0">
                             <h3 className="text-sm font-semibold mb-1 leading-tight">{campaign.title}</h3>
