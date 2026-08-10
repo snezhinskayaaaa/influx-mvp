@@ -1260,7 +1260,7 @@ export function CampaignsTab({
                               <div className="flex gap-2 shrink-0">
                                 <Button
                                   size="sm"
-                                  className="bg-gradient-to-r from-primary to-secondary"
+                                  className="bg-success/15 text-success border border-success/30 hover:bg-success/25"
                                   disabled={actionLoading}
                                   onClick={() => {
                                     setPriceModalData({ application, defaultPrice: application.proposedPriceCPM || '0' });
@@ -1273,7 +1273,7 @@ export function CampaignsTab({
                                 <Button
                                   size="sm"
                                   variant="outline"
-                                  className="text-destructive border-destructive/30 hover:bg-destructive/10"
+                                  className="text-red-600 border-red-200 hover:bg-red-50"
                                   disabled={actionLoading}
                                   onClick={async () => {
                                     setActionLoading(true);
