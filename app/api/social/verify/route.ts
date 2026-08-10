@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
 import { getCurrentUser } from '@/lib/auth'
 
-const VALID_PLATFORMS = ['twitter', 'instagram', 'tiktok', 'youtube', 'telegram'] as const
+const VALID_PLATFORMS = ['twitter', 'instagram', 'tiktok', 'youtube', 'telegram', 'linkedin'] as const
 type Platform = typeof VALID_PLATFORMS[number]
 
 const PLATFORM_HANDLE_FIELD: Record<Platform, string> = {
@@ -11,6 +11,7 @@ const PLATFORM_HANDLE_FIELD: Record<Platform, string> = {
   tiktok: 'tiktokHandle',
   youtube: 'youtubeHandle',
   telegram: 'telegramHandle',
+  linkedin: 'linkedinHandle',
 }
 
 const PLATFORM_VERIFIED_FIELD: Record<Platform, string> = {
@@ -19,6 +20,7 @@ const PLATFORM_VERIFIED_FIELD: Record<Platform, string> = {
   tiktok: 'tiktokVerified',
   youtube: 'youtubeVerified',
   telegram: 'telegramVerified',
+  linkedin: 'linkedinHandle', // brands only, no verified field for linkedin
 }
 
 /**
@@ -32,13 +34,36 @@ export async function POST(request: NextRequest) {
   try {
     const user = await getCurrentUser()
     if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    if (user.role !== 'INFLUENCER') return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+    if (user.role !== 'INFLUENCER' && user.role !== 'BRAND') return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
 
     const body = await request.json()
     const { platform } = body as { platform: string }
 
     if (!VALID_PLATFORMS.includes(platform as Platform)) {
       return NextResponse.json({ error: 'Invalid platform' }, { status: 400 })
+    }
+
+    // For brands — just send admin notification, no per-platform verification fields
+    if (user.role === 'BRAND') {
+      const brand = await prisma.brand.findUnique({ where: { userId: user.userId } })
+      if (!brand) return NextResponse.json({ error: 'Brand not found' }, { status: 404 })
+
+      const handle = (brand as Record<string, unknown>)[PLATFORM_HANDLE_FIELD[platform as Platform]] as string | null
+      if (!handle) return NextResponse.json({ error: `No ${platform} handle set. Fill it in first.` }, { status: 400 })
+
+      const platformLabel = platform === 'twitter' ? 'X (Twitter)' : platform.charAt(0).toUpperCase() + platform.slice(1)
+      const admins = await prisma.profile.findMany({ where: { role: 'ADMIN' }, select: { id: true } })
+      for (const admin of admins) {
+        await prisma.notification.create({
+          data: {
+            userId: admin.id,
+            title: `Brand Verification: ${platformLabel}`,
+            body: `${brand.companyName} requested verification for ${platformLabel}: ${handle}`,
+            link: `/admin?verify=${brand.id}&platform=${platform}&type=brand`,
+          },
+        })
+      }
+      return NextResponse.json({ requested: true, platform })
     }
 
     const influencer = await prisma.influencer.findUnique({

@@ -3001,9 +3001,6 @@ export default function InfluencerDashboard() {
                       <Save className="h-4 w-4 mr-2" />
                       Save Profile
                     </Button>
-                    <Button type="button" variant="outline" className="h-11">
-                      Cancel
-                    </Button>
                   </div>
                 </form>
               </Card>
