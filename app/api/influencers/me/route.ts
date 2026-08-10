@@ -120,7 +120,8 @@ export async function PATCH(request: NextRequest) {
     for (const field of ENGAGEMENT_FIELDS) {
       if (field in body) {
         const parsed = parseFloat(body[field])
-        updateData[field] = Number.isFinite(parsed) ? parsed : 0
+        // Clamp to Decimal(5,2) max: 999.99
+        updateData[field] = Number.isFinite(parsed) ? Math.min(Math.max(parsed, 0), 999.99) : 0
       }
     }
 

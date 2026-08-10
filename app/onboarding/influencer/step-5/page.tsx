@@ -42,28 +42,10 @@ export default function InfluencerOnboardingStep5() {
     if (selectedGoal) {
       setIsSubmitting(true);
       try {
-        const platforms = JSON.parse(localStorage.getItem("influencer_onboarding_platforms") || "[]") as string[];
-        const engagement = parseFloat(localStorage.getItem("influencer_onboarding_engagement") || "0");
         const niches = JSON.parse(localStorage.getItem("influencer_onboarding_niches") || "[]") as string[];
 
-        // Don't guess per-platform followers — set 0, influencer fills in real numbers in their profile
-        const followersPerPlatform: Record<string, number> = {};
-        const engagementPerPlatform: Record<string, number> = {};
-
-        for (const p of platforms) {
-          if (p === "instagram") {
-            followersPerPlatform.instagramFollowers = 0;
-            engagementPerPlatform.instagramEngagement = engagement;
-          } else if (p === "tiktok") {
-            followersPerPlatform.tiktokFollowers = 0;
-            engagementPerPlatform.tiktokEngagement = engagement;
-          } else if (p === "youtube") {
-            followersPerPlatform.youtubeSubscribers = 0;
-            engagementPerPlatform.youtubeEngagement = engagement;
-          }
-        }
-
-        const patchBody: Record<string, unknown> = { niche: niches, ...followersPerPlatform, ...engagementPerPlatform };
+        const patchBody: Record<string, unknown> = {};
+        if (niches.length > 0) patchBody.niche = niches;
         const handle = localStorage.getItem("influencer_onboarding_handle");
         if (handle) patchBody.handle = handle;
         const bio = localStorage.getItem("influencer_onboarding_bio");
@@ -80,7 +62,7 @@ export default function InfluencerOnboardingStep5() {
         if (tg) patchBody.telegramHandle = tg;
 
         // Only call API if there's meaningful data to update
-        if (Object.keys(patchBody).length > 1 || (Object.keys(patchBody).length === 1 && !('niche' in patchBody && (patchBody.niche as string[]).length === 0))) {
+        if (Object.keys(patchBody).length > 0) {
           const res = await fetch("/api/influencers/me", {
             method: "PATCH",
             headers: { "Content-Type": "application/json" },
