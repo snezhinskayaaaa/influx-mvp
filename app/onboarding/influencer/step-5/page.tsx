@@ -79,15 +79,18 @@ export default function InfluencerOnboardingStep5() {
         const tg = localStorage.getItem("influencer_onboarding_telegram");
         if (tg) patchBody.telegramHandle = tg;
 
-        const res = await fetch("/api/influencers/me", {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(patchBody),
-        });
+        // Only call API if there's meaningful data to update
+        if (Object.keys(patchBody).length > 1 || (Object.keys(patchBody).length === 1 && !('niche' in patchBody && (patchBody.niche as string[]).length === 0))) {
+          const res = await fetch("/api/influencers/me", {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(patchBody),
+          });
 
-        if (!res.ok) {
-          const data = await res.json();
-          throw new Error(data.error || "Failed to save profile");
+          if (!res.ok) {
+            const data = await res.json();
+            throw new Error(data.error || "Failed to save profile");
+          }
         }
 
         // Clean up localStorage

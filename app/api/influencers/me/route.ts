@@ -170,9 +170,12 @@ export async function PATCH(request: NextRequest) {
     return NextResponse.json({ influencer }, { status: 200 })
   } catch (error) {
     console.error('PATCH /api/influencers/me error:', error)
-    const message = error instanceof Error && error.message.includes('Unique constraint')
-      ? 'Handle is already taken'
-      : 'Failed to update influencer profile'
+    let message = 'Failed to update influencer profile'
+    if (error instanceof Error) {
+      if (error.message.includes('Unique constraint')) message = 'Handle is already taken'
+      else if (error.message.includes('Record to update not found')) message = 'Influencer profile not found. Please contact support.'
+      else message = error.message
+    }
     return NextResponse.json(
       { error: message },
       { status: 500 },
