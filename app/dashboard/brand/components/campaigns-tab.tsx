@@ -404,6 +404,7 @@ export function CampaignsTab({
     // On refresh, skip this to avoid flickering
     if (!selectedCampaignDetails || selectedCampaignDetails.id !== campaign.id) {
       setSelectedCampaignDetails(campaign);
+      setSelectedInfluencerForPipeline(null);
     }
     try {
       const res = await fetch('/api/collaborations');
