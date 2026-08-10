@@ -1297,7 +1297,7 @@ export default function InfluencerDashboard() {
                               }
                               if (myCollab.status === 'applied') {
                                 return (
-                                  <Button size="default" variant="outline" disabled className="text-muted-foreground">
+                                  <Button size="default" className="bg-amber-500/15 text-amber-600 border border-amber-500/30 hover:bg-amber-500/25">
                                     <Clock className="h-4 w-4 mr-2" />
                                     Applied
                                   </Button>
@@ -1305,7 +1305,7 @@ export default function InfluencerDashboard() {
                               }
                               if (myCollab.status === 'completed' || myCollab.status === 'resolved') {
                                 return (
-                                  <Button size="default" variant="outline" disabled className="text-success border-success/30">
+                                  <Button size="default" className="bg-success/15 text-success border border-success/30 hover:bg-success/25">
                                     <CheckCircle2 className="h-4 w-4 mr-2" />
                                     Completed
                                   </Button>
@@ -1315,7 +1315,7 @@ export default function InfluencerDashboard() {
                               return (
                                 <Button
                                   size="default"
-                                  variant="outline"
+                                  className="bg-primary/15 text-primary border border-primary/30 hover:bg-primary/25"
                                   onClick={() => setActiveTab("my-campaigns")}
                                 >
                                   View Campaign
