@@ -103,6 +103,8 @@ export default function InfluencerOnboardingStep5() {
         router.push("/dashboard/influencer");
       } catch (err) {
         setIsSubmitting(false);
+        const message = err instanceof Error ? err.message : 'Something went wrong';
+        alert(message);
         console.error("Influencer onboarding error:", err);
       }
     }
