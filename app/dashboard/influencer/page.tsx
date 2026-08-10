@@ -377,7 +377,7 @@ export default function InfluencerDashboard() {
                 campaignId: (campaign?.id as string) || '',
                 title: (campaign?.title as string) || '',
                 brand: (brand?.companyName as string) || 'Unknown Brand',
-                brandAvatar: '🏢',
+                brandAvatar: ((brand?.profile as Record<string, unknown>)?.avatarUrl as string) || '🏢',
                 category: (campaign?.influencerNiches as string[])?.[0] || (brand?.industry as string) || '',
                 budget: Math.round(budgetCents / 100),
                 budgetMin: Math.round(((campaign?.budgetMin as number) || 0) / 100),
@@ -599,7 +599,7 @@ export default function InfluencerDashboard() {
   const getStatusLabel = (status: CampaignStatus): string => {
     switch (status) {
       case "open": return "Open";
-      case "applied": return "Pending";
+      case "applied": return "Applied";
       case "approved": return "Negotiating";
       case "active": return "In Progress";
       case "content_review": return "Under Review";
@@ -681,7 +681,7 @@ export default function InfluencerDashboard() {
               campaignId: (campaign?.id as string) || '',
               title: (campaign?.title as string) || "",
               brand: (brand?.companyName as string) || "Unknown Brand",
-              brandAvatar: "🏢",
+              brandAvatar: ((brand?.profile as Record<string, unknown>)?.avatarUrl as string) || "🏢",
               category: (campaign?.influencerNiches as string[])?.[0] || (brand?.industry as string) || '',
               budget: Math.round(budgetCents / 100),
               budgetMin: Math.round(((campaign?.budgetMin as number) || 0) / 100),
@@ -823,7 +823,7 @@ export default function InfluencerDashboard() {
               campaignId: (campaign?.id as string) || '',
               title: (campaign?.title as string) || "",
               brand: (brand?.companyName as string) || "Unknown Brand",
-              brandAvatar: "🏢",
+              brandAvatar: ((brand?.profile as Record<string, unknown>)?.avatarUrl as string) || "🏢",
               category: (campaign?.influencerNiches as string[])?.[0] || (brand?.industry as string) || '',
               budget: Math.round(budgetCents / 100),
               budgetMin: Math.round(((campaign?.budgetMin as number) || 0) / 100),
@@ -2340,8 +2340,8 @@ export default function InfluencerDashboard() {
                     <div className="flex items-center px-6 py-4 bg-muted/30 border-b">
                       <div className="w-[320px] text-xs font-semibold text-muted-foreground uppercase tracking-wide">Name</div>
                       <div className="w-[100px] text-xs font-semibold text-muted-foreground uppercase tracking-wide">Pricing</div>
-                      <div className="w-[100px] text-xs font-semibold text-muted-foreground uppercase tracking-wide">Budget</div>
-                      <div className="w-[120px] text-xs font-semibold text-muted-foreground uppercase tracking-wide">Received</div>
+                      <div className="w-[100px] text-xs font-semibold text-muted-foreground uppercase tracking-wide">My Price</div>
+                      <div className="w-[120px] text-xs font-semibold text-muted-foreground uppercase tracking-wide">Earned</div>
                       <div className="flex-1 text-xs font-semibold text-muted-foreground uppercase tracking-wide">Status</div>
                       <div className="w-[140px] text-xs font-semibold text-muted-foreground uppercase tracking-wide text-right">Actions</div>
                     </div>
@@ -2418,7 +2418,13 @@ export default function InfluencerDashboard() {
                         {/* Status Column */}
                         <div className="flex-1">
                           <div className="text-sm text-muted-foreground">
-                            Due: {new Date(campaign.deadline).toLocaleDateString()}
+                            {campaign.status === "completed" || campaign.status === "resolved"
+                              ? "Completed"
+                              : campaign.status === "applied"
+                              ? "Awaiting review"
+                              : campaign.deadline
+                              ? `Due: ${new Date(campaign.deadline).toLocaleDateString()}`
+                              : getStatusLabel(campaign.status)}
                           </div>
                         </div>
 

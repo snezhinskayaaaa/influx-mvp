@@ -30,7 +30,7 @@ export async function GET(request: NextRequest) {
           where,
           include: {
             campaign: {
-              include: { brand: { select: { companyName: true, industry: true } } },
+              include: { brand: { select: { companyName: true, industry: true, profile: { select: { avatarUrl: true } } } } },
             },
           },
           orderBy: { createdAt: 'desc' },
