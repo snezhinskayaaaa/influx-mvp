@@ -1792,9 +1792,9 @@ export function CampaignsTab({
 
                             {/* Creator declined the price — brand can propose a new one */}
                             {selectedInfluencerForPipeline.influencerAgreed === false && (
-                              <div className="space-y-3 pt-3 border-t">
+                              <div className="space-y-2 pt-3 border-t">
                                 <div className="flex items-center gap-2 px-4 py-3 rounded-lg bg-amber-500/10 border border-amber-500/20">
-                                  <AlertCircle className="h-5 w-5 text-amber-600" />
+                                  <AlertCircle className="h-5 w-5 text-amber-600 shrink-0" />
                                   <div>
                                     <p className="text-sm font-medium text-amber-600">
                                       Creator declined your offer of ${selectedInfluencerForPipeline.agreedPrice ?? 0}
@@ -1818,11 +1818,11 @@ export function CampaignsTab({
 
                             {/* Cancel Negotiation */}
                             {selectedInfluencerForPipeline.collaborationId && (
-                              <div className="pt-2">
+                              <div className="pt-1">
                                 <Button
                                   size="sm"
                                   variant="outline"
-                                  className="w-full text-destructive border-destructive/30 hover:bg-destructive/10"
+                                  className="w-full text-red-600 border-red-200 hover:bg-red-50"
                                   disabled={actionLoading}
                                   onClick={async () => {
                                     setActionLoading(true);
