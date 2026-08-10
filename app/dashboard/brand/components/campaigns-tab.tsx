@@ -556,6 +556,9 @@ export function CampaignsTab({
                         if (editedCampaignData.detailedRequirements !== selectedCampaignDetails.detailedRequirements) {
                           patchBody.deliverables = editedCampaignData.detailedRequirements;
                         }
+                        if (editedCampaignData.endDate !== selectedCampaignDetails.endDate) {
+                          patchBody.endDate = editedCampaignData.endDate || null;
+                        }
 
                         if (Object.keys(patchBody).length > 0) {
                           const res = await fetch(`/api/campaigns/${selectedCampaignDetails.id}`, {
