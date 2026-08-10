@@ -11,6 +11,9 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "Influx — Crypto-Native Influencer Marketing for Web3",
   description: "The platform where Web3 projects run influencer campaigns and pay in crypto. AI influencers, crypto KOLs, and Web3 creators — with escrow protection built in.",
+  icons: {
+    icon: "/icon.svg",
+  },
 };
 
 export default function RootLayout({
