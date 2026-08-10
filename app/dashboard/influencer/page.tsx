@@ -2363,7 +2363,12 @@ export default function InfluencerDashboard() {
                             ) : campaign.brandAvatar}
                           </div>
                           <div className="min-w-0 flex-1">
-                            <h3 className="text-sm font-semibold mb-1.5 truncate">{campaign.title}</h3>
+                            <div className="flex items-center gap-1.5 mb-1.5">
+                              <h3 className="text-sm font-semibold truncate">{campaign.title}</h3>
+                              {["approved", "active", "revision", "publishing"].includes(campaign.status) && (
+                                <span className="inline-flex items-center justify-center w-2 h-2 rounded-full bg-amber-500 shrink-0" />
+                              )}
+                            </div>
                             <div className="flex items-center gap-2">
                               <Badge
                                 variant={campaign.status === "active" ? "default" : "secondary"}
@@ -2468,7 +2473,12 @@ export default function InfluencerDashboard() {
                             ) : campaign.brandAvatar}
                           </div>
                           <div className="flex-1 min-w-0">
-                            <h3 className="text-sm font-semibold mb-1 leading-tight">{campaign.title}</h3>
+                            <div className="flex items-center gap-1.5 mb-1">
+                              <h3 className="text-sm font-semibold leading-tight truncate">{campaign.title}</h3>
+                              {["approved", "active", "revision", "publishing"].includes(campaign.status) && (
+                                <span className="inline-flex items-center justify-center w-2 h-2 rounded-full bg-amber-500 shrink-0" />
+                              )}
+                            </div>
                             <Badge
                               variant={campaign.status === "active" ? "default" : "secondary"}
                               className={`text-[10px] px-2 py-0 h-5 ${getStatusColor(campaign.status)} border`}
