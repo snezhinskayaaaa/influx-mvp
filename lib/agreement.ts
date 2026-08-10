@@ -12,6 +12,11 @@ interface AgreementData {
   campaignTitle: string
   campaignDescription: string | null
   deliverables: string[]
+  platforms: string[]
+  contentFormats: string[]
+  brandTerms: string | null
+  influencerTerms: string | null
+  endDate: string | null
   agreedPrice: number
   pricingBasis: string
   depositFeePercent: number
@@ -212,6 +217,15 @@ export function generateAgreementPDF(data: AgreementData): Buffer {
   addSection('2', 'Campaign')
   addLabel(data.campaignTitle)
   if (data.campaignDescription) addBody(data.campaignDescription)
+  if (data.platforms.length > 0) {
+    addBody(`Platforms: ${data.platforms.join(', ')}`)
+  }
+  if (data.contentFormats.length > 0) {
+    addBody(`Content formats: ${data.contentFormats.map(f => f.replace(/-/g, ' ')).join(', ')}`)
+  }
+  if (data.endDate) {
+    addBody(`Campaign deadline: ${data.endDate}`)
+  }
   y += 2
 
   // ============= 3. DELIVERABLES =============
@@ -329,8 +343,25 @@ export function generateAgreementPDF(data: AgreementData): Buffer {
   addMuted('If no resolution within 14 days, funds are automatically released to the Creator.')
   y += 2
 
-  // ============= 9. GENERAL TERMS =============
-  addSection('9', 'General Terms')
+  // ============= 9. ADDITIONAL TERMS =============
+  if (data.brandTerms || data.influencerTerms) {
+    addSection('9', 'Additional Terms')
+    if (data.brandTerms) {
+      addLabel('Project Terms:')
+      addBody(data.brandTerms)
+      y += 1
+    }
+    if (data.influencerTerms) {
+      addLabel('Creator Terms:')
+      addBody(data.influencerTerms)
+      y += 1
+    }
+    y += 2
+  }
+
+  // ============= 10. GENERAL TERMS =============
+  const generalNum = (data.brandTerms || data.influencerTerms) ? '10' : '9'
+  addSection(generalNum, 'General Terms')
   addBullet('Both parties agree to act in good faith')
   addBullet('Creator retains rights to their content unless otherwise agreed')
   addBullet('Project receives a license to use the content for marketing purposes')

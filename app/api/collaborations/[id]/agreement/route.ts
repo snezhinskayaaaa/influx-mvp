@@ -108,6 +108,13 @@ export async function GET(
         collaboration.deliverables.length > 0
           ? collaboration.deliverables
           : collaboration.campaign.deliverables,
+      platforms: collaboration.campaign.platforms || [],
+      contentFormats: collaboration.campaign.contentFormats || [],
+      brandTerms: collaboration.brandTerms,
+      influencerTerms: collaboration.influencerTerms,
+      endDate: collaboration.campaign.endDate
+        ? collaboration.campaign.endDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
+        : null,
       agreedPrice,
       pricingBasis,
       depositFeePercent: depositFee,
