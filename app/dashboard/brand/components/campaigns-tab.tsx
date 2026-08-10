@@ -2485,7 +2485,16 @@ export function CampaignsTab({
                   <Briefcase className="h-5 w-5 text-muted-foreground" />
                 </div>
                 <div className="min-w-0 flex-1">
-                  <h3 className="text-sm font-semibold mb-1.5 truncate">{campaign.title}</h3>
+                  <div className="flex items-center gap-1.5 mb-1.5">
+                    <h3 className="text-sm font-semibold truncate">{campaign.title}</h3>
+                    {(() => {
+                      const pending = campaign.applicationsList?.filter(a => a.status === "pending").length || 0;
+                      const actionNeeded = (campaign.applicationsList?.filter(a => a.status === "approved" && getActionInfo(a).type === "action").length || 0);
+                      const total = pending + actionNeeded;
+                      if (total === 0) return null;
+                      return <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-amber-500 text-white text-[10px] font-bold shrink-0">{total}</span>;
+                    })()}
+                  </div>
                   <div className="flex items-center gap-2">
                     <Badge
                       variant={campaign.status === "active" ? "default" : "secondary"}
@@ -2647,7 +2656,16 @@ export function CampaignsTab({
                       <Briefcase className="h-5 w-5 text-muted-foreground" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <h3 className="text-sm font-semibold mb-1 leading-tight">{campaign.title}</h3>
+                      <div className="flex items-center gap-1.5 mb-1">
+                        <h3 className="text-sm font-semibold leading-tight truncate">{campaign.title}</h3>
+                        {(() => {
+                          const pending = campaign.applicationsList?.filter(a => a.status === "pending").length || 0;
+                          const actionNeeded = (campaign.applicationsList?.filter(a => a.status === "approved" && getActionInfo(a).type === "action").length || 0);
+                          const total = pending + actionNeeded;
+                          if (total === 0) return null;
+                          return <span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-amber-500 text-white text-[8px] font-bold shrink-0">{total}</span>;
+                        })()}
+                      </div>
                       <div className="flex items-center gap-1.5 flex-wrap">
                         <Badge
                           variant={campaign.status === "active" ? "default" : "secondary"}
