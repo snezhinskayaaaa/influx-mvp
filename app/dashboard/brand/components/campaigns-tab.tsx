@@ -2492,6 +2492,7 @@ export function CampaignsTab({
                       const actionNeeded = (campaign.applicationsList?.filter(a => a.status === "approved" && getActionInfo(a).type === "action").length || 0);
                       const total = pending + actionNeeded;
                       if (total === 0) return null;
+                      if (total === 1) return <span className="inline-flex w-2.5 h-2.5 rounded-full bg-amber-500 shrink-0" />;
                       return <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-amber-500 text-white text-[10px] font-bold shrink-0">{total}</span>;
                     })()}
                   </div>
@@ -2663,6 +2664,7 @@ export function CampaignsTab({
                           const actionNeeded = (campaign.applicationsList?.filter(a => a.status === "approved" && getActionInfo(a).type === "action").length || 0);
                           const total = pending + actionNeeded;
                           if (total === 0) return null;
+                          if (total === 1) return <span className="inline-flex w-2 h-2 rounded-full bg-amber-500 shrink-0" />;
                           return <span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-amber-500 text-white text-[8px] font-bold shrink-0">{total}</span>;
                         })()}
                       </div>
