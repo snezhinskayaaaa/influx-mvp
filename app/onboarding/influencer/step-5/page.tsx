@@ -63,19 +63,26 @@ export default function InfluencerOnboardingStep5() {
           }
         }
 
+        const patchBody: Record<string, unknown> = { niche: niches, ...followersPerPlatform, ...engagementPerPlatform };
+        const handle = localStorage.getItem("influencer_onboarding_handle");
+        if (handle) patchBody.handle = handle;
+        const bio = localStorage.getItem("influencer_onboarding_bio");
+        if (bio) patchBody.bio = bio;
+        const ig = localStorage.getItem("influencer_onboarding_instagram");
+        if (ig) patchBody.instagramHandle = ig;
+        const tk = localStorage.getItem("influencer_onboarding_tiktok");
+        if (tk) patchBody.tiktokHandle = tk;
+        const yt = localStorage.getItem("influencer_onboarding_youtube");
+        if (yt) patchBody.youtubeHandle = yt;
+        const tw = localStorage.getItem("influencer_onboarding_twitter");
+        if (tw) patchBody.twitterHandle = tw;
+        const tg = localStorage.getItem("influencer_onboarding_telegram");
+        if (tg) patchBody.telegramHandle = tg;
+
         const res = await fetch("/api/influencers/me", {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            handle: localStorage.getItem("influencer_onboarding_handle") || "",
-            bio: localStorage.getItem("influencer_onboarding_bio") || "",
-            instagramHandle: localStorage.getItem("influencer_onboarding_instagram") || "",
-            tiktokHandle: localStorage.getItem("influencer_onboarding_tiktok") || "",
-            youtubeHandle: localStorage.getItem("influencer_onboarding_youtube") || "",
-            niche: niches,
-            ...followersPerPlatform,
-            ...engagementPerPlatform,
-          }),
+          body: JSON.stringify(patchBody),
         });
 
         if (!res.ok) {
