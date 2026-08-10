@@ -74,13 +74,13 @@ export function SettingsTab() {
       )}
 
       <div className="mb-6">
-        <h1 className="text-2xl sm:text-3xl font-bold mb-2">Settings</h1>
+        <h1 className="text-xl sm:text-3xl font-bold mb-2">Settings</h1>
         <p className="text-muted-foreground text-sm sm:text-base">Manage your account preferences</p>
       </div>
 
       <div className="space-y-4 max-w-2xl">
         {/* Account */}
-        <Card className="p-5">
+        <Card className="p-4 sm:p-5">
           <h3 className="text-sm font-semibold mb-3">Account</h3>
           <div className="space-y-4">
             <div>
@@ -122,7 +122,7 @@ export function SettingsTab() {
         </Card>
 
         {/* Notifications */}
-        <Card className="p-5">
+        <Card className="p-4 sm:p-5">
           <h3 className="text-sm font-semibold mb-3">Notifications</h3>
           <div className="space-y-3">
             <div className="flex items-center justify-between">
@@ -153,7 +153,7 @@ export function SettingsTab() {
         </Card>
 
         {/* Two-Factor Authentication */}
-        <Card className="p-5">
+        <Card className="p-4 sm:p-5">
           <h3 className="text-sm font-semibold mb-3">Two-Factor Authentication</h3>
           {totpBackupCodes ? (
             <div className="space-y-3">

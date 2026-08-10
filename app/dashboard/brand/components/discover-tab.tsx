@@ -113,7 +113,7 @@ export function DiscoverTab({ influencers, onCollaborate }: DiscoverTabProps) {
       transition={{ duration: 0.3 }}
     >
       <div className="mb-6">
-        <h1 className="text-2xl sm:text-3xl font-bold mb-2">Discover AI Influencers</h1>
+        <h1 className="text-xl sm:text-3xl font-bold mb-2">Discover Talent</h1>
         <p className="text-muted-foreground text-sm sm:text-base">Find the perfect creators for your brand</p>
       </div>
 

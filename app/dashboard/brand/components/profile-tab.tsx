@@ -74,14 +74,14 @@ export function ProfileTab({
       transition={{ duration: 0.3 }}
     >
       <div className="mb-6">
-        <h1 className="text-2xl sm:text-3xl font-bold mb-2">Company Profile</h1>
+        <h1 className="text-xl sm:text-3xl font-bold mb-2">Company Profile</h1>
         <p className="text-muted-foreground text-sm sm:text-base">Manage your company information</p>
       </div>
 
-      <Card className="p-6 sm:p-8">
+      <Card className="p-4 sm:p-8">
         <form className="space-y-5">
-          <div className="flex items-center gap-4 pb-5 border-b">
-            <div className="w-20 h-20 rounded-full bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center overflow-hidden">
+          <div className="flex items-center gap-3 sm:gap-4 pb-4 sm:pb-5 border-b">
+            <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center overflow-hidden shrink-0">
               {logoUrl ? (
                 <img src={logoUrl} alt="Logo" className="w-full h-full object-cover" />
               ) : (

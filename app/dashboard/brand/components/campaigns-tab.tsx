@@ -508,7 +508,7 @@ export function CampaignsTab({
                 <ArrowRight className="h-4 w-4 mr-2 rotate-180" />
                 Back to Campaigns
               </Button>
-              <h1 className="text-2xl sm:text-3xl font-bold mb-2">{selectedCampaignDetails.title}</h1>
+              <h1 className="text-xl sm:text-3xl font-bold mb-2">{selectedCampaignDetails.title}</h1>
               <div className="flex items-center gap-2">
                 <Badge
                   variant={selectedCampaignDetails.status === "active" ? "default" : "secondary"}
@@ -613,7 +613,7 @@ export function CampaignsTab({
           </div>
 
           {/* Brief Info Card */}
-          <Card className="p-6 mb-6">
+          <Card className="p-4 sm:p-6 mb-4 sm:mb-6">
             <div className="space-y-4">
               {/* Brief Info */}
               <div className="grid grid-cols-4 gap-4">
@@ -1195,7 +1195,7 @@ export function CampaignsTab({
 
           {/* Applications */}
           {selectedCampaignDetails.applicationsList && selectedCampaignDetails.applicationsList.length > 0 && (
-            <Card className="p-6 mb-6">
+            <Card className="p-4 sm:p-6 mb-4 sm:mb-6">
               <div className="flex items-center justify-between mb-4">
                 <div>
                   <h2 className="text-xl font-bold">Applications</h2>
@@ -2412,7 +2412,7 @@ export function CampaignsTab({
       ) : (
         <>
           <div className="mb-6">
-            <h1 className="text-2xl sm:text-3xl font-bold mb-2">My Campaigns</h1>
+            <h1 className="text-xl sm:text-3xl font-bold mb-2">My Campaigns</h1>
             <p className="text-muted-foreground text-sm sm:text-base">Track and manage your campaigns</p>
           </div>
 

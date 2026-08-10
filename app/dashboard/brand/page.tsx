@@ -414,30 +414,30 @@ export default function BrandDashboard() {
             {activeTab === "wallet" && (
               <motion.div key="wallet" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} transition={{ duration: 0.3 }}>
                 <div className="mb-8">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <h1 className="text-2xl sm:text-3xl font-bold mb-1">Wallet</h1>
-                      <p className="text-muted-foreground text-sm">Manage your funds and view transaction history</p>
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="min-w-0">
+                      <h1 className="text-xl sm:text-3xl font-bold mb-1">Wallet</h1>
+                      <p className="text-muted-foreground text-xs sm:text-sm">Manage your funds and view transaction history</p>
                     </div>
-                    <div className="flex gap-2">
-                      <Button size="sm" className="h-9 px-5 bg-primary/10 text-primary hover:bg-primary/20 border border-primary/20" onClick={() => setShowTopUpModal(true)}>
+                    <div className="flex gap-2 shrink-0">
+                      <Button size="sm" className="h-8 sm:h-9 px-3 sm:px-5 text-xs sm:text-sm bg-primary/10 text-primary hover:bg-primary/20 border border-primary/20" onClick={() => setShowTopUpModal(true)}>
                         Top Up
                       </Button>
-                      <Button size="sm" variant="outline" className="h-9 px-5" onClick={() => setShowWithdrawModal(true)}>
+                      <Button size="sm" variant="outline" className="h-8 sm:h-9 px-3 sm:px-5 text-xs sm:text-sm" onClick={() => setShowWithdrawModal(true)}>
                         Withdraw
                       </Button>
                     </div>
                   </div>
                 </div>
                 <div className="space-y-6">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="rounded-xl border border-border p-6">
-                      <p className="text-xs text-muted-foreground mb-2">Available Balance</p>
-                      <p className="text-3xl font-bold text-primary">${balance.toFixed(2)}</p>
+                  <div className="grid grid-cols-2 gap-3 sm:gap-4">
+                    <div className="rounded-xl border border-border p-4 sm:p-6">
+                      <p className="text-[10px] sm:text-xs text-muted-foreground mb-1 sm:mb-2">Available Balance</p>
+                      <p className="text-xl sm:text-3xl font-bold text-primary">${balance.toFixed(2)}</p>
                     </div>
-                    <div className="rounded-xl border border-border p-6">
-                      <p className="text-xs text-muted-foreground mb-2">Frozen</p>
-                      <p className="text-3xl font-bold text-foreground">${frozenBalance.toFixed(2)}</p>
+                    <div className="rounded-xl border border-border p-4 sm:p-6">
+                      <p className="text-[10px] sm:text-xs text-muted-foreground mb-1 sm:mb-2">Frozen</p>
+                      <p className="text-xl sm:text-3xl font-bold text-foreground">${frozenBalance.toFixed(2)}</p>
                     </div>
                   </div>
 
@@ -473,7 +473,7 @@ export default function BrandDashboard() {
                             ? 'Transaction failed — balance refunded'
                             : tx.description || (tx.currency ? `${tx.currency}` : '');
                           return (
-                            <div key={tx.id} className={`flex items-center justify-between px-5 py-4 border-b border-border last:border-0 ${isFailed ? 'opacity-50' : ''}`}>
+                            <div key={tx.id} className={`flex items-center justify-between px-3 sm:px-5 py-3 sm:py-4 border-b border-border last:border-0 ${isFailed ? 'opacity-50' : ''}`}>
                               <div className="flex-1 min-w-0">
                                 <div className="flex items-center gap-2">
                                   <span className={`text-sm font-medium ${isFailed ? 'text-muted-foreground' : isFrozen ? 'text-primary' : isIncoming ? 'text-success' : 'text-foreground'}`}>
