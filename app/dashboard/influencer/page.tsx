@@ -94,6 +94,7 @@ type CampaignStatus =
 
 interface Campaign {
   id: number | string;
+  campaignId?: string; // actual campaign ID (for myCampaigns, id is collaboration ID)
   title: string;
   brand: string;
   brandAvatar: string;
@@ -373,6 +374,7 @@ export default function InfluencerDashboard() {
               const budgetCents = agreedPrice || proposedPrice || 0;
               return {
                 id: collab.id,
+                campaignId: (campaign?.id as string) || '',
                 title: (campaign?.title as string) || '',
                 brand: (brand?.companyName as string) || 'Unknown Brand',
                 brandAvatar: '🏢',
@@ -676,6 +678,7 @@ export default function InfluencerDashboard() {
             const budgetCents = agreedPrice || colProposedPrice || 0;
             return {
               id: collab.id,
+              campaignId: (campaign?.id as string) || '',
               title: (campaign?.title as string) || "",
               brand: (brand?.companyName as string) || "Unknown Brand",
               brandAvatar: "🏢",
@@ -817,6 +820,7 @@ export default function InfluencerDashboard() {
             const budgetCents = agreedPrice || colProposedPrice || 0;
             return {
               id: collab.id,
+              campaignId: (campaign?.id as string) || '',
               title: (campaign?.title as string) || "",
               brand: (brand?.companyName as string) || "Unknown Brand",
               brandAvatar: "🏢",
@@ -1278,23 +1282,46 @@ export default function InfluencerDashboard() {
 
                           {/* Actions */}
                           <div className="flex gap-2">
-                            {campaign.status === "open" && (
-                              <>
+                            {(() => {
+                              const myCollab = myCampaigns.find(mc => mc.campaignId === String(campaign.id));
+                              if (!myCollab) {
+                                return (
+                                  <Button
+                                    size="default"
+                                    className="bg-primary/10 text-primary hover:bg-primary/20 border border-primary/30"
+                                    onClick={() => setApplyingCampaign(campaign)}
+                                  >
+                                    Apply Now
+                                  </Button>
+                                );
+                              }
+                              if (myCollab.status === 'applied') {
+                                return (
+                                  <Button size="default" variant="outline" disabled className="text-muted-foreground">
+                                    <Clock className="h-4 w-4 mr-2" />
+                                    Applied
+                                  </Button>
+                                );
+                              }
+                              if (myCollab.status === 'completed' || myCollab.status === 'resolved') {
+                                return (
+                                  <Button size="default" variant="outline" disabled className="text-success border-success/30">
+                                    <CheckCircle2 className="h-4 w-4 mr-2" />
+                                    Completed
+                                  </Button>
+                                );
+                              }
+                              // Active collaboration — negotiating, in progress, etc.
+                              return (
                                 <Button
                                   size="default"
-                                  className="bg-primary/10 text-primary hover:bg-primary/20 border border-primary/30"
-                                  onClick={() => setApplyingCampaign(campaign)}
+                                  variant="outline"
+                                  onClick={() => setActiveTab("my-campaigns")}
                                 >
-                                  Apply Now
+                                  View Campaign
                                 </Button>
-                              </>
-                            )}
-                            {campaign.status === "applied" && (
-                              <Button size="default" variant="outline" disabled>
-                                <Clock className="h-4 w-4 mr-2" />
-                                Application Pending
-                              </Button>
-                            )}
+                              );
+                            })()}
                           </div>
                         </div>
                       </div>
