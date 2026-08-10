@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
 import { getCurrentUser } from '@/lib/auth'
-import { notifyInfluencerApplicationAccepted, notifyInfluencerAgreedAndAdvance } from '@/lib/notifications'
+import { notifyInfluencerApplicationAccepted, notifyInfluencerAgreedAndAdvance, notifyBrandPriceAccepted, notifyBrandPriceDeclined } from '@/lib/notifications'
 
 export async function GET(
   request: NextRequest,
@@ -104,6 +104,22 @@ export async function PATCH(
     if (isInfluencer || isAdmin) {
       if (body.influencerAgreed !== undefined) {
         updateData.influencerAgreed = body.influencerAgreed
+        // Notify brand about price accept/decline
+        if (body.influencerAgreed === true) {
+          notifyBrandPriceAccepted(
+            collaboration.campaign.brand.userId,
+            collaboration.influencer.handle,
+            collaboration.campaign.title,
+            (collaboration.agreedPrice || 0) / 100,
+          ).catch(() => {})
+        } else if (body.influencerAgreed === false) {
+          notifyBrandPriceDeclined(
+            collaboration.campaign.brand.userId,
+            collaboration.influencer.handle,
+            collaboration.campaign.title,
+            (collaboration.agreedPrice || 0) / 100,
+          ).catch(() => {})
+        }
       }
       if (typeof body.influencerTerms === 'string') {
         updateData.influencerTerms = body.influencerTerms.slice(0, 2000)

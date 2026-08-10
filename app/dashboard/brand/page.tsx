@@ -137,6 +137,8 @@ export default function BrandDashboard() {
                         id: (c.influencer as Record<string, unknown>)?.id || '',
                         status: c.status === 'APPLIED' ? 'pending' as const : 'approved' as const,
                         collaborationStatus: c.status as string,
+                        influencerAgreed: c.influencerAgreed as boolean | undefined,
+                        agreedPrice: c.agreedPrice ? (c.agreedPrice as number) / 100 : undefined,
                       }));
                     camp.applicationsList = campCollabs;
                   }

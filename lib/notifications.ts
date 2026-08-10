@@ -164,6 +164,30 @@ export async function notifyInfluencerPaymentReceived(influencerUserId: string, 
   ).catch(err => console.error('Notification email failed:', err))
 }
 
+export async function notifyBrandPriceAccepted(brandUserId: string, influencerName: string, campaignTitle: string, price: number) {
+  await createInAppNotification(brandUserId, 'Price Accepted', `${influencerName} accepted your offer of $${price} for "${campaignTitle}"`, '/dashboard/brand')
+  const { email, notify } = await shouldNotify(brandUserId)
+  if (!notify) return
+  await sendCollaborationEmail(
+    email,
+    `Price accepted — "${campaignTitle}"`,
+    'Price Accepted',
+    `${influencerName} has accepted your price offer of $${price} for "${campaignTitle}". You can now start the campaign and freeze funds.`,
+  ).catch(err => console.error('Notification email failed:', err))
+}
+
+export async function notifyBrandPriceDeclined(brandUserId: string, influencerName: string, campaignTitle: string, price: number) {
+  await createInAppNotification(brandUserId, 'Price Declined', `${influencerName} declined your offer of $${price} for "${campaignTitle}"`, '/dashboard/brand')
+  const { email, notify } = await shouldNotify(brandUserId)
+  if (!notify) return
+  await sendCollaborationEmail(
+    email,
+    `Price declined — "${campaignTitle}"`,
+    'Price Declined',
+    `${influencerName} has declined your price offer of $${price} for "${campaignTitle}". You can propose a new price or cancel the collaboration.`,
+  ).catch(err => console.error('Notification email failed:', err))
+}
+
 export async function notifyInfluencerDisputeCreated(influencerUserId: string, campaignTitle: string, reason: string) {
   await createInAppNotification(influencerUserId, 'Dispute Raised', `A dispute was raised for "${campaignTitle}"`, '/dashboard/influencer')
   const { email, notify } = await shouldNotify(influencerUserId)
