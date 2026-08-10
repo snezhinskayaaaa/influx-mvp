@@ -1769,7 +1769,7 @@ export default function InfluencerDashboard() {
                                   <Button
                                     size="sm"
                                     variant="outline"
-                                    className="w-full mt-2 text-destructive border-destructive/30 hover:bg-destructive/10"
+                                    className="w-full mt-1 text-red-600 border-red-200 hover:bg-red-50"
                                     disabled={actionLoading}
                                     onClick={async () => {
                                       setActionLoading(true);
