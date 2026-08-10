@@ -704,6 +704,7 @@ export default function InfluencerDashboard() {
               collaborationMessage: (collab.message as string) || undefined,
               brandTerms: (collab.brandTerms as string) || undefined,
               influencerTerms: (collab.influencerTerms as string) || undefined,
+              influencerAgreed: collab.influencerAgreed as boolean | undefined,
             };
           });
           setMyCampaigns(mapped);
@@ -846,6 +847,7 @@ export default function InfluencerDashboard() {
               collaborationMessage: (collab.message as string) || undefined,
               brandTerms: (collab.brandTerms as string) || undefined,
               influencerTerms: (collab.influencerTerms as string) || undefined,
+              influencerAgreed: collab.influencerAgreed as boolean | undefined,
             };
           });
           setMyCampaigns(mapped);
