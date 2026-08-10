@@ -43,7 +43,7 @@ export async function POST(request: NextRequest) {
       await sendPasswordResetEmail(cleanEmail, token)
     } catch (emailError) {
       console.error('Failed to send reset email:', emailError)
-      // Still return success to prevent enumeration
+      return NextResponse.json({ error: 'Failed to send email. Please try again later.' }, { status: 500 })
     }
 
     return NextResponse.json({ success: true })
