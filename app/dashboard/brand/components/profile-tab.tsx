@@ -242,12 +242,30 @@ export function ProfileTab({
           </div>
 
           <div className="flex gap-3 pt-4">
-            <Button className="flex-1 h-11 bg-gradient-to-r from-primary to-secondary hover:opacity-90">
+            <Button
+              type="button"
+              className="flex-1 h-11 bg-gradient-to-r from-primary to-secondary hover:opacity-90"
+              onClick={async () => {
+                try {
+                  const res = await fetch('/api/brands/me', {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                      companyName: companyName,
+                      description: companyBio,
+                      website: websiteUrl,
+                    }),
+                  });
+                  if (res.ok) showToast?.('Profile saved!', 'success');
+                  else {
+                    const data = await res.json();
+                    showToast?.(data.error || 'Failed to save', 'error');
+                  }
+                } catch { showToast?.('Failed to save profile', 'error'); }
+              }}
+            >
               <Save className="h-4 w-4 mr-2" />
               Save Profile
-            </Button>
-            <Button type="button" variant="outline" className="h-11">
-              Cancel
             </Button>
           </div>
         </form>

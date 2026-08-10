@@ -26,8 +26,6 @@ import {
   Save,
   CheckCircle2,
   Clock,
-  Eye,
-  Heart,
   MessageCircle,
   Wallet,
   ChevronDown,
@@ -43,7 +41,6 @@ import {
   Trash2,
   AlertCircle,
   ExternalLink,
-  Camera,
   FileText,
 } from "lucide-react";
 import type { Tab, Campaign, CampaignApplication, CollaborationStatus } from "./types";
@@ -164,7 +161,6 @@ export function CampaignsTab({
   campaigns,
   setCampaigns,
   setActiveTab,
-  balance,
   setShowInsufficientFundsDialog,
 }: CampaignsTabProps) {
   const [toast, setToast] = useState<{ message: string; variant: 'success' | 'error' } | null>(null);
@@ -183,7 +179,6 @@ export function CampaignsTab({
   const [editedCampaignData, setEditedCampaignData] = useState<Campaign | null>(null);
   const [selectedInfluencerForPipeline, setSelectedInfluencerForPipeline] = useState<CampaignApplication | null>(null);
   const [showInfluencerSelector, setShowInfluencerSelector] = useState(false);
-  const [brandFeedbackText, setBrandFeedbackText] = useState("");
   const [priceModalData, setPriceModalData] = useState<{ application: CampaignApplication; defaultPrice: string; isNewOffer?: boolean } | null>(null);
   const [priceModalValue, setPriceModalValue] = useState("");
   const [revisionNoteText, setRevisionNoteText] = useState("");
