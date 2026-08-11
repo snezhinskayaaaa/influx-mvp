@@ -57,9 +57,15 @@ interface Influencer {
   youtubeSubscribers: number;
   twitterHandle?: string;
   twitterFollowers: number;
+  telegramHandle?: string;
   followers: number;
   status: string;
   isVerified: boolean;
+  twitterVerified?: boolean;
+  instagramVerified?: boolean;
+  tiktokVerified?: boolean;
+  youtubeVerified?: boolean;
+  telegramVerified?: boolean;
   isFeatured: boolean;
   createdAt: string;
   profile?: {
@@ -464,94 +470,39 @@ export default function AdminInfluencers() {
 
               {/* Social Media */}
               <div>
-                <p className="font-medium text-muted-foreground mb-2">Social Media</p>
+                <p className="font-medium text-muted-foreground mb-2">Social Media Verification</p>
                 <div className="space-y-2">
-                  {selectedInfluencer.instagramHandle && (
-                    <a
-                      href={selectedInfluencer.instagramHandle.startsWith("http") ? selectedInfluencer.instagramHandle : `https://instagram.com/${selectedInfluencer.instagramHandle.replace(/^@/, "")}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center justify-between rounded-lg border border-border p-3 hover:bg-muted/30 transition-colors group"
-                    >
+                  {([
+                    { handle: selectedInfluencer.instagramHandle, platform: 'instagram', label: 'Instagram', verified: selectedInfluencer.instagramVerified, field: 'instagramVerified', followers: selectedInfluencer.instagramFollowers, color: 'bg-gradient-to-br from-purple-500 via-pink-500 to-orange-400', url: (h: string) => h.startsWith('http') ? h : `https://instagram.com/${h.replace(/^@/, '')}` },
+                    { handle: selectedInfluencer.tiktokHandle, platform: 'tiktok', label: 'TikTok', verified: selectedInfluencer.tiktokVerified, field: 'tiktokVerified', followers: selectedInfluencer.tiktokFollowers, color: 'bg-black', url: (h: string) => h.startsWith('http') ? h : `https://tiktok.com/@${h.replace(/^@/, '')}` },
+                    { handle: selectedInfluencer.youtubeHandle, platform: 'youtube', label: 'YouTube', verified: selectedInfluencer.youtubeVerified, field: 'youtubeVerified', followers: selectedInfluencer.youtubeSubscribers, color: 'bg-red-600', url: (h: string) => h.startsWith('http') ? h : `https://youtube.com/@${h.replace(/^@/, '')}` },
+                    { handle: selectedInfluencer.twitterHandle, platform: 'twitter', label: 'X', verified: selectedInfluencer.twitterVerified, field: 'twitterVerified', followers: selectedInfluencer.twitterFollowers, color: 'bg-foreground', url: (h: string) => h.startsWith('http') ? h : `https://x.com/${h.replace(/^@/, '')}` },
+                    { handle: selectedInfluencer.telegramHandle, platform: 'telegram', label: 'Telegram', verified: selectedInfluencer.telegramVerified, field: 'telegramVerified', followers: 0, color: 'bg-blue-500', url: (h: string) => h.startsWith('http') ? h : `https://t.me/${h.replace(/^@/, '')}` },
+                  ] as const).filter(s => s.handle).map(social => (
+                    <div key={social.platform} className={`flex items-center justify-between rounded-lg border p-3 ${social.verified ? 'border-green-200 bg-green-50/50' : 'border-border'}`}>
                       <div className="flex items-center gap-2.5">
-                        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500 via-pink-500 to-orange-400 flex items-center justify-center">
-                          <svg className="h-4 w-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                            <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
-                            <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
-                            <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
-                          </svg>
-                        </div>
-                        <span className="text-sm font-medium text-foreground group-hover:text-primary transition-colors">
-                          @{extractUsername(selectedInfluencer.instagramHandle, "instagram")}
-                        </span>
+                        <a href={social.url(social.handle!)} target="_blank" rel="noopener noreferrer" className="text-sm font-medium hover:text-primary">
+                          @{extractUsername(social.handle!, social.platform)}
+                        </a>
+                        {social.followers > 0 && (
+                          <Badge className="bg-muted text-foreground border-border text-[10px]">{social.followers.toLocaleString()}</Badge>
+                        )}
+                        {social.verified && <CheckCircle2 className="h-3.5 w-3.5 text-green-500" />}
                       </div>
-                      {selectedInfluencer.instagramFollowers > 0 && (
-                        <Badge className="bg-muted text-foreground border-border text-xs">{selectedInfluencer.instagramFollowers.toLocaleString()}</Badge>
-                      )}
-                    </a>
-                  )}
-                  {selectedInfluencer.tiktokHandle && (
-                    <a
-                      href={selectedInfluencer.tiktokHandle.startsWith("http") ? selectedInfluencer.tiktokHandle : `https://tiktok.com/@${selectedInfluencer.tiktokHandle.replace(/^@/, "")}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center justify-between rounded-lg border border-border p-3 hover:bg-muted/30 transition-colors group"
-                    >
-                      <div className="flex items-center gap-2.5">
-                        <div className="w-8 h-8 rounded-lg bg-black flex items-center justify-center">
-                          <svg className="h-4 w-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                            <path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5" />
-                          </svg>
-                        </div>
-                        <span className="text-sm font-medium text-foreground group-hover:text-primary transition-colors">
-                          @{extractUsername(selectedInfluencer.tiktokHandle, "tiktok")}
-                        </span>
-                      </div>
-                      {selectedInfluencer.tiktokFollowers > 0 && (
-                        <Badge className="bg-muted text-foreground border-border text-xs">{selectedInfluencer.tiktokFollowers.toLocaleString()}</Badge>
-                      )}
-                    </a>
-                  )}
-                  {selectedInfluencer.youtubeHandle && (
-                    <a
-                      href={selectedInfluencer.youtubeHandle.startsWith("http") ? selectedInfluencer.youtubeHandle : `https://youtube.com/@${selectedInfluencer.youtubeHandle.replace(/^@/, "")}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center justify-between rounded-lg border border-border p-3 hover:bg-muted/30 transition-colors group"
-                    >
-                      <div className="flex items-center gap-2.5">
-                        <div className="w-8 h-8 rounded-lg bg-red-600 flex items-center justify-center">
-                          <svg className="h-4 w-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                            <path d="M2.5 17a24.12 24.12 0 0 1 0-10 2 2 0 0 1 1.4-1.4 49.56 49.56 0 0 1 16.2 0A2 2 0 0 1 21.5 7a24.12 24.12 0 0 1 0 10 2 2 0 0 1-1.4 1.4 49.55 49.55 0 0 1-16.2 0A2 2 0 0 1 2.5 17" />
-                            <path d="m10 15 5-3-5-3z" />
-                          </svg>
-                        </div>
-                        <span className="text-sm font-medium text-foreground group-hover:text-primary transition-colors">
-                          @{extractUsername(selectedInfluencer.youtubeHandle, "youtube")}
-                        </span>
-                      </div>
-                    </a>
-                  )}
-                  {selectedInfluencer.twitterHandle && (
-                    <a
-                      href={selectedInfluencer.twitterHandle.startsWith("http") ? selectedInfluencer.twitterHandle : `https://x.com/${selectedInfluencer.twitterHandle.replace(/^@/, "")}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center justify-between rounded-lg border border-border p-3 hover:bg-muted/30 transition-colors group"
-                    >
-                      <div className="flex items-center gap-2.5">
-                        <div className="w-8 h-8 rounded-lg bg-foreground flex items-center justify-center">
-                          <svg className="h-4 w-4 text-background" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-                        </div>
-                        <span className="text-sm font-medium text-foreground group-hover:text-primary transition-colors">
-                          @{extractUsername(selectedInfluencer.twitterHandle, "twitter")}
-                        </span>
-                      </div>
-                      {selectedInfluencer.twitterFollowers > 0 && (
-                        <Badge className="bg-muted text-foreground border-border text-xs">{selectedInfluencer.twitterFollowers.toLocaleString()}</Badge>
-                      )}
-                    </a>
-                  )}
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className={`h-7 text-[10px] px-2 ${social.verified ? 'text-red-600 border-red-200 hover:bg-red-50' : 'text-green-600 border-green-200 hover:bg-green-50'}`}
+                        onClick={async () => {
+                          const newVal = !social.verified;
+                          await updateInfluencer(selectedInfluencer.id, { [social.field]: newVal });
+                          setSelectedInfluencer({ ...selectedInfluencer, [social.field]: newVal } as typeof selectedInfluencer);
+                        }}
+                      >
+                        {social.verified ? 'Unverify' : 'Verify'}
+                      </Button>
+                    </div>
+                  ))}
                 </div>
               </div>
 
