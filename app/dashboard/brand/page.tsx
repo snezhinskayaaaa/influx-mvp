@@ -177,34 +177,28 @@ export default function BrandDashboard() {
               const engagement = inf.instagramEngagement != null ? Number(inf.instagramEngagement) : 0;
 
               // Build CPM/CPC/CPE rate strings from cents
+              // New single-value rates
+              const cpmRate = (inf.cpmRate as number) || 0;
+              const cpcRate = (inf.cpcRate as number) || 0;
+              const cpeRate = (inf.cpeRate as number) || 0;
+              const avgPostPrice = (inf.averagePostPrice as number) || 0;
+
+              // Legacy fallback
               const cpmMin = (inf.cpmMin as number) || 0;
               const cpmMax = (inf.cpmMax as number) || 0;
-              const cpcMin = (inf.cpcMin as number) || 0;
-              const cpcMax = (inf.cpcMax as number) || 0;
-              const cpeMin = (inf.cpeMin as number) || 0;
-              const cpeMax = (inf.cpeMax as number) || 0;
 
-              const formatRange = (min: number, max: number) => {
-                if (min && max) return `$${(min / 100).toFixed(2)} - $${(max / 100).toFixed(2)}`;
-                if (min) return `$${(min / 100).toFixed(2)}`;
-                if (max) return `$${(max / 100).toFixed(2)}`;
-                return undefined;
-              };
+              const formatCents = (c: number) => c ? `$${(c / 100).toFixed(0)}` : '';
 
-              const pricingCPM = formatRange(cpmMin, cpmMax);
-              const pricingCPC = formatRange(cpcMin, cpcMax);
-              const pricingCPE = formatRange(cpeMin, cpeMax);
+              const pricingCPM = cpmRate ? formatCents(cpmRate) : (cpmMin ? `$${(cpmMin / 100).toFixed(0)}-${(cpmMax / 100).toFixed(0)}` : undefined);
+              const pricingCPC = cpcRate ? formatCents(cpcRate) : undefined;
+              const pricingCPE = cpeRate ? formatCents(cpeRate) : undefined;
 
-              // Determine primary rate display
-              const pricePerPost = (inf.pricePerPost as number) || 0;
+              // Primary rate display
               let rateStr: string;
-              if (pricingCPM) {
-                rateStr = pricingCPM;
-              } else if (pricePerPost) {
-                rateStr = `$${(pricePerPost / 100).toFixed(0)}`;
-              } else {
-                rateStr = 'N/A';
-              }
+              if (avgPostPrice) rateStr = formatCents(avgPostPrice);
+              else if (cpmRate) rateStr = `${formatCents(cpmRate)} CPM`;
+              else if (pricingCPM) rateStr = pricingCPM;
+              else rateStr = 'N/A';
 
               // Extract avatarUrl from profile relation
               const profile = inf.profile as Record<string, unknown> | null;
