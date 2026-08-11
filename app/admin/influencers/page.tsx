@@ -85,6 +85,10 @@ interface Influencer {
   cpcMax?: number;
   cpeMin?: number;
   cpeMax?: number;
+  cpmRate?: number;
+  cpcRate?: number;
+  cpeRate?: number;
+  averagePostPrice?: number;
 }
 
 export default function AdminInfluencers() {
@@ -434,10 +438,12 @@ export default function AdminInfluencers() {
           ? selectedInfluencer.handle
           : `@${selectedInfluencer.handle}`;
         const avatarUrl = selectedInfluencer.profile?.avatarUrl;
-        const cpmRate = formatCents(selectedInfluencer.cpmMin, selectedInfluencer.cpmMax);
-        const cpcRate = formatCents(selectedInfluencer.cpcMin, selectedInfluencer.cpcMax);
-        const cpeRate = formatCents(selectedInfluencer.cpeMin, selectedInfluencer.cpeMax);
-        const hasRates = cpmRate || cpcRate || cpeRate;
+        const formatRate = (cents?: number) => cents ? `$${(cents / 100).toFixed(2)}` : null;
+        const cpmDisplay = formatRate(selectedInfluencer.cpmRate) || formatCents(selectedInfluencer.cpmMin, selectedInfluencer.cpmMax);
+        const cpcDisplay = formatRate(selectedInfluencer.cpcRate) || formatCents(selectedInfluencer.cpcMin, selectedInfluencer.cpcMax);
+        const cpeDisplay = formatRate(selectedInfluencer.cpeRate) || formatCents(selectedInfluencer.cpeMin, selectedInfluencer.cpeMax);
+        const avgPostDisplay = formatRate(selectedInfluencer.averagePostPrice);
+        const hasRates = cpmDisplay || cpcDisplay || cpeDisplay || avgPostDisplay;
 
         return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm" onClick={() => setSelectedInfluencer(null)}>
@@ -573,23 +579,29 @@ export default function AdminInfluencers() {
               {hasRates && (
                 <div>
                   <p className="font-medium text-muted-foreground mb-2">Pricing Rates</p>
-                  <div className="grid grid-cols-3 gap-2">
-                    {cpmRate && (
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                    {cpmDisplay && (
                       <div className="rounded-lg border border-border p-3 text-center">
                         <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider mb-1">CPM</p>
-                        <p className="text-sm font-semibold text-foreground">{cpmRate}</p>
+                        <p className="text-sm font-semibold text-foreground">{cpmDisplay}</p>
                       </div>
                     )}
-                    {cpcRate && (
+                    {cpcDisplay && (
                       <div className="rounded-lg border border-border p-3 text-center">
                         <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider mb-1">CPC</p>
-                        <p className="text-sm font-semibold text-foreground">{cpcRate}</p>
+                        <p className="text-sm font-semibold text-foreground">{cpcDisplay}</p>
                       </div>
                     )}
-                    {cpeRate && (
+                    {cpeDisplay && (
                       <div className="rounded-lg border border-border p-3 text-center">
                         <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider mb-1">CPE</p>
-                        <p className="text-sm font-semibold text-foreground">{cpeRate}</p>
+                        <p className="text-sm font-semibold text-foreground">{cpeDisplay}</p>
+                      </div>
+                    )}
+                    {avgPostDisplay && (
+                      <div className="rounded-lg border border-border p-3 text-center">
+                        <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider mb-1">Avg Post</p>
+                        <p className="text-sm font-semibold text-foreground">{avgPostDisplay}</p>
                       </div>
                     )}
                   </div>
