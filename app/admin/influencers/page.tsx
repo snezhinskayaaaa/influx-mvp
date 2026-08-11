@@ -40,7 +40,7 @@ const staggerContainer = {
   },
 };
 
-type FilterTab = "all" | "pending" | "approved" | "rejected";
+type FilterTab = "all" | "verified" | "unverified" | "banned";
 
 interface Influencer {
   id: number;
@@ -163,13 +163,16 @@ export default function AdminInfluencers() {
 
   const tabs: { key: FilterTab; label: string; icon: typeof Users }[] = [
     { key: "all", label: "All", icon: Users },
-    { key: "pending", label: "Pending", icon: Clock },
-    { key: "approved", label: "Approved", icon: CheckCircle2 },
-    { key: "rejected", label: "Banned", icon: XCircle },
+    { key: "verified", label: "Verified", icon: CheckCircle2 },
+    { key: "unverified", label: "Unverified", icon: Clock },
+    { key: "banned", label: "Banned", icon: XCircle },
   ];
 
   const filtered = influencers.filter((inf) => {
-    const matchesTab = activeTab === "all" || inf.status?.toLowerCase() === activeTab;
+    const matchesTab = activeTab === "all"
+      || (activeTab === "verified" && inf.isVerified && inf.status !== "Rejected")
+      || (activeTab === "unverified" && !inf.isVerified && inf.status !== "Rejected")
+      || (activeTab === "banned" && inf.status === "Rejected");
     const matchesSearch =
       !search ||
       inf.handle?.toLowerCase().includes(search.toLowerCase()) ||
@@ -212,9 +215,9 @@ export default function AdminInfluencers() {
 
   const tabCounts = {
     all: influencers.length,
-    pending: influencers.filter((i) => i.status?.toLowerCase() === "pending").length,
-    approved: influencers.filter((i) => i.status?.toLowerCase() === "approved").length,
-    rejected: influencers.filter((i) => i.status?.toLowerCase() === "rejected").length,
+    verified: influencers.filter((i) => i.isVerified && i.status !== "Rejected").length,
+    unverified: influencers.filter((i) => !i.isVerified && i.status !== "Rejected").length,
+    banned: influencers.filter((i) => i.status === "Rejected").length,
   };
 
   if (loading) {
@@ -249,7 +252,7 @@ export default function AdminInfluencers() {
                 Influencers
               </h1>
               <p className="text-muted-foreground mt-1">
-                Manage influencer registrations and approvals
+                Manage creator profiles, verification, and moderation
               </p>
             </div>
             <div className="relative w-full sm:w-72">
