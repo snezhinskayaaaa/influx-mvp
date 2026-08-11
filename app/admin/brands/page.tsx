@@ -13,7 +13,6 @@ import {
   DollarSign,
   Loader2,
   Search,
-  CheckCircle2,
   XCircle,
   Globe,
   Crown,
