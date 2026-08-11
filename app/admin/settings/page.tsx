@@ -48,6 +48,11 @@ export default function AdminSettings() {
     type: "success" | "error";
     text: string;
   } | null>(null);
+  const [userEmail, setUserEmail] = useState('');
+  const [totpEnabled, setTotpEnabled] = useState(false);
+  const [totpSetup, setTotpSetup] = useState<{ qrCode: string; secret: string } | null>(null);
+  const [totpVerifyCode, setTotpVerifyCode] = useState('');
+  const [totpBackupCodes, setTotpBackupCodes] = useState<string[] | null>(null);
   const [showCodeModal, setShowCodeModal] = useState(false);
   const [codeToken, setCodeToken] = useState("");
   const [verificationCode, setVerificationCode] = useState("");
@@ -71,6 +76,12 @@ export default function AdminSettings() {
     };
 
     fetchSettings();
+    fetch('/api/profiles/me').then(r => r.json()).then(d => {
+      if (d.profile) {
+        setUserEmail(d.profile.email || '');
+        setTotpEnabled(d.profile.totpEnabled || false);
+      }
+    }).catch(() => {});
   }, []);
 
   const handleSave = async () => {
@@ -278,6 +289,123 @@ export default function AdminSettings() {
                   {codeSending ? "Sending Code..." : "Save Settings"}
                 </Button>
               </div>
+            </Card>
+          </motion.div>
+          {/* Account */}
+          <motion.div variants={fadeInUp}>
+            <Card className="border border-border/50 p-6">
+              <h2 className="text-lg font-semibold mb-4">Account</h2>
+              <div className="space-y-4">
+                <div>
+                  <Label className="text-xs text-muted-foreground">Email</Label>
+                  <div className="flex items-center gap-2 mt-1">
+                    <Input value={userEmail} readOnly className="h-10 bg-muted/50" />
+                    <CheckCircle2 className="h-4 w-4 text-green-500 shrink-0" />
+                  </div>
+                </div>
+                <div className="border-t pt-4">
+                  <Label className="text-xs font-medium mb-2 block">Change Password</Label>
+                  <form onSubmit={async (e) => {
+                    e.preventDefault();
+                    const form = e.currentTarget;
+                    const currentPw = (form.elements.namedItem('currentPassword') as HTMLInputElement).value;
+                    const newPw = (form.elements.namedItem('newPassword') as HTMLInputElement).value;
+                    const confirmPw = (form.elements.namedItem('confirmPassword') as HTMLInputElement).value;
+                    if (newPw !== confirmPw) { setMessage({ type: 'error', text: 'Passwords do not match' }); return; }
+                    if (newPw.length < 8) { setMessage({ type: 'error', text: 'Password must be at least 8 characters' }); return; }
+                    try {
+                      const res = await fetch('/api/auth/change-password', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ currentPassword: currentPw, newPassword: newPw }) });
+                      const data = await res.json();
+                      if (res.ok) { setMessage({ type: 'success', text: 'Password changed' }); form.reset(); }
+                      else setMessage({ type: 'error', text: data.error || 'Failed' });
+                    } catch { setMessage({ type: 'error', text: 'Failed to change password' }); }
+                  }} className="space-y-2">
+                    <Input name="currentPassword" type="password" placeholder="Current password" className="h-10" required />
+                    <Input name="newPassword" type="password" placeholder="New password" className="h-10" required minLength={8} />
+                    <Input name="confirmPassword" type="password" placeholder="Confirm new password" className="h-10" required minLength={8} />
+                    <Button type="submit" size="sm">Change Password</Button>
+                  </form>
+                </div>
+              </div>
+            </Card>
+          </motion.div>
+
+          {/* Two-Factor Authentication */}
+          <motion.div variants={fadeInUp}>
+            <Card className="border border-border/50 p-6">
+              <h2 className="text-lg font-semibold mb-4">Two-Factor Authentication</h2>
+              {totpBackupCodes ? (
+                <div className="space-y-3">
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="h-4 w-4 text-green-500" />
+                    <span className="text-sm font-medium text-green-600">2FA enabled successfully</span>
+                  </div>
+                  <div className="p-3 rounded-lg bg-amber-50 border border-amber-200">
+                    <p className="text-xs font-medium text-amber-800 mb-2">Save these backup codes in a safe place.</p>
+                    <div className="grid grid-cols-2 gap-1">
+                      {totpBackupCodes.map((code) => (
+                        <code key={code} className="text-xs bg-white px-2 py-1 rounded border text-center font-mono">{code}</code>
+                      ))}
+                    </div>
+                  </div>
+                  <Button size="sm" onClick={() => { setTotpBackupCodes(null); setTotpSetup(null); setTotpEnabled(true); }}>I saved my backup codes</Button>
+                </div>
+              ) : totpEnabled ? (
+                <div className="space-y-3">
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="h-4 w-4 text-green-500" />
+                    <span className="text-sm font-medium text-green-600">2FA is enabled</span>
+                  </div>
+                  <p className="text-xs text-muted-foreground">Your admin account is protected with an authenticator app.</p>
+                  <form onSubmit={async (e) => {
+                    e.preventDefault();
+                    const code = (e.currentTarget.elements.namedItem('disableCode') as HTMLInputElement).value;
+                    try {
+                      const res = await fetch('/api/auth/2fa/disable', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ code }) });
+                      const data = await res.json();
+                      if (res.ok) { setTotpEnabled(false); setMessage({ type: 'success', text: '2FA disabled' }); e.currentTarget.reset(); }
+                      else setMessage({ type: 'error', text: data.error || 'Failed' });
+                    } catch { setMessage({ type: 'error', text: 'Failed to disable 2FA' }); }
+                  }} className="flex gap-2">
+                    <Input name="disableCode" type="text" placeholder="Enter password, app code, or backup code to disable 2FA" className="h-9 flex-1" required />
+                    <Button type="submit" variant="outline" size="sm" className="text-red-600 border-red-200 hover:bg-red-50 text-xs h-9 shrink-0">Disable</Button>
+                  </form>
+                </div>
+              ) : totpSetup ? (
+                <div className="space-y-3">
+                  <p className="text-xs text-muted-foreground">Scan this QR code with your authenticator app:</p>
+                  <div className="flex justify-center">
+                    <img src={totpSetup.qrCode} alt="QR Code" className="w-48 h-48 rounded-lg border" />
+                  </div>
+                  <p className="text-[10px] text-muted-foreground text-center">
+                    Or enter manually: <code className="bg-muted px-1 py-0.5 rounded text-[10px]">{totpSetup.secret}</code>
+                  </p>
+                  <form onSubmit={async (e) => {
+                    e.preventDefault();
+                    try {
+                      const res = await fetch('/api/auth/2fa/verify', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ code: totpVerifyCode }) });
+                      const data = await res.json();
+                      if (res.ok && data.enabled) setTotpBackupCodes(data.backupCodes);
+                      else setMessage({ type: 'error', text: data.error || 'Invalid code' });
+                    } catch { setMessage({ type: 'error', text: 'Failed to verify' }); }
+                  }} className="flex gap-2">
+                    <Input type="text" inputMode="numeric" placeholder="Enter 6-digit code" value={totpVerifyCode} onChange={(e) => setTotpVerifyCode(e.target.value)} className="h-9 flex-1 text-center tracking-widest" maxLength={6} required />
+                    <Button type="submit" size="sm" className="shrink-0">Verify</Button>
+                  </form>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  <p className="text-xs text-muted-foreground">Protect your admin account with an authenticator app (Google Authenticator, Authy, etc.)</p>
+                  <Button size="sm" variant="outline" onClick={async () => {
+                    try {
+                      const res = await fetch('/api/auth/2fa/setup', { method: 'POST' });
+                      const data = await res.json();
+                      if (res.ok) setTotpSetup({ qrCode: data.qrCode, secret: data.secret });
+                      else setMessage({ type: 'error', text: data.error || 'Failed to setup 2FA' });
+                    } catch { setMessage({ type: 'error', text: 'Failed to setup 2FA' }); }
+                  }}>Enable 2FA</Button>
+                </div>
+              )}
             </Card>
           </motion.div>
         </motion.div>
