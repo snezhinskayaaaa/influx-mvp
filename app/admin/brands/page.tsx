@@ -9,13 +9,13 @@ import { AdminNav } from "@/components/admin-nav";
 import { motion } from "framer-motion";
 import {
   Building2,
-  Target,
-  DollarSign,
   Loader2,
   Search,
   XCircle,
   Globe,
   Crown,
+  Users,
+  CheckCircle2,
 } from "lucide-react";
 import Image from "next/image";
 
@@ -28,6 +28,8 @@ const staggerContainer = {
   hidden: { opacity: 0 },
   visible: { opacity: 1, transition: { staggerChildren: 0.1, delayChildren: 0.2 } },
 };
+
+type FilterTab = "all" | "founding" | "banned";
 
 interface Brand {
   id: string;
@@ -43,6 +45,7 @@ interface Brand {
   foundingMember: boolean;
   balance: number;
   frozenBalance: number;
+  status?: string;
   createdAt: string;
   profile?: { email?: string; fullName?: string; avatarUrl?: string };
   _count?: { campaigns: number };
@@ -52,6 +55,7 @@ export default function AdminBrands() {
   const [brands, setBrands] = useState<Brand[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
+  const [activeTab, setActiveTab] = useState<FilterTab>("all");
   const [selectedBrand, setSelectedBrand] = useState<Brand | null>(null);
 
   const fetchBrands = useCallback(async () => {
@@ -68,15 +72,31 @@ export default function AdminBrands() {
 
   useEffect(() => { fetchBrands(); }, [fetchBrands]);
 
-  const filtered = brands.filter((b) => {
-    const q = searchQuery.toLowerCase();
-    return !q || b.companyName.toLowerCase().includes(q) || (b.profile?.email || '').toLowerCase().includes(q);
-  });
-
   const extractHandle = (url: string | null) => {
     if (!url) return null;
     return url.replace(/^https?:\/\/(www\.)?(instagram\.com|tiktok\.com|youtube\.com|x\.com|t\.me|twitter\.com|linkedin\.com)\/?@?/i, '').replace(/^@/, '').split('/')[0].split('?')[0] || url;
   };
+
+  const tabs: { key: FilterTab; label: string; icon: typeof Users }[] = [
+    { key: "all", label: "All", icon: Users },
+    { key: "founding", label: "Founding", icon: Crown },
+    { key: "banned", label: "Banned", icon: XCircle },
+  ];
+
+  const tabCounts = {
+    all: brands.length,
+    founding: brands.filter(b => b.foundingMember).length,
+    banned: 0, // No ban system for brands yet
+  };
+
+  const filtered = brands.filter((b) => {
+    const q = searchQuery.toLowerCase();
+    const matchesSearch = !q || b.companyName.toLowerCase().includes(q) || (b.profile?.email || '').toLowerCase().includes(q);
+    const matchesTab = activeTab === "all"
+      || (activeTab === "founding" && b.foundingMember)
+      || (activeTab === "banned" && false);
+    return matchesSearch && matchesTab;
+  });
 
   if (loading) {
     return (
@@ -94,11 +114,11 @@ export default function AdminBrands() {
       <AdminNav />
 
       <main className="pt-20 pb-12 px-6 sm:px-12 lg:px-16">
-        <motion.div variants={staggerContainer} initial="hidden" animate="visible" className="space-y-8">
+        <motion.div variants={staggerContainer} initial="hidden" animate="visible" className="space-y-6">
           {/* Header */}
           <motion.div variants={fadeInUp} className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-foreground">Projects</h1>
+              <h1 className="text-3xl font-bold">Projects</h1>
               <p className="text-muted-foreground mt-1">Manage registered projects and their activity</p>
             </div>
             <div className="relative w-64">
@@ -107,41 +127,24 @@ export default function AdminBrands() {
             </div>
           </motion.div>
 
-          {/* Stats */}
-          <motion.div variants={fadeInUp} className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <Card className="p-5 border border-border/50">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
-                  <Building2 className="h-5 w-5 text-primary" />
-                </div>
-                <div>
-                  <p className="text-xs text-muted-foreground">Total Projects</p>
-                  <p className="text-xl font-bold">{brands.length}</p>
-                </div>
-              </div>
-            </Card>
-            <Card className="p-5 border border-border/50">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-secondary/10 flex items-center justify-center">
-                  <Target className="h-5 w-5 text-secondary" />
-                </div>
-                <div>
-                  <p className="text-xs text-muted-foreground">Total Campaigns</p>
-                  <p className="text-xl font-bold">{brands.reduce((sum, b) => sum + (b._count?.campaigns || 0), 0)}</p>
-                </div>
-              </div>
-            </Card>
-            <Card className="p-5 border border-border/50">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-green-500/10 flex items-center justify-center">
-                  <DollarSign className="h-5 w-5 text-green-500" />
-                </div>
-                <div>
-                  <p className="text-xs text-muted-foreground">Founding Members</p>
-                  <p className="text-xl font-bold">{brands.filter(b => b.foundingMember).length}</p>
-                </div>
-              </div>
-            </Card>
+          {/* Filter Tabs */}
+          <motion.div variants={fadeInUp} className="flex gap-2">
+            {tabs.map((tab) => {
+              const Icon = tab.icon;
+              return (
+                <Button
+                  key={tab.key}
+                  variant={activeTab === tab.key ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setActiveTab(tab.key)}
+                  className={activeTab === tab.key ? "" : "text-muted-foreground"}
+                >
+                  <Icon className="h-3.5 w-3.5 mr-1.5" />
+                  {tab.label}
+                  <span className="ml-1.5 text-xs opacity-60">({tabCounts[tab.key]})</span>
+                </Button>
+              );
+            })}
           </motion.div>
 
           {/* Table */}
@@ -150,9 +153,9 @@ export default function AdminBrands() {
               <div className="hidden sm:grid grid-cols-12 gap-4 p-4 bg-muted/30 border-b border-border/50 text-xs font-medium text-muted-foreground uppercase tracking-wider">
                 <div className="col-span-3">Project</div>
                 <div className="col-span-3">Email</div>
-                <div className="col-span-2">Industry</div>
-                <div className="col-span-2">Status</div>
-                <div className="col-span-2 text-right">Campaigns</div>
+                <div className="col-span-2">Balance</div>
+                <div className="col-span-2">Campaigns</div>
+                <div className="col-span-2 text-right">Actions</div>
               </div>
 
               <div className="divide-y divide-border/50">
@@ -174,9 +177,12 @@ export default function AdminBrands() {
                           )}
                         </div>
                         <div>
-                          <p className="text-sm font-medium">{brand.companyName}</p>
-                          {brand.foundingMember && (
-                            <span className="text-[9px] px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-600 border border-amber-500/20 font-medium">Founding</span>
+                          <div className="flex items-center gap-1.5">
+                            <p className="text-sm font-medium">{brand.companyName}</p>
+                            {brand.foundingMember && <Crown className="h-3 w-3 text-amber-500" />}
+                          </div>
+                          {brand.industry && (
+                            <p className="text-[10px] text-muted-foreground">{brand.industry}</p>
                           )}
                         </div>
                       </div>
@@ -186,26 +192,20 @@ export default function AdminBrands() {
                       </div>
 
                       <div className="sm:col-span-2">
-                        {brand.industry && (
-                          <Badge variant="outline" className="text-xs font-normal">{brand.industry}</Badge>
+                        <p className="text-sm font-medium">${(brand.balance / 100).toFixed(0)}</p>
+                        {brand.frozenBalance > 0 && (
+                          <p className="text-[10px] text-muted-foreground">Frozen: ${(brand.frozenBalance / 100).toFixed(0)}</p>
                         )}
                       </div>
 
                       <div className="sm:col-span-2">
-                        <div className="flex gap-1">
-                          {[brand.twitterHandle, brand.telegramHandle, brand.instagramHandle, brand.youtubeHandle, brand.linkedinHandle].filter(Boolean).length > 0 ? (
-                            <Badge className="bg-primary/10 text-primary border-primary/20 text-[10px]">
-                              {[brand.twitterHandle, brand.telegramHandle, brand.instagramHandle, brand.youtubeHandle, brand.linkedinHandle].filter(Boolean).length} socials
-                            </Badge>
-                          ) : (
-                            <Badge className="bg-muted text-muted-foreground border-border text-[10px]">No socials</Badge>
-                          )}
-                        </div>
+                        <span className="text-sm font-medium">{brand._count?.campaigns || 0}</span>
                       </div>
 
-                      <div className="sm:col-span-2 text-right">
-                        <span className="text-sm font-medium">{brand._count?.campaigns || 0}</span>
-                        <span className="text-xs text-muted-foreground ml-1">campaigns</span>
+                      <div className="sm:col-span-2 flex items-center justify-end gap-2" onClick={(e) => e.stopPropagation()}>
+                        <Button size="sm" variant="outline" className="text-xs h-7 px-2" onClick={() => setSelectedBrand(brand)}>
+                          View
+                        </Button>
                       </div>
                     </div>
                   ))
@@ -237,58 +237,62 @@ export default function AdminBrands() {
                 )}
               </div>
               <div className="flex-1 min-w-0">
-                <p className="font-semibold text-lg">{selectedBrand.companyName}</p>
+                <div className="flex items-center gap-1.5">
+                  <p className="font-semibold text-lg">{selectedBrand.companyName}</p>
+                  {selectedBrand.foundingMember && <Crown className="h-4 w-4 text-amber-500" />}
+                </div>
                 {selectedBrand.profile?.fullName && <p className="text-sm text-muted-foreground">{selectedBrand.profile.fullName}</p>}
                 <p className="text-sm text-muted-foreground truncate">{selectedBrand.profile?.email}</p>
               </div>
-              <div className="flex flex-col gap-1 items-end">
-                {selectedBrand.foundingMember && (
-                  <Badge className="bg-amber-500/10 text-amber-600 border-amber-500/20 text-[10px]">
-                    <Crown className="h-3 w-3 mr-1" />Founding
-                  </Badge>
-                )}
-              </div>
             </div>
 
-            {/* Info */}
             <div className="space-y-4">
-              {selectedBrand.industry && (
-                <div>
-                  <p className="text-xs text-muted-foreground mb-1">Industry</p>
-                  <p className="text-sm font-medium">{selectedBrand.industry}</p>
-                </div>
-              )}
+              {/* Info grid */}
+              <div className="grid grid-cols-2 gap-3">
+                {selectedBrand.industry && (
+                  <div className="rounded-lg border p-3">
+                    <p className="text-[10px] text-muted-foreground mb-0.5">Industry</p>
+                    <p className="text-sm font-medium">{selectedBrand.industry}</p>
+                  </div>
+                )}
+                {selectedBrand.website && (
+                  <div className="rounded-lg border p-3">
+                    <p className="text-[10px] text-muted-foreground mb-0.5">Website</p>
+                    <a href={selectedBrand.website.startsWith('http') ? selectedBrand.website : `https://${selectedBrand.website}`} target="_blank" rel="noopener noreferrer" className="text-sm text-primary hover:underline flex items-center gap-1">
+                      <Globe className="h-3 w-3" />{selectedBrand.website.replace(/^https?:\/\/(www\.)?/, '').split('/')[0]}
+                    </a>
+                  </div>
+                )}
+              </div>
 
               {selectedBrand.description && (
                 <div>
-                  <p className="text-xs text-muted-foreground mb-1">Description</p>
+                  <p className="text-[10px] text-muted-foreground mb-1">Description</p>
                   <p className="text-sm">{selectedBrand.description}</p>
                 </div>
               )}
 
-              {selectedBrand.website && (
-                <div>
-                  <p className="text-xs text-muted-foreground mb-1">Website</p>
-                  <a href={selectedBrand.website.startsWith('http') ? selectedBrand.website : `https://${selectedBrand.website}`} target="_blank" rel="noopener noreferrer" className="text-sm text-primary hover:underline flex items-center gap-1">
-                    <Globe className="h-3 w-3" />{selectedBrand.website}
-                  </a>
-                </div>
-              )}
-
               {/* Wallet */}
-              <div>
-                <p className="text-xs text-muted-foreground mb-1">Wallet</p>
-                <div className="flex gap-4 text-sm">
-                  <span>Balance: <strong>${(selectedBrand.balance / 100).toFixed(2)}</strong></span>
-                  <span>Frozen: <strong>${(selectedBrand.frozenBalance / 100).toFixed(2)}</strong></span>
+              <div className="grid grid-cols-3 gap-2">
+                <div className="rounded-lg border p-3 text-center">
+                  <p className="text-[10px] text-muted-foreground">Balance</p>
+                  <p className="text-sm font-bold text-primary">${(selectedBrand.balance / 100).toFixed(2)}</p>
+                </div>
+                <div className="rounded-lg border p-3 text-center">
+                  <p className="text-[10px] text-muted-foreground">Frozen</p>
+                  <p className="text-sm font-bold">${(selectedBrand.frozenBalance / 100).toFixed(2)}</p>
+                </div>
+                <div className="rounded-lg border p-3 text-center">
+                  <p className="text-[10px] text-muted-foreground">Campaigns</p>
+                  <p className="text-sm font-bold">{selectedBrand._count?.campaigns || 0}</p>
                 </div>
               </div>
 
               {/* Social Media */}
               {[selectedBrand.twitterHandle, selectedBrand.telegramHandle, selectedBrand.instagramHandle, selectedBrand.youtubeHandle, selectedBrand.linkedinHandle].some(Boolean) && (
                 <div>
-                  <p className="text-xs text-muted-foreground mb-2">Social Media</p>
-                  <div className="space-y-2">
+                  <p className="text-[10px] text-muted-foreground mb-2">Social Media</p>
+                  <div className="space-y-1.5">
                     {([
                       { handle: selectedBrand.twitterHandle, label: 'X (Twitter)', url: (h: string) => `https://x.com/${extractHandle(h)}` },
                       { handle: selectedBrand.telegramHandle, label: 'Telegram', url: (h: string) => `https://t.me/${extractHandle(h)}` },
@@ -296,12 +300,10 @@ export default function AdminBrands() {
                       { handle: selectedBrand.youtubeHandle, label: 'YouTube', url: (h: string) => `https://youtube.com/@${extractHandle(h)}` },
                       { handle: selectedBrand.linkedinHandle, label: 'LinkedIn', url: (h: string) => h.startsWith('http') ? h : `https://linkedin.com/in/${extractHandle(h)}` },
                     ]).filter(s => s.handle).map(social => (
-                      <div key={social.label} className="flex items-center justify-between rounded-lg border border-border p-2.5">
+                      <div key={social.label} className="flex items-center justify-between rounded-lg border p-2.5">
                         <div className="flex items-center gap-2">
                           <span className="text-xs font-medium">{social.label}</span>
-                          <a href={social.url(social.handle!)} target="_blank" rel="noopener noreferrer" className="text-xs text-primary hover:underline">
-                            @{extractHandle(social.handle!)}
-                          </a>
+                          <span className="text-xs text-muted-foreground">@{extractHandle(social.handle!)}</span>
                         </div>
                         <a href={social.url(social.handle!)} target="_blank" rel="noopener noreferrer" className="text-[10px] text-primary hover:underline">Open</a>
                       </div>
@@ -310,17 +312,7 @@ export default function AdminBrands() {
                 </div>
               )}
 
-              {/* Stats */}
-              <div className="grid grid-cols-2 gap-3">
-                <div className="rounded-lg border border-border p-3 text-center">
-                  <p className="text-[10px] text-muted-foreground mb-0.5">Campaigns</p>
-                  <p className="text-lg font-bold">{selectedBrand._count?.campaigns || 0}</p>
-                </div>
-                <div className="rounded-lg border border-border p-3 text-center">
-                  <p className="text-[10px] text-muted-foreground mb-0.5">Registered</p>
-                  <p className="text-sm font-medium">{new Date(selectedBrand.createdAt).toLocaleDateString()}</p>
-                </div>
-              </div>
+              <p className="text-xs text-muted-foreground">Registered {new Date(selectedBrand.createdAt).toLocaleDateString()}</p>
             </div>
           </div>
         </div>
