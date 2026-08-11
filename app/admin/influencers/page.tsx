@@ -356,7 +356,7 @@ export default function AdminInfluencers() {
                         {inf.status === "Rejected" ? (
                           <Badge className="bg-red-500/10 text-red-600 border-red-500/20">Banned</Badge>
                         ) : inf.isVerified ? (
-                          <Badge className="bg-green-500/10 text-green-600 border-green-500/20">Verified</Badge>
+                          <Badge className="bg-primary/10 text-primary border-primary/20">Verified</Badge>
                         ) : (
                           <Badge className="bg-muted text-muted-foreground border-border">Unverified</Badge>
                         )}
