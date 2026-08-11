@@ -161,7 +161,7 @@ export default function AdminInfluencers() {
     { key: "all", label: "All", icon: Users },
     { key: "pending", label: "Pending", icon: Clock },
     { key: "approved", label: "Approved", icon: CheckCircle2 },
-    { key: "rejected", label: "Rejected", icon: XCircle },
+    { key: "rejected", label: "Banned", icon: XCircle },
   ];
 
   const filtered = influencers.filter((inf) => {
@@ -346,36 +346,49 @@ export default function AdminInfluencers() {
                       </div>
 
                       <div className="sm:col-span-2">
-                        <Badge
-                          className={
-                            inf.status === "Approved"
-                              ? "bg-green-500/10 text-green-600 border-green-500/20"
-                              : inf.status === "Pending"
-                                ? "bg-yellow-500/10 text-yellow-600 border-yellow-500/20"
-                                : "bg-red-500/10 text-red-600 border-red-500/20"
-                          }
-                        >
-                          {inf.status}
-                        </Badge>
+                        {inf.status === "Rejected" ? (
+                          <Badge className="bg-red-500/10 text-red-600 border-red-500/20">Banned</Badge>
+                        ) : inf.isVerified ? (
+                          <Badge className="bg-green-500/10 text-green-600 border-green-500/20">Verified</Badge>
+                        ) : (
+                          <Badge className="bg-muted text-muted-foreground border-border">Unverified</Badge>
+                        )}
                       </div>
 
                       <div className="sm:col-span-2 flex items-center justify-end gap-2">
-                        {inf.status !== "Approved" && (
+                        {inf.status === "Pending" && (
                           <Button
                             size="sm"
                             variant="outline"
                             className="text-green-600 border-green-500/30 hover:bg-green-500/10 text-xs"
                             disabled={updatingId === inf.id}
-                            onClick={() =>
-                              updateInfluencer(inf.id, { status: "Approved" })
-                            }
+                            onClick={() => updateInfluencer(inf.id, { status: "Approved" })}
                           >
-                            {updatingId === inf.id ? (
-                              <Loader2 className="h-3 w-3 animate-spin" />
-                            ) : (
-                              <CheckCircle2 className="h-3 w-3 mr-1" />
-                            )}
+                            <CheckCircle2 className="h-3 w-3 mr-1" />
                             Approve
+                          </Button>
+                        )}
+                        {!inf.isVerified && inf.status !== "Rejected" && (
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="text-primary border-primary/30 hover:bg-primary/10 text-xs"
+                            disabled={updatingId === inf.id}
+                            onClick={() => updateInfluencer(inf.id, { isVerified: true })}
+                          >
+                            <CheckCircle2 className="h-3 w-3 mr-1" />
+                            Verify
+                          </Button>
+                        )}
+                        {inf.isVerified && (
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="text-muted-foreground border-border hover:bg-muted text-xs"
+                            disabled={updatingId === inf.id}
+                            onClick={() => updateInfluencer(inf.id, { isVerified: false })}
+                          >
+                            Unverify
                           </Button>
                         )}
                         {inf.status !== "Rejected" && (
@@ -384,16 +397,25 @@ export default function AdminInfluencers() {
                             variant="outline"
                             className="text-red-600 border-red-500/30 hover:bg-red-500/10 text-xs"
                             disabled={updatingId === inf.id}
-                            onClick={() =>
-                              updateInfluencer(inf.id, { status: "Rejected" })
-                            }
+                            onClick={() => updateInfluencer(inf.id, { status: "Rejected" })}
                           >
                             {updatingId === inf.id ? (
                               <Loader2 className="h-3 w-3 animate-spin" />
                             ) : (
                               <XCircle className="h-3 w-3 mr-1" />
                             )}
-                            Reject
+                            Ban
+                          </Button>
+                        )}
+                        {inf.status === "Rejected" && (
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="text-green-600 border-green-500/30 hover:bg-green-500/10 text-xs"
+                            disabled={updatingId === inf.id}
+                            onClick={() => updateInfluencer(inf.id, { status: "Approved" })}
+                          >
+                            Unban
                           </Button>
                         )}
                       </div>
@@ -444,12 +466,14 @@ export default function AdminInfluencers() {
                 )}
                 <p className="text-sm text-muted-foreground truncate">{selectedInfluencer.email}</p>
               </div>
-              <div className="ml-auto">
-                <Badge className={
-                  selectedInfluencer.status === "Approved" ? "bg-green-500/10 text-green-600 border-green-500/20" :
-                  selectedInfluencer.status === "Pending" ? "bg-yellow-500/10 text-yellow-600 border-yellow-500/20" :
-                  "bg-red-500/10 text-red-600 border-red-500/20"
-                }>{selectedInfluencer.status}</Badge>
+              <div className="ml-auto flex flex-col gap-1 items-end">
+                {selectedInfluencer.status === "Rejected" ? (
+                  <Badge className="bg-red-500/10 text-red-600 border-red-500/20">Banned</Badge>
+                ) : selectedInfluencer.isVerified ? (
+                  <Badge className="bg-green-500/10 text-green-600 border-green-500/20">Verified</Badge>
+                ) : (
+                  <Badge className="bg-muted text-muted-foreground border-border">Unverified</Badge>
+                )}
               </div>
             </div>
 
@@ -577,7 +601,7 @@ export default function AdminInfluencers() {
 
             {/* Action buttons */}
             <div className="flex gap-2 mt-6 pt-4 border-t border-border/50">
-              {selectedInfluencer.status !== "Approved" && (
+              {selectedInfluencer.status === "Pending" && (
                 <Button
                   className="flex-1 bg-green-600 hover:bg-green-700 text-white"
                   onClick={() => {
@@ -589,17 +613,51 @@ export default function AdminInfluencers() {
                   Approve
                 </Button>
               )}
-              {selectedInfluencer.status !== "Rejected" && (
+              {!selectedInfluencer.isVerified && selectedInfluencer.status !== "Rejected" && (
+                <Button
+                  className="flex-1 bg-primary/10 text-primary hover:bg-primary/20 border border-primary/30"
+                  onClick={() => {
+                    updateInfluencer(selectedInfluencer.id, { isVerified: true });
+                    setSelectedInfluencer({ ...selectedInfluencer, isVerified: true });
+                  }}
+                >
+                  <CheckCircle2 className="h-4 w-4 mr-2" />
+                  Verify
+                </Button>
+              )}
+              {selectedInfluencer.isVerified && (
                 <Button
                   variant="outline"
-                  className="flex-1 text-red-600 border-red-500/30 hover:bg-red-500/10"
+                  className="flex-1"
+                  onClick={() => {
+                    updateInfluencer(selectedInfluencer.id, { isVerified: false });
+                    setSelectedInfluencer({ ...selectedInfluencer, isVerified: false });
+                  }}
+                >
+                  Unverify
+                </Button>
+              )}
+              {selectedInfluencer.status !== "Rejected" ? (
+                <Button
+                  variant="outline"
+                  className="flex-1 text-red-600 border-red-200 hover:bg-red-50"
                   onClick={() => {
                     updateInfluencer(selectedInfluencer.id, { status: "Rejected" });
                     setSelectedInfluencer({ ...selectedInfluencer, status: "Rejected" });
                   }}
                 >
                   <XCircle className="h-4 w-4 mr-2" />
-                  Reject
+                  Ban
+                </Button>
+              ) : (
+                <Button
+                  className="flex-1 bg-green-600 hover:bg-green-700 text-white"
+                  onClick={() => {
+                    updateInfluencer(selectedInfluencer.id, { status: "Approved" });
+                    setSelectedInfluencer({ ...selectedInfluencer, status: "Approved" });
+                  }}
+                >
+                  Unban
                 </Button>
               )}
             </div>
