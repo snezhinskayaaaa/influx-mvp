@@ -51,13 +51,19 @@ interface Influencer {
   niche?: string[];
   instagramHandle?: string;
   instagramFollowers: number;
+  instagramAvgViews?: number;
   tiktokHandle?: string;
   tiktokFollowers: number;
+  tiktokAvgViews?: number;
   youtubeHandle?: string;
   youtubeSubscribers: number;
+  youtubeAvgViews?: number;
   twitterHandle?: string;
   twitterFollowers: number;
+  twitterAvgViews?: number;
   telegramHandle?: string;
+  telegramFollowers?: number;
+  telegramAvgViews?: number;
   followers: number;
   status: string;
   isVerified: boolean;
@@ -468,39 +474,71 @@ export default function AdminInfluencers() {
                 </div>
               )}
 
-              {/* Social Media */}
+              {/* Social Media Verification */}
               <div>
                 <p className="font-medium text-muted-foreground mb-2">Social Media Verification</p>
-                <div className="space-y-2">
+                <div className="space-y-3">
                   {([
-                    { handle: selectedInfluencer.instagramHandle, platform: 'instagram', label: 'Instagram', verified: selectedInfluencer.instagramVerified, field: 'instagramVerified', followers: selectedInfluencer.instagramFollowers, color: 'bg-gradient-to-br from-purple-500 via-pink-500 to-orange-400', url: (h: string) => h.startsWith('http') ? h : `https://instagram.com/${h.replace(/^@/, '')}` },
-                    { handle: selectedInfluencer.tiktokHandle, platform: 'tiktok', label: 'TikTok', verified: selectedInfluencer.tiktokVerified, field: 'tiktokVerified', followers: selectedInfluencer.tiktokFollowers, color: 'bg-black', url: (h: string) => h.startsWith('http') ? h : `https://tiktok.com/@${h.replace(/^@/, '')}` },
-                    { handle: selectedInfluencer.youtubeHandle, platform: 'youtube', label: 'YouTube', verified: selectedInfluencer.youtubeVerified, field: 'youtubeVerified', followers: selectedInfluencer.youtubeSubscribers, color: 'bg-red-600', url: (h: string) => h.startsWith('http') ? h : `https://youtube.com/@${h.replace(/^@/, '')}` },
-                    { handle: selectedInfluencer.twitterHandle, platform: 'twitter', label: 'X', verified: selectedInfluencer.twitterVerified, field: 'twitterVerified', followers: selectedInfluencer.twitterFollowers, color: 'bg-foreground', url: (h: string) => h.startsWith('http') ? h : `https://x.com/${h.replace(/^@/, '')}` },
-                    { handle: selectedInfluencer.telegramHandle, platform: 'telegram', label: 'Telegram', verified: selectedInfluencer.telegramVerified, field: 'telegramVerified', followers: 0, color: 'bg-blue-500', url: (h: string) => h.startsWith('http') ? h : `https://t.me/${h.replace(/^@/, '')}` },
+                    { handle: selectedInfluencer.instagramHandle, platform: 'instagram', label: 'Instagram', verified: selectedInfluencer.instagramVerified, verifiedField: 'instagramVerified', followersField: 'instagramFollowers', avgViewsField: 'instagramAvgViews', followers: selectedInfluencer.instagramFollowers, avgViews: selectedInfluencer.instagramAvgViews || 0, url: (h: string) => h.startsWith('http') ? h : `https://instagram.com/${h.replace(/^@/, '')}` },
+                    { handle: selectedInfluencer.tiktokHandle, platform: 'tiktok', label: 'TikTok', verified: selectedInfluencer.tiktokVerified, verifiedField: 'tiktokVerified', followersField: 'tiktokFollowers', avgViewsField: 'tiktokAvgViews', followers: selectedInfluencer.tiktokFollowers, avgViews: selectedInfluencer.tiktokAvgViews || 0, url: (h: string) => h.startsWith('http') ? h : `https://tiktok.com/@${h.replace(/^@/, '')}` },
+                    { handle: selectedInfluencer.youtubeHandle, platform: 'youtube', label: 'YouTube', verified: selectedInfluencer.youtubeVerified, verifiedField: 'youtubeVerified', followersField: 'youtubeSubscribers', avgViewsField: 'youtubeAvgViews', followers: selectedInfluencer.youtubeSubscribers, avgViews: selectedInfluencer.youtubeAvgViews || 0, url: (h: string) => h.startsWith('http') ? h : `https://youtube.com/@${h.replace(/^@/, '')}` },
+                    { handle: selectedInfluencer.twitterHandle, platform: 'twitter', label: 'X (Twitter)', verified: selectedInfluencer.twitterVerified, verifiedField: 'twitterVerified', followersField: 'twitterFollowers', avgViewsField: 'twitterAvgViews', followers: selectedInfluencer.twitterFollowers, avgViews: selectedInfluencer.twitterAvgViews || 0, url: (h: string) => h.startsWith('http') ? h : `https://x.com/${h.replace(/^@/, '')}` },
+                    { handle: selectedInfluencer.telegramHandle, platform: 'telegram', label: 'Telegram', verified: selectedInfluencer.telegramVerified, verifiedField: 'telegramVerified', followersField: 'telegramFollowers', avgViewsField: 'telegramAvgViews', followers: selectedInfluencer.telegramFollowers || 0, avgViews: selectedInfluencer.telegramAvgViews || 0, url: (h: string) => h.startsWith('http') ? h : `https://t.me/${h.replace(/^@/, '')}` },
                   ] as const).filter(s => s.handle).map(social => (
-                    <div key={social.platform} className={`flex items-center justify-between rounded-lg border p-3 ${social.verified ? 'border-green-200 bg-green-50/50' : 'border-border'}`}>
-                      <div className="flex items-center gap-2.5">
-                        <a href={social.url(social.handle!)} target="_blank" rel="noopener noreferrer" className="text-sm font-medium hover:text-primary">
-                          @{extractUsername(social.handle!, social.platform)}
-                        </a>
-                        {social.followers > 0 && (
-                          <Badge className="bg-muted text-foreground border-border text-[10px]">{social.followers.toLocaleString()}</Badge>
-                        )}
-                        {social.verified && <CheckCircle2 className="h-3.5 w-3.5 text-green-500" />}
+                    <div key={social.platform} className={`rounded-lg border p-3 space-y-2 ${social.verified ? 'border-green-200 bg-green-50/50' : 'border-border'}`}>
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs font-semibold">{social.label}</span>
+                          {social.verified && <CheckCircle2 className="h-3.5 w-3.5 text-green-500" />}
+                        </div>
+                        <div className="flex gap-1">
+                          <a href={social.url(social.handle!)} target="_blank" rel="noopener noreferrer" className="text-[10px] text-primary hover:underline">Open</a>
+                          <span className="text-muted-foreground text-[10px]">|</span>
+                          <button
+                            className={`text-[10px] font-medium ${social.verified ? 'text-red-600 hover:underline' : 'text-green-600 hover:underline'}`}
+                            onClick={async () => {
+                              const newVal = !social.verified;
+                              await updateInfluencer(selectedInfluencer.id, { [social.verifiedField]: newVal });
+                              setSelectedInfluencer({ ...selectedInfluencer, [social.verifiedField]: newVal } as typeof selectedInfluencer);
+                            }}
+                          >
+                            {social.verified ? 'Unverify' : 'Verify'}
+                          </button>
+                        </div>
                       </div>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        className={`h-7 text-[10px] px-2 ${social.verified ? 'text-red-600 border-red-200 hover:bg-red-50' : 'text-green-600 border-green-200 hover:bg-green-50'}`}
-                        onClick={async () => {
-                          const newVal = !social.verified;
-                          await updateInfluencer(selectedInfluencer.id, { [social.field]: newVal });
-                          setSelectedInfluencer({ ...selectedInfluencer, [social.field]: newVal } as typeof selectedInfluencer);
-                        }}
-                      >
-                        {social.verified ? 'Unverify' : 'Verify'}
-                      </Button>
+                      <div className="text-sm text-foreground">@{extractUsername(social.handle!, social.platform)}</div>
+                      <div className="grid grid-cols-2 gap-2">
+                        <div>
+                          <label className="text-[10px] text-muted-foreground">Followers</label>
+                          <Input
+                            type="number"
+                            className="h-8 text-xs"
+                            defaultValue={social.followers}
+                            onBlur={async (e) => {
+                              const val = parseInt(e.target.value) || 0;
+                              if (val !== social.followers) {
+                                await updateInfluencer(selectedInfluencer.id, { [social.followersField]: val });
+                                setSelectedInfluencer({ ...selectedInfluencer, [social.followersField]: val } as typeof selectedInfluencer);
+                              }
+                            }}
+                          />
+                        </div>
+                        <div>
+                          <label className="text-[10px] text-muted-foreground">Avg. views</label>
+                          <Input
+                            type="number"
+                            className="h-8 text-xs"
+                            defaultValue={social.avgViews}
+                            onBlur={async (e) => {
+                              const val = parseInt(e.target.value) || 0;
+                              if (val !== social.avgViews) {
+                                await updateInfluencer(selectedInfluencer.id, { [social.avgViewsField]: val });
+                                setSelectedInfluencer({ ...selectedInfluencer, [social.avgViewsField]: val } as typeof selectedInfluencer);
+                              }
+                            }}
+                          />
+                        </div>
+                      </div>
                     </div>
                   ))}
                 </div>

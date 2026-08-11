@@ -20,7 +20,8 @@ export async function PATCH(
 
     const body = await request.json()
     const { status, isVerified, isFeatured, instagramFollowers, tiktokFollowers, youtubeSubscribers, twitterFollowers,
-      twitterVerified, instagramVerified, tiktokVerified, youtubeVerified, telegramVerified } = body
+      twitterVerified, instagramVerified, tiktokVerified, youtubeVerified, telegramVerified,
+      instagramAvgViews, tiktokAvgViews, youtubeAvgViews, twitterAvgViews, telegramFollowers, telegramAvgViews } = body
 
     if (status !== undefined) {
       const statusMap: Record<string, string> = {
@@ -64,6 +65,12 @@ export async function PATCH(
     if (tiktokVerified !== undefined) updateData.tiktokVerified = Boolean(tiktokVerified)
     if (youtubeVerified !== undefined) updateData.youtubeVerified = Boolean(youtubeVerified)
     if (telegramVerified !== undefined) updateData.telegramVerified = Boolean(telegramVerified)
+    if (instagramAvgViews !== undefined) updateData.instagramAvgViews = parseInt(String(instagramAvgViews)) || 0
+    if (tiktokAvgViews !== undefined) updateData.tiktokAvgViews = parseInt(String(tiktokAvgViews)) || 0
+    if (youtubeAvgViews !== undefined) updateData.youtubeAvgViews = parseInt(String(youtubeAvgViews)) || 0
+    if (twitterAvgViews !== undefined) updateData.twitterAvgViews = parseInt(String(twitterAvgViews)) || 0
+    if (telegramFollowers !== undefined) updateData.telegramFollowers = parseInt(String(telegramFollowers)) || 0
+    if (telegramAvgViews !== undefined) updateData.telegramAvgViews = parseInt(String(telegramAvgViews)) || 0
 
     if (Object.keys(updateData).length === 0) {
       return NextResponse.json(
