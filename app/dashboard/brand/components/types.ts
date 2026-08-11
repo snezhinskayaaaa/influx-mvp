@@ -55,11 +55,13 @@ export interface Influencer {
   category: string;
   rate: string;
   verified: boolean;
+  foundingMember: boolean;
   gender: string;
   ethnicity: string;
   age: string;
   bio?: string;
   niche?: string[];
+  telegramHandle?: string;
   pricingCPM?: string;
   pricingCPC?: string;
   pricingCPE?: string;
