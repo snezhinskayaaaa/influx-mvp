@@ -142,7 +142,7 @@ export async function GET(request: NextRequest) {
           data: {
             userId: profile.id,
             handle: cleanEmail.split('@')[0] + '_' + Math.random().toString(36).substring(2, 6),
-            status: 'PENDING',
+            status: 'APPROVED',
           },
         })
       }

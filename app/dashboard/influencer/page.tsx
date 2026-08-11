@@ -212,6 +212,7 @@ export default function InfluencerDashboard() {
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [emailVerified, setEmailVerified] = useState(true);
   const [influencerStatus, setInfluencerStatus] = useState<string>('');
+  const [isVerifiedProfile, setIsVerifiedProfile] = useState(false);
   const [isFoundingMember, setIsFoundingMember] = useState(false);
   const [profileData, setProfileData] = useState<{
     displayName: string
@@ -443,6 +444,7 @@ export default function InfluencerDashboard() {
             const inf = data.influencer
             if (inf) {
               setInfluencerStatus(inf.status || 'PENDING')
+              if (inf.isVerified) setIsVerifiedProfile(true)
               if (inf.foundingMember) setIsFoundingMember(true)
               // Skip overwriting profile data when user is editing on profile tab
               if (activeTabRef.current !== 'profile') setProfileData({
@@ -1044,14 +1046,18 @@ export default function InfluencerDashboard() {
 
         {/* Main Content */}
         <main className="flex-1 p-4 sm:p-6 lg:p-8 pb-24 lg:pb-8 overflow-auto">
-          {/* Moderation Status Banner — only shown for non-approved statuses */}
-          {influencerStatus === 'PENDING' && (
-            <div className="mb-4 rounded-xl border border-amber-500/30 bg-amber-500/5 p-4 flex items-start gap-3">
-              <Clock className="h-5 w-5 text-amber-500 shrink-0 mt-0.5" />
-              <div>
-                <h4 className="font-semibold text-sm">Profile Under Review</h4>
-                <p className="text-muted-foreground text-xs mt-1">Your profile is being reviewed by our team. Once approved, you&apos;ll appear in the marketplace and can start receiving campaign offers. This usually takes 24-48 hours.</p>
+          {/* Verification Banner — shown until profile is verified */}
+          {!isVerifiedProfile && influencerStatus !== 'REJECTED' && (
+            <div
+              className="mb-4 rounded-xl border border-primary/30 bg-primary/5 p-4 flex items-start gap-3 cursor-pointer hover:bg-primary/10 transition-colors"
+              onClick={() => setActiveTab("profile")}
+            >
+              <AlertCircle className="h-5 w-5 text-primary shrink-0 mt-0.5" />
+              <div className="flex-1">
+                <h4 className="font-semibold text-sm">Complete your profile to get verified</h4>
+                <p className="text-muted-foreground text-xs mt-1">Fill in your social media handles, followers, and average views. Then request verification so projects can trust your numbers. Verified creators get more campaign offers.</p>
               </div>
+              <span className="text-xs text-primary font-medium shrink-0 mt-0.5">Go to Profile →</span>
             </div>
           )}
           {influencerStatus === 'REJECTED' && (

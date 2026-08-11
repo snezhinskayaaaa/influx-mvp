@@ -25,6 +25,7 @@ import {
   Search,
   Filter,
   CheckCircle2,
+  AlertCircle,
   MapPin,
   Globe,
   Instagram,
@@ -244,8 +245,10 @@ export function DiscoverTab({ influencers, onCollaborate }: DiscoverTabProps) {
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-1 leading-none">
                   <h3 className="font-semibold text-xs sm:text-sm truncate cursor-pointer">{influencer.name}</h3>
-                  {influencer.verified && (
+                  {influencer.verified ? (
                     <CheckCircle2 className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-primary shrink-0" />
+                  ) : (
+                    <AlertCircle className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-muted-foreground/40 shrink-0" />
                   )}
                 </div>
                 <p className="text-[10px] sm:text-xs text-muted-foreground cursor-pointer leading-none mt-0.5">{influencer.username}</p>

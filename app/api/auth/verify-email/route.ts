@@ -23,10 +23,18 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Invalid verification token' }, { status: 400 })
     }
 
-    await prisma.profile.update({
+    const profile = await prisma.profile.update({
       where: { id: payload.userId as string },
       data: { emailVerified: true },
     })
+
+    // Auto-approve influencer when email is verified
+    if (profile.role === 'INFLUENCER') {
+      await prisma.influencer.updateMany({
+        where: { userId: profile.id, status: 'PENDING' },
+        data: { status: 'APPROVED' },
+      })
+    }
 
     return NextResponse.json({ success: true })
   } catch (error) {
