@@ -232,7 +232,7 @@ export default function AdminSettings() {
                     onChange={(e) => setDepositFee(e.target.value)}
                   />
                   <p className="text-xs text-muted-foreground">
-                    Fee charged on brand deposits into the platform
+                    Standard fee for brand deposits. Founding Members pay 2% (locked).
                   </p>
                 </div>
 
@@ -254,7 +254,7 @@ export default function AdminSettings() {
                     onChange={(e) => setWithdrawalFee(e.target.value)}
                   />
                   <p className="text-xs text-muted-foreground">
-                    Fee charged on influencer withdrawals from the platform
+                    Standard fee for withdrawals. Founding Members pay 3% (locked).
                   </p>
                 </div>
 

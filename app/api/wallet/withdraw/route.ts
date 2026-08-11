@@ -65,7 +65,18 @@ export async function POST(request: NextRequest) {
     const amountCents = Math.round(amount * 100)
 
     const settings = await prisma.platformSettings.findUnique({ where: { id: 'default' } })
-    const feePercent = settings ? Number(settings.withdrawalFeePercent) : 3
+    const standardFee = settings ? Number(settings.withdrawalFeePercent) : 6
+    const foundingFee = 3 // Founding members locked rate
+    // Check if user is a founding member
+    let isFoundingMember = false
+    if (user.role === 'INFLUENCER') {
+      const inf = await prisma.influencer.findUnique({ where: { userId: user.userId }, select: { foundingMember: true } })
+      isFoundingMember = inf?.foundingMember || false
+    } else {
+      const br = await prisma.brand.findUnique({ where: { userId: user.userId }, select: { foundingMember: true } })
+      isFoundingMember = br?.foundingMember || false
+    }
+    const feePercent = isFoundingMember ? foundingFee : standardFee
     const fee = Math.round(amountCents * (feePercent / 100))
     const payout = amountCents - fee
 

@@ -49,7 +49,9 @@ export async function POST(request: NextRequest) {
 
     const amountCents = Math.round(amount * 100)
     const settings = await prisma.platformSettings.findUnique({ where: { id: 'default' } })
-    const feePercent = settings ? Number(settings.depositFeePercent) : 2
+    const standardFee = settings ? Number(settings.depositFeePercent) : 4
+    const foundingFee = 2 // Founding members locked rate
+    const feePercent = brand.foundingMember ? foundingFee : standardFee
     const fee = Math.round(amountCents * (feePercent / 100))
 
     // Create a PENDING transaction — balance is NOT credited yet
