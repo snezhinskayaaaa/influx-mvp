@@ -20,7 +20,7 @@ import { useState } from "react";
 const navLinks = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
   { href: "/admin/influencers", label: "Influencers", icon: Users },
-  { href: "/admin/brands", label: "Brands", icon: Building2 },
+  { href: "/admin/brands", label: "Projects", icon: Building2 },
   { href: "/admin/campaigns", label: "Campaigns", icon: Target },
   { href: "/admin/database", label: "Database", icon: Database },
   { href: "/admin/settings", label: "Settings", icon: Settings },

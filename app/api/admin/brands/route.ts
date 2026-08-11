@@ -23,6 +23,8 @@ export async function GET(request: NextRequest) {
           profile: {
             select: {
               email: true,
+              fullName: true,
+              avatarUrl: true,
             },
           },
           _count: {
