@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getCurrentUser } from '@/lib/auth'
+import { getCurrentUser, comparePassword } from '@/lib/auth'
 import prisma from '@/lib/prisma'
-import { jwtVerify } from 'jose'
+import { verifySync } from 'otplib'
 
 export async function GET() {
   try {
@@ -48,21 +48,32 @@ export async function PATCH(request: NextRequest) {
     }
 
     const body = await request.json()
-    const { depositFeePercent, withdrawalFeePercent, codeToken, code } = body
+    const { depositFeePercent, withdrawalFeePercent, authCode } = body
 
-    // Verify the verification code
-    if (!codeToken || !code) {
-      return NextResponse.json({ error: 'Verification code is required' }, { status: 400 })
+    // Require 2FA code or password to confirm settings change
+    if (!authCode) {
+      return NextResponse.json({ error: '2FA code or password required to change settings' }, { status: 400 })
     }
 
-    try {
-      const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET!)
-      const { payload } = await jwtVerify(codeToken, JWT_SECRET)
-      if (payload.purpose !== 'admin-settings-change' || payload.code !== code) {
-        return NextResponse.json({ error: 'Invalid verification code' }, { status: 400 })
-      }
-    } catch {
-      return NextResponse.json({ error: 'Verification code expired or invalid' }, { status: 400 })
+    const profile = await prisma.profile.findUnique({
+      where: { id: user.userId },
+      select: { passwordHash: true, totpEnabled: true, totpSecret: true, totpBackupCodes: true },
+    })
+    if (!profile) {
+      return NextResponse.json({ error: 'Profile not found' }, { status: 404 })
+    }
+
+    // Try TOTP first, then password
+    let verified = false
+    if (profile.totpEnabled && profile.totpSecret) {
+      verified = !!verifySync({ token: authCode, secret: profile.totpSecret })
+      if (!verified) verified = profile.totpBackupCodes.includes(authCode.toUpperCase())
+    }
+    if (!verified) {
+      verified = await comparePassword(authCode, profile.passwordHash)
+    }
+    if (!verified) {
+      return NextResponse.json({ error: 'Invalid 2FA code or password' }, { status: 403 })
     }
 
     if (depositFeePercent !== undefined) {

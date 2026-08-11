@@ -54,9 +54,7 @@ export default function AdminSettings() {
   const [totpVerifyCode, setTotpVerifyCode] = useState('');
   const [totpBackupCodes, setTotpBackupCodes] = useState<string[] | null>(null);
   const [showCodeModal, setShowCodeModal] = useState(false);
-  const [codeToken, setCodeToken] = useState("");
   const [verificationCode, setVerificationCode] = useState("");
-  const [codeSending, setCodeSending] = useState(false);
   const [codeError, setCodeError] = useState("");
 
   useEffect(() => {
@@ -108,30 +106,7 @@ export default function AdminSettings() {
       return;
     }
 
-    // Send verification code instead of saving directly
-    setCodeSending(true);
-    try {
-      const res = await fetch("/api/admin/settings/send-code", {
-        method: "POST",
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        setMessage({
-          type: "error",
-          text: data.error || "Failed to send verification code",
-        });
-        return;
-      }
-      setCodeToken(data.codeToken);
-      setShowCodeModal(true);
-    } catch {
-      setMessage({
-        type: "error",
-        text: "Failed to send verification code",
-      });
-    } finally {
-      setCodeSending(false);
-    }
+    setShowCodeModal(true);
   };
 
   const handleConfirmSave = async () => {
@@ -146,13 +121,13 @@ export default function AdminSettings() {
         body: JSON.stringify({
           depositFeePercent,
           withdrawalFeePercent,
-          codeToken,
-          code: verificationCode,
+          authCode: verificationCode,
         }),
       });
       const data = await res.json();
       if (!res.ok) {
         setCodeError(data.error || "Verification failed");
+        setSaving(false);
         return;
       }
       setShowCodeModal(false);
@@ -278,15 +253,11 @@ export default function AdminSettings() {
 
                 <Button
                   onClick={handleSave}
-                  disabled={saving || codeSending}
+                  disabled={saving}
                   className="bg-primary text-primary-foreground hover:bg-primary/90"
                 >
-                  {codeSending ? (
-                    <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                  ) : (
-                    <Save className="h-4 w-4 mr-2" />
-                  )}
-                  {codeSending ? "Sending Code..." : "Save Settings"}
+                  <Save className="h-4 w-4 mr-2" />
+                  Save Settings
                 </Button>
               </div>
             </Card>
@@ -421,25 +392,22 @@ export default function AdminSettings() {
               </div>
             </div>
             <h3 className="text-lg font-bold text-center mb-2">
-              Verify Settings Change
+              Confirm Fee Change
             </h3>
             <p className="text-muted-foreground text-center text-sm mb-4">
-              A 6-digit verification code has been sent to your email. Enter it
-              below to confirm the fee changes.
+              Enter your 2FA code or password to confirm the fee changes.
             </p>
             <div className="mb-4">
               <Input
                 type="text"
-                placeholder="000000"
+                placeholder={totpEnabled ? "Enter 2FA code" : "Enter password"}
                 value={verificationCode}
                 onChange={(e) => {
-                  setVerificationCode(
-                    e.target.value.replace(/\D/g, "").slice(0, 6)
-                  );
+                  setVerificationCode(e.target.value);
                   setCodeError("");
                 }}
-                className="text-center text-2xl tracking-[0.5em] font-mono h-14"
-                maxLength={6}
+                className="text-center h-12"
+                autoFocus
               />
             </div>
             {codeError && (
@@ -461,7 +429,7 @@ export default function AdminSettings() {
               </Button>
               <Button
                 className="flex-1"
-                disabled={verificationCode.length !== 6 || saving}
+                disabled={!verificationCode.trim() || saving}
                 onClick={handleConfirmSave}
               >
                 {saving ? (
