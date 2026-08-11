@@ -243,7 +243,7 @@ export function DiscoverTab({ influencers, onCollaborate }: DiscoverTabProps) {
             {/* Header: Avatar + Name + Badges */}
             <button
               onClick={() => handleCardClick(influencer)}
-              className="flex items-center gap-2.5 sm:gap-3 mb-2 sm:mb-3 w-full text-left hover:opacity-80 transition-opacity"
+              className="flex items-center gap-2.5 sm:gap-3 mb-1.5 w-full text-left hover:opacity-80 transition-opacity"
             >
               {renderAvatar(influencer, "w-10 h-10 sm:w-12 sm:h-12", "text-base sm:text-xl")}
               <div className="flex-1 min-w-0">
@@ -266,11 +266,11 @@ export function DiscoverTab({ influencers, onCollaborate }: DiscoverTabProps) {
 
             {/* Bio */}
             {influencer.bio && (
-              <p className="text-xs text-muted-foreground mb-2 line-clamp-2">{influencer.bio}</p>
+              <p className="text-[11px] text-muted-foreground mb-1.5 line-clamp-1">{influencer.bio}</p>
             )}
 
             {/* Niche + Social icons */}
-            <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center justify-between mb-1.5">
               <div className="flex flex-wrap gap-1">
                 {(influencer.niche && influencer.niche.length > 0 ? influencer.niche : [influencer.category]).map((tag) => (
                   <Badge key={tag} className="bg-secondary/10 text-secondary border-secondary/30 text-[9px] py-0 px-1.5 h-5">
@@ -288,7 +288,7 @@ export function DiscoverTab({ influencers, onCollaborate }: DiscoverTabProps) {
             </div>
 
             {/* Stats */}
-            <div className="grid grid-cols-3 gap-2 mb-2 text-center">
+            <div className="grid grid-cols-3 gap-1.5 mb-2 text-center">
               <div className="rounded-md bg-muted/50 py-1.5 px-1">
                 <div className="text-[9px] text-muted-foreground">Followers</div>
                 <div className="font-semibold text-xs">{influencer.followers}</div>
@@ -396,52 +396,27 @@ export function DiscoverTab({ influencers, onCollaborate }: DiscoverTabProps) {
               </div>
 
               {/* Social Handles */}
-              {(selectedInfluencer.instagramHandle || selectedInfluencer.tiktokHandle || selectedInfluencer.youtubeHandle || selectedInfluencer.twitterHandle) && (
+              {(selectedInfluencer.instagramHandle || selectedInfluencer.tiktokHandle || selectedInfluencer.youtubeHandle || selectedInfluencer.twitterHandle || selectedInfluencer.telegramHandle) && (
                 <div>
                   <div className="text-xs font-medium text-muted-foreground mb-2">Social Profiles</div>
-                  <div className="flex flex-wrap gap-2">
-                    {selectedInfluencer.instagramHandle && (
-                      <a
-                        href={`https://instagram.com/${selectedInfluencer.instagramHandle}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center gap-1.5 text-xs px-2.5 py-1.5 rounded-lg bg-muted/50 border hover:bg-primary/10 hover:text-primary hover:border-primary/30 transition-colors"
-                      >
-                        <Instagram className="h-3.5 w-3.5" />
-                        @{selectedInfluencer.instagramHandle}
-                      </a>
-                    )}
-                    {selectedInfluencer.tiktokHandle && (
-                      <a
-                        href={`https://tiktok.com/@${selectedInfluencer.tiktokHandle}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center gap-1.5 text-xs px-2.5 py-1.5 rounded-lg bg-muted/50 border hover:bg-primary/10 hover:text-primary hover:border-primary/30 transition-colors"
-                      >
-                        TikTok @{selectedInfluencer.tiktokHandle}
-                      </a>
-                    )}
-                    {selectedInfluencer.youtubeHandle && (
-                      <a
-                        href={`https://youtube.com/@${selectedInfluencer.youtubeHandle}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center gap-1.5 text-xs px-2.5 py-1.5 rounded-lg bg-muted/50 border hover:bg-primary/10 hover:text-primary hover:border-primary/30 transition-colors"
-                      >
-                        YouTube @{selectedInfluencer.youtubeHandle}
-                      </a>
-                    )}
-                    {selectedInfluencer.twitterHandle && (
-                      <a
-                        href={`https://twitter.com/${selectedInfluencer.twitterHandle}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center gap-1.5 text-xs px-2.5 py-1.5 rounded-lg bg-muted/50 border hover:bg-primary/10 hover:text-primary hover:border-primary/30 transition-colors"
-                      >
-                        <X className="h-3.5 w-3.5" />
-                        @{selectedInfluencer.twitterHandle}
-                      </a>
-                    )}
+                  <div className="flex flex-wrap gap-1.5">
+                    {([
+                      { handle: selectedInfluencer.twitterHandle, icon: <XIcon className="h-3 w-3" />, base: 'https://x.com/' },
+                      { handle: selectedInfluencer.telegramHandle, icon: <Send className="h-3 w-3" />, base: 'https://t.me/' },
+                      { handle: selectedInfluencer.instagramHandle, icon: <Instagram className="h-3 w-3" />, base: 'https://instagram.com/' },
+                      { handle: selectedInfluencer.tiktokHandle, icon: <svg className="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5" /></svg>, base: 'https://tiktok.com/@' },
+                      { handle: selectedInfluencer.youtubeHandle, icon: <Youtube className="h-3 w-3" />, base: 'https://youtube.com/@' },
+                    ]).filter(s => s.handle).map((s, i) => {
+                      const clean = s.handle!.replace(/^https?:\/\/(www\.)?(instagram\.com|tiktok\.com|youtube\.com|x\.com|t\.me|twitter\.com)\/?@?/i, '').replace(/^@/, '').split('?')[0].split('/')[0];
+                      const url = s.handle!.startsWith('http') ? s.handle! : `${s.base}${clean}`;
+                      return (
+                        <a key={i} href={url} target="_blank" rel="noopener noreferrer"
+                          className="flex items-center gap-1 text-[11px] px-2 py-1 rounded-md bg-muted/50 border hover:bg-primary/10 hover:text-primary transition-colors">
+                          {s.icon}
+                          @{clean}
+                        </a>
+                      );
+                    })}
                   </div>
                 </div>
               )}
