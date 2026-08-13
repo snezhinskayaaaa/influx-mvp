@@ -21,6 +21,7 @@ import {
   Wallet,
   AlertCircle,
   Mail,
+  Building2,
 } from "lucide-react";
 
 import { BrandNav, BrandSidebar, MobileNav } from "./components/brand-nav";
@@ -57,6 +58,7 @@ export default function BrandDashboard() {
   const [balance, setBalance] = useState(0);
   const [frozenBalance, setFrozenBalance] = useState(0);
   const [isFoundingMember, setIsFoundingMember] = useState(false);
+  const [isVerifiedProject, setIsVerifiedProject] = useState(false);
   const [walletTransactions, setWalletTransactions] = useState<Array<{
     id: string; type: string; amount: number; fee: number;
     description: string | null; status: string; createdAt: string;
@@ -278,6 +280,7 @@ export default function BrandDashboard() {
             if (b.telegramHandle) setTelegramUrl(b.telegramHandle);
             if (b.youtubeHandle) setYoutubeUrl(b.youtubeHandle);
             if (b.linkedinHandle) setLinkedinUrl(b.linkedinHandle);
+            if (b.isVerified) setIsVerifiedProject(true);
             if (b.foundingMember) setIsFoundingMember(true);
           }
         }
@@ -354,6 +357,20 @@ export default function BrandDashboard() {
 
         {/* Main Content */}
         <main className="flex-1 p-4 sm:p-6 lg:p-8 pb-24 lg:pb-8">
+          {/* Verification Banner */}
+          {!isVerifiedProject && (
+            <div
+              className="mb-4 rounded-xl border border-primary/30 bg-primary/5 p-4 flex items-start gap-3 cursor-pointer hover:bg-primary/10 transition-colors"
+              onClick={() => setActiveTab("profile")}
+            >
+              <Building2 className="h-5 w-5 text-primary shrink-0 mt-0.5" />
+              <div className="flex-1">
+                <h4 className="font-semibold text-sm">Complete your profile to get verified</h4>
+                <p className="text-muted-foreground text-xs mt-1">Fill in your company info, social media, and website. Verified projects get more trust from creators.</p>
+              </div>
+              <span className="text-xs text-primary font-medium shrink-0 mt-0.5">Go to Profile →</span>
+            </div>
+          )}
           <AnimatePresence mode="wait">
             {activeTab === "discover" && (
               <DiscoverTab

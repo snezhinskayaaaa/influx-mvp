@@ -29,7 +29,7 @@ const staggerContainer = {
   visible: { opacity: 1, transition: { staggerChildren: 0.1, delayChildren: 0.2 } },
 };
 
-type FilterTab = "all" | "founding" | "banned";
+type FilterTab = "all" | "verified" | "unverified" | "founding" | "banned";
 
 interface Brand {
   id: string;
@@ -43,9 +43,10 @@ interface Brand {
   youtubeHandle: string | null;
   linkedinHandle: string | null;
   foundingMember: boolean;
+  isVerified: boolean;
+  isBanned: boolean;
   balance: number;
   frozenBalance: number;
-  status?: string;
   createdAt: string;
   profile?: { email?: string; fullName?: string; avatarUrl?: string };
   _count?: { campaigns: number };
@@ -72,6 +73,20 @@ export default function AdminBrands() {
 
   useEffect(() => { fetchBrands(); }, [fetchBrands]);
 
+  const updateBrand = async (id: string, data: Record<string, unknown>) => {
+    try {
+      const res = await fetch(`/api/admin/brands/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+      if (res.ok) {
+        setBrands(prev => prev.map(b => b.id === id ? { ...b, ...data } as Brand : b));
+        if (selectedBrand?.id === id) setSelectedBrand(prev => prev ? { ...prev, ...data } as Brand : null);
+      }
+    } catch (e) { console.error(e); }
+  };
+
   const extractHandle = (url: string | null) => {
     if (!url) return null;
     return url.replace(/^https?:\/\/(www\.)?(instagram\.com|tiktok\.com|youtube\.com|x\.com|t\.me|twitter\.com|linkedin\.com)\/?@?/i, '').replace(/^@/, '').split('/')[0].split('?')[0] || url;
@@ -79,22 +94,28 @@ export default function AdminBrands() {
 
   const tabs: { key: FilterTab; label: string; icon: typeof Users }[] = [
     { key: "all", label: "All", icon: Users },
+    { key: "verified", label: "Verified", icon: CheckCircle2 },
+    { key: "unverified", label: "Unverified", icon: Building2 },
     { key: "founding", label: "Founding", icon: Crown },
     { key: "banned", label: "Banned", icon: XCircle },
   ];
 
   const tabCounts = {
     all: brands.length,
+    verified: brands.filter(b => b.isVerified && !b.isBanned).length,
+    unverified: brands.filter(b => !b.isVerified && !b.isBanned).length,
     founding: brands.filter(b => b.foundingMember).length,
-    banned: 0, // No ban system for brands yet
+    banned: brands.filter(b => b.isBanned).length,
   };
 
   const filtered = brands.filter((b) => {
     const q = searchQuery.toLowerCase();
     const matchesSearch = !q || b.companyName.toLowerCase().includes(q) || (b.profile?.email || '').toLowerCase().includes(q);
     const matchesTab = activeTab === "all"
+      || (activeTab === "verified" && b.isVerified && !b.isBanned)
+      || (activeTab === "unverified" && !b.isVerified && !b.isBanned)
       || (activeTab === "founding" && b.foundingMember)
-      || (activeTab === "banned" && false);
+      || (activeTab === "banned" && b.isBanned);
     return matchesSearch && matchesTab;
   });
 
@@ -153,9 +174,9 @@ export default function AdminBrands() {
               <div className="hidden sm:grid grid-cols-12 gap-4 p-4 bg-muted/30 border-b border-border/50 text-xs font-medium text-muted-foreground uppercase tracking-wider">
                 <div className="col-span-3">Project</div>
                 <div className="col-span-3">Email</div>
-                <div className="col-span-2">Balance</div>
-                <div className="col-span-2">Campaigns</div>
-                <div className="col-span-2 text-right">Actions</div>
+                <div className="col-span-1">Balance</div>
+                <div className="col-span-1">Status</div>
+                <div className="col-span-3 text-right">Actions</div>
               </div>
 
               <div className="divide-y divide-border/50">
@@ -191,21 +212,44 @@ export default function AdminBrands() {
                         <p className="text-sm text-muted-foreground truncate">{brand.profile?.email || '—'}</p>
                       </div>
 
-                      <div className="sm:col-span-2">
+                      <div className="sm:col-span-1">
                         <p className="text-sm font-medium">${(brand.balance / 100).toFixed(0)}</p>
-                        {brand.frozenBalance > 0 && (
-                          <p className="text-[10px] text-muted-foreground">Frozen: ${(brand.frozenBalance / 100).toFixed(0)}</p>
+                      </div>
+
+                      <div className="sm:col-span-1">
+                        {brand.isBanned ? (
+                          <Badge className="bg-red-500/10 text-red-600 border-red-500/20 text-[10px]">Banned</Badge>
+                        ) : brand.isVerified ? (
+                          <Badge className="bg-primary/10 text-primary border-primary/20 text-[10px]">Verified</Badge>
+                        ) : (
+                          <Badge className="bg-muted text-muted-foreground border-border text-[10px]">Unverified</Badge>
                         )}
                       </div>
 
-                      <div className="sm:col-span-2">
-                        <span className="text-sm font-medium">{brand._count?.campaigns || 0}</span>
-                      </div>
-
-                      <div className="sm:col-span-2 flex items-center justify-end gap-2" onClick={(e) => e.stopPropagation()}>
-                        <Button size="sm" variant="outline" className="text-xs h-7 px-2" onClick={() => setSelectedBrand(brand)}>
-                          View
-                        </Button>
+                      <div className="sm:col-span-3 flex items-center justify-end gap-1.5" onClick={(e) => e.stopPropagation()}>
+                        {!brand.isVerified && !brand.isBanned && (
+                          <Button size="sm" variant="outline" className="text-primary border-primary/30 hover:bg-primary/10 text-xs h-7 px-2"
+                            onClick={() => updateBrand(brand.id, { isVerified: true })}>
+                            Verify
+                          </Button>
+                        )}
+                        {brand.isVerified && (
+                          <Button size="sm" variant="outline" className="text-muted-foreground text-xs h-7 px-2"
+                            onClick={() => updateBrand(brand.id, { isVerified: false })}>
+                            Unverify
+                          </Button>
+                        )}
+                        {!brand.isBanned ? (
+                          <Button size="sm" variant="outline" className="text-red-600 border-red-200 hover:bg-red-50 text-xs h-7 px-2"
+                            onClick={() => updateBrand(brand.id, { isBanned: true })}>
+                            <XCircle className="h-3 w-3 mr-1" />Ban
+                          </Button>
+                        ) : (
+                          <Button size="sm" variant="outline" className="text-green-600 border-green-200 hover:bg-green-50 text-xs h-7 px-2"
+                            onClick={() => updateBrand(brand.id, { isBanned: false })}>
+                            Unban
+                          </Button>
+                        )}
                       </div>
                     </div>
                   ))

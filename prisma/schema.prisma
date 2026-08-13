@@ -209,6 +209,10 @@ model Brand {
   // Budget
   monthlyBudgetRange String? @map("monthly_budget_range")
 
+  // Moderation
+  isVerified Boolean @default(false) @map("is_verified")
+  isBanned   Boolean @default(false) @map("is_banned")
+
   // Wallet
   balance       Int @default(0) // free balance in cents
   frozenBalance Int @default(0) @map("frozen_balance") // frozen for active collaborations in cents
