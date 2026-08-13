@@ -14,6 +14,7 @@ import {
   Menu,
   X,
   Database,
+  Wallet,
 } from "lucide-react";
 import { useState } from "react";
 
@@ -22,6 +23,7 @@ const navLinks = [
   { href: "/admin/influencers", label: "Influencers", icon: Users },
   { href: "/admin/brands", label: "Projects", icon: Building2 },
   { href: "/admin/campaigns", label: "Campaigns", icon: Target },
+  { href: "/admin/transactions", label: "Transactions", icon: Wallet },
   { href: "/admin/database", label: "Database", icon: Database },
   { href: "/admin/settings", label: "Settings", icon: Settings },
 ];
