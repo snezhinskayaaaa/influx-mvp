@@ -197,9 +197,10 @@ export default function BrandDashboard() {
 
               // Primary rate display
               let rateStr: string;
-              if (avgPostPrice) rateStr = formatCents(avgPostPrice);
-              else if (cpmRate) rateStr = `${formatCents(cpmRate)} CPM`;
-              else if (pricingCPM) rateStr = pricingCPM;
+              let rateLabel = 'Rate';
+              if (avgPostPrice) { rateStr = formatCents(avgPostPrice); rateLabel = 'Per post'; }
+              else if (cpmRate) { rateStr = formatCents(cpmRate); rateLabel = 'CPM'; }
+              else if (pricingCPM) { rateStr = pricingCPM; rateLabel = 'CPM'; }
               else rateStr = 'N/A';
 
               // Extract avatarUrl from profile relation
@@ -221,6 +222,7 @@ export default function BrandDashboard() {
                 rawEngagement: engagement,
                 category: nicheArr.length > 0 ? nicheArr[0] : 'Other',
                 rate: rateStr,
+                rateLabel,
                 verified: (inf.isVerified as boolean) || false,
                 foundingMember: (inf.foundingMember as boolean) || false,
                 gender: 'Unknown',

@@ -274,19 +274,19 @@ export function DiscoverTab({ influencers, onCollaborate }: DiscoverTabProps) {
 
             {/* Row 2: Stats inline + Social icons */}
             <div className="flex items-center justify-between mb-2 px-0.5">
-              <div className="flex items-center gap-3 text-[11px]">
+              <div className="flex items-center gap-3 text-xs">
                 <span><span className="text-muted-foreground">Followers</span> <strong>{influencer.followers}</strong></span>
                 <span><span className="text-muted-foreground">Eng</span> <strong className="text-primary">{influencer.engagement}</strong></span>
                 {influencer.rate !== 'N/A' && (
-                  <span><span className="text-muted-foreground">Rate</span> <strong>{influencer.rate}</strong></span>
+                  <span><span className="text-muted-foreground">{influencer.rateLabel}</span> <strong>{influencer.rate}</strong></span>
                 )}
               </div>
-              <div className="flex items-center gap-1 text-muted-foreground/50">
-                {influencer.twitterHandle && <XIcon className="h-2.5 w-2.5" />}
-                {influencer.telegramHandle && <Send className="h-2.5 w-2.5" />}
-                {influencer.instagramHandle && <Instagram className="h-2.5 w-2.5" />}
-                {influencer.tiktokHandle && <svg className="h-2.5 w-2.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5" /></svg>}
-                {influencer.youtubeHandle && <Youtube className="h-2.5 w-2.5" />}
+              <div className="flex items-center gap-1.5 text-muted-foreground/50">
+                {influencer.twitterHandle && <XIcon className="h-3 w-3" />}
+                {influencer.telegramHandle && <Send className="h-3 w-3" />}
+                {influencer.instagramHandle && <Instagram className="h-3 w-3" />}
+                {influencer.tiktokHandle && <svg className="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5" /></svg>}
+                {influencer.youtubeHandle && <Youtube className="h-3 w-3" />}
               </div>
             </div>
 

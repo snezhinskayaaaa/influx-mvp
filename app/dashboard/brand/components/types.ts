@@ -54,6 +54,7 @@ export interface Influencer {
   rawEngagement: number;
   category: string;
   rate: string;
+  rateLabel: string;
   verified: boolean;
   foundingMember: boolean;
   gender: string;
