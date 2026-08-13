@@ -239,74 +239,61 @@ export function DiscoverTab({ influencers, onCollaborate }: DiscoverTabProps) {
       {/* Influencers Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {filteredInfluencers.map((influencer) => (
-          <Card key={influencer.id} className="p-3 sm:p-4 hover:shadow-lg transition-shadow">
-            {/* Header: Avatar + Name + Badges */}
-            <button
-              onClick={() => handleCardClick(influencer)}
-              className="flex items-center gap-2.5 sm:gap-3 mb-1.5 w-full text-left hover:opacity-80 transition-opacity"
-            >
-              {renderAvatar(influencer, "w-10 h-10 sm:w-12 sm:h-12", "text-base sm:text-xl")}
+          <Card key={influencer.id} className="p-3 hover:shadow-lg transition-shadow overflow-hidden">
+            {/* Row 1: Avatar + Name + Niche */}
+            <div className="flex items-start gap-2.5 mb-2">
+              <button onClick={() => handleCardClick(influencer)} className="shrink-0 hover:opacity-80">
+                {renderAvatar(influencer, "w-10 h-10", "text-base")}
+              </button>
               <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-1 leading-none">
-                  <h3 className="font-semibold text-sm truncate">{influencer.name}</h3>
+                <div className="flex items-center gap-1">
+                  <button onClick={() => handleCardClick(influencer)} className="hover:opacity-80">
+                    <h3 className="font-semibold text-sm truncate">{influencer.name}</h3>
+                  </button>
                   {influencer.verified ? (
                     <CheckCircle2 className="h-3.5 w-3.5 text-primary shrink-0" />
                   ) : (
                     <AlertCircle className="h-3.5 w-3.5 text-muted-foreground/40 shrink-0" />
                   )}
-                </div>
-                <div className="flex items-center gap-1.5 mt-1">
-                  <p className="text-xs text-muted-foreground leading-none">{influencer.username}</p>
                   {influencer.foundingMember && (
-                    <span className="text-[9px] px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-600 border border-amber-500/20 font-medium leading-none">Founding</span>
+                    <span className="text-[8px] px-1 py-0.5 rounded bg-amber-500/10 text-amber-600 border border-amber-500/20 font-medium shrink-0">FM</span>
                   )}
                 </div>
-              </div>
-            </button>
-
-            {/* Bio */}
-            {influencer.bio && (
-              <p className="text-[11px] text-muted-foreground mb-1.5 line-clamp-1">{influencer.bio}</p>
-            )}
-
-            {/* Niche + Social icons */}
-            <div className="flex items-center justify-between mb-1.5">
-              <div className="flex flex-wrap gap-1">
-                {(influencer.niche && influencer.niche.length > 0 ? influencer.niche : [influencer.category]).map((tag) => (
-                  <Badge key={tag} className="bg-secondary/10 text-secondary border-secondary/30 text-[9px] py-0 px-1.5 h-5">
-                    {tag}
-                  </Badge>
-                ))}
-              </div>
-              <div className="flex items-center gap-1 text-muted-foreground/60">
-                {influencer.twitterHandle && <XIcon className="h-3 w-3" />}
-                {influencer.telegramHandle && <Send className="h-3 w-3" />}
-                {influencer.instagramHandle && <Instagram className="h-3 w-3" />}
-                {influencer.tiktokHandle && <svg className="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5" /></svg>}
-                {influencer.youtubeHandle && <Youtube className="h-3 w-3" />}
+                <div className="flex items-center gap-1.5 mt-0.5">
+                  <span className="text-[11px] text-muted-foreground">{influencer.username}</span>
+                  <span className="text-muted-foreground/30">·</span>
+                  {(influencer.niche && influencer.niche.length > 0 ? influencer.niche : [influencer.category]).slice(0, 1).map((tag) => (
+                    <span key={tag} className="text-[10px] text-secondary font-medium">{tag}</span>
+                  ))}
+                </div>
+                {influencer.bio && (
+                  <p className="text-[10px] text-muted-foreground mt-0.5 line-clamp-1">{influencer.bio}</p>
+                )}
               </div>
             </div>
 
-            {/* Stats */}
-            <div className="grid grid-cols-3 gap-1.5 mb-2 text-center">
-              <div className="rounded-md bg-muted/50 py-1.5 px-1">
-                <div className="text-[9px] text-muted-foreground">Followers</div>
-                <div className="font-semibold text-xs">{influencer.followers}</div>
+            {/* Row 2: Stats inline + Social icons */}
+            <div className="flex items-center justify-between mb-2 px-0.5">
+              <div className="flex items-center gap-3 text-[11px]">
+                <span><span className="text-muted-foreground">Followers</span> <strong>{influencer.followers}</strong></span>
+                <span><span className="text-muted-foreground">Eng</span> <strong className="text-primary">{influencer.engagement}</strong></span>
+                {influencer.rate !== 'N/A' && (
+                  <span><span className="text-muted-foreground">Rate</span> <strong>{influencer.rate}</strong></span>
+                )}
               </div>
-              <div className="rounded-md bg-muted/50 py-1.5 px-1">
-                <div className="text-[9px] text-muted-foreground">Engagement</div>
-                <div className="font-semibold text-xs text-primary">{influencer.engagement}</div>
-              </div>
-              <div className="rounded-md bg-muted/50 py-1.5 px-1">
-                <div className="text-[9px] text-muted-foreground">Rate</div>
-                <div className="font-semibold text-xs">{influencer.rate}</div>
+              <div className="flex items-center gap-1 text-muted-foreground/50">
+                {influencer.twitterHandle && <XIcon className="h-2.5 w-2.5" />}
+                {influencer.telegramHandle && <Send className="h-2.5 w-2.5" />}
+                {influencer.instagramHandle && <Instagram className="h-2.5 w-2.5" />}
+                {influencer.tiktokHandle && <svg className="h-2.5 w-2.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5" /></svg>}
+                {influencer.youtubeHandle && <Youtube className="h-2.5 w-2.5" />}
               </div>
             </div>
 
-            {/* Action */}
+            {/* Row 3: Action */}
             <Button
               size="sm"
-              className="w-full bg-primary/10 hover:bg-primary/20 text-primary border border-primary/30 h-8 text-xs"
+              className="w-full bg-primary/10 hover:bg-primary/20 text-primary border border-primary/30 h-7 text-xs"
               onClick={() => onCollaborate(influencer)}
             >
               Collaborate
