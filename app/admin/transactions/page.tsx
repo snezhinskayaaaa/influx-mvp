@@ -4,12 +4,13 @@ import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { AdminNav } from "@/components/admin-nav";
 import { motion } from "framer-motion";
 import {
   Wallet,
   Loader2,
-  DollarSign,
   ArrowUpRight,
   ArrowDownRight,
   TrendingUp,
@@ -42,15 +43,13 @@ export default function AdminTransactions() {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<FilterTab>("all");
-  const [stats, setStats] = useState({ totalFees: 0, totalVolume: 0 });
+  const [dateFrom, setDateFrom] = useState("");
+  const [dateTo, setDateTo] = useState("");
 
   useEffect(() => {
-    fetch("/api/admin/transactions?limit=100")
+    fetch("/api/admin/transactions?limit=200")
       .then(r => r.json())
-      .then(data => {
-        setTransactions(data.transactions || []);
-        setStats(data.stats || { totalFees: 0, totalVolume: 0 });
-      })
+      .then(data => setTransactions(data.transactions || []))
       .catch(e => console.error("Failed to fetch transactions:", e))
       .finally(() => setLoading(false));
   }, []);
@@ -64,11 +63,6 @@ export default function AdminTransactions() {
     { key: "campaign_freeze", label: "Freezes" },
   ];
 
-  const filtered = transactions.filter(tx => {
-    if (activeTab === "all") return true;
-    return tx.type.toLowerCase() === activeTab || tx.type.toLowerCase().startsWith(activeTab);
-  });
-
   const typeLabels: Record<string, string> = {
     DEPOSIT: 'Deposit', WITHDRAWAL: 'Withdrawal',
     CAMPAIGN_ADVANCE: 'Advance', CAMPAIGN_PAYOUT: 'Payout',
@@ -77,12 +71,47 @@ export default function AdminTransactions() {
     DISPUTE_PAYOUT: 'Dispute Payout', DISPUTE_REFUND: 'Dispute Refund',
   };
 
-  const isIncoming = (type: string) => ['DEPOSIT', 'CAMPAIGN_UNFREEZE', 'ADVANCE_REFUND', 'DISPUTE_REFUND'].includes(type);
+  // Direction: who is this transaction FOR?
+  // Brand pays → amount leaves brand (outgoing for brand)
+  // Creator receives → amount enters creator (incoming for creator)
+  const getDirection = (type: string, role: string): 'in' | 'out' | 'neutral' => {
+    if (type === 'DEPOSIT') return 'in'; // money into platform
+    if (type === 'WITHDRAWAL') return 'out'; // money out of platform
+    if (type === 'CAMPAIGN_FREEZE') return 'neutral'; // internal move
+    if (type === 'CAMPAIGN_UNFREEZE') return 'neutral'; // internal move
+    if (type === 'CAMPAIGN_ADVANCE' || type === 'CAMPAIGN_PAYOUT' || type === 'CAMPAIGN_PAYOUT_AUTO' || type === 'DISPUTE_PAYOUT') {
+      return role === 'INFLUENCER' ? 'in' : 'out';
+    }
+    if (type === 'ADVANCE_REFUND' || type === 'DISPUTE_REFUND') {
+      return role === 'BRAND' ? 'in' : 'out';
+    }
+    return 'neutral';
+  };
 
-  // Calculate totals
-  const totalDeposits = transactions.filter(t => t.type === 'DEPOSIT' && t.status === 'confirmed').reduce((s, t) => s + t.amount, 0);
-  const totalWithdrawals = transactions.filter(t => t.type === 'WITHDRAWAL' && t.status === 'confirmed').reduce((s, t) => s + t.amount, 0);
-  const totalFees = transactions.filter(t => t.status === 'confirmed').reduce((s, t) => s + t.fee, 0);
+  // Filter by tab + date range
+  const filtered = transactions.filter(tx => {
+    const matchesTab = activeTab === "all" || tx.type.toLowerCase() === activeTab || tx.type.toLowerCase().startsWith(activeTab);
+
+    let matchesDate = true;
+    if (dateFrom) {
+      matchesDate = new Date(tx.createdAt) >= new Date(dateFrom);
+    }
+    if (dateTo && matchesDate) {
+      const toDate = new Date(dateTo);
+      toDate.setHours(23, 59, 59, 999);
+      matchesDate = new Date(tx.createdAt) <= toDate;
+    }
+
+    return matchesTab && matchesDate;
+  });
+
+  // Calculate stats from filtered transactions (respects date range)
+  const confirmedFiltered = filtered.filter(t => t.status === 'confirmed');
+  const totalDeposits = confirmedFiltered.filter(t => t.type === 'DEPOSIT').reduce((s, t) => s + t.amount, 0);
+  const totalWithdrawals = confirmedFiltered.filter(t => t.type === 'WITHDRAWAL').reduce((s, t) => s + t.amount, 0);
+  const totalFees = confirmedFiltered.reduce((s, t) => s + t.fee, 0);
+  // Net platform balance = deposits - withdrawals (how much is held on platform)
+  const netBalance = totalDeposits - totalWithdrawals;
 
   if (loading) {
     return (
@@ -102,12 +131,29 @@ export default function AdminTransactions() {
       <main className="pt-20 pb-12 px-6 sm:px-12 lg:px-16">
         <motion.div variants={staggerContainer} initial="hidden" animate="visible" className="space-y-6">
           {/* Header */}
-          <motion.div variants={fadeInUp}>
-            <h1 className="text-3xl font-bold">Transactions</h1>
-            <p className="text-muted-foreground mt-1">Platform financial overview and transaction history</p>
+          <motion.div variants={fadeInUp} className="flex items-center justify-between">
+            <div>
+              <h1 className="text-3xl font-bold">Transactions</h1>
+              <p className="text-muted-foreground mt-1">Platform financial overview</p>
+            </div>
+            <div className="flex items-center gap-2">
+              <div>
+                <Label className="text-[10px] text-muted-foreground">From</Label>
+                <Input type="date" value={dateFrom} onChange={(e) => setDateFrom(e.target.value)} className="h-8 text-xs w-36" />
+              </div>
+              <div>
+                <Label className="text-[10px] text-muted-foreground">To</Label>
+                <Input type="date" value={dateTo} onChange={(e) => setDateTo(e.target.value)} className="h-8 text-xs w-36" />
+              </div>
+              {(dateFrom || dateTo) && (
+                <Button variant="ghost" size="sm" className="mt-4 text-xs h-8" onClick={() => { setDateFrom(''); setDateTo(''); }}>
+                  Clear
+                </Button>
+              )}
+            </div>
           </motion.div>
 
-          {/* Stats */}
+          {/* Stats — recalculated based on date filter */}
           <motion.div variants={fadeInUp} className="grid grid-cols-1 sm:grid-cols-4 gap-4">
             <Card className="p-4 border border-border/50">
               <div className="flex items-center gap-3">
@@ -115,7 +161,7 @@ export default function AdminTransactions() {
                   <ArrowDownRight className="h-4 w-4 text-green-500" />
                 </div>
                 <div>
-                  <p className="text-[10px] text-muted-foreground">Total Deposits</p>
+                  <p className="text-[10px] text-muted-foreground">Deposits</p>
                   <p className="text-lg font-bold text-green-600">${(totalDeposits / 100).toLocaleString(undefined, { minimumFractionDigits: 2 })}</p>
                 </div>
               </div>
@@ -126,7 +172,7 @@ export default function AdminTransactions() {
                   <ArrowUpRight className="h-4 w-4 text-red-500" />
                 </div>
                 <div>
-                  <p className="text-[10px] text-muted-foreground">Total Withdrawals</p>
+                  <p className="text-[10px] text-muted-foreground">Withdrawals</p>
                   <p className="text-lg font-bold text-red-600">${(totalWithdrawals / 100).toLocaleString(undefined, { minimumFractionDigits: 2 })}</p>
                 </div>
               </div>
@@ -137,7 +183,7 @@ export default function AdminTransactions() {
                   <TrendingUp className="h-4 w-4 text-primary" />
                 </div>
                 <div>
-                  <p className="text-[10px] text-muted-foreground">Platform Fees Earned</p>
+                  <p className="text-[10px] text-muted-foreground">Fees Earned</p>
                   <p className="text-lg font-bold text-primary">${(totalFees / 100).toLocaleString(undefined, { minimumFractionDigits: 2 })}</p>
                 </div>
               </div>
@@ -148,8 +194,8 @@ export default function AdminTransactions() {
                   <Wallet className="h-4 w-4 text-secondary" />
                 </div>
                 <div>
-                  <p className="text-[10px] text-muted-foreground">Total Volume</p>
-                  <p className="text-lg font-bold">${((stats.totalVolume || 0) / 100).toLocaleString(undefined, { minimumFractionDigits: 2 })}</p>
+                  <p className="text-[10px] text-muted-foreground">Net on Platform</p>
+                  <p className="text-lg font-bold">${(netBalance / 100).toLocaleString(undefined, { minimumFractionDigits: 2 })}</p>
                 </div>
               </div>
             </Card>
@@ -167,7 +213,7 @@ export default function AdminTransactions() {
               >
                 {tab.label}
                 <span className="ml-1.5 text-xs opacity-60">
-                  ({tab.key === "all" ? transactions.length : transactions.filter(t => t.type.toLowerCase() === tab.key || t.type.toLowerCase().startsWith(tab.key)).length})
+                  ({tab.key === "all" ? filtered.length : filtered.filter(t => t.type.toLowerCase() === tab.key || t.type.toLowerCase().startsWith(tab.key)).length})
                 </span>
               </Button>
             ))}
@@ -180,7 +226,8 @@ export default function AdminTransactions() {
                 <div className="col-span-2">Date</div>
                 <div className="col-span-2">Type</div>
                 <div className="col-span-3">User</div>
-                <div className="col-span-2">Amount</div>
+                <div className="col-span-1">Direction</div>
+                <div className="col-span-1">Amount</div>
                 <div className="col-span-1">Fee</div>
                 <div className="col-span-1">Status</div>
                 <div className="col-span-1 text-right">Role</div>
@@ -193,9 +240,9 @@ export default function AdminTransactions() {
                   filtered.map((tx) => {
                     const isFailed = tx.status === 'failed';
                     const isPending = tx.status === 'pending';
-                    const incoming = isIncoming(tx.type);
+                    const dir = getDirection(tx.type, tx.profile.role);
                     return (
-                      <div key={tx.id} className={`grid grid-cols-1 sm:grid-cols-12 gap-2 sm:gap-4 p-3 sm:p-4 items-center ${isFailed ? 'opacity-50' : ''}`}>
+                      <div key={tx.id} className={`grid grid-cols-1 sm:grid-cols-12 gap-2 sm:gap-4 p-3 sm:p-4 items-center ${isFailed ? 'opacity-40' : ''}`}>
                         <div className="sm:col-span-2">
                           <p className="text-xs text-muted-foreground">
                             {new Date(tx.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
@@ -206,21 +253,25 @@ export default function AdminTransactions() {
                         </div>
 
                         <div className="sm:col-span-2">
-                          <span className={`text-sm font-medium ${incoming ? 'text-green-600' : 'text-foreground'}`}>
-                            {typeLabels[tx.type] || tx.type}
-                          </span>
+                          <span className="text-sm font-medium">{typeLabels[tx.type] || tx.type}</span>
                         </div>
 
                         <div className="sm:col-span-3">
                           <p className="text-sm text-muted-foreground truncate">{tx.profile.email}</p>
                         </div>
 
-                        <div className="sm:col-span-2">
+                        <div className="sm:col-span-1">
+                          {dir === 'in' && <span className="text-[10px] text-green-600 font-medium">Received</span>}
+                          {dir === 'out' && <span className="text-[10px] text-red-600 font-medium">Sent</span>}
+                          {dir === 'neutral' && <span className="text-[10px] text-muted-foreground">Internal</span>}
+                        </div>
+
+                        <div className="sm:col-span-1">
                           {isFailed ? (
                             <p className="text-sm text-muted-foreground line-through">${(tx.amount / 100).toFixed(2)}</p>
                           ) : (
-                            <p className={`text-sm font-semibold ${incoming ? 'text-green-600' : 'text-foreground'}`}>
-                              {incoming ? '+' : ''}${(tx.amount / 100).toFixed(2)}
+                            <p className={`text-sm font-semibold ${dir === 'in' ? 'text-green-600' : dir === 'out' ? 'text-red-600' : 'text-primary'}`}>
+                              ${(tx.amount / 100).toFixed(2)}
                             </p>
                           )}
                         </div>
