@@ -283,8 +283,17 @@ export function CampaignsTab({
         return;
       }
       showToast('Revision requested.', 'success');
-      setRevisionNoteText("");
       setShowRevisionInput(false);
+      // Immediately update local state so UI reflects REVISION status
+      if (selectedInfluencerForPipeline) {
+        setSelectedInfluencerForPipeline({
+          ...selectedInfluencerForPipeline,
+          collaborationStatus: 'REVISION' as CollaborationStatus,
+          revisionNote: revisionNoteText,
+          revisionCount: (selectedInfluencerForPipeline.revisionCount ?? 0) + 1,
+        });
+      }
+      setRevisionNoteText("");
       if (selectedCampaignDetails) await handleOpenCampaign(selectedCampaignDetails);
     } catch {
       showToast('Failed to request revision', 'error');
