@@ -2080,6 +2080,15 @@ export function CampaignsTab({
                                 <div className="text-xs text-muted-foreground">
                                   Revision {selectedInfluencerForPipeline.revisionCount ?? 0}/3
                                 </div>
+                                {selectedInfluencerForPipeline.collaborationStatus === "REVISION" ? (
+                                  <div className="px-4 py-3 rounded-lg bg-amber-500/10 border border-amber-500/20">
+                                    <p className="text-sm font-medium text-amber-600">Revision requested</p>
+                                    <p className="text-xs text-muted-foreground mt-1">Waiting for creator to resubmit updated content.</p>
+                                    {selectedInfluencerForPipeline.revisionNote && (
+                                      <p className="text-xs text-muted-foreground mt-2">Your note: &quot;{selectedInfluencerForPipeline.revisionNote}&quot;</p>
+                                    )}
+                                  </div>
+                                ) : (<>
                                 <div className="flex gap-2">
                                   <Button
                                     onClick={() => handleApproveContent(selectedInfluencerForPipeline.collaborationId!)}
@@ -2115,6 +2124,7 @@ export function CampaignsTab({
                                     </div>
                                   </div>
                                 )}
+                                </>)}
                               </div>
                             )}
 
