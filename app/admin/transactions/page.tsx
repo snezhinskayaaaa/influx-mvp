@@ -4,9 +4,9 @@ import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { AdminNav } from "@/components/admin-nav";
+import { DatePicker } from "@/components/ui/date-picker";
 import { motion } from "framer-motion";
 import {
   Wallet,
@@ -43,8 +43,8 @@ export default function AdminTransactions() {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<FilterTab>("all");
-  const [dateFrom, setDateFrom] = useState("");
-  const [dateTo, setDateTo] = useState("");
+  const [dateFrom, setDateFrom] = useState<Date | undefined>(undefined);
+  const [dateTo, setDateTo] = useState<Date | undefined>(undefined);
 
   useEffect(() => {
     fetch("/api/admin/transactions?limit=200")
@@ -94,12 +94,14 @@ export default function AdminTransactions() {
 
     let matchesDate = true;
     if (dateFrom) {
-      matchesDate = new Date(tx.createdAt) >= new Date(dateFrom);
+      const from = new Date(dateFrom);
+      from.setHours(0, 0, 0, 0);
+      matchesDate = new Date(tx.createdAt) >= from;
     }
     if (dateTo && matchesDate) {
-      const toDate = new Date(dateTo);
-      toDate.setHours(23, 59, 59, 999);
-      matchesDate = new Date(tx.createdAt) <= toDate;
+      const to = new Date(dateTo);
+      to.setHours(23, 59, 59, 999);
+      matchesDate = new Date(tx.createdAt) <= to;
     }
 
     return matchesTab && matchesDate;
@@ -138,15 +140,15 @@ export default function AdminTransactions() {
             </div>
             <div className="flex items-center gap-2">
               <div>
-                <Label className="text-[10px] text-muted-foreground">From</Label>
-                <Input type="date" value={dateFrom} onChange={(e) => setDateFrom(e.target.value)} className="h-8 text-xs w-36" />
+                <Label className="text-[10px] text-muted-foreground mb-1 block">From</Label>
+                <DatePicker date={dateFrom} onDateChange={setDateFrom} placeholder="Start date" className="h-8 text-xs w-40" />
               </div>
               <div>
-                <Label className="text-[10px] text-muted-foreground">To</Label>
-                <Input type="date" value={dateTo} onChange={(e) => setDateTo(e.target.value)} className="h-8 text-xs w-36" />
+                <Label className="text-[10px] text-muted-foreground mb-1 block">To</Label>
+                <DatePicker date={dateTo} onDateChange={setDateTo} placeholder="End date" className="h-8 text-xs w-40" />
               </div>
               {(dateFrom || dateTo) && (
-                <Button variant="ghost" size="sm" className="mt-4 text-xs h-8" onClick={() => { setDateFrom(''); setDateTo(''); }}>
+                <Button variant="ghost" size="sm" className="mt-4 text-xs h-8" onClick={() => { setDateFrom(undefined); setDateTo(undefined); }}>
                   Clear
                 </Button>
               )}
@@ -226,11 +228,10 @@ export default function AdminTransactions() {
                 <div className="col-span-2">Date</div>
                 <div className="col-span-2">Type</div>
                 <div className="col-span-3">User</div>
-                <div className="col-span-1">Direction</div>
+                <div className="col-span-2">Direction</div>
                 <div className="col-span-1">Amount</div>
                 <div className="col-span-1">Fee</div>
-                <div className="col-span-1">Status</div>
-                <div className="col-span-1 text-right">Role</div>
+                <div className="col-span-1 text-right">Status</div>
               </div>
 
               <div className="divide-y divide-border/50">
@@ -260,10 +261,10 @@ export default function AdminTransactions() {
                           <p className="text-sm text-muted-foreground truncate">{tx.profile.email}</p>
                         </div>
 
-                        <div className="sm:col-span-1">
-                          {dir === 'in' && <span className="text-[10px] text-green-600 font-medium">Received</span>}
-                          {dir === 'out' && <span className="text-[10px] text-red-600 font-medium">Sent</span>}
-                          {dir === 'neutral' && <span className="text-[10px] text-muted-foreground">Internal</span>}
+                        <div className="sm:col-span-2">
+                          {dir === 'in' && <span className="text-[11px] text-green-600 font-medium">→ {tx.profile.role === 'INFLUENCER' ? 'Creator receives' : 'Project receives'}</span>}
+                          {dir === 'out' && <span className="text-[11px] text-red-600 font-medium">← {tx.profile.role === 'BRAND' ? 'Project pays' : 'Creator pays'}</span>}
+                          {dir === 'neutral' && <span className="text-[11px] text-primary font-medium">{tx.profile.role === 'BRAND' ? 'Project internal' : 'Internal'}</span>}
                         </div>
 
                         <div className="sm:col-span-1">
@@ -282,14 +283,10 @@ export default function AdminTransactions() {
                           )}
                         </div>
 
-                        <div className="sm:col-span-1">
+                        <div className="sm:col-span-1 text-right">
                           {isFailed && <Badge className="bg-red-500/10 text-red-600 border-red-500/20 text-[9px]">Failed</Badge>}
                           {isPending && <Badge className="bg-amber-500/10 text-amber-600 border-amber-500/20 text-[9px]">Pending</Badge>}
                           {tx.status === 'confirmed' && <Badge className="bg-green-500/10 text-green-600 border-green-500/20 text-[9px]">OK</Badge>}
-                        </div>
-
-                        <div className="sm:col-span-1 text-right">
-                          <span className="text-[10px] text-muted-foreground">{tx.profile.role === 'BRAND' ? 'Project' : tx.profile.role === 'INFLUENCER' ? 'Creator' : tx.profile.role}</span>
                         </div>
                       </div>
                     );
