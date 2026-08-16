@@ -1,4 +1,6 @@
 import { jsPDF } from 'jspdf'
+import fs from 'fs'
+import path from 'path'
 
 interface AgreementData {
   collaborationId: string
@@ -27,6 +29,21 @@ interface AgreementData {
 
 export function generateAgreementPDF(data: AgreementData): Buffer {
   const doc = new jsPDF()
+
+  // Load Roboto font for Unicode/Cyrillic support
+  try {
+    const fontPath = path.join(process.cwd(), 'public', 'fonts', 'Roboto-Regular.ttf')
+    const fontData = fs.readFileSync(fontPath)
+    const fontBase64 = fontData.toString('base64')
+    doc.addFileToVFS('Roboto-Regular.ttf', fontBase64)
+    doc.addFont('Roboto-Regular.ttf', 'Roboto', 'normal')
+    doc.setFont('Roboto', 'normal')
+  } catch {
+    // Fallback to helvetica if font not found
+  }
+
+  const fontName = doc.getFont().fontName === 'Roboto' ? 'Roboto' : 'helvetica'
+
   const margin = 25
   const pageWidth = doc.internal.pageSize.getWidth()
   const pageHeight = doc.internal.pageSize.getHeight()
@@ -52,7 +69,7 @@ export function generateAgreementPDF(data: AgreementData): Buffer {
   const addFooter = () => {
     doc.setFontSize(7)
     doc.setTextColor(...muted)
-    doc.setFont('helvetica', 'normal')
+    doc.setFont(fontName, 'normal')
     doc.text('INFLUX connect  |  aiinflux.io', pageWidth / 2, pageHeight - 12, { align: 'center' })
     doc.text(`Agreement #${data.collaborationId.slice(0, 8)}`, pageWidth / 2, pageHeight - 8, { align: 'center' })
     doc.setTextColor(...dark)
@@ -63,7 +80,7 @@ export function generateAgreementPDF(data: AgreementData): Buffer {
     y += 4
     // Section number + title
     doc.setFontSize(11)
-    doc.setFont('helvetica', 'bold')
+    doc.setFont(fontName, 'normal')
     doc.setTextColor(...primary)
     doc.text(`${num}.`, margin, y)
     doc.text(title.toUpperCase(), margin + 8, y)
@@ -81,7 +98,7 @@ export function generateAgreementPDF(data: AgreementData): Buffer {
   const addLabel = (text: string) => {
     checkPage(8)
     doc.setFontSize(9)
-    doc.setFont('helvetica', 'bold')
+    doc.setFont(fontName, 'normal')
     doc.setTextColor(...dark)
     doc.text(text, margin, y)
     y += 5
@@ -90,7 +107,7 @@ export function generateAgreementPDF(data: AgreementData): Buffer {
   const addBody = (text: string) => {
     checkPage(8)
     doc.setFontSize(9)
-    doc.setFont('helvetica', 'normal')
+    doc.setFont(fontName, 'normal')
     doc.setTextColor(...dark)
     const lines = doc.splitTextToSize(text, contentWidth)
     doc.text(lines, margin, y)
@@ -100,7 +117,7 @@ export function generateAgreementPDF(data: AgreementData): Buffer {
   const addMuted = (text: string) => {
     checkPage(8)
     doc.setFontSize(8)
-    doc.setFont('helvetica', 'normal')
+    doc.setFont(fontName, 'normal')
     doc.setTextColor(...muted)
     const lines = doc.splitTextToSize(text, contentWidth)
     doc.text(lines, margin, y)
@@ -111,7 +128,7 @@ export function generateAgreementPDF(data: AgreementData): Buffer {
   const addBullet = (text: string) => {
     checkPage(8)
     doc.setFontSize(9)
-    doc.setFont('helvetica', 'normal')
+    doc.setFont(fontName, 'normal')
     doc.setTextColor(...dark)
     const lines = doc.splitTextToSize(text, contentWidth - 8)
     doc.text('-', margin + 2, y)
@@ -122,7 +139,7 @@ export function generateAgreementPDF(data: AgreementData): Buffer {
   const addNumberedItem = (num: number, text: string) => {
     checkPage(8)
     doc.setFontSize(9)
-    doc.setFont('helvetica', 'normal')
+    doc.setFont(fontName, 'normal')
     doc.setTextColor(...muted)
     doc.text(`${num}.`, margin + 2, y)
     doc.setTextColor(...dark)
@@ -140,17 +157,17 @@ export function generateAgreementPDF(data: AgreementData): Buffer {
 
   // Logo text
   doc.setFontSize(22)
-  doc.setFont('helvetica', 'bold')
+  doc.setFont(fontName, 'normal')
   doc.setTextColor(...primary)
   doc.text('INFLUX', margin, y)
   doc.setFontSize(10)
-  doc.setFont('helvetica', 'normal')
+  doc.setFont(fontName, 'normal')
   doc.setTextColor(...muted)
   doc.text('connect', margin + 38, y)
 
   // Title right-aligned
   doc.setFontSize(10)
-  doc.setFont('helvetica', 'normal')
+  doc.setFont(fontName, 'normal')
   doc.setTextColor(...muted)
   doc.text('COLLABORATION AGREEMENT', pageWidth - margin, y - 4, { align: 'right' })
   doc.setFontSize(8)
@@ -187,11 +204,11 @@ export function generateAgreementPDF(data: AgreementData): Buffer {
   doc.setTextColor(...muted)
   doc.text('PROJECT (CLIENT)', margin + 5, boxY + 6)
   doc.setFontSize(10)
-  doc.setFont('helvetica', 'bold')
+  doc.setFont(fontName, 'normal')
   doc.setTextColor(...dark)
   doc.text(data.brandCompanyName, margin + 5, boxY + 13)
   doc.setFontSize(8)
-  doc.setFont('helvetica', 'normal')
+  doc.setFont(fontName, 'normal')
   doc.setTextColor(...muted)
   if (data.brandContactEmail) doc.text(data.brandContactEmail, margin + 5, boxY + 19)
   if (data.brandContactName) doc.text(data.brandContactName, margin + 5, boxY + 25)
@@ -202,11 +219,11 @@ export function generateAgreementPDF(data: AgreementData): Buffer {
   doc.setTextColor(...muted)
   doc.text('CREATOR', rightX, boxY + 6)
   doc.setFontSize(10)
-  doc.setFont('helvetica', 'bold')
+  doc.setFont(fontName, 'normal')
   doc.setTextColor(...dark)
   doc.text(`@${data.influencerHandle}`, rightX, boxY + 13)
   doc.setFontSize(8)
-  doc.setFont('helvetica', 'normal')
+  doc.setFont(fontName, 'normal')
   doc.setTextColor(...muted)
   doc.text(data.influencerEmail, rightX, boxY + 19)
 
@@ -249,11 +266,11 @@ export function generateAgreementPDF(data: AgreementData): Buffer {
   doc.setTextColor(...muted)
   doc.text('AGREED PRICE', margin + 5, priceBoxY + 6)
   doc.setFontSize(14)
-  doc.setFont('helvetica', 'bold')
+  doc.setFont(fontName, 'normal')
   doc.setTextColor(...primary)
   doc.text(formatUSD(data.agreedPrice), margin + 5, priceBoxY + 13)
   doc.setFontSize(8)
-  doc.setFont('helvetica', 'normal')
+  doc.setFont(fontName, 'normal')
   doc.setTextColor(...muted)
   doc.text(data.pricingBasis, margin + 55, priceBoxY + 13)
   doc.setTextColor(...dark)
@@ -278,11 +295,11 @@ export function generateAgreementPDF(data: AgreementData): Buffer {
   doc.setTextColor(...muted)
   doc.text('50% ADVANCE', margin + 5, payBoxY + 6)
   doc.setFontSize(12)
-  doc.setFont('helvetica', 'bold')
+  doc.setFont(fontName, 'normal')
   doc.setTextColor(22, 163, 74) // green
   doc.text(formatUSD(data.advanceAmount), margin + 5, payBoxY + 13)
   doc.setFontSize(7)
-  doc.setFont('helvetica', 'normal')
+  doc.setFont(fontName, 'normal')
   doc.setTextColor(...muted)
   doc.text('Released when campaign starts', margin + 5, payBoxY + 19)
 
@@ -292,11 +309,11 @@ export function generateAgreementPDF(data: AgreementData): Buffer {
   doc.setTextColor(...muted)
   doc.text('50% FINAL PAYMENT', margin + halfW + 11, payBoxY + 6)
   doc.setFontSize(12)
-  doc.setFont('helvetica', 'bold')
+  doc.setFont(fontName, 'normal')
   doc.setTextColor(22, 163, 74)
   doc.text(formatUSD(data.finalAmount), margin + halfW + 11, payBoxY + 13)
   doc.setFontSize(7)
-  doc.setFont('helvetica', 'normal')
+  doc.setFont(fontName, 'normal')
   doc.setTextColor(...muted)
   doc.text('Released after delivery approval', margin + halfW + 11, payBoxY + 19)
 
@@ -377,11 +394,11 @@ export function generateAgreementPDF(data: AgreementData): Buffer {
   y += 8
 
   doc.setFontSize(9)
-  doc.setFont('helvetica', 'italic')
+  doc.setFont(fontName, 'normal')
   doc.setTextColor(...dark)
   doc.text(`Both parties confirmed these terms on ${data.agreedDate}`, margin, y)
   y += 6
-  doc.setFont('helvetica', 'normal')
+  doc.setFont(fontName, 'normal')
   doc.setFontSize(8)
   doc.setTextColor(...muted)
   doc.text('This agreement was generated and accepted digitally on the Influx platform (aiinflux.io).', margin, y)
