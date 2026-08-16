@@ -630,7 +630,7 @@ export function CampaignsTab({
                   {isEditingCampaign && editedCampaignData ? (
                     <DatePicker
                       date={editedCampaignData.startDate ? new Date(editedCampaignData.startDate) : undefined}
-                      onDateChange={(d) => setEditedCampaignData({...editedCampaignData, startDate: d ? d.toISOString().split('T')[0] : ''})}
+                      onDateChange={(d) => setEditedCampaignData({...editedCampaignData, startDate: d ? `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}` : ''})}
                       placeholder="Select date"
                       className="h-9 text-sm"
                     />
@@ -647,7 +647,7 @@ export function CampaignsTab({
                   {isEditingCampaign && editedCampaignData ? (
                     <DatePicker
                       date={editedCampaignData.endDate ? new Date(editedCampaignData.endDate) : undefined}
-                      onDateChange={(d) => setEditedCampaignData({...editedCampaignData, endDate: d ? d.toISOString().split('T')[0] : ''})}
+                      onDateChange={(d) => setEditedCampaignData({...editedCampaignData, endDate: d ? `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}` : ''})}
                       placeholder="Select date"
                       className="h-9 text-sm"
                     />
