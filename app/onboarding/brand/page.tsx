@@ -41,22 +41,22 @@ export default function OnboardingStep1() {
       title="How did you hear about us?"
       subtitle="We want to know how you found out about Influx so we can improve our marketing efforts."
     >
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-8">
+      <div className="grid grid-cols-2 gap-2 sm:gap-4 mb-6 sm:mb-8">
         {sources.map((source) => (
           <button
             key={source.id}
             onClick={() => setSelectedSource(source.id)}
-            className={`relative p-4 sm:p-5 rounded-xl border-2 text-left transition-all ${
+            className={`relative p-2.5 sm:p-5 rounded-lg sm:rounded-xl border-2 text-left transition-all ${
               selectedSource === source.id
                 ? "border-primary bg-primary/5"
                 : "border-border hover:border-primary/50 hover:bg-muted/50"
             }`}
           >
             <div className="flex items-center justify-between">
-              <span className="text-sm sm:text-base font-medium">{source.label}</span>
+              <span className="text-xs sm:text-base font-medium">{source.label}</span>
               {selectedSource === source.id && (
-                <div className="w-5 h-5 rounded-full bg-primary flex items-center justify-center shrink-0">
-                  <Check className="h-3 w-3 text-primary-foreground" />
+                <div className="w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-primary flex items-center justify-center shrink-0">
+                  <Check className="h-2.5 w-2.5 sm:h-3 sm:w-3 text-primary-foreground" />
                 </div>
               )}
             </div>
@@ -67,7 +67,7 @@ export default function OnboardingStep1() {
       <Button
         onClick={handleNext}
         disabled={!selectedSource}
-        className="w-full h-12 sm:h-14 bg-gradient-to-r from-primary to-secondary hover:opacity-90 text-base sm:text-lg"
+        className="w-full h-10 sm:h-14 bg-gradient-to-r from-primary to-secondary hover:opacity-90 text-sm sm:text-lg"
       >
         Next
       </Button>

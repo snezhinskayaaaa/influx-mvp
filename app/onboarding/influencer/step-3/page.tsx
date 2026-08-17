@@ -102,28 +102,28 @@ export default function InfluencerOnboardingStep3() {
       subtitle="Select the topics you cover or want to collaborate on."
       onBack={handleBack}
     >
-      <div className="mb-4">
-        <p className="text-sm text-muted-foreground">
+      <div className="mb-2 sm:mb-4">
+        <p className="text-xs sm:text-sm text-muted-foreground">
           Selected: <span className="font-medium text-foreground">{selectedNiches.length}</span> {selectedNiches.length === 1 ? 'topic' : 'topics'}
         </p>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mb-8">
+      <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-3 mb-4 sm:mb-8">
         {niches.map((niche) => (
           <button
             key={niche}
             onClick={() => toggleNiche(niche)}
-            className={`relative p-4 rounded-xl border-2 text-left transition-all ${
+            className={`relative p-2.5 sm:p-4 rounded-lg sm:rounded-xl border-2 text-left transition-all ${
               selectedNiches.includes(niche)
                 ? "border-primary bg-primary/5"
                 : "border-border hover:border-primary/50 hover:bg-muted/50"
             }`}
           >
             <div className="flex items-center justify-between">
-              <span className="text-sm sm:text-base font-medium">{niche}</span>
+              <span className="text-xs sm:text-base font-medium">{niche}</span>
               {selectedNiches.includes(niche) && (
-                <div className="w-5 h-5 rounded-full bg-primary flex items-center justify-center shrink-0 ml-2">
-                  <Check className="h-3 w-3 text-primary-foreground" />
+                <div className="w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-primary flex items-center justify-center shrink-0 ml-1">
+                  <Check className="h-2.5 w-2.5 sm:h-3 sm:w-3 text-primary-foreground" />
                 </div>
               )}
             </div>
@@ -134,7 +134,7 @@ export default function InfluencerOnboardingStep3() {
       <Button
         onClick={handleComplete}
         disabled={selectedNiches.length === 0 || isSubmitting}
-        className="w-full h-12 sm:h-14 bg-gradient-to-r from-primary to-secondary hover:opacity-90 text-base sm:text-lg"
+        className="w-full h-10 sm:h-14 bg-gradient-to-r from-primary to-secondary hover:opacity-90 text-sm sm:text-lg"
       >
         {isSubmitting ? (
           <>
