@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { Instagram, Youtube, Video, MessageCircle } from "lucide-react";
+import { Instagram, Youtube, Send } from "lucide-react";
 
 export default function InfluencerOnboardingStep2() {
   const router = useRouter();
@@ -44,7 +44,7 @@ export default function InfluencerOnboardingStep2() {
       currentStep={2}
       totalSteps={5}
       title="Creator profile"
-      subtitle="Tell brands about yourself and share your social media handles so they can find you."
+      subtitle="Tell projects about yourself and share your social media handles so they can find you."
       onBack={handleBack}
     >
       <div className="space-y-5 sm:space-y-6 mb-8">
@@ -68,7 +68,7 @@ export default function InfluencerOnboardingStep2() {
           </Label>
           <Textarea
             id="bio"
-            placeholder="Tell brands about your content style, personality, and what makes you unique..."
+            placeholder="Tell projects about your content style, personality, and what makes you unique..."
             value={bio}
             onChange={(e) => setBio(e.target.value)}
             rows={4}
@@ -87,6 +87,24 @@ export default function InfluencerOnboardingStep2() {
           </Label>
           <div className="space-y-3">
             <div className="relative">
+              <XIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="X (Twitter) username"
+                value={twitter}
+                onChange={(e) => setTwitter(e.target.value)}
+                className="pl-10 h-11"
+              />
+            </div>
+            <div className="relative">
+              <Send className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Telegram username"
+                value={telegram}
+                onChange={(e) => setTelegram(e.target.value)}
+                className="pl-10 h-11"
+              />
+            </div>
+            <div className="relative">
               <Instagram className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
                 placeholder="Instagram username"
@@ -96,7 +114,9 @@ export default function InfluencerOnboardingStep2() {
               />
             </div>
             <div className="relative">
-              <Video className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <svg className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1v-3.5a6.37 6.37 0 0 0-.79-.05A6.34 6.34 0 0 0 3.16 15a6.34 6.34 0 0 0 6.33 6.33 6.34 6.34 0 0 0 6.34-6.33V8.98a8.21 8.21 0 0 0 4.78 1.53V7.05a4.84 4.84 0 0 1-1.02-.36z"/>
+              </svg>
               <Input
                 placeholder="TikTok username"
                 value={tiktok}
@@ -110,24 +130,6 @@ export default function InfluencerOnboardingStep2() {
                 placeholder="YouTube channel"
                 value={youtube}
                 onChange={(e) => setYoutube(e.target.value)}
-                className="pl-10 h-11"
-              />
-            </div>
-            <div className="relative">
-              <XIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="X/Twitter username"
-                value={twitter}
-                onChange={(e) => setTwitter(e.target.value)}
-                className="pl-10 h-11"
-              />
-            </div>
-            <div className="relative">
-              <MessageCircle className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Telegram username"
-                value={telegram}
-                onChange={(e) => setTelegram(e.target.value)}
                 className="pl-10 h-11"
               />
             </div>
