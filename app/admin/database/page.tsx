@@ -23,6 +23,39 @@ import {
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 
+function ReferralStats() {
+  const [data, setData] = useState<{ source: string; total: number; brands: number; creators: number }[]>([]);
+  const [total, setTotal] = useState(0);
+  useEffect(() => {
+    fetch('/api/admin/referrals').then(r => r.json()).then(d => {
+      setData(d.referrals || []);
+      setTotal(d.total || 0);
+    }).catch(() => {});
+  }, []);
+  if (data.length === 0) return <p className="text-sm text-muted-foreground">No referral data yet. Data will appear after users complete onboarding.</p>;
+  return (
+    <div>
+      <p className="text-xs text-muted-foreground mb-3">Total responses: {total}</p>
+      <div className="space-y-2">
+        {data.map(r => (
+          <div key={r.source} className="flex items-center justify-between py-2 border-b border-border/50 last:border-0">
+            <div className="flex items-center gap-2">
+              <span className="text-sm font-medium">{r.source}</span>
+              <span className="text-[10px] text-muted-foreground">({r.creators} creators, {r.brands} projects)</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-24 h-2 bg-muted rounded-full overflow-hidden">
+                <div className="h-full bg-primary rounded-full" style={{ width: `${(r.total / total) * 100}%` }} />
+              </div>
+              <span className="text-sm font-semibold w-8 text-right">{r.total}</span>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 const fadeInUp = {
   hidden: { opacity: 0, y: 50 },
   visible: {
@@ -979,6 +1012,14 @@ export default function AdminDatabase() {
                 )}
               </Card>
             )}
+          {/* Referral Sources */}
+          <motion.div variants={fadeInUp}>
+            <Card className="border border-border/50 p-6">
+              <h2 className="text-lg font-semibold mb-4">Referral Sources</h2>
+              <ReferralStats />
+            </Card>
+          </motion.div>
+
           </motion.div>
         </motion.div>
       </main>

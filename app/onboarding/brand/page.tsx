@@ -25,6 +25,11 @@ export default function OnboardingStep1() {
   const handleNext = () => {
     if (selectedSource) {
       localStorage.setItem("brand_onboarding_source", selectedSource);
+      fetch('/api/profiles/referral', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ source: selectedSource }),
+      }).catch(() => {});
       router.push("/onboarding/brand/step-2");
     }
   };

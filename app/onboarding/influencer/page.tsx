@@ -25,6 +25,12 @@ export default function InfluencerOnboardingStep1() {
   const handleNext = () => {
     if (selectedSource) {
       localStorage.setItem("influencer_onboarding_source", selectedSource);
+      // Save to DB (fire-and-forget)
+      fetch('/api/profiles/referral', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ source: selectedSource }),
+      }).catch(() => {});
       router.push("/onboarding/influencer/step-2");
     }
   };
