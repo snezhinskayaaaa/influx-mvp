@@ -8,13 +8,12 @@ import { Check } from "lucide-react";
 
 const sources = [
   { id: "recommendation", label: "Recommendation" },
-  { id: "instagram-ads", label: "Instagram Ads" },
-  { id: "facebook-ads", label: "Facebook Ads" },
-  { id: "google-ads", label: "Google Ads" },
-  { id: "google-search", label: "Google Search" },
-  { id: "social-media", label: "Social Media Post" },
-  { id: "crypto-twitter", label: "Crypto Twitter" },
+  { id: "x-twitter", label: "X (Twitter)" },
   { id: "telegram", label: "Telegram" },
+  { id: "google-search", label: "Google Search" },
+  { id: "youtube", label: "YouTube" },
+  { id: "instagram-ads", label: "Instagram Ads" },
+  { id: "google-ads", label: "Google Ads" },
   { id: "blog-review", label: "Review on a blog, website, etc." },
   { id: "other", label: "Other" },
 ];
