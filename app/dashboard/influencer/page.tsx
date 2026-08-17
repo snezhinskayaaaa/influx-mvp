@@ -867,21 +867,21 @@ export default function InfluencerDashboard() {
       {/* Loading overlay */}
       {isLoading && <LoadingScreen />}
       {/* Header */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-primary/5 backdrop-blur-md border-b border-border/50 py-4">
-        <div className="px-6 sm:px-12 lg:px-16">
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-primary/5 backdrop-blur-md border-b border-border/50 py-2.5 sm:py-4">
+        <div className="px-4 sm:px-12 lg:px-16">
           <div className="flex items-center justify-between">
-            <Link href="/" className="flex items-center gap-3 group">
-              <NetworkLogo className="w-8 h-8 transition-transform group-hover:scale-110" />
+            <Link href="/" className="flex items-center gap-2 sm:gap-3 group">
+              <NetworkLogo className="w-7 h-7 sm:w-8 sm:h-8 transition-transform group-hover:scale-110" />
               <div className="flex items-baseline gap-1">
-                <span className="text-xl sm:text-2xl font-bold text-primary">INFLUX</span>
-                <span className="text-xs font-medium text-foreground/60">connect</span>
+                <span className="text-lg sm:text-2xl font-bold text-primary">INFLUX</span>
+                <span className="text-[10px] sm:text-xs font-medium text-foreground/60">connect</span>
               </div>
             </Link>
 
-            <div className="flex items-center gap-2 sm:gap-3">
+            <div className="flex items-center gap-1.5 sm:gap-3">
               <NotificationBell />
 
-              <Button variant="ghost" size="sm" className="text-sm font-medium text-muted-foreground hover:bg-muted/50 hover:text-foreground" onClick={async () => { await fetch('/api/auth/logout', { method: 'POST' }); window.location.href = '/login'; }}>
+              <Button variant="ghost" size="sm" className="text-sm font-medium text-muted-foreground hover:bg-muted/50 hover:text-foreground h-8 w-8 p-0" onClick={async () => { await fetch('/api/auth/logout', { method: 'POST' }); window.location.href = '/login'; }}>
                 <LogOut className="h-4 w-4" />
               </Button>
             </div>
@@ -890,11 +890,11 @@ export default function InfluencerDashboard() {
       </nav>
 
       {/* Spacer for fixed header */}
-      <div className="h-20"></div>
+      <div className="h-14 sm:h-20"></div>
 
       <div className="flex">
         {/* Sidebar */}
-        <aside className="hidden lg:block w-64 border-r bg-muted/30 min-h-[calc(100vh-80px)] sticky top-20">
+        <aside className="hidden lg:block w-64 border-r bg-muted/30 min-h-[calc(100vh-80px)] sticky top-14 sm:top-20">
           <nav className="p-4 space-y-2">
             {/* Balance Card */}
             <div className="w-full p-4 rounded-xl bg-primary/10 border-2 border-primary/30 mb-4">
@@ -995,61 +995,61 @@ export default function InfluencerDashboard() {
 
         {/* Mobile Navigation */}
         <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-background/95 backdrop-blur-xl border-t z-40">
-          <div className="flex items-center justify-around px-2 py-3">
+          <div className="flex items-center justify-around px-1 py-1.5 pb-[env(safe-area-inset-bottom,4px)]">
             <button
               onClick={() => setActiveTab("discover")}
-              className={`flex flex-col items-center gap-1 px-3 py-2 rounded-lg transition-colors ${
+              className={`flex flex-col items-center gap-0.5 px-2 py-1 rounded-lg transition-colors ${
                 activeTab === "discover" ? "text-primary" : "text-muted-foreground"
               }`}
             >
-              <Search className="h-5 w-5" />
-              <span className="text-xs font-medium">Discover</span>
+              <Search className="h-4 w-4" />
+              <span className="text-[10px] font-medium">Discover</span>
             </button>
             <button
               onClick={() => setActiveTab("my-campaigns")}
-              className={`flex flex-col items-center gap-1 px-3 py-2 rounded-lg transition-colors ${
+              className={`flex flex-col items-center gap-0.5 px-2 py-1 rounded-lg transition-colors ${
                 activeTab === "my-campaigns" ? "text-primary" : "text-muted-foreground"
               }`}
             >
-              <BarChart3 className="h-5 w-5" />
-              <span className="text-xs font-medium">Campaigns</span>
+              <BarChart3 className="h-4 w-4" />
+              <span className="text-[10px] font-medium">Campaigns</span>
             </button>
             <button
               onClick={() => setActiveTab("wallet")}
-              className={`flex flex-col items-center gap-1 px-3 py-2 rounded-lg transition-colors ${
+              className={`flex flex-col items-center gap-0.5 px-2 py-1 rounded-lg transition-colors ${
                 activeTab === "wallet" ? "text-primary" : "text-muted-foreground"
               }`}
             >
-              <Wallet className="h-5 w-5" />
-              <span className="text-xs font-medium">Wallet</span>
+              <Wallet className="h-4 w-4" />
+              <span className="text-[10px] font-medium">Wallet</span>
             </button>
             <button
               onClick={() => setActiveTab("profile")}
-              className={`flex flex-col items-center gap-1 px-3 py-2 rounded-lg transition-colors ${
+              className={`flex flex-col items-center gap-0.5 px-2 py-1 rounded-lg transition-colors ${
                 activeTab === "profile" ? "text-primary" : "text-muted-foreground"
               }`}
             >
-              <User className="h-5 w-5" />
-              <span className="text-xs font-medium">Profile</span>
+              <User className="h-4 w-4" />
+              <span className="text-[10px] font-medium">Profile</span>
             </button>
             <button
               onClick={() => setActiveTab("settings")}
-              className={`flex flex-col items-center gap-1 px-3 py-2 rounded-lg transition-colors ${
+              className={`flex flex-col items-center gap-0.5 px-2 py-1 rounded-lg transition-colors ${
                 activeTab === "settings" ? "text-primary" : "text-muted-foreground"
               }`}
             >
-              <Settings className="h-5 w-5" />
-              <span className="text-xs font-medium">Settings</span>
+              <Settings className="h-4 w-4" />
+              <span className="text-[10px] font-medium">Settings</span>
             </button>
           </div>
         </div>
 
         {/* Main Content */}
-        <main className="flex-1 p-4 sm:p-6 lg:p-8 pb-24 lg:pb-8 overflow-auto">
+        <main className="flex-1 p-3 sm:p-6 lg:p-8 pb-16 lg:pb-8 overflow-auto">
           {/* Verification Banner — shown until profile is verified */}
           {!isVerifiedProfile && influencerStatus !== 'REJECTED' && (
             <div
-              className="mb-4 rounded-xl border border-primary/30 bg-primary/5 p-4 flex items-start gap-3 cursor-pointer hover:bg-primary/10 transition-colors"
+              className="mb-3 sm:mb-4 rounded-lg sm:rounded-xl border border-primary/30 bg-primary/5 p-3 sm:p-4 flex items-start gap-2 sm:gap-3 cursor-pointer hover:bg-primary/10 transition-colors"
               onClick={() => setActiveTab("profile")}
             >
               <AlertCircle className="h-5 w-5 text-primary shrink-0 mt-0.5" />
@@ -1079,9 +1079,9 @@ export default function InfluencerDashboard() {
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.3 }}
             >
-              <div className="mb-6">
-                <h1 className="text-xl sm:text-3xl font-bold mb-2">Discover Campaigns</h1>
-                <p className="text-muted-foreground text-sm sm:text-base">
+              <div className="mb-3 sm:mb-6">
+                <h1 className="text-base sm:text-3xl font-bold mb-1 sm:mb-2">Discover Campaigns</h1>
+                <p className="text-muted-foreground text-xs sm:text-base">
                   Find and apply to campaigns that match your audience
                 </p>
               </div>
@@ -2295,9 +2295,9 @@ export default function InfluencerDashboard() {
                 </>
               ) : (
                 <>
-                  <div className="mb-6">
-                    <h1 className="text-xl sm:text-3xl font-bold mb-2">My Campaigns</h1>
-                    <p className="text-muted-foreground text-sm sm:text-base">
+                  <div className="mb-3 sm:mb-6">
+                    <h1 className="text-base sm:text-3xl font-bold mb-1 sm:mb-2">My Campaigns</h1>
+                    <p className="text-muted-foreground text-xs sm:text-base">
                       Track and manage your active collaborations
                     </p>
                   </div>
@@ -2556,7 +2556,7 @@ export default function InfluencerDashboard() {
               <div className="mb-6 sm:mb-8">
                 <div className="flex items-center justify-between gap-3">
                   <div className="min-w-0">
-                    <h1 className="text-xl sm:text-3xl font-bold mb-1">Wallet</h1>
+                    <h1 className="text-base sm:text-3xl font-bold mb-1">Wallet</h1>
                     <p className="text-muted-foreground text-xs sm:text-sm">Your earnings and transaction history</p>
                   </div>
                   <Button size="sm" variant="outline" className="h-8 sm:h-9 px-4 sm:px-5 text-xs sm:text-sm shrink-0" onClick={() => setShowWithdrawModal(true)}>
@@ -2669,9 +2669,9 @@ export default function InfluencerDashboard() {
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.3 }}
             >
-              <div className="mb-6">
-                <h1 className="text-xl sm:text-3xl font-bold mb-2">Influencer Profile</h1>
-                <p className="text-muted-foreground text-sm sm:text-base">Manage your public profile and portfolio</p>
+              <div className="mb-3 sm:mb-6">
+                <h1 className="text-base sm:text-3xl font-bold mb-1 sm:mb-2">Influencer Profile</h1>
+                <p className="text-muted-foreground text-xs sm:text-base">Manage your public profile and portfolio</p>
               </div>
 
               <Card className="p-4 sm:p-8">
@@ -3024,9 +3024,9 @@ export default function InfluencerDashboard() {
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.3 }}
             >
-              <div className="mb-6">
-                <h1 className="text-xl sm:text-3xl font-bold mb-2">Settings</h1>
-                <p className="text-muted-foreground text-sm sm:text-base">
+              <div className="mb-3 sm:mb-6">
+                <h1 className="text-base sm:text-3xl font-bold mb-1 sm:mb-2">Settings</h1>
+                <p className="text-muted-foreground text-xs sm:text-base">
                   Manage your account preferences
                 </p>
               </div>
