@@ -878,7 +878,7 @@ export default function InfluencerDashboard() {
               <NetworkLogo className="w-7 h-7 sm:w-8 sm:h-8 transition-transform group-hover:scale-110" />
               <div className="flex items-baseline gap-1">
                 <span className="text-lg sm:text-2xl font-bold text-primary">INFLUX</span>
-                <span className="text-[10px] sm:text-xs font-medium text-foreground/60">connect</span>
+                <span className="text-xs font-medium text-foreground/60">connect</span>
               </div>
             </Link>
 
@@ -930,7 +930,7 @@ export default function InfluencerDashboard() {
                 <Crown className="h-4 w-4 text-amber-600 shrink-0" />
                 <div>
                   <p className="text-xs font-semibold text-amber-600">Founding Creator</p>
-                  <p className="text-[10px] text-muted-foreground">3% withdrawal rate locked</p>
+                  <p className="text-xs text-muted-foreground">3% withdrawal rate locked</p>
                 </div>
               </div>
             )}
@@ -999,14 +999,14 @@ export default function InfluencerDashboard() {
 
         {/* Mobile Navigation */}
         <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-background/95 backdrop-blur-xl border-t z-40">
-          <div className="flex items-center justify-around px-1 py-1.5 pb-[env(safe-area-inset-bottom,4px)]">
+          <div className="flex items-center justify-around px-1 py-2 pb-[env(safe-area-inset-bottom,6px)]">
             <button
               onClick={() => setActiveTab("discover")}
               className={`flex flex-col items-center gap-0.5 px-2 py-1 rounded-lg transition-colors ${
                 activeTab === "discover" ? "text-primary" : "text-muted-foreground"
               }`}
             >
-              <Search className="h-4 w-4" />
+              <Search className="h-5 w-5" />
               <span className="text-[10px] font-medium">Discover</span>
             </button>
             <button
@@ -1015,7 +1015,7 @@ export default function InfluencerDashboard() {
                 activeTab === "my-campaigns" ? "text-primary" : "text-muted-foreground"
               }`}
             >
-              <BarChart3 className="h-4 w-4" />
+              <BarChart3 className="h-5 w-5" />
               <span className="text-[10px] font-medium">Campaigns</span>
             </button>
             <button
@@ -1024,7 +1024,7 @@ export default function InfluencerDashboard() {
                 activeTab === "wallet" ? "text-primary" : "text-muted-foreground"
               }`}
             >
-              <Wallet className="h-4 w-4" />
+              <Wallet className="h-5 w-5" />
               <span className="text-[10px] font-medium">Wallet</span>
             </button>
             <button
@@ -1033,7 +1033,7 @@ export default function InfluencerDashboard() {
                 activeTab === "profile" ? "text-primary" : "text-muted-foreground"
               }`}
             >
-              <User className="h-4 w-4" />
+              <User className="h-5 w-5" />
               <span className="text-[10px] font-medium">Profile</span>
             </button>
             <button
@@ -1042,14 +1042,14 @@ export default function InfluencerDashboard() {
                 activeTab === "settings" ? "text-primary" : "text-muted-foreground"
               }`}
             >
-              <Settings className="h-4 w-4" />
+              <Settings className="h-5 w-5" />
               <span className="text-[10px] font-medium">Settings</span>
             </button>
           </div>
         </div>
 
         {/* Main Content */}
-        <main className="flex-1 p-3 sm:p-6 lg:p-8 pb-16 lg:pb-8 overflow-auto">
+        <main className="flex-1 p-3 sm:p-6 lg:p-8 pb-20 lg:pb-8 overflow-auto">
           {/* Verification Banner — shown until profile is verified */}
           {!isVerifiedProfile && influencerStatus !== 'REJECTED' && (
             <div
@@ -1058,10 +1058,10 @@ export default function InfluencerDashboard() {
             >
               <AlertCircle className="h-4 w-4 sm:h-5 sm:w-5 text-primary shrink-0" />
               <div className="flex-1 min-w-0">
-                <h4 className="font-semibold text-[11px] sm:text-sm leading-tight">Complete your profile to get verified</h4>
-                <p className="text-muted-foreground text-[10px] sm:text-xs mt-0.5 hidden sm:block">Fill in your social media handles, followers, and average views. Verified creators get more campaign offers.</p>
+                <h4 className="font-semibold text-xs sm:text-sm leading-tight">Complete your profile to get verified</h4>
+                <p className="text-muted-foreground text-xs mt-0.5 hidden sm:block">Fill in your social media handles, followers, and average views. Verified creators get more campaign offers.</p>
               </div>
-              <span className="text-[10px] sm:text-xs text-primary font-medium shrink-0">Go →</span>
+              <span className="text-xs text-primary font-medium shrink-0">Go →</span>
             </div>
           )}
           {influencerStatus === 'REJECTED' && (
@@ -1084,7 +1084,7 @@ export default function InfluencerDashboard() {
               transition={{ duration: 0.3 }}
             >
               <div className="mb-3 sm:mb-6">
-                <h1 className="text-base sm:text-3xl font-bold mb-1 sm:mb-2">Discover Campaigns</h1>
+                <h1 className="text-lg sm:text-3xl font-bold mb-1 sm:mb-2">Discover Campaigns</h1>
                 <p className="text-muted-foreground text-xs sm:text-base">
                   Find and apply to campaigns that match your audience
                 </p>
@@ -1099,13 +1099,13 @@ export default function InfluencerDashboard() {
                       placeholder="Search campaigns or projects..."
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
-                      className="pl-9 sm:pl-10 h-9 sm:h-11 text-xs sm:text-sm"
+                      className="pl-9 sm:pl-10 h-10 sm:h-11 text-xs sm:text-sm"
                     />
                   </div>
                   <Button
                     variant="outline"
                     onClick={() => setShowFilters(!showFilters)}
-                    className="h-9 sm:h-11 gap-1.5 sm:gap-2 shrink-0 text-xs sm:text-sm hover:bg-primary/10 hover:text-primary hover:border-primary/30"
+                    className="h-10 sm:h-11 gap-1.5 sm:gap-2 shrink-0 text-xs sm:text-sm hover:bg-primary/10 hover:text-primary hover:border-primary/30"
                   >
                     <Filter className="h-4 w-4" />
                     Filters
@@ -1217,21 +1217,21 @@ export default function InfluencerDashboard() {
                           <div className="flex items-start justify-between gap-2 sm:gap-4 mb-1 sm:mb-2">
                             <div className="flex-1 min-w-0">
                               <h3 className="text-sm sm:text-xl font-bold mb-0.5 truncate">{campaign.title}</h3>
-                              <div className="flex items-center gap-1.5 text-[10px] sm:text-sm text-muted-foreground">
+                              <div className="flex items-center gap-1.5 text-xs sm:text-sm text-muted-foreground">
                                 <span className="font-medium">{campaign.brand}</span>
                                 <span>•</span>
                                 <span>{campaign.category}</span>
                               </div>
                             </div>
-                            <Badge className={`${getStatusColor(campaign.status)} shrink-0 px-2 py-0.5 sm:px-3 sm:py-1 border text-[10px] sm:text-xs`}>
+                            <Badge className={`${getStatusColor(campaign.status)} shrink-0 px-2 py-0.5 sm:px-3 sm:py-1 border text-xs`}>
                               {getStatusLabel(campaign.status)}
                             </Badge>
                           </div>
 
-                          <p className="text-[10px] sm:text-sm text-muted-foreground mb-2 sm:mb-3 line-clamp-1 sm:line-clamp-2">{campaign.description}</p>
+                          <p className="text-xs sm:text-sm text-muted-foreground mb-2 sm:mb-3 line-clamp-2">{campaign.description}</p>
 
                           {/* Price, Pricing Basis, and Platforms */}
-                          <div className="flex flex-wrap items-center gap-2 sm:gap-6 mb-2 sm:mb-3 text-[10px] sm:text-sm">
+                          <div className="flex flex-wrap items-center gap-2 sm:gap-6 mb-2 sm:mb-3 text-xs sm:text-sm">
                             <div className="flex items-center gap-1 sm:gap-2">
                               <DollarSign className="h-3 w-3 sm:h-4 sm:w-4 text-primary" />
                               <span className="font-bold text-xs sm:text-sm">
@@ -1242,12 +1242,12 @@ export default function InfluencerDashboard() {
                             <div className="flex items-center gap-1.5">
                               {campaign.pricingModels.length > 0 ? (
                                 campaign.pricingModels.map((m) => (
-                                  <Badge key={m} variant="outline" className={`text-[10px] px-2 py-0.5 ${getPricingBadgeStyle(m)}`}>
+                                  <Badge key={m} variant="outline" className={`text-xs px-2 py-0.5 ${getPricingBadgeStyle(m)}`}>
                                     {m.toUpperCase()}
                                   </Badge>
                                 ))
                               ) : (
-                                <Badge variant="outline" className={`text-[10px] px-2 py-0.5 ${getPricingBadgeStyle(campaign.pricingModel)}`}>
+                                <Badge variant="outline" className={`text-xs px-2 py-0.5 ${getPricingBadgeStyle(campaign.pricingModel)}`}>
                                   {campaign.pricingModel}
                                 </Badge>
                               )}
@@ -1272,7 +1272,7 @@ export default function InfluencerDashboard() {
                             {campaign.contentFormats.length > 0 && (
                               <div className="flex flex-wrap gap-1.5">
                                 {campaign.contentFormats.map((format) => (
-                                  <span key={format} className="text-[10px] text-muted-foreground bg-muted/50 px-2 py-0.5 rounded">
+                                  <span key={format} className="text-xs text-muted-foreground bg-muted/50 px-2 py-0.5 rounded">
                                     {format.replace(/-/g, ' ')}
                                   </span>
                                 ))}
@@ -1282,10 +1282,10 @@ export default function InfluencerDashboard() {
 
                           {/* Requirements */}
                           <div className="mb-2 sm:mb-3">
-                            <div className="text-[10px] sm:text-xs font-medium text-muted-foreground mb-1 sm:mb-2">Must mention:</div>
+                            <div className="text-xs font-medium text-muted-foreground mb-1 sm:mb-2">Must mention:</div>
                             <div className="flex flex-wrap gap-1 sm:gap-2">
                               {campaign.requirements.map((req, idx) => (
-                                <span key={idx} className="text-[10px] sm:text-xs bg-muted/50 px-2 py-1 sm:px-3 sm:py-1.5 rounded-md">
+                                <span key={idx} className="text-xs bg-muted/50 px-2 py-1 sm:px-3 sm:py-1.5 rounded-md">
                                   {req}
                                 </span>
                               ))}
@@ -1300,7 +1300,7 @@ export default function InfluencerDashboard() {
                                 return (
                                   <Button
                                     size="sm"
-                                    className="bg-primary/10 text-primary hover:bg-primary/20 border border-primary/30 h-7 sm:h-9 text-xs sm:text-sm px-3 sm:px-4"
+                                    className="bg-primary/10 text-primary hover:bg-primary/20 border border-primary/30 h-8 sm:h-9 text-xs sm:text-sm px-3 sm:px-4"
                                     onClick={() => setApplyingCampaign(campaign)}
                                   >
                                     Apply Now
@@ -2300,7 +2300,7 @@ export default function InfluencerDashboard() {
               ) : (
                 <>
                   <div className="mb-3 sm:mb-6">
-                    <h1 className="text-base sm:text-3xl font-bold mb-1 sm:mb-2">My Campaigns</h1>
+                    <h1 className="text-lg sm:text-3xl font-bold mb-1 sm:mb-2">My Campaigns</h1>
                     <p className="text-muted-foreground text-xs sm:text-base">
                       Track and manage your active collaborations
                     </p>
@@ -2493,7 +2493,7 @@ export default function InfluencerDashboard() {
                             </div>
                             <Badge
                               variant={campaign.status === "active" ? "default" : "secondary"}
-                              className={`text-[10px] px-2 py-0 h-5 ${getStatusColor(campaign.status)} border`}
+                              className={`text-xs px-2 py-0 h-5 ${getStatusColor(campaign.status)} border`}
                             >
                               <div className={`w-1.5 h-1.5 rounded-full mr-1 ${getStatusDotColor(campaign.status)}`} />
                               {getStatusLabel(campaign.status)}
@@ -2507,12 +2507,12 @@ export default function InfluencerDashboard() {
                             <div className="flex flex-wrap gap-1">
                               {campaign.pricingModels.length > 0 ? (
                                 campaign.pricingModels.map((m) => (
-                                  <div key={m} className={`inline-block text-[10px] px-2 py-0.5 rounded-md font-medium ${getPricingBadgeStyle(m)}`}>
+                                  <div key={m} className={`inline-block text-xs px-2 py-0.5 rounded-md font-medium ${getPricingBadgeStyle(m)}`}>
                                     {m.toUpperCase()}
                                   </div>
                                 ))
                               ) : (
-                                <div className={`inline-block text-[10px] px-2 py-0.5 rounded-md font-medium ${getPricingBadgeStyle(campaign.pricingModel)}`}>
+                                <div className={`inline-block text-xs px-2 py-0.5 rounded-md font-medium ${getPricingBadgeStyle(campaign.pricingModel)}`}>
                                   {campaign.pricingModel}
                                 </div>
                               )}
@@ -2560,7 +2560,7 @@ export default function InfluencerDashboard() {
               <div className="mb-6 sm:mb-8">
                 <div className="flex items-center justify-between gap-3">
                   <div className="min-w-0">
-                    <h1 className="text-base sm:text-3xl font-bold mb-1">Wallet</h1>
+                    <h1 className="text-lg sm:text-3xl font-bold mb-1">Wallet</h1>
                     <p className="text-muted-foreground text-xs sm:text-sm">Your earnings and transaction history</p>
                   </div>
                   <Button size="sm" variant="outline" className="h-8 sm:h-9 px-4 sm:px-5 text-xs sm:text-sm shrink-0" onClick={() => setShowWithdrawModal(true)}>
@@ -2573,13 +2573,13 @@ export default function InfluencerDashboard() {
                 {/* Balance Overview */}
                 <div className="grid grid-cols-2 gap-3 sm:gap-4">
                   <div className="rounded-xl border border-border p-4 sm:p-6">
-                    <p className="text-[10px] sm:text-xs text-muted-foreground mb-1 sm:mb-2">Available Balance</p>
+                    <p className="text-xs text-muted-foreground mb-1 sm:mb-2">Available Balance</p>
                     <p className="text-xl sm:text-3xl font-bold text-primary">
                       ${walletBalance !== null ? walletBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '0.00'}
                     </p>
                   </div>
                   <div className="rounded-xl border border-border p-4 sm:p-6">
-                    <p className="text-[10px] sm:text-xs text-muted-foreground mb-1 sm:mb-2">Pending</p>
+                    <p className="text-xs text-muted-foreground mb-1 sm:mb-2">Pending</p>
                     <p className="text-xl sm:text-3xl font-bold text-foreground">
                       ${walletPending !== null ? walletPending.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '0.00'}
                     </p>
@@ -2626,16 +2626,16 @@ export default function InfluencerDashboard() {
                                   {typeLabels[t] || tx.type}
                                 </span>
                                 {isFailed && (
-                                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-red-500/10 text-red-600 font-medium">Failed</span>
+                                  <span className="text-xs px-1.5 py-0.5 rounded bg-red-500/10 text-red-600 font-medium">Failed</span>
                                 )}
                                 {isPending && (
-                                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-600 font-medium">Pending</span>
+                                  <span className="text-xs px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-600 font-medium">Pending</span>
                                 )}
                               </div>
                               <p className="text-xs text-muted-foreground truncate mt-0.5">
                                 {description}
                               </p>
-                              <p className="text-[10px] text-muted-foreground">
+                              <p className="text-xs text-muted-foreground">
                                 {new Date(tx.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
                               </p>
                             </div>
@@ -2648,7 +2648,7 @@ export default function InfluencerDashboard() {
                                     {isIncoming ? '+' : '-'}${(tx.amount / 100).toFixed(2)}
                                   </p>
                                   {tx.fee > 0 && (
-                                    <p className="text-[10px] text-muted-foreground">Fee: ${(tx.fee / 100).toFixed(2)}</p>
+                                    <p className="text-xs text-muted-foreground">Fee: ${(tx.fee / 100).toFixed(2)}</p>
                                   )}
                                 </>
                               )}
@@ -2674,7 +2674,7 @@ export default function InfluencerDashboard() {
               transition={{ duration: 0.3 }}
             >
               <div className="mb-3 sm:mb-6">
-                <h1 className="text-base sm:text-3xl font-bold mb-1 sm:mb-2">Influencer Profile</h1>
+                <h1 className="text-lg sm:text-3xl font-bold mb-1 sm:mb-2">Influencer Profile</h1>
                 <p className="text-muted-foreground text-xs sm:text-base">Manage your public profile and portfolio</p>
               </div>
 
@@ -2728,7 +2728,7 @@ export default function InfluencerDashboard() {
                         <Camera className="h-4 w-4 mr-2" />
                         Upload Avatar
                       </Button>
-                      <p className="text-[10px] sm:text-xs text-muted-foreground mt-1 sm:mt-2">JPG, PNG or SVG. Max 2MB.</p>
+                      <p className="text-xs text-muted-foreground mt-1 sm:mt-2">JPG, PNG or SVG. Max 2MB.</p>
                     </div>
                   </div>
 
@@ -2741,7 +2741,7 @@ export default function InfluencerDashboard() {
                       placeholder="Your Name"
                       value={profileData.displayName}
                       onChange={(e) => setProfileData(p => ({...p, displayName: e.target.value}))}
-                      className="h-9 sm:h-11 text-sm"
+                      className="h-10 sm:h-11 text-sm"
                     />
                   </div>
 
@@ -2764,7 +2764,7 @@ export default function InfluencerDashboard() {
                       Primary Category
                     </Label>
                     <Select value={profileData.category} onValueChange={(val) => setProfileData(p => ({...p, category: val}))}>
-                      <SelectTrigger className="h-9 sm:h-11 text-sm">
+                      <SelectTrigger className="h-10 sm:h-11 text-sm">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
@@ -2784,7 +2784,7 @@ export default function InfluencerDashboard() {
 
                   <div className="space-y-2.5 sm:space-y-4">
                     <Label className="text-xs sm:text-sm font-medium">Social Media</Label>
-                    <p className="text-[10px] sm:text-xs text-muted-foreground">Fill in your handles and stats. Changes save automatically.</p>
+                    <p className="text-xs text-muted-foreground">Fill in your handles and stats. Changes save automatically.</p>
 
                     {/* X (Twitter) */}
                     <div className={`rounded-lg border p-3 space-y-2 ${profileData.twitterVerified ? 'border-success/30 bg-success/5' : 'border-border'}`} onBlur={(e) => { if (!e.currentTarget.contains(e.relatedTarget as Node)) autoSaveProfile(); }}>
@@ -2796,9 +2796,9 @@ export default function InfluencerDashboard() {
                         {profileData.twitterVerified && <CheckCircle2 className="h-4 w-4 text-success" />}
                       </div>
                       <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
-                        <Input placeholder="@handle" value={profileData.twitter} onChange={(e) => setProfileData(p => ({...p, twitter: e.target.value}))} className="h-8 sm:h-10 text-xs sm:text-sm col-span-3 sm:col-span-1" />
-                        <Input type="number" placeholder="Followers" value={profileData.twitterFollowers || ''} onChange={(e) => setProfileData(p => ({...p, twitterFollowers: e.target.value}))} className="h-8 sm:h-10 text-xs sm:text-sm" min="0" />
-                        <Input type="number" placeholder="Avg. views" value={profileData.twitterAvgViews || ''} onChange={(e) => setProfileData(p => ({...p, twitterAvgViews: e.target.value}))} className="h-8 sm:h-10 text-xs sm:text-sm" min="0" />
+                        <Input placeholder="@handle" value={profileData.twitter} onChange={(e) => setProfileData(p => ({...p, twitter: e.target.value}))} className="h-10 text-xs sm:text-sm col-span-3 sm:col-span-1" />
+                        <Input type="number" placeholder="Followers" value={profileData.twitterFollowers || ''} onChange={(e) => setProfileData(p => ({...p, twitterFollowers: e.target.value}))} className="h-10 text-xs sm:text-sm" min="0" />
+                        <Input type="number" placeholder="Avg. views" value={profileData.twitterAvgViews || ''} onChange={(e) => setProfileData(p => ({...p, twitterAvgViews: e.target.value}))} className="h-10 text-xs sm:text-sm" min="0" />
                       </div>
                       {!profileData.twitterVerified && profileData.twitter && (
                         <Button type="button" variant="outline" size="sm" className="h-8 text-xs w-full" onClick={async () => {
@@ -2822,9 +2822,9 @@ export default function InfluencerDashboard() {
                         {profileData.telegramVerified && <CheckCircle2 className="h-4 w-4 text-success" />}
                       </div>
                       <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
-                        <Input placeholder="@channel" value={profileData.telegram || ''} onChange={(e) => setProfileData(p => ({...p, telegram: e.target.value}))} className="h-8 sm:h-10 text-xs sm:text-sm col-span-3 sm:col-span-1" />
-                        <Input type="number" placeholder="Subscribers" value={profileData.telegramFollowers || ''} onChange={(e) => setProfileData(p => ({...p, telegramFollowers: e.target.value}))} className="h-8 sm:h-10 text-xs sm:text-sm" min="0" />
-                        <Input type="number" placeholder="Avg. views" value={profileData.telegramAvgViews || ''} onChange={(e) => setProfileData(p => ({...p, telegramAvgViews: e.target.value}))} className="h-8 sm:h-10 text-xs sm:text-sm" min="0" />
+                        <Input placeholder="@channel" value={profileData.telegram || ''} onChange={(e) => setProfileData(p => ({...p, telegram: e.target.value}))} className="h-10 text-xs sm:text-sm col-span-3 sm:col-span-1" />
+                        <Input type="number" placeholder="Subscribers" value={profileData.telegramFollowers || ''} onChange={(e) => setProfileData(p => ({...p, telegramFollowers: e.target.value}))} className="h-10 text-xs sm:text-sm" min="0" />
+                        <Input type="number" placeholder="Avg. views" value={profileData.telegramAvgViews || ''} onChange={(e) => setProfileData(p => ({...p, telegramAvgViews: e.target.value}))} className="h-10 text-xs sm:text-sm" min="0" />
                       </div>
                       {!profileData.telegramVerified && profileData.telegram && (
                         <Button type="button" variant="outline" size="sm" className="h-8 text-xs w-full" onClick={async () => {
@@ -2848,9 +2848,9 @@ export default function InfluencerDashboard() {
                         {profileData.instagramVerified && <CheckCircle2 className="h-4 w-4 text-success" />}
                       </div>
                       <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
-                        <Input placeholder="@handle" value={profileData.instagram} onChange={(e) => setProfileData(p => ({...p, instagram: e.target.value}))} className="h-8 sm:h-10 text-xs sm:text-sm col-span-3 sm:col-span-1" />
-                        <Input type="number" placeholder="Followers" value={profileData.instagramFollowers} onChange={(e) => setProfileData(p => ({...p, instagramFollowers: e.target.value}))} className="h-8 sm:h-10 text-xs sm:text-sm" min="0" />
-                        <Input type="number" placeholder="Avg. views" value={profileData.instagramAvgViews || ''} onChange={(e) => setProfileData(p => ({...p, instagramAvgViews: e.target.value}))} className="h-8 sm:h-10 text-xs sm:text-sm" min="0" />
+                        <Input placeholder="@handle" value={profileData.instagram} onChange={(e) => setProfileData(p => ({...p, instagram: e.target.value}))} className="h-10 text-xs sm:text-sm col-span-3 sm:col-span-1" />
+                        <Input type="number" placeholder="Followers" value={profileData.instagramFollowers} onChange={(e) => setProfileData(p => ({...p, instagramFollowers: e.target.value}))} className="h-10 text-xs sm:text-sm" min="0" />
+                        <Input type="number" placeholder="Avg. views" value={profileData.instagramAvgViews || ''} onChange={(e) => setProfileData(p => ({...p, instagramAvgViews: e.target.value}))} className="h-10 text-xs sm:text-sm" min="0" />
                       </div>
                       {!profileData.instagramVerified && profileData.instagram && (
                         <Button type="button" variant="outline" size="sm" className="h-8 text-xs w-full" onClick={async () => {
@@ -2876,9 +2876,9 @@ export default function InfluencerDashboard() {
                         {profileData.tiktokVerified && <CheckCircle2 className="h-4 w-4 text-success" />}
                       </div>
                       <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
-                        <Input placeholder="@handle" value={profileData.tiktok} onChange={(e) => setProfileData(p => ({...p, tiktok: e.target.value}))} className="h-8 sm:h-10 text-xs sm:text-sm col-span-3 sm:col-span-1" />
-                        <Input type="number" placeholder="Followers" value={profileData.tiktokFollowers} onChange={(e) => setProfileData(p => ({...p, tiktokFollowers: e.target.value}))} className="h-8 sm:h-10 text-xs sm:text-sm" min="0" />
-                        <Input type="number" placeholder="Avg. views" value={profileData.tiktokAvgViews || ''} onChange={(e) => setProfileData(p => ({...p, tiktokAvgViews: e.target.value}))} className="h-8 sm:h-10 text-xs sm:text-sm" min="0" />
+                        <Input placeholder="@handle" value={profileData.tiktok} onChange={(e) => setProfileData(p => ({...p, tiktok: e.target.value}))} className="h-10 text-xs sm:text-sm col-span-3 sm:col-span-1" />
+                        <Input type="number" placeholder="Followers" value={profileData.tiktokFollowers} onChange={(e) => setProfileData(p => ({...p, tiktokFollowers: e.target.value}))} className="h-10 text-xs sm:text-sm" min="0" />
+                        <Input type="number" placeholder="Avg. views" value={profileData.tiktokAvgViews || ''} onChange={(e) => setProfileData(p => ({...p, tiktokAvgViews: e.target.value}))} className="h-10 text-xs sm:text-sm" min="0" />
                       </div>
                       {!profileData.tiktokVerified && profileData.tiktok && (
                         <Button type="button" variant="outline" size="sm" className="h-8 text-xs w-full" onClick={async () => {
@@ -2902,9 +2902,9 @@ export default function InfluencerDashboard() {
                         {profileData.youtubeVerified && <CheckCircle2 className="h-4 w-4 text-success" />}
                       </div>
                       <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
-                        <Input placeholder="@channel" value={profileData.youtube} onChange={(e) => setProfileData(p => ({...p, youtube: e.target.value}))} className="h-8 sm:h-10 text-xs sm:text-sm col-span-3 sm:col-span-1" />
-                        <Input type="number" placeholder="Subscribers" value={profileData.youtubeSubscribers} onChange={(e) => setProfileData(p => ({...p, youtubeSubscribers: e.target.value}))} className="h-8 sm:h-10 text-xs sm:text-sm" min="0" />
-                        <Input type="number" placeholder="Avg. views" value={profileData.youtubeAvgViews || ''} onChange={(e) => setProfileData(p => ({...p, youtubeAvgViews: e.target.value}))} className="h-8 sm:h-10 text-xs sm:text-sm" min="0" />
+                        <Input placeholder="@channel" value={profileData.youtube} onChange={(e) => setProfileData(p => ({...p, youtube: e.target.value}))} className="h-10 text-xs sm:text-sm col-span-3 sm:col-span-1" />
+                        <Input type="number" placeholder="Subscribers" value={profileData.youtubeSubscribers} onChange={(e) => setProfileData(p => ({...p, youtubeSubscribers: e.target.value}))} className="h-10 text-xs sm:text-sm" min="0" />
+                        <Input type="number" placeholder="Avg. views" value={profileData.youtubeAvgViews || ''} onChange={(e) => setProfileData(p => ({...p, youtubeAvgViews: e.target.value}))} className="h-10 text-xs sm:text-sm" min="0" />
                       </div>
                       {!profileData.youtubeVerified && profileData.youtube && (
                         <Button type="button" variant="outline" size="sm" className="h-8 text-xs w-full" onClick={async () => {
@@ -2928,38 +2928,38 @@ export default function InfluencerDashboard() {
 
                   <div className="space-y-2.5 sm:space-y-4 pt-2" onBlur={(e) => { if (!e.currentTarget.contains(e.relatedTarget as Node)) autoSaveProfile(); }}>
                     <Label className="text-xs sm:text-sm font-medium">Your Rates (USD)</Label>
-                    <p className="text-[10px] sm:text-xs text-muted-foreground">Optional. Final price is negotiated per campaign.</p>
+                    <p className="text-xs text-muted-foreground">Optional. Final price is negotiated per campaign.</p>
 
                     <div className="grid grid-cols-2 gap-2 sm:gap-3">
                       <div className="rounded-lg border border-border p-2 sm:p-3 space-y-1 sm:space-y-2">
-                        <Label className="text-[10px] sm:text-xs font-medium block">CPM (per 1K views)</Label>
+                        <Label className="text-xs font-medium block">CPM (per 1K views)</Label>
                         <div className="relative">
                           <DollarSign className="absolute left-2 sm:left-3 top-1/2 -translate-y-1/2 h-3 w-3 sm:h-4 sm:w-4 text-muted-foreground" />
-                          <Input type="number" placeholder="e.g. 10" value={profileData.cpmRate} onChange={(e) => setProfileData(p => ({...p, cpmRate: e.target.value}))} className="pl-7 sm:pl-10 h-8 sm:h-10 text-xs sm:text-sm" min="0" step="0.01" />
+                          <Input type="number" placeholder="e.g. 10" value={profileData.cpmRate} onChange={(e) => setProfileData(p => ({...p, cpmRate: e.target.value}))} className="pl-7 sm:pl-10 h-10 text-xs sm:text-sm" min="0" step="0.01" />
                         </div>
                       </div>
 
                       <div className="rounded-lg border border-border p-2 sm:p-3 space-y-1 sm:space-y-2">
-                        <Label className="text-[10px] sm:text-xs font-medium block">CPC (per click)</Label>
+                        <Label className="text-xs font-medium block">CPC (per click)</Label>
                         <div className="relative">
                           <DollarSign className="absolute left-2 sm:left-3 top-1/2 -translate-y-1/2 h-3 w-3 sm:h-4 sm:w-4 text-muted-foreground" />
-                          <Input type="number" placeholder="e.g. 0.50" value={profileData.cpcRate} onChange={(e) => setProfileData(p => ({...p, cpcRate: e.target.value}))} className="pl-7 sm:pl-10 h-8 sm:h-10 text-xs sm:text-sm" min="0" step="0.01" />
+                          <Input type="number" placeholder="e.g. 0.50" value={profileData.cpcRate} onChange={(e) => setProfileData(p => ({...p, cpcRate: e.target.value}))} className="pl-7 sm:pl-10 h-10 text-xs sm:text-sm" min="0" step="0.01" />
                         </div>
                       </div>
 
                       <div className="rounded-lg border border-border p-2 sm:p-3 space-y-1 sm:space-y-2">
-                        <Label className="text-[10px] sm:text-xs font-medium block">CPE (per engagement)</Label>
+                        <Label className="text-xs font-medium block">CPE (per engagement)</Label>
                         <div className="relative">
                           <DollarSign className="absolute left-2 sm:left-3 top-1/2 -translate-y-1/2 h-3 w-3 sm:h-4 sm:w-4 text-muted-foreground" />
-                          <Input type="number" placeholder="e.g. 0.20" value={profileData.cpeRate} onChange={(e) => setProfileData(p => ({...p, cpeRate: e.target.value}))} className="pl-7 sm:pl-10 h-8 sm:h-10 text-xs sm:text-sm" min="0" step="0.01" />
+                          <Input type="number" placeholder="e.g. 0.20" value={profileData.cpeRate} onChange={(e) => setProfileData(p => ({...p, cpeRate: e.target.value}))} className="pl-7 sm:pl-10 h-10 text-xs sm:text-sm" min="0" step="0.01" />
                         </div>
                       </div>
 
                       <div className="rounded-lg border border-border p-2 sm:p-3 space-y-1 sm:space-y-2">
-                        <Label className="text-[10px] sm:text-xs font-medium block">Avg. post price</Label>
+                        <Label className="text-xs font-medium block">Avg. post price</Label>
                         <div className="relative">
                           <DollarSign className="absolute left-2 sm:left-3 top-1/2 -translate-y-1/2 h-3 w-3 sm:h-4 sm:w-4 text-muted-foreground" />
-                          <Input type="number" placeholder="e.g. 200" value={profileData.averagePostPrice} onChange={(e) => setProfileData(p => ({...p, averagePostPrice: e.target.value}))} className="pl-7 sm:pl-10 h-8 sm:h-10 text-xs sm:text-sm" min="0" step="1" />
+                          <Input type="number" placeholder="e.g. 200" value={profileData.averagePostPrice} onChange={(e) => setProfileData(p => ({...p, averagePostPrice: e.target.value}))} className="pl-7 sm:pl-10 h-10 text-xs sm:text-sm" min="0" step="1" />
                         </div>
                       </div>
                     </div>
@@ -2968,7 +2968,7 @@ export default function InfluencerDashboard() {
                   <div className="flex gap-2 sm:gap-3 pt-3 sm:pt-4">
                     <Button
                       type="button"
-                      className="flex-1 h-9 sm:h-11 text-xs sm:text-sm bg-gradient-to-r from-primary to-secondary hover:opacity-90"
+                      className="flex-1 h-10 sm:h-11 text-sm bg-gradient-to-r from-primary to-secondary hover:opacity-90"
                       onClick={async () => {
                         try {
                           const res = await fetch('/api/influencers/me', {
@@ -3029,7 +3029,7 @@ export default function InfluencerDashboard() {
               transition={{ duration: 0.3 }}
             >
               <div className="mb-3 sm:mb-6">
-                <h1 className="text-base sm:text-3xl font-bold mb-1 sm:mb-2">Settings</h1>
+                <h1 className="text-lg sm:text-3xl font-bold mb-1 sm:mb-2">Settings</h1>
                 <p className="text-muted-foreground text-xs sm:text-base">
                   Manage your account preferences
                 </p>
@@ -3040,15 +3040,15 @@ export default function InfluencerDashboard() {
                   <h3 className="text-xs sm:text-sm font-semibold mb-2 sm:mb-3">Account</h3>
                   <div className="space-y-3 sm:space-y-4">
                     <div>
-                      <Label className="text-[10px] sm:text-xs text-muted-foreground">Email</Label>
+                      <Label className="text-xs text-muted-foreground">Email</Label>
                       <div className="flex items-center gap-2 mt-1">
-                        <Input value={userEmail} readOnly className="h-8 sm:h-10 text-xs sm:text-sm bg-muted/50" />
+                        <Input value={userEmail} readOnly className="h-10 text-xs sm:text-sm bg-muted/50" />
                         {emailVerified && <CheckCircle2 className="h-4 w-4 text-success shrink-0" />}
                       </div>
                     </div>
 
                     <div className="border-t pt-3 sm:pt-4">
-                      <Label className="text-[10px] sm:text-xs font-medium mb-1 sm:mb-2 block">Change Password</Label>
+                      <Label className="text-xs font-medium mb-1 sm:mb-2 block">Change Password</Label>
                       <form onSubmit={async (e) => {
                         e.preventDefault();
                         const form = e.currentTarget;
@@ -3068,9 +3068,9 @@ export default function InfluencerDashboard() {
                           else showToast(data.error || 'Failed to change password', 'error');
                         } catch { showToast('Failed to change password', 'error'); }
                       }} className="space-y-2">
-                        <Input name="currentPassword" type="password" placeholder="Current password" className="h-8 sm:h-10 text-xs sm:text-sm" required />
-                        <Input name="newPassword" type="password" placeholder="New password" className="h-8 sm:h-10 text-xs sm:text-sm" required minLength={8} />
-                        <Input name="confirmPassword" type="password" placeholder="Confirm new password" className="h-8 sm:h-10 text-xs sm:text-sm" required minLength={8} />
+                        <Input name="currentPassword" type="password" placeholder="Current password" className="h-10 text-xs sm:text-sm" required />
+                        <Input name="newPassword" type="password" placeholder="New password" className="h-10 text-xs sm:text-sm" required minLength={8} />
+                        <Input name="confirmPassword" type="password" placeholder="Confirm new password" className="h-10 text-xs sm:text-sm" required minLength={8} />
                         <Button type="submit" size="sm">Change Password</Button>
                       </form>
                     </div>
@@ -3083,7 +3083,7 @@ export default function InfluencerDashboard() {
                     <div className="flex items-center justify-between">
                       <div>
                         <div className="text-xs sm:text-sm font-medium">Email Notifications</div>
-                        <div className="text-[10px] sm:text-xs text-muted-foreground">
+                        <div className="text-xs text-muted-foreground">
                           Receive email updates about your campaigns
                         </div>
                       </div>
@@ -3097,7 +3097,7 @@ export default function InfluencerDashboard() {
                     <div className="flex items-center justify-between">
                       <div>
                         <div className="text-xs sm:text-sm font-medium">Campaign Updates</div>
-                        <div className="text-[10px] sm:text-xs text-muted-foreground">
+                        <div className="text-xs text-muted-foreground">
                           Get notified about campaign invitations and application updates
                         </div>
                       </div>
@@ -3161,8 +3161,8 @@ export default function InfluencerDashboard() {
                       <div className="flex justify-center">
                         <img src={totpSetup.qrCode} alt="QR Code" className="w-48 h-48 rounded-lg border" />
                       </div>
-                      <p className="text-[10px] text-muted-foreground text-center">
-                        Or enter manually: <code className="bg-muted px-1 py-0.5 rounded text-[10px]">{totpSetup.secret}</code>
+                      <p className="text-xs text-muted-foreground text-center">
+                        Or enter manually: <code className="bg-muted px-1 py-0.5 rounded text-xs">{totpSetup.secret}</code>
                       </p>
                       <form onSubmit={async (e) => {
                         e.preventDefault();
