@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { OnboardingLayout } from "@/components/onboarding-layout";
 import { Button } from "@/components/ui/button";
-import { Check } from "lucide-react";
+import { Check, Sparkles } from "lucide-react";
 
 const niches = [
   "DeFi",
@@ -24,6 +24,7 @@ const niches = [
 export default function InfluencerOnboardingStep3() {
   const router = useRouter();
   const [selectedNiches, setSelectedNiches] = useState<string[]>([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const toggleNiche = (niche: string) => {
     setSelectedNiches((prev) =>
@@ -33,10 +34,59 @@ export default function InfluencerOnboardingStep3() {
     );
   };
 
-  const handleNext = () => {
+  const handleComplete = async () => {
     if (selectedNiches.length > 0) {
-      localStorage.setItem("influencer_onboarding_niches", JSON.stringify(selectedNiches));
-      router.push("/onboarding/influencer/step-4");
+      setIsSubmitting(true);
+      try {
+        const patchBody: Record<string, unknown> = {};
+        patchBody.niche = selectedNiches;
+        const handle = localStorage.getItem("influencer_onboarding_handle");
+        if (handle) patchBody.handle = handle;
+        const bio = localStorage.getItem("influencer_onboarding_bio");
+        if (bio) patchBody.bio = bio;
+        const ig = localStorage.getItem("influencer_onboarding_instagram");
+        if (ig) patchBody.instagramHandle = ig;
+        const tk = localStorage.getItem("influencer_onboarding_tiktok");
+        if (tk) patchBody.tiktokHandle = tk;
+        const yt = localStorage.getItem("influencer_onboarding_youtube");
+        if (yt) patchBody.youtubeHandle = yt;
+        const tw = localStorage.getItem("influencer_onboarding_twitter");
+        if (tw) patchBody.twitterHandle = tw;
+        const tg = localStorage.getItem("influencer_onboarding_telegram");
+        if (tg) patchBody.telegramHandle = tg;
+
+        const res = await fetch("/api/influencers/me", {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(patchBody),
+        });
+
+        if (!res.ok) {
+          const data = await res.json();
+          throw new Error(data.error || "Failed to save profile");
+        }
+
+        // Clean up localStorage
+        const keys = [
+          "influencer_onboarding_source",
+          "influencer_onboarding_handle",
+          "influencer_onboarding_bio",
+          "influencer_onboarding_instagram",
+          "influencer_onboarding_tiktok",
+          "influencer_onboarding_youtube",
+          "influencer_onboarding_twitter",
+          "influencer_onboarding_telegram",
+          "influencer_onboarding_niches",
+        ];
+        keys.forEach((key) => localStorage.removeItem(key));
+
+        router.push("/dashboard/influencer");
+      } catch (err) {
+        setIsSubmitting(false);
+        const message = err instanceof Error ? err.message : 'Something went wrong';
+        alert(message);
+        console.error("Influencer onboarding error:", err);
+      }
     }
   };
 
@@ -47,7 +97,7 @@ export default function InfluencerOnboardingStep3() {
   return (
     <OnboardingLayout
       currentStep={3}
-      totalSteps={4}
+      totalSteps={3}
       title="Content focus"
       subtitle="Select the topics you cover or want to collaborate on."
       onBack={handleBack}
@@ -82,11 +132,21 @@ export default function InfluencerOnboardingStep3() {
       </div>
 
       <Button
-        onClick={handleNext}
-        disabled={selectedNiches.length === 0}
+        onClick={handleComplete}
+        disabled={selectedNiches.length === 0 || isSubmitting}
         className="w-full h-12 sm:h-14 bg-gradient-to-r from-primary to-secondary hover:opacity-90 text-base sm:text-lg"
       >
-        Next
+        {isSubmitting ? (
+          <>
+            <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
+            Setting up your profile...
+          </>
+        ) : (
+          <>
+            <Sparkles className="h-5 w-5 mr-2" />
+            Complete & Start Collaborating
+          </>
+        )}
       </Button>
     </OnboardingLayout>
   );

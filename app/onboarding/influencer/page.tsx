@@ -38,7 +38,7 @@ export default function InfluencerOnboardingStep1() {
   return (
     <OnboardingLayout
       currentStep={1}
-      totalSteps={4}
+      totalSteps={3}
       title="How did you hear about us?"
       subtitle="We want to know how you found out about Influx so we can improve our marketing efforts."
     >
