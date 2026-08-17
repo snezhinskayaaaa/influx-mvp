@@ -152,6 +152,7 @@ interface Campaign {
 export default function InfluencerDashboard() {
   const [activeTab, setActiveTab] = useState<"discover" | "my-campaigns" | "wallet" | "profile" | "settings">("discover");
   const activeTabRef = useRef(activeTab);
+  const emailVerifyShown = useRef(false);
   useEffect(() => { activeTabRef.current = activeTab; }, [activeTab]);
   const [toast, setToast] = useState<{ message: string; variant: 'success' | 'error' } | null>(null);
 
@@ -496,7 +497,10 @@ export default function InfluencerDashboard() {
             if (profileData.profile.totpEnabled) setTotpEnabled(true);
             if (!profileData.profile.emailVerified) {
               setEmailVerified(false);
-              setShowVerifyPopup(true);
+              if (!emailVerifyShown.current) {
+                setShowVerifyPopup(true);
+                emailVerifyShown.current = true;
+              }
             }
             if (profileData.profile.avatarUrl) {
               setAvatarUrl(profileData.profile.avatarUrl);
@@ -1049,18 +1053,15 @@ export default function InfluencerDashboard() {
           {/* Verification Banner — shown until profile is verified */}
           {!isVerifiedProfile && influencerStatus !== 'REJECTED' && (
             <div
-              className="mb-3 sm:mb-4 rounded-lg sm:rounded-xl border border-primary/30 bg-primary/5 p-2.5 sm:p-4 cursor-pointer hover:bg-primary/10 transition-colors"
+              className="mb-3 sm:mb-4 rounded-lg sm:rounded-xl border border-primary/30 bg-primary/5 px-2.5 py-2 sm:p-4 flex items-center gap-2 sm:gap-3 cursor-pointer hover:bg-primary/10 transition-colors"
               onClick={() => setActiveTab("profile")}
             >
-              <div className="flex items-start gap-2 sm:gap-3">
-                <AlertCircle className="h-4 w-4 sm:h-5 sm:w-5 text-primary shrink-0 mt-0.5" />
-                <div className="flex-1 min-w-0">
-                  <h4 className="font-semibold text-xs sm:text-sm">Complete your profile to get verified</h4>
-                  <p className="text-muted-foreground text-[10px] sm:text-xs mt-0.5 sm:mt-1 hidden sm:block">Fill in your social media handles, followers, and average views. Then request verification so projects can trust your numbers. Verified creators get more campaign offers.</p>
-                  <p className="text-muted-foreground text-[10px] mt-0.5 sm:hidden">Verified creators get more campaign offers.</p>
-                </div>
+              <AlertCircle className="h-4 w-4 sm:h-5 sm:w-5 text-primary shrink-0" />
+              <div className="flex-1 min-w-0">
+                <h4 className="font-semibold text-[11px] sm:text-sm leading-tight">Complete your profile to get verified</h4>
+                <p className="text-muted-foreground text-[10px] sm:text-xs mt-0.5 hidden sm:block">Fill in your social media handles, followers, and average views. Verified creators get more campaign offers.</p>
               </div>
-              <div className="text-[10px] sm:text-xs text-primary font-medium mt-1.5 sm:mt-2 text-right">Go to Profile →</div>
+              <span className="text-[10px] sm:text-xs text-primary font-medium shrink-0">Go →</span>
             </div>
           )}
           {influencerStatus === 'REJECTED' && (
@@ -1298,8 +1299,8 @@ export default function InfluencerDashboard() {
                               if (!myCollab) {
                                 return (
                                   <Button
-                                    size="default"
-                                    className="bg-primary/10 text-primary hover:bg-primary/20 border border-primary/30"
+                                    size="sm"
+                                    className="bg-primary/10 text-primary hover:bg-primary/20 border border-primary/30 h-7 sm:h-9 text-xs sm:text-sm px-3 sm:px-4"
                                     onClick={() => setApplyingCampaign(campaign)}
                                   >
                                     Apply Now
@@ -2925,49 +2926,49 @@ export default function InfluencerDashboard() {
                     </div>
                   </div>
 
-                  <div className="space-y-4 pt-2" onBlur={(e) => { if (!e.currentTarget.contains(e.relatedTarget as Node)) autoSaveProfile(); }}>
-                    <Label className="text-sm font-medium">Your Rates (USD)</Label>
-                    <p className="text-xs text-muted-foreground">Optional. Projects see these when browsing your profile. Fill in what makes sense for you. Final price is negotiated per campaign.</p>
+                  <div className="space-y-2.5 sm:space-y-4 pt-2" onBlur={(e) => { if (!e.currentTarget.contains(e.relatedTarget as Node)) autoSaveProfile(); }}>
+                    <Label className="text-xs sm:text-sm font-medium">Your Rates (USD)</Label>
+                    <p className="text-[10px] sm:text-xs text-muted-foreground">Optional. Final price is negotiated per campaign.</p>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                      <div className="rounded-lg border border-border p-3">
-                        <Label className="text-xs font-medium mb-2 block">CPM (per 1K views)</Label>
+                    <div className="grid grid-cols-2 gap-2 sm:gap-3">
+                      <div className="rounded-lg border border-border p-2 sm:p-3 space-y-1 sm:space-y-2">
+                        <Label className="text-[10px] sm:text-xs font-medium block">CPM (per 1K views)</Label>
                         <div className="relative">
-                          <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                          <Input type="number" placeholder="e.g. 10" value={profileData.cpmRate} onChange={(e) => setProfileData(p => ({...p, cpmRate: e.target.value}))} className="pl-10 h-10" min="0" step="0.01" />
+                          <DollarSign className="absolute left-2 sm:left-3 top-1/2 -translate-y-1/2 h-3 w-3 sm:h-4 sm:w-4 text-muted-foreground" />
+                          <Input type="number" placeholder="e.g. 10" value={profileData.cpmRate} onChange={(e) => setProfileData(p => ({...p, cpmRate: e.target.value}))} className="pl-7 sm:pl-10 h-8 sm:h-10 text-xs sm:text-sm" min="0" step="0.01" />
                         </div>
                       </div>
 
-                      <div className="rounded-lg border border-border p-3">
-                        <Label className="text-xs font-medium mb-2 block">CPC (per click)</Label>
+                      <div className="rounded-lg border border-border p-2 sm:p-3 space-y-1 sm:space-y-2">
+                        <Label className="text-[10px] sm:text-xs font-medium block">CPC (per click)</Label>
                         <div className="relative">
-                          <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                          <Input type="number" placeholder="e.g. 0.50" value={profileData.cpcRate} onChange={(e) => setProfileData(p => ({...p, cpcRate: e.target.value}))} className="pl-10 h-10" min="0" step="0.01" />
+                          <DollarSign className="absolute left-2 sm:left-3 top-1/2 -translate-y-1/2 h-3 w-3 sm:h-4 sm:w-4 text-muted-foreground" />
+                          <Input type="number" placeholder="e.g. 0.50" value={profileData.cpcRate} onChange={(e) => setProfileData(p => ({...p, cpcRate: e.target.value}))} className="pl-7 sm:pl-10 h-8 sm:h-10 text-xs sm:text-sm" min="0" step="0.01" />
                         </div>
                       </div>
 
-                      <div className="rounded-lg border border-border p-3">
-                        <Label className="text-xs font-medium mb-2 block">CPE (per engagement)</Label>
+                      <div className="rounded-lg border border-border p-2 sm:p-3 space-y-1 sm:space-y-2">
+                        <Label className="text-[10px] sm:text-xs font-medium block">CPE (per engagement)</Label>
                         <div className="relative">
-                          <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                          <Input type="number" placeholder="e.g. 0.20" value={profileData.cpeRate} onChange={(e) => setProfileData(p => ({...p, cpeRate: e.target.value}))} className="pl-10 h-10" min="0" step="0.01" />
+                          <DollarSign className="absolute left-2 sm:left-3 top-1/2 -translate-y-1/2 h-3 w-3 sm:h-4 sm:w-4 text-muted-foreground" />
+                          <Input type="number" placeholder="e.g. 0.20" value={profileData.cpeRate} onChange={(e) => setProfileData(p => ({...p, cpeRate: e.target.value}))} className="pl-7 sm:pl-10 h-8 sm:h-10 text-xs sm:text-sm" min="0" step="0.01" />
                         </div>
                       </div>
 
-                      <div className="rounded-lg border border-border p-3">
-                        <Label className="text-xs font-medium mb-2 block">Average post price</Label>
+                      <div className="rounded-lg border border-border p-2 sm:p-3 space-y-1 sm:space-y-2">
+                        <Label className="text-[10px] sm:text-xs font-medium block">Avg. post price</Label>
                         <div className="relative">
-                          <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                          <Input type="number" placeholder="e.g. 200" value={profileData.averagePostPrice} onChange={(e) => setProfileData(p => ({...p, averagePostPrice: e.target.value}))} className="pl-10 h-10" min="0" step="1" />
+                          <DollarSign className="absolute left-2 sm:left-3 top-1/2 -translate-y-1/2 h-3 w-3 sm:h-4 sm:w-4 text-muted-foreground" />
+                          <Input type="number" placeholder="e.g. 200" value={profileData.averagePostPrice} onChange={(e) => setProfileData(p => ({...p, averagePostPrice: e.target.value}))} className="pl-7 sm:pl-10 h-8 sm:h-10 text-xs sm:text-sm" min="0" step="1" />
                         </div>
                       </div>
                     </div>
                   </div>
 
-                  <div className="flex gap-3 pt-4">
+                  <div className="flex gap-2 sm:gap-3 pt-3 sm:pt-4">
                     <Button
                       type="button"
-                      className="flex-1 h-11 bg-gradient-to-r from-primary to-secondary hover:opacity-90"
+                      className="flex-1 h-9 sm:h-11 text-xs sm:text-sm bg-gradient-to-r from-primary to-secondary hover:opacity-90"
                       onClick={async () => {
                         try {
                           const res = await fetch('/api/influencers/me', {
