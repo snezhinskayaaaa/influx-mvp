@@ -4,38 +4,98 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { OnboardingLayout } from "@/components/onboarding-layout";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Check, Instagram, Youtube, Video, Twitter, Users, MessageCircle } from "lucide-react";
+import { Check, Sparkles, TrendingUp, Users, Heart } from "lucide-react";
 
-const platforms = [
-  { id: "twitter", name: "X (Twitter)", icon: Twitter },
-  { id: "telegram", name: "Telegram", icon: MessageCircle },
-  { id: "instagram", name: "Instagram", icon: Instagram },
-  { id: "tiktok", name: "TikTok", icon: Video },
-  { id: "youtube", name: "YouTube", icon: Youtube },
+const collaborationGoals = [
+  {
+    id: "grow-community",
+    title: "Grow my community",
+    description: "I want to collaborate with crypto projects that can help me reach new followers and expand my community across platforms.",
+    icon: TrendingUp,
+  },
+  {
+    id: "paid-crypto",
+    title: "Get paid in crypto",
+    description: "I'm focused on earning income in crypto through project partnerships, sponsored content, and leveraging my existing audience.",
+    icon: Sparkles,
+  },
+  {
+    id: "build-web3-portfolio",
+    title: "Build my Web3 portfolio",
+    description: "I want to work with diverse crypto projects to showcase my content creation skills and build a strong Web3 collaboration portfolio.",
+    icon: Users,
+  },
+  {
+    id: "partner-crypto-projects",
+    title: "Partner with crypto projects",
+    description: "I'm looking for crypto projects that align with my values and content style for genuine, long-term collaborations.",
+    icon: Heart,
+  },
 ];
 
-export default function InfluencerOnboardingStep4() {
+export default function InfluencerOnboardingStep5() {
   const router = useRouter();
-  const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>([]);
-  const [totalFollowers, setTotalFollowers] = useState("");
-  const [engagementRate, setEngagementRate] = useState("");
+  const [selectedGoal, setSelectedGoal] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const togglePlatform = (platform: string) => {
-    setSelectedPlatforms((prev) =>
-      prev.includes(platform)
-        ? prev.filter((p) => p !== platform)
-        : [...prev, platform]
-    );
-  };
+  const handleComplete = async () => {
+    if (selectedGoal) {
+      setIsSubmitting(true);
+      try {
+        const niches = JSON.parse(localStorage.getItem("influencer_onboarding_niches") || "[]") as string[];
 
-  const handleNext = () => {
-    if (selectedPlatforms.length > 0 && totalFollowers && parseInt(totalFollowers) > 0) {
-      localStorage.setItem("influencer_onboarding_platforms", JSON.stringify(selectedPlatforms));
-      localStorage.setItem("influencer_onboarding_followers", totalFollowers);
-      localStorage.setItem("influencer_onboarding_engagement", engagementRate);
-      router.push("/onboarding/influencer/step-5");
+        const patchBody: Record<string, unknown> = {};
+        if (niches.length > 0) patchBody.niche = niches;
+        const handle = localStorage.getItem("influencer_onboarding_handle");
+        if (handle) patchBody.handle = handle;
+        const bio = localStorage.getItem("influencer_onboarding_bio");
+        if (bio) patchBody.bio = bio;
+        const ig = localStorage.getItem("influencer_onboarding_instagram");
+        if (ig) patchBody.instagramHandle = ig;
+        const tk = localStorage.getItem("influencer_onboarding_tiktok");
+        if (tk) patchBody.tiktokHandle = tk;
+        const yt = localStorage.getItem("influencer_onboarding_youtube");
+        if (yt) patchBody.youtubeHandle = yt;
+        const tw = localStorage.getItem("influencer_onboarding_twitter");
+        if (tw) patchBody.twitterHandle = tw;
+        const tg = localStorage.getItem("influencer_onboarding_telegram");
+        if (tg) patchBody.telegramHandle = tg;
+
+        // Only call API if there's meaningful data to update
+        if (Object.keys(patchBody).length > 0) {
+          const res = await fetch("/api/influencers/me", {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(patchBody),
+          });
+
+          if (!res.ok) {
+            const data = await res.json();
+            throw new Error(data.error || "Failed to save profile");
+          }
+        }
+
+        // Clean up localStorage
+        const keys = [
+          "influencer_onboarding_source",
+          "influencer_onboarding_handle",
+          "influencer_onboarding_bio",
+          "influencer_onboarding_instagram",
+          "influencer_onboarding_tiktok",
+          "influencer_onboarding_youtube",
+          "influencer_onboarding_twitter",
+          "influencer_onboarding_telegram",
+          "influencer_onboarding_niches",
+        ];
+        keys.forEach((key) => localStorage.removeItem(key));
+
+        router.push("/dashboard/influencer");
+      } catch (err) {
+        setIsSubmitting(false);
+        const message = err instanceof Error ? err.message : 'Something went wrong';
+        alert(message);
+        console.error("Influencer onboarding error:", err);
+      }
     }
   };
 
@@ -43,107 +103,68 @@ export default function InfluencerOnboardingStep4() {
     router.push("/onboarding/influencer/step-3");
   };
 
-  const isValid = selectedPlatforms.length > 0 && totalFollowers && parseInt(totalFollowers) > 0;
-
   return (
     <OnboardingLayout
       currentStep={4}
-      totalSteps={5}
-      title="Platforms & audience"
-      subtitle="Tell us about your reach and where your audience can find you."
+      totalSteps={4}
+      title="Collaboration goals"
+      subtitle="What's your main goal for joining Influx? This helps us match you with the right projects."
       onBack={handleBack}
     >
-      <div className="space-y-8 mb-8">
-        {/* Platforms */}
-        <div>
-          <Label className="text-sm font-medium mb-4 block">
-            Active platforms
-            <span className="text-muted-foreground ml-2 font-normal">(Select all that apply)</span>
-          </Label>
-          <div className="grid grid-cols-2 gap-3">
-            {platforms.map((platform) => {
-              const Icon = platform.icon;
-              return (
-                <button
-                  key={platform.id}
-                  onClick={() => togglePlatform(platform.id)}
-                  className={`relative p-4 sm:p-5 rounded-xl border-2 transition-all ${
-                    selectedPlatforms.includes(platform.id)
-                      ? "border-primary bg-primary/5"
-                      : "border-border hover:border-primary/50"
-                  }`}
-                >
-                  <div className="flex items-center gap-3">
-                    <Icon className={`h-5 w-5 ${selectedPlatforms.includes(platform.id) ? "text-primary" : "text-muted-foreground"}`} />
-                    <span className="text-sm sm:text-base font-medium">{platform.name}</span>
-                    {selectedPlatforms.includes(platform.id) && (
-                      <div className="ml-auto w-5 h-5 rounded-full bg-primary flex items-center justify-center shrink-0">
-                        <Check className="h-3 w-3 text-primary-foreground" />
+      <div className="space-y-4 mb-8">
+        {collaborationGoals.map((goal) => {
+          const Icon = goal.icon;
+          return (
+            <button
+              key={goal.id}
+              onClick={() => setSelectedGoal(goal.id)}
+              className={`w-full relative p-5 sm:p-6 rounded-xl border-2 text-left transition-all ${
+                selectedGoal === goal.id
+                  ? "border-primary bg-primary/5"
+                  : "border-border hover:border-primary/50"
+              }`}
+            >
+              <div className="flex items-start gap-4">
+                <div className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 ${
+                  selectedGoal === goal.id ? "bg-primary/10" : "bg-muted"
+                }`}>
+                  <Icon className={`h-6 w-6 ${selectedGoal === goal.id ? "text-primary" : "text-muted-foreground"}`} />
+                </div>
+                <div className="flex-1">
+                  <div className="flex items-center justify-between mb-2">
+                    <h4 className="font-semibold text-base sm:text-lg">{goal.title}</h4>
+                    {selectedGoal === goal.id && (
+                      <div className="w-6 h-6 rounded-full bg-primary flex items-center justify-center shrink-0 ml-2">
+                        <Check className="h-4 w-4 text-primary-foreground" />
                       </div>
                     )}
                   </div>
-                </button>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* Total Followers */}
-        <div>
-          <Label htmlFor="followers" className="text-sm font-medium mb-2 block">
-            Total followers across all platforms
-          </Label>
-          <div className="relative">
-            <Users className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-            <Input
-              id="followers"
-              type="number"
-              placeholder="e.g., 50000"
-              value={totalFollowers}
-              onChange={(e) => setTotalFollowers(e.target.value)}
-              className="h-11 sm:h-12 pl-11"
-              min="0"
-            />
-          </div>
-          <p className="text-xs text-muted-foreground mt-1.5">
-            Enter your combined follower count from all platforms
-          </p>
-        </div>
-
-        {/* Engagement Rate */}
-        <div>
-          <Label htmlFor="engagement" className="text-sm font-medium mb-2 block">
-            Average engagement rate
-            <span className="text-muted-foreground ml-2 font-normal">(Optional)</span>
-          </Label>
-          <div className="relative">
-            <Input
-              id="engagement"
-              type="number"
-              placeholder="e.g., 5.2"
-              value={engagementRate}
-              onChange={(e) => setEngagementRate(e.target.value)}
-              className="h-11 sm:h-12 pr-10"
-              min="0"
-              max="100"
-              step="0.1"
-            />
-            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground text-sm">
-              %
-            </span>
-          </div>
-          <p className="text-xs text-muted-foreground mt-1.5">
-            Likes + Comments ÷ Followers × 100
-          </p>
-        </div>
+                  <p className="text-sm text-muted-foreground leading-relaxed">
+                    {goal.description}
+                  </p>
+                </div>
+              </div>
+            </button>
+          );
+        })}
       </div>
 
       <Button
-        onClick={handleNext}
-        disabled={!isValid}
+        onClick={handleComplete}
+        disabled={!selectedGoal || isSubmitting}
         className="w-full h-12 sm:h-14 bg-gradient-to-r from-primary to-secondary hover:opacity-90 text-base sm:text-lg"
       >
-        Next
+        {isSubmitting ? (
+          <>
+            <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
+            Setting up your profile...
+          </>
+        ) : (
+          <>
+            <Sparkles className="h-5 w-5 mr-2" />
+            Complete & Start Collaborating
+          </>
+        )}
       </Button>
     </OnboardingLayout>
   );
