@@ -37,12 +37,13 @@ export default function InfluencerOnboardingStep2() {
     router.push("/onboarding/influencer");
   };
 
-  const isValid = creatorName.trim() && bio.trim();
+  const hasAnySocial = twitter.trim() || telegram.trim() || instagram.trim() || tiktok.trim() || youtube.trim();
+  const isValid = creatorName.trim() && bio.trim() && hasAnySocial;
 
   return (
     <OnboardingLayout
       currentStep={2}
-      totalSteps={5}
+      totalSteps={4}
       title="Creator profile"
       subtitle="Tell projects about yourself and share your social media handles so they can find you."
       onBack={handleBack}
@@ -83,7 +84,7 @@ export default function InfluencerOnboardingStep2() {
         {/* Social Media Links */}
         <div className="pt-2">
           <Label className="text-sm font-medium mb-3 block">
-            Social Media Handles <span className="text-muted-foreground font-normal">(Optional)</span>
+            Social Media Handles <span className="text-muted-foreground font-normal">(at least 1 required)</span>
           </Label>
           <div className="space-y-3">
             <div className="relative">

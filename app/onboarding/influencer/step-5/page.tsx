@@ -86,9 +86,6 @@ export default function InfluencerOnboardingStep5() {
           "influencer_onboarding_twitter",
           "influencer_onboarding_telegram",
           "influencer_onboarding_niches",
-          "influencer_onboarding_platforms",
-          "influencer_onboarding_followers",
-          "influencer_onboarding_engagement",
         ];
         keys.forEach((key) => localStorage.removeItem(key));
 
@@ -103,15 +100,15 @@ export default function InfluencerOnboardingStep5() {
   };
 
   const handleBack = () => {
-    router.push("/onboarding/influencer/step-4");
+    router.push("/onboarding/influencer/step-3");
   };
 
   return (
     <OnboardingLayout
-      currentStep={5}
-      totalSteps={5}
+      currentStep={4}
+      totalSteps={4}
       title="Collaboration goals"
-      subtitle="What's your main goal for joining Influx? This helps us match you with the right brands."
+      subtitle="What's your main goal for joining Influx? This helps us match you with the right projects."
       onBack={handleBack}
     >
       <div className="space-y-4 mb-8">

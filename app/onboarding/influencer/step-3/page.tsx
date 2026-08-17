@@ -36,7 +36,7 @@ export default function InfluencerOnboardingStep3() {
   const handleNext = () => {
     if (selectedNiches.length > 0) {
       localStorage.setItem("influencer_onboarding_niches", JSON.stringify(selectedNiches));
-      router.push("/onboarding/influencer/step-4");
+      router.push("/onboarding/influencer/step-5");
     }
   };
 
@@ -47,7 +47,7 @@ export default function InfluencerOnboardingStep3() {
   return (
     <OnboardingLayout
       currentStep={3}
-      totalSteps={5}
+      totalSteps={4}
       title="Content focus"
       subtitle="Select the topics you cover or want to collaborate on."
       onBack={handleBack}
