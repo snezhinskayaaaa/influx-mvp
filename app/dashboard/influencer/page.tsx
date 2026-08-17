@@ -1049,7 +1049,7 @@ export default function InfluencerDashboard() {
         </div>
 
         {/* Main Content */}
-        <main className="flex-1 p-3 sm:p-6 lg:p-8 pb-20 lg:pb-8 overflow-auto">
+        <main className="flex-1 px-4 py-3 sm:p-6 lg:p-8 pb-20 lg:pb-8 overflow-auto">
           {/* Verification Banner — shown until profile is verified */}
           {!isVerifiedProfile && influencerStatus !== 'REJECTED' && (
             <div
