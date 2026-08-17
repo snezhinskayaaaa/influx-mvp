@@ -7,15 +7,17 @@ import { Button } from "@/components/ui/button";
 import { Check } from "lucide-react";
 
 const niches = [
-  "DeFi & Trading",
-  "NFT & Digital Art",
-  "GameFi",
-  "Chains & Infrastructure",
-  "Exchanges",
+  "DeFi",
+  "Trading & Alpha",
   "Memecoins",
-  "DAOs & Governance",
+  "Airdrops & Testnets",
+  "NFTs & Digital Art",
+  "GameFi",
   "AI x Crypto",
-  "Wallets & Security",
+  "Layer 1 / Layer 2",
+  "RWA",
+  "SocialFi",
+  "Education",
   "Other",
 ];
 
@@ -46,13 +48,13 @@ export default function InfluencerOnboardingStep3() {
     <OnboardingLayout
       currentStep={3}
       totalSteps={5}
-      title="Content niche"
-      subtitle="Select the categories that best describe your content. You can choose multiple niches."
+      title="Content focus"
+      subtitle="Select the topics you cover or want to collaborate on."
       onBack={handleBack}
     >
       <div className="mb-4">
         <p className="text-sm text-muted-foreground">
-          Selected: <span className="font-medium text-foreground">{selectedNiches.length}</span> {selectedNiches.length === 1 ? 'niche' : 'niches'}
+          Selected: <span className="font-medium text-foreground">{selectedNiches.length}</span> {selectedNiches.length === 1 ? 'topic' : 'topics'}
         </p>
       </div>
 
