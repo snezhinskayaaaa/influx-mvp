@@ -39,3 +39,25 @@ export async function checkCampaignAutoComplete(campaignId: string) {
     console.error('Campaign auto-complete check failed:', error)
   }
 }
+
+/**
+ * Check ALL active campaigns and auto-complete any where all collabs are done.
+ * Called from cron to catch campaigns that were missed.
+ */
+export async function checkAllCampaignsAutoComplete() {
+  try {
+    const activeCampaigns = await prisma.campaign.findMany({
+      where: { status: 'ACTIVE' },
+      select: { id: true },
+    })
+
+    for (const campaign of activeCampaigns) {
+      await checkCampaignAutoComplete(campaign.id)
+    }
+
+    return activeCampaigns.length
+  } catch (error) {
+    console.error('Bulk campaign auto-complete check failed:', error)
+    return 0
+  }
+}

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
 import { notifyBrandAutoRelease, notifyInfluencerPaymentReceived } from '@/lib/notifications'
-import { checkCampaignAutoComplete } from '@/lib/campaign-auto-complete'
+import { checkCampaignAutoComplete, checkAllCampaignsAutoComplete } from '@/lib/campaign-auto-complete'
 
 const CRON_SECRET = process.env.CRON_SECRET
 
@@ -199,11 +199,15 @@ export async function POST(request: NextRequest) {
     results.errors.push(`Auto-resolve query failed: ${err instanceof Error ? err.message : 'unknown'}`)
   }
 
-  console.log(`[cron/auto-release] Released: ${results.autoReleased}, Expired: ${results.autoExpired}, Errors: ${results.errors.length}`)
+  // Check all active campaigns for auto-completion
+  const campaignsChecked = await checkAllCampaignsAutoComplete()
+
+  console.log(`[cron/auto-release] Released: ${results.autoReleased}, Expired: ${results.autoExpired}, Campaigns checked: ${campaignsChecked}, Errors: ${results.errors.length}`)
 
   return NextResponse.json({
     ok: true,
     ...results,
+    campaignsChecked,
     timestamp: now.toISOString(),
   })
 }
