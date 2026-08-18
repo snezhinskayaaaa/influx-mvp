@@ -2408,7 +2408,7 @@ export function CampaignsTab({
                                       <p className="text-sm font-medium text-red-600">Dispute filed — under review</p>
                                     </div>
                                     {selectedInfluencerForPipeline.disputeReason && (() => {
-                                      const match = (selectedInfluencerForPipeline.disputeReason ?? '').match(/^\[(.+?)\]\s*(.*)/s);
+                                      const match = (selectedInfluencerForPipeline.disputeReason ?? '').match(/^\[(.+?)\]\s*([\s\S]*)/);
                                       const category = match ? match[1].replace(/-/g, ' ').replace(/\b\w/g, (c: string) => c.toUpperCase()) : null;
                                       const comment = match ? match[2] : selectedInfluencerForPipeline.disputeReason;
                                       return (

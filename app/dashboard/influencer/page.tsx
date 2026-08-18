@@ -2195,7 +2195,7 @@ export default function InfluencerDashboard() {
                                   <p className="text-sm font-medium text-red-600">Dispute filed — under review</p>
                                 </div>
                                 {selectedCampaignDetails.disputeReason && (() => {
-                                  const match = selectedCampaignDetails.disputeReason.match(/^\[(.+?)\]\s*(.*)/s);
+                                  const match = selectedCampaignDetails.disputeReason.match(/^\[(.+?)\]\s*([\s\S]*)/);
                                   const category = match ? match[1].replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase()) : null;
                                   const comment = match ? match[2] : selectedCampaignDetails.disputeReason;
                                   return (
