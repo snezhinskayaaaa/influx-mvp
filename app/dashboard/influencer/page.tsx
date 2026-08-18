@@ -1199,7 +1199,7 @@ export default function InfluencerDashboard() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.3 }}
                   >
-                    <Card className="p-3 sm:p-6 hover:shadow-lg transition-shadow">
+                    <Card className="p-3 sm:p-6 hover:shadow-lg transition-shadow cursor-pointer" onClick={() => setSelectedCampaignDetails(campaign)}>
                       <div className="flex gap-2.5 sm:gap-4">
                         {/* Brand Avatar */}
                         <div className="flex-shrink-0">
@@ -1301,7 +1301,7 @@ export default function InfluencerDashboard() {
                                   <Button
                                     size="sm"
                                     className="bg-primary/10 text-primary hover:bg-primary/20 border border-primary/30 h-8 sm:h-9 text-xs sm:text-sm px-3 sm:px-4"
-                                    onClick={() => setApplyingCampaign(campaign)}
+                                    onClick={(e) => { e.stopPropagation(); setApplyingCampaign(campaign); }}
                                   >
                                     Apply Now
                                   </Button>
@@ -1328,7 +1328,7 @@ export default function InfluencerDashboard() {
                                 <Button
                                   size="default"
                                   className="bg-primary/15 text-primary border border-primary/30 hover:bg-primary/25"
-                                  onClick={() => setActiveTab("my-campaigns")}
+                                  onClick={(e) => { e.stopPropagation(); setActiveTab("my-campaigns"); }}
                                 >
                                   View Campaign
                                 </Button>
