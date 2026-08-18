@@ -45,8 +45,8 @@ export async function POST(
       publishedUrls?: string[]
     }
 
-    // Submit draft content (IN_PROGRESS or REVISION -> CONTENT_REVIEW)
-    if (collaboration.status === 'IN_PROGRESS' || collaboration.status === 'REVISION') {
+    // Submit draft content (IN_PROGRESS, REVISION, or CONTENT_REVIEW -> CONTENT_REVIEW)
+    if (collaboration.status === 'IN_PROGRESS' || collaboration.status === 'REVISION' || collaboration.status === 'CONTENT_REVIEW') {
       if (!contentUrl || typeof contentUrl !== 'string' || contentUrl.trim().length === 0) {
         return NextResponse.json({ error: 'contentUrl is required' }, { status: 400 })
       }

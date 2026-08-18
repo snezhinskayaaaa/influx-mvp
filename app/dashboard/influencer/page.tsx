@@ -2044,7 +2044,7 @@ export default function InfluencerDashboard() {
                                 Waiting for content approval
                               </p>
                               <p className="text-xs text-muted-foreground">
-                                You can publish after brand approves your content
+                                You can publish after project approves your content
                               </p>
                             </div>
                           ) : selectedCampaignDetails.status === "publishing" ? (
