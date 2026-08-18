@@ -1859,7 +1859,7 @@ export default function InfluencerDashboard() {
                           <div
                             className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold ${
                               ["active", "content_review", "revision", "publishing", "delivered", "completed", "resolved"].includes(selectedCampaignDetails.status)
-                                ? "bg-secondary text-secondary-foreground"
+                                ? "bg-primary text-primary-foreground"
                                 : "bg-muted text-muted-foreground"
                             }`}
                           >
@@ -1907,7 +1907,7 @@ export default function InfluencerDashboard() {
                                     />
                                   </div>
                                   <Button
-                                    className="h-11 bg-primary hover:bg-primary/90 text-primary-foreground"
+                                    className="h-11 bg-gradient-to-r from-primary to-secondary hover:opacity-90 text-white"
                                     disabled={submitLoading || !contentLinkInput.trim()}
                                     onClick={() => handleSubmitContent(selectedCampaignDetails.id, { contentUrl: contentLinkInput.trim() })}
                                   >
@@ -1988,7 +1988,7 @@ export default function InfluencerDashboard() {
                                     />
                                   </div>
                                   <Button
-                                    className="h-11 bg-primary hover:bg-primary/90 text-primary-foreground"
+                                    className="h-11 bg-gradient-to-r from-primary to-secondary hover:opacity-90 text-white"
                                     disabled={submitLoading || !contentLinkInput.trim()}
                                     onClick={() => handleSubmitContent(selectedCampaignDetails.id, { contentUrl: contentLinkInput.trim() })}
                                   >
@@ -2032,7 +2032,7 @@ export default function InfluencerDashboard() {
                           <div
                             className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold ${
                               ["publishing", "delivered", "completed", "resolved"].includes(selectedCampaignDetails.status)
-                                ? "bg-success text-success-foreground"
+                                ? "bg-primary text-primary-foreground"
                                 : "bg-muted text-muted-foreground"
                             }`}
                           >
