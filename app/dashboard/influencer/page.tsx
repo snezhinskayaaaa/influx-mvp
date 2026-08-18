@@ -1907,7 +1907,7 @@ export default function InfluencerDashboard() {
                                     />
                                   </div>
                                   <Button
-                                    className="h-11 bg-primary/10 text-primary hover:bg-primary/20 border border-primary/30"
+                                    className="h-11 bg-violet-500/15 text-violet-600 hover:bg-violet-500/25 border border-violet-500/30"
                                     disabled={submitLoading || !contentLinkInput.trim()}
                                     onClick={() => handleSubmitContent(selectedCampaignDetails.id, { contentUrl: contentLinkInput.trim() })}
                                   >
@@ -1988,7 +1988,7 @@ export default function InfluencerDashboard() {
                                     />
                                   </div>
                                   <Button
-                                    className="h-11 bg-primary/10 text-primary hover:bg-primary/20 border border-primary/30"
+                                    className="h-11 bg-violet-500/15 text-violet-600 hover:bg-violet-500/25 border border-violet-500/30"
                                     disabled={submitLoading || !contentLinkInput.trim()}
                                     onClick={() => handleSubmitContent(selectedCampaignDetails.id, { contentUrl: contentLinkInput.trim() })}
                                   >
