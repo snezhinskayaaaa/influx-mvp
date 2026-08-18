@@ -363,23 +363,25 @@ export function DiscoverTab({ influencers, onCollaborate }: DiscoverTabProps) {
               )}
 
               {/* Stats */}
-              <div className="grid grid-cols-2 gap-3">
-                <div className="p-3 rounded-lg bg-muted/30 border">
-                  <div className="text-xs text-muted-foreground mb-0.5">Total Followers</div>
-                  <div className="font-bold text-lg">{selectedInfluencer.followers}</div>
-                  <div className="text-[10px] text-muted-foreground mt-1 space-y-0.5">
-                    {(selectedInfluencer.instagramFollowers ?? 0) > 0 && (
-                      <div>Instagram: {(selectedInfluencer.instagramFollowers ?? 0).toLocaleString()}</div>
-                    )}
-                    {(selectedInfluencer.tiktokFollowers ?? 0) > 0 && (
-                      <div>TikTok: {(selectedInfluencer.tiktokFollowers ?? 0).toLocaleString()}</div>
-                    )}
+              <div className="space-y-3">
+                {/* Per-platform followers */}
+                {selectedInfluencer.platformFollowers && selectedInfluencer.platformFollowers.length > 0 && (
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                    {selectedInfluencer.platformFollowers.map((pf) => (
+                      <div key={pf.platform} className="p-2.5 rounded-lg bg-muted/30 border text-center">
+                        <div className="font-bold text-sm">{pf.count.toLocaleString()}</div>
+                        <div className="text-xs text-muted-foreground">{pf.platform}</div>
+                      </div>
+                    ))}
                   </div>
-                </div>
-                <div className="p-3 rounded-lg bg-muted/30 border">
-                  <div className="text-xs text-muted-foreground mb-0.5">Engagement Rate</div>
-                  <div className="font-bold text-lg text-primary">{selectedInfluencer.engagement}</div>
-                </div>
+                )}
+                {/* Engagement Rate */}
+                {selectedInfluencer.rawEngagement > 0 && (
+                  <div className="p-2.5 rounded-lg bg-primary/5 border border-primary/20">
+                    <div className="text-xs text-muted-foreground mb-0.5">Engagement Rate</div>
+                    <div className="font-bold text-lg text-primary">{selectedInfluencer.engagement}</div>
+                  </div>
+                )}
               </div>
 
               {/* Social Handles */}

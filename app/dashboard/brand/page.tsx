@@ -166,8 +166,26 @@ export default function BrandDashboard() {
             const transformedInfluencers: Influencer[] = data.influencers.map((inf: Record<string, unknown>) => {
               const igFollowers = (inf.instagramFollowers as number) || 0;
               const tkFollowers = (inf.tiktokFollowers as number) || 0;
+              const ytSubscribers = (inf.youtubeSubscribers as number) || 0;
+              const twFollowers = (inf.twitterFollowers as number) || 0;
+              const tgFollowers = (inf.telegramFollowers as number) || 0;
+
+              const igAvgViews = (inf.instagramAvgViews as number) || 0;
+              const tkAvgViews = (inf.tiktokAvgViews as number) || 0;
+              const ytAvgViews = (inf.youtubeAvgViews as number) || 0;
+              const twAvgViews = (inf.twitterAvgViews as number) || 0;
+              const tgAvgViews = (inf.telegramAvgViews as number) || 0;
+
+              // Per-platform followers for display
+              const platformFollowers: { platform: string; count: number }[] = [];
+              if (twFollowers > 0) platformFollowers.push({ platform: 'X', count: twFollowers });
+              if (tgFollowers > 0) platformFollowers.push({ platform: 'Telegram', count: tgFollowers });
+              if (igFollowers > 0) platformFollowers.push({ platform: 'Instagram', count: igFollowers });
+              if (tkFollowers > 0) platformFollowers.push({ platform: 'TikTok', count: tkFollowers });
+              if (ytSubscribers > 0) platformFollowers.push({ platform: 'YouTube', count: ytSubscribers });
+
+              const totalFollowers = igFollowers + tkFollowers + ytSubscribers + twFollowers + tgFollowers;
               let followersStr: string;
-              const totalFollowers = igFollowers + tkFollowers;
               if (totalFollowers >= 1_000_000) {
                 followersStr = `${(totalFollowers / 1_000_000).toFixed(1)}M`;
               } else if (totalFollowers >= 1_000) {
@@ -176,7 +194,14 @@ export default function BrandDashboard() {
                 followersStr = String(totalFollowers);
               }
 
-              const engagement = inf.instagramEngagement != null ? Number(inf.instagramEngagement) : 0;
+              // Auto-calculate engagement: avgViews / followers per platform, then average
+              const engRates: number[] = [];
+              if (igFollowers > 0 && igAvgViews > 0) engRates.push((igAvgViews / igFollowers) * 100);
+              if (tkFollowers > 0 && tkAvgViews > 0) engRates.push((tkAvgViews / tkFollowers) * 100);
+              if (ytSubscribers > 0 && ytAvgViews > 0) engRates.push((ytAvgViews / ytSubscribers) * 100);
+              if (twFollowers > 0 && twAvgViews > 0) engRates.push((twAvgViews / twFollowers) * 100);
+              if (tgFollowers > 0 && tgAvgViews > 0) engRates.push((tgAvgViews / tgFollowers) * 100);
+              const engagement = engRates.length > 0 ? engRates.reduce((a, b) => a + b, 0) / engRates.length : 0;
 
               // Build CPM/CPC/CPE rate strings from cents
               // New single-value rates
@@ -218,6 +243,7 @@ export default function BrandDashboard() {
                 avatarUrl: avatarUrl || undefined,
                 followers: followersStr,
                 rawFollowers: totalFollowers,
+                platformFollowers,
                 engagement: `${engagement.toFixed(1)}%`,
                 rawEngagement: engagement,
                 category: nicheArr.length > 0 ? nicheArr[0] : 'Other',

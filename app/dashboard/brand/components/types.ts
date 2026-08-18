@@ -50,6 +50,7 @@ export interface Influencer {
   avatarUrl?: string;
   followers: string;
   rawFollowers: number;
+  platformFollowers?: { platform: string; count: number }[];
   engagement: string;
   rawEngagement: number;
   category: string;
