@@ -47,21 +47,21 @@ export function BrandNav() {
   return (
     <>
       {/* Header */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-primary/5 backdrop-blur-md border-b border-border/50 py-4" role="banner">
-        <div className="px-6 sm:px-12 lg:px-16">
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-primary/5 backdrop-blur-md border-b border-border/50 py-2.5 sm:py-4" role="banner">
+        <div className="px-4 sm:px-12 lg:px-16">
           <div className="flex items-center justify-between">
-            <Link href="/" className="flex items-center gap-3 group">
-              <NetworkLogo className="w-8 h-8 transition-transform group-hover:scale-110" />
+            <Link href="/" className="flex items-center gap-2 sm:gap-3 group">
+              <NetworkLogo className="w-7 h-7 sm:w-8 sm:h-8 transition-transform group-hover:scale-110" />
               <div className="flex items-baseline gap-1">
-                <span className="text-xl sm:text-2xl font-bold text-primary">INFLUX</span>
-                <span className="text-xs font-medium text-foreground/60">connect</span>
+                <span className="text-lg sm:text-2xl font-bold text-primary">INFLUX</span>
+                <span className="text-[10px] sm:text-xs font-medium text-foreground/60">connect</span>
               </div>
             </Link>
 
-            <div className="flex items-center gap-2 sm:gap-3">
+            <div className="flex items-center gap-1.5 sm:gap-3">
               <NotificationBell />
 
-              <Button variant="ghost" size="sm" className="text-sm font-medium text-muted-foreground hover:bg-muted/50 hover:text-foreground" onClick={async () => { await fetch('/api/auth/logout', { method: 'POST' }); window.location.href = '/login'; }}>
+              <Button variant="ghost" size="sm" className="text-sm font-medium text-muted-foreground hover:bg-muted/50 hover:text-foreground h-8 w-8 p-0" onClick={async () => { await fetch('/api/auth/logout', { method: 'POST' }); window.location.href = '/login'; }}>
                 <LogOut className="h-4 w-4" />
               </Button>
             </div>
@@ -70,7 +70,7 @@ export function BrandNav() {
       </nav>
 
       {/* Spacer for fixed header */}
-      <div className="h-20"></div>
+      <div className="h-14 sm:h-20"></div>
     </>
   );
 }
@@ -141,7 +141,7 @@ export function BrandSidebar({
   }, []);
 
   return (
-      <aside className="hidden lg:block w-64 border-r bg-muted/30 min-h-[calc(100vh-80px)] sticky top-20">
+      <aside className="hidden lg:block w-64 border-r bg-muted/30 min-h-[calc(100vh-80px)] sticky top-14 sm:top-20">
         <nav className="p-4 space-y-2">
           {/* Balance Card */}
           <Dialog open={showTopUpModal} onOpenChange={setShowTopUpModal}>
@@ -603,63 +603,61 @@ interface MobileNavProps {
 
 export function MobileNav({ activeTab, setActiveTab }: MobileNavProps) {
   return (
-    <nav className="lg:hidden fixed bottom-0 inset-x-0 bg-white dark:bg-black border-t border-border z-[100] safe-area-inset-bottom">
-      <div className="flex items-center justify-around w-full px-2 py-2">
+    <nav className="lg:hidden fixed bottom-0 inset-x-0 bg-background/95 backdrop-blur-xl border-t border-border z-[100]">
+      <div className="flex items-center justify-around w-full px-1 py-2 pb-[env(safe-area-inset-bottom,6px)]">
         <button
           onClick={() => setActiveTab("discover")}
-          className={`flex flex-col items-center justify-center gap-0.5 min-w-0 flex-1 transition-colors ${
+          className={`flex flex-col items-center gap-0.5 px-2 py-1 rounded-lg transition-colors ${
             activeTab === "discover" ? "text-primary" : "text-muted-foreground"
           }`}
         >
-          <div className="w-6 h-6 rounded-full bg-foreground flex items-center justify-center text-background text-xs font-bold shrink-0">
-            N
-          </div>
-          <span className="text-[8px] font-medium truncate max-w-full text-center">Discover</span>
+          <Search className="h-5 w-5" />
+          <span className="text-[10px] font-medium">Discover</span>
         </button>
         <button
           onClick={() => setActiveTab("campaigns")}
-          className={`flex flex-col items-center justify-center gap-0.5 min-w-0 flex-1 transition-colors ${
+          className={`flex flex-col items-center gap-0.5 px-2 py-1 rounded-lg transition-colors ${
             activeTab === "campaigns" ? "text-primary" : "text-muted-foreground"
           }`}
         >
-          <BarChart3 className="h-5 w-5 shrink-0" />
-          <span className="text-[8px] font-medium truncate max-w-full text-center">Campaigns</span>
+          <BarChart3 className="h-5 w-5" />
+          <span className="text-[10px] font-medium">Campaigns</span>
         </button>
         <button
           onClick={() => setActiveTab("create-campaign")}
-          className={`flex flex-col items-center justify-center gap-0.5 min-w-0 flex-1 transition-colors ${
+          className={`flex flex-col items-center gap-0.5 px-2 py-1 rounded-lg transition-colors ${
             activeTab === "create-campaign" ? "text-primary" : "text-muted-foreground"
           }`}
         >
-          <Plus className="h-5 w-5 shrink-0" />
-          <span className="text-[8px] font-medium truncate max-w-full text-center">Create</span>
+          <Plus className="h-5 w-5" />
+          <span className="text-[10px] font-medium">Create</span>
         </button>
         <button
           onClick={() => setActiveTab("wallet")}
-          className={`flex flex-col items-center justify-center gap-0.5 min-w-0 flex-1 transition-colors ${
+          className={`flex flex-col items-center gap-0.5 px-2 py-1 rounded-lg transition-colors ${
             activeTab === "wallet" ? "text-primary" : "text-muted-foreground"
           }`}
         >
-          <Wallet className="h-5 w-5 shrink-0" />
-          <span className="text-[8px] font-medium truncate max-w-full text-center">Wallet</span>
+          <Wallet className="h-5 w-5" />
+          <span className="text-[10px] font-medium">Wallet</span>
         </button>
         <button
           onClick={() => setActiveTab("profile")}
-          className={`flex flex-col items-center justify-center gap-0.5 min-w-0 flex-1 transition-colors ${
+          className={`flex flex-col items-center gap-0.5 px-2 py-1 rounded-lg transition-colors ${
             activeTab === "profile" ? "text-primary" : "text-muted-foreground"
           }`}
         >
-          <Building2 className="h-5 w-5 shrink-0" />
-          <span className="text-[8px] font-medium truncate max-w-full text-center">Profile</span>
+          <Building2 className="h-5 w-5" />
+          <span className="text-[10px] font-medium">Profile</span>
         </button>
         <button
           onClick={() => setActiveTab("settings")}
-          className={`flex flex-col items-center justify-center gap-0.5 min-w-0 flex-1 transition-colors ${
+          className={`flex flex-col items-center gap-0.5 px-2 py-1 rounded-lg transition-colors ${
             activeTab === "settings" ? "text-primary" : "text-muted-foreground"
           }`}
         >
-          <Settings className="h-5 w-5 shrink-0" />
-          <span className="text-[8px] font-medium truncate max-w-full text-center">Settings</span>
+          <Settings className="h-5 w-5" />
+          <span className="text-[10px] font-medium">Settings</span>
         </button>
       </div>
     </nav>

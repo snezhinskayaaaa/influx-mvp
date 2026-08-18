@@ -199,3 +199,21 @@ export async function notifyInfluencerDisputeCreated(influencerUserId: string, c
     `The project has raised a dispute for "${campaignTitle}". Reason: "${reason}". Our team will review and resolve this. Your remaining payment is held until resolution.`,
   ).catch(err => console.error('Notification email failed:', err))
 }
+
+export async function notifyDisputeResolved(influencerUserId: string, brandUserId: string, campaignTitle: string, result: string) {
+  await createInAppNotification(influencerUserId, 'Dispute Resolved', `Dispute for "${campaignTitle}" resolved: ${result}`, '/dashboard/influencer')
+  const infNotify = await shouldNotify(influencerUserId)
+  if (infNotify.notify) {
+    sendCollaborationEmail(infNotify.email, `Dispute resolved — "${campaignTitle}"`, 'Dispute Resolved',
+      `The dispute for "${campaignTitle}" has been resolved.\n\nDecision: ${result}\n\nContact support@aiinflux.io with questions.`
+    ).catch(err => console.error('Notification email failed:', err))
+  }
+
+  await createInAppNotification(brandUserId, 'Dispute Resolved', `Dispute for "${campaignTitle}" resolved: ${result}`, '/dashboard/brand')
+  const brandNotify = await shouldNotify(brandUserId)
+  if (brandNotify.notify) {
+    sendCollaborationEmail(brandNotify.email, `Dispute resolved — "${campaignTitle}"`, 'Dispute Resolved',
+      `The dispute for "${campaignTitle}" has been resolved.\n\nDecision: ${result}\n\nContact support@aiinflux.io with questions.`
+    ).catch(err => console.error('Notification email failed:', err))
+  }
+}

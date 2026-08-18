@@ -3,6 +3,7 @@ import prisma from '@/lib/prisma'
 import { getCurrentUser } from '@/lib/auth'
 import { rateLimit } from '@/lib/rate-limit'
 import { checkCampaignAutoComplete } from '@/lib/campaign-auto-complete'
+import { notifyDisputeResolved } from '@/lib/notifications'
 
 export async function POST(
   request: NextRequest,
@@ -183,6 +184,14 @@ export async function POST(
           },
         })
       })
+
+      // Fire-and-forget: notify both parties
+      notifyDisputeResolved(
+        collaboration.influencer.userId,
+        collaboration.campaign.brand.userId,
+        collaboration.campaign.title,
+        result.disputeResult || 'Resolved'
+      )
 
       // Fire-and-forget: auto-complete campaign if all collabs done
       checkCampaignAutoComplete(collaboration.campaignId)

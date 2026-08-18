@@ -384,7 +384,7 @@ export default function BrandDashboard() {
         />
 
         {/* Main Content */}
-        <main className="flex-1 p-4 sm:p-6 lg:p-8 pb-24 lg:pb-8">
+        <main className="flex-1 px-4 py-3 sm:p-6 lg:p-8 pb-20 lg:pb-8">
           {/* Verification Banner */}
           {!isVerifiedProject && (
             <div
@@ -459,7 +459,7 @@ export default function BrandDashboard() {
                 <div className="mb-8">
                   <div className="flex items-center justify-between gap-3">
                     <div className="min-w-0">
-                      <h1 className="text-xl sm:text-3xl font-bold mb-1">Wallet</h1>
+                      <h1 className="text-lg sm:text-3xl font-bold mb-1">Wallet</h1>
                       <p className="text-muted-foreground text-xs sm:text-sm">Manage your funds and view transaction history</p>
                     </div>
                     <div className="flex gap-2 shrink-0">
@@ -476,11 +476,11 @@ export default function BrandDashboard() {
                   <div className="grid grid-cols-2 gap-3 sm:gap-4">
                     <div className="rounded-xl border border-border p-4 sm:p-6">
                       <p className="text-[10px] sm:text-xs text-muted-foreground mb-1 sm:mb-2">Available Balance</p>
-                      <p className="text-xl sm:text-3xl font-bold text-primary">${balance.toFixed(2)}</p>
+                      <p className="text-lg sm:text-3xl font-bold text-primary">${balance.toFixed(2)}</p>
                     </div>
                     <div className="rounded-xl border border-border p-4 sm:p-6">
                       <p className="text-[10px] sm:text-xs text-muted-foreground mb-1 sm:mb-2">Frozen</p>
-                      <p className="text-xl sm:text-3xl font-bold text-foreground">${frozenBalance.toFixed(2)}</p>
+                      <p className="text-lg sm:text-3xl font-bold text-foreground">${frozenBalance.toFixed(2)}</p>
                     </div>
                   </div>
 
