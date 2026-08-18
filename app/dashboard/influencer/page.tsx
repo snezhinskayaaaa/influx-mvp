@@ -80,6 +80,7 @@ const FORMAT_LABELS: Record<string, string> = {
 
 type CampaignStatus =
   | "open"
+  | "invited"
   | "applied"
   | "approved"
   | "active"
@@ -360,6 +361,7 @@ export default function InfluencerDashboard() {
           const data = await collabRes.json();
           if (data.collaborations && data.collaborations.length > 0) {
             const statusMap: Record<string, CampaignStatus> = {
+              INVITED: 'invited',
               APPLIED: 'applied',
               NEGOTIATING: 'approved',
               AGREED: 'approved',
@@ -583,6 +585,8 @@ export default function InfluencerDashboard() {
     switch (status) {
       case "open":
         return "bg-blue-500/10 text-blue-600 border-blue-500/30";
+      case "invited":
+        return "bg-violet-500/10 text-violet-600 border-violet-500/30";
       case "applied":
         return "bg-yellow-500/10 text-yellow-600 border-yellow-500/30";
       case "approved":
@@ -613,6 +617,7 @@ export default function InfluencerDashboard() {
   const getStatusLabel = (status: CampaignStatus): string => {
     switch (status) {
       case "open": return "Open";
+      case "invited": return "Invited";
       case "applied": return "Applied";
       case "approved": return "Negotiating";
       case "active": return "In Progress";
@@ -631,6 +636,7 @@ export default function InfluencerDashboard() {
   const getStatusDotColor = (status: CampaignStatus): string => {
     switch (status) {
       case "active": return "bg-success";
+      case "invited": return "bg-violet-600";
       case "applied": return "bg-yellow-600";
       case "approved": return "bg-amber-500";
       case "content_review": return "bg-blue-600";
@@ -671,6 +677,7 @@ export default function InfluencerDashboard() {
         const collabData = await collabRes.json();
         if (collabData.collaborations && collabData.collaborations.length > 0) {
           const statusMap: Record<string, CampaignStatus> = {
+            INVITED: "invited",
             APPLIED: "applied",
             NEGOTIATING: "approved",
             AGREED: "active",
@@ -816,6 +823,7 @@ export default function InfluencerDashboard() {
         const collabData = await collabRes.json();
         if (collabData.collaborations && collabData.collaborations.length > 0) {
           const statusMap: Record<string, CampaignStatus> = {
+            INVITED: "invited",
             APPLIED: "applied",
             NEGOTIATING: "approved",
             AGREED: "active",
@@ -2490,6 +2498,8 @@ export default function InfluencerDashboard() {
                           <div className="text-sm text-muted-foreground">
                             {campaign.status === "completed" || campaign.status === "resolved"
                               ? "Completed"
+                              : campaign.status === "invited"
+                              ? "Invitation received"
                               : campaign.status === "applied"
                               ? "Awaiting review"
                               : campaign.deadline
@@ -2503,6 +2513,57 @@ export default function InfluencerDashboard() {
                           <Button size="sm" variant="ghost" className="h-8 w-8 p-0" onClick={() => setSelectedCampaignDetails(campaign)}>
                             <Eye className="h-4 w-4" />
                           </Button>
+                          {campaign.status === "invited" && campaign.collaborationId && (
+                            <>
+                              <Button
+                                size="sm"
+                                className="h-8 text-xs bg-success/10 text-success border border-success/30 hover:bg-success/20"
+                                onClick={async (e) => {
+                                  e.stopPropagation();
+                                  try {
+                                    const res = await fetch(`/api/collaborations/${campaign.collaborationId}/review`, {
+                                      method: 'POST',
+                                      headers: { 'Content-Type': 'application/json' },
+                                      body: JSON.stringify({ action: 'accept_invitation' }),
+                                    });
+                                    if (res.ok) {
+                                      showToast('Invitation accepted!', 'success');
+                                      refreshCollaborations();
+                                    } else {
+                                      const data = await res.json();
+                                      showToast(data.error || 'Failed', 'error');
+                                    }
+                                  } catch { showToast('Failed to accept', 'error'); }
+                                }}
+                              >
+                                Accept
+                              </Button>
+                              <Button
+                                size="sm"
+                                variant="ghost"
+                                className="h-8 text-xs text-red-600 hover:bg-red-500/10"
+                                onClick={async (e) => {
+                                  e.stopPropagation();
+                                  try {
+                                    const res = await fetch(`/api/collaborations/${campaign.collaborationId}/review`, {
+                                      method: 'POST',
+                                      headers: { 'Content-Type': 'application/json' },
+                                      body: JSON.stringify({ action: 'decline_invitation' }),
+                                    });
+                                    if (res.ok) {
+                                      showToast('Invitation declined', 'success');
+                                      refreshCollaborations();
+                                    } else {
+                                      const data = await res.json();
+                                      showToast(data.error || 'Failed', 'error');
+                                    }
+                                  } catch { showToast('Failed to decline', 'error'); }
+                                }}
+                              >
+                                Decline
+                              </Button>
+                            </>
+                          )}
                           {(campaign.status === "applied" || campaign.status === "approved") && campaign.collaborationId && (
                             <Button
                               size="sm"

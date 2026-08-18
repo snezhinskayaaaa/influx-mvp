@@ -195,8 +195,8 @@ export async function POST(request: NextRequest) {
           campaignId,
           influencerId: targetInfluencerId,
           proposedPrice: campaign.budgetMin,
-          message: `You've been invited to collaborate on "${campaign.title}"`,
-          status: 'APPLIED',
+          message: message || `You've been invited to collaborate on "${campaign.title}"`,
+          status: 'INVITED',
         },
       })
 

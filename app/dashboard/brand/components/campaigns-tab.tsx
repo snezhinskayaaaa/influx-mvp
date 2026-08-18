@@ -90,6 +90,7 @@ const COLLAB_STAGES = ["Negotiating", "In Progress", "Content", "Published", "Co
 /** Map collaborationStatus → which stage index (0-4) the collab is at */
 function getStageIndex(status: string | undefined): number {
   switch (status) {
+    case "INVITED":
     case "APPLIED":
     case "NEGOTIATING":
       return 0;
@@ -116,6 +117,8 @@ function getStageIndex(status: string | undefined): number {
 function getActionInfo(app: CampaignApplication): { type: "action" | "waiting" | "done"; text: string } {
   const status = app.collaborationStatus;
   switch (status) {
+    case "INVITED":
+      return { type: "waiting", text: "Invitation sent — waiting for creator to respond" };
     case "APPLIED":
       return { type: "action", text: "New application — review and approve or reject" };
     case "NEGOTIATING":
@@ -443,7 +446,7 @@ export function CampaignsTab({
                 influencerAvatar: (inf?.profile as Record<string, unknown>)?.avatarUrl as string || '👤',
                 influencerFollowers: followers > 0 ? followers.toLocaleString() : '0',
                 source: 'applied' as const,
-                status: c.status === 'APPLIED' ? 'pending' as const : 'approved' as const,
+                status: c.status === 'INVITED' ? 'invited' as const : c.status === 'APPLIED' ? 'pending' as const : 'approved' as const,
                 collaborationStatus: c.status as string,
                 proposedPriceCPM: `${(proposedPrice / 100).toFixed(0)}`,
                 agreedPrice: c.agreedPrice ? (c.agreedPrice as number) / 100 : undefined,
@@ -1240,6 +1243,8 @@ export function CampaignsTab({
                       className={`p-4 rounded-lg border ${
                         application.status === "approved"
                           ? "bg-success/5 border-success/20"
+                          : application.status === "invited"
+                          ? "bg-violet-500/5 border-violet-500/20"
                           : application.status === "rejected"
                           ? "bg-muted border-border opacity-60"
                           : "bg-background border-border hover:border-primary/30"
@@ -1274,6 +1279,11 @@ export function CampaignsTab({
                             </div>
 
                             {/* Action Buttons */}
+                            {application.status === "invited" && (
+                              <div className="flex items-center gap-2 shrink-0">
+                                <span className="text-xs text-violet-600 bg-violet-500/10 px-2.5 py-1 rounded-full border border-violet-500/20">Waiting for response</span>
+                              </div>
+                            )}
                             {application.status === "pending" && (
                               <div className="flex gap-2 shrink-0">
                                 <Button
@@ -1486,6 +1496,33 @@ export function CampaignsTab({
                             />
                           </div>
                         )}
+
+                        {/* Invited — waiting for response */}
+                        {(() => {
+                          const invitedApps = selectedCampaignDetails.applicationsList?.filter(a => a.status === "invited") || [];
+                          if (invitedApps.length === 0) return null;
+                          return (
+                            <div className="space-y-2">
+                              {invitedApps.map((app) => (
+                                <div key={app.id} className="rounded-lg border border-violet-500/20 bg-violet-500/5 p-4">
+                                  <div className="flex items-center gap-3">
+                                    <div className="w-8 h-8 rounded-full bg-gradient-to-r from-primary to-secondary flex items-center justify-center text-xs shrink-0 overflow-hidden">
+                                      {app.influencerAvatar?.startsWith('data:') ? (
+                                        <img src={app.influencerAvatar} alt="" className="w-full h-full object-cover" />
+                                      ) : (
+                                        <span className="text-white text-xs">{app.influencerName?.charAt(0) || '?'}</span>
+                                      )}
+                                    </div>
+                                    <div className="flex-1 min-w-0">
+                                      <p className="text-sm font-medium truncate">{app.influencerName}</p>
+                                      <p className="text-xs text-violet-600">Invited — waiting for response</p>
+                                    </div>
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          );
+                        })()}
 
                         {/* Pending applications */}
                         {pendingApps.length > 0 && (

@@ -36,6 +36,7 @@ enum InfluencerStatus {
 }
 
 enum CollaborationStatus {
+  INVITED        @map("invited")
   APPLIED        @map("applied")
   NEGOTIATING    @map("negotiating")
   AGREED         @map("agreed")

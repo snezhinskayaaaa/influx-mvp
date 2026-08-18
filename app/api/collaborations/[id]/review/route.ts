@@ -40,18 +40,47 @@ export async function POST(
       return NextResponse.json({ error: 'Collaboration not found' }, { status: 404 })
     }
 
-    // Only the brand owner can review
+    const { action, note } = body as { action?: string; note?: string }
+
+    // KOL accepting/declining invitation
+    if (action === 'accept_invitation' || action === 'decline_invitation') {
+      if (collaboration.influencer.userId !== user.userId) {
+        return NextResponse.json({ error: 'Access denied' }, { status: 403 })
+      }
+      if (collaboration.status !== 'INVITED') {
+        return NextResponse.json({ error: 'Can only respond to invitations' }, { status: 400 })
+      }
+
+      if (action === 'accept_invitation') {
+        const updated = await prisma.collaboration.update({
+          where: { id },
+          data: { status: 'APPLIED' },
+        })
+        return NextResponse.json({ collaboration: updated })
+      } else {
+        const updated = await prisma.collaboration.update({
+          where: { id },
+          data: { status: 'CANCELLED' },
+        })
+        return NextResponse.json({ collaboration: updated })
+      }
+    }
+
+    // Only the brand owner can review from here
     if (collaboration.campaign.brand.userId !== user.userId) {
       return NextResponse.json({ error: 'Access denied' }, { status: 403 })
     }
 
-    const { action, note } = body as { action?: string; note?: string }
-
     if (!action || !['approve', 'request_revision', 'dispute'].includes(action)) {
       return NextResponse.json(
-        { error: 'Invalid action. Must be one of: approve, request_revision, dispute' },
+        { error: 'Invalid action. Must be one of: approve, request_revision, dispute, accept_invitation, decline_invitation' },
         { status: 400 }
       )
+    }
+
+    // Prevent brand from approving their own invitations
+    if (action === 'approve' && collaboration.status === 'INVITED') {
+      return NextResponse.json({ error: 'Cannot approve an invitation you sent. Wait for the creator to accept.' }, { status: 400 })
     }
 
     // --- APPROVE ---

@@ -1,6 +1,7 @@
 export type Tab = "discover" | "campaigns" | "wallet" | "profile" | "create-campaign" | "settings";
 
 export type CollaborationStatus =
+  | "INVITED"
   | "APPLIED"
   | "NEGOTIATING"
   | "AGREED"
@@ -19,6 +20,7 @@ export const COLLABORATION_STATUS_CONFIG: Record<
   CollaborationStatus,
   { label: string; badgeClass: string }
 > = {
+  INVITED: { label: "Invited", badgeClass: "bg-violet-500/10 text-violet-600 border-violet-500/20" },
   APPLIED: { label: "Applied", badgeClass: "bg-muted text-foreground border-border" },
   NEGOTIATING: { label: "Negotiating", badgeClass: "bg-primary/10 text-primary border-primary/20" },
   AGREED: { label: "Agreed", badgeClass: "bg-success/10 text-success border-success/20" },
@@ -112,7 +114,7 @@ export interface CampaignApplication {
   influencerAvatar: string;
   influencerFollowers: string;
   source: "applied" | "invited";
-  status: "pending" | "approved" | "rejected";
+  status: "invited" | "pending" | "approved" | "rejected";
   /** Collaboration lifecycle status from the backend */
   collaborationStatus?: CollaborationStatus;
   proposedPriceCPM?: string;
