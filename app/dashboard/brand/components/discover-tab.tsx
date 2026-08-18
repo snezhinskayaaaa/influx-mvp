@@ -386,21 +386,21 @@ export function DiscoverTab({ influencers, onCollaborate }: DiscoverTabProps) {
               {(selectedInfluencer.instagramHandle || selectedInfluencer.tiktokHandle || selectedInfluencer.youtubeHandle || selectedInfluencer.twitterHandle || selectedInfluencer.telegramHandle) && (
                 <div>
                   <div className="text-xs font-medium text-muted-foreground mb-2">Social Profiles</div>
-                  <div className="flex flex-wrap gap-1.5">
+                  <div className="flex flex-wrap gap-2">
                     {([
-                      { handle: selectedInfluencer.twitterHandle, icon: <XIcon className="h-3 w-3" />, base: 'https://x.com/' },
-                      { handle: selectedInfluencer.telegramHandle, icon: <Send className="h-3 w-3" />, base: 'https://t.me/' },
-                      { handle: selectedInfluencer.instagramHandle, icon: <Instagram className="h-3 w-3" />, base: 'https://instagram.com/' },
-                      { handle: selectedInfluencer.tiktokHandle, icon: <svg className="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5" /></svg>, base: 'https://tiktok.com/@' },
-                      { handle: selectedInfluencer.youtubeHandle, icon: <Youtube className="h-3 w-3" />, base: 'https://youtube.com/@' },
+                      { handle: selectedInfluencer.twitterHandle, icon: <XIcon className="h-3.5 w-3.5" />, base: 'https://x.com/' },
+                      { handle: selectedInfluencer.telegramHandle, icon: <Send className="h-3.5 w-3.5" />, base: 'https://t.me/' },
+                      { handle: selectedInfluencer.instagramHandle, icon: <Instagram className="h-3.5 w-3.5" />, base: 'https://instagram.com/' },
+                      { handle: selectedInfluencer.tiktokHandle, icon: <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5" /></svg>, base: 'https://tiktok.com/@' },
+                      { handle: selectedInfluencer.youtubeHandle, icon: <Youtube className="h-3.5 w-3.5" />, base: 'https://youtube.com/@' },
                     ]).filter(s => s.handle).map((s, i) => {
                       const clean = s.handle!.replace(/^https?:\/\/(www\.)?(instagram\.com|tiktok\.com|youtube\.com|x\.com|t\.me|twitter\.com)\/?@?/i, '').replace(/^@/, '').split('?')[0].split('/')[0];
                       const url = s.handle!.startsWith('http') ? s.handle! : `${s.base}${clean}`;
                       return (
                         <a key={i} href={url} target="_blank" rel="noopener noreferrer"
-                          className="flex items-center gap-1 text-[11px] px-2 py-1 rounded-md bg-muted/50 border hover:bg-primary/10 hover:text-primary transition-colors">
+                          className="flex items-center gap-1.5 text-xs px-2.5 py-1.5 rounded-lg bg-muted/50 border hover:bg-primary/10 hover:text-primary transition-colors">
                           {s.icon}
-                          @{clean}
+                          {clean}
                         </a>
                       );
                     })}
