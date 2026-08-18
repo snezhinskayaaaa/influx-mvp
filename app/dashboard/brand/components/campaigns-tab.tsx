@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { XIcon } from "@/components/x-icon";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -176,6 +176,7 @@ export function CampaignsTab({
   const [campaignStatusFilter, setCampaignStatusFilter] = useState<"all" | "active" | "draft" | "paused">("all");
   const [isCampaignDetailsExpanded, setIsCampaignDetailsExpanded] = useState(false);
   const [isApplicationsExpanded, setIsApplicationsExpanded] = useState(false);
+  const applicationsRef = useRef<HTMLDivElement>(null);
   const [isEditingCampaign, setIsEditingCampaign] = useState(false);
   const [editedCampaignData, setEditedCampaignData] = useState<Campaign | null>(null);
   const [selectedInfluencerForPipeline, setSelectedInfluencerForPipeline] = useState<CampaignApplication | null>(null);
@@ -1207,7 +1208,7 @@ export function CampaignsTab({
 
           {/* Applications */}
           {selectedCampaignDetails.applicationsList && selectedCampaignDetails.applicationsList.length > 0 && (
-            <Card className="p-4 sm:p-6 mb-4 sm:mb-6">
+            <Card ref={applicationsRef} className="p-4 sm:p-6 mb-4 sm:mb-6">
               <div className="flex items-center justify-between mb-4">
                 <div>
                   <h2 className="text-xl font-bold">Applications</h2>
@@ -1456,12 +1457,18 @@ export function CampaignsTab({
                             </p>
                           </div>
                           {totalActions > 0 && (
-                            <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-amber-500/10 border border-amber-500/20">
+                            <button
+                              className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-amber-500/10 border border-amber-500/20 hover:bg-amber-500/20 transition-colors"
+                              onClick={() => {
+                                setIsApplicationsExpanded(true);
+                                setTimeout(() => applicationsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
+                              }}
+                            >
                               <AlertCircle className="h-4 w-4 text-amber-600" />
                               <span className="text-sm font-medium text-amber-600">
                                 {totalActions} action{totalActions > 1 ? 's' : ''} needed
                               </span>
-                            </div>
+                            </button>
                           )}
                         </div>
 
@@ -1483,7 +1490,8 @@ export function CampaignsTab({
                                 key={app.id}
                                 className="rounded-lg border border-border p-4 hover:bg-muted/30 transition-colors cursor-pointer"
                                 onClick={() => {
-                                  // Scroll to applications section or handle
+                                  setIsApplicationsExpanded(true);
+                                  setTimeout(() => applicationsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
                                 }}
                               >
                                 <div className="flex items-center gap-3 mb-2">
