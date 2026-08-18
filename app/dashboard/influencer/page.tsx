@@ -153,6 +153,7 @@ export default function InfluencerDashboard() {
   const [activeTab, setActiveTab] = useState<"discover" | "my-campaigns" | "wallet" | "profile" | "settings">("discover");
   const activeTabRef = useRef(activeTab);
   const emailVerifyShown = useRef(false);
+  const cameFromDiscover = useRef(false);
   useEffect(() => { activeTabRef.current = activeTab; }, [activeTab]);
   const [toast, setToast] = useState<{ message: string; variant: 'success' | 'error' } | null>(null);
 
@@ -1199,7 +1200,7 @@ export default function InfluencerDashboard() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.3 }}
                   >
-                    <Card className="p-3 sm:p-6 hover:shadow-lg transition-shadow cursor-pointer" onClick={() => setSelectedCampaignDetails(campaign)}>
+                    <Card className="p-3 sm:p-6 hover:shadow-lg transition-shadow cursor-pointer" onClick={() => { cameFromDiscover.current = true; setSelectedCampaignDetails(campaign); setActiveTab("my-campaigns"); }}>
                       <div className="flex gap-2.5 sm:gap-4">
                         {/* Brand Avatar */}
                         <div className="flex-shrink-0">
@@ -1373,10 +1374,14 @@ export default function InfluencerDashboard() {
                         onClick={() => {
                           setSelectedCampaignDetails(null);
                           setIsCampaignDetailsExpanded(false);
+                          if (cameFromDiscover.current) {
+                            setActiveTab("discover");
+                            cameFromDiscover.current = false;
+                          }
                         }}
                       >
                         <ArrowRight className="h-4 w-4 mr-2 rotate-180" />
-                        Back to Campaigns
+                        Back
                       </Button>
                       <h1 className="text-2xl sm:text-3xl font-bold mb-2">{selectedCampaignDetails.title}</h1>
                       <div className="flex items-center gap-2">
