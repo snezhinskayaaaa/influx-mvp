@@ -1533,7 +1533,7 @@ export function CampaignsTab({
                               return (
                                 <div
                                   key={app.id}
-                                  className="rounded-lg border border-border p-4 hover:bg-muted/30 transition-colors cursor-pointer"
+                                  className={`rounded-lg border p-4 hover:bg-muted/30 transition-colors cursor-pointer ${app.collaborationStatus === "DISPUTED" ? "border-red-500/30 bg-red-500/5" : "border-border"}`}
                                   onClick={() => {
                                     setSelectedInfluencerForPipeline(app);
                                     setTermsAccepted(false);
