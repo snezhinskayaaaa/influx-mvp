@@ -42,6 +42,7 @@ import {
   AlertCircle,
   ExternalLink,
   FileText,
+  Send,
 } from "lucide-react";
 import type { Tab, Campaign, CampaignApplication, CollaborationStatus } from "./types";
 import { COLLABORATION_STATUS_CONFIG } from "./types";
@@ -456,13 +457,16 @@ export function CampaignsTab({
                 // Profile details for popup
                 influencerBio: (inf?.bio as string) || '',
                 influencerNiche: Array.isArray(inf?.niche) ? (inf.niche as string[]).join(', ') : '',
+                influencerVerified: (inf?.isVerified as boolean) || false,
                 influencerInstagram: (inf?.instagramHandle as string) || '',
                 influencerTiktok: (inf?.tiktokHandle as string) || '',
                 influencerYoutube: (inf?.youtubeHandle as string) || '',
                 influencerTwitter: (inf?.twitterHandle as string) || '',
+                influencerTelegram: (inf?.telegramHandle as string) || '',
                 influencerTiktokFollowers: (inf?.tiktokFollowers as number) || 0,
                 influencerYoutubeSubscribers: (inf?.youtubeSubscribers as number) || 0,
                 influencerTwitterFollowers: (inf?.twitterFollowers as number) || 0,
+                influencerTelegramFollowers: (inf?.telegramFollowers as number) || 0,
               };
             });
           setSelectedCampaignDetails({ ...campaign, applicationsList: campaignCollabs, applications: campaignCollabs.length });
@@ -2873,7 +2877,12 @@ export function CampaignsTab({
                 ) : '👤'}
               </div>
               <div>
-                <h3 className="text-lg font-bold">{viewingProfile.influencerName as string}</h3>
+                <div className="flex items-center gap-2">
+                  <h3 className="text-lg font-bold">{viewingProfile.influencerName as string}</h3>
+                  {viewingProfile.influencerVerified && (
+                    <CheckCircle2 className="h-4 w-4 text-primary shrink-0" />
+                  )}
+                </div>
                 <p className="text-sm text-muted-foreground">{viewingProfile.influencerUsername as string}</p>
                 {(viewingProfile.influencerNiche as string) && (
                   <p className="text-xs text-primary mt-1">{viewingProfile.influencerNiche as string}</p>
@@ -2910,6 +2919,12 @@ export function CampaignsTab({
                   <p className="text-xs text-muted-foreground">YouTube</p>
                 </div>
               )}
+              {Number(viewingProfile.influencerTelegramFollowers) > 0 && (
+                <div className="bg-muted/50 rounded-lg p-2 text-center">
+                  <p className="text-sm font-semibold">{(viewingProfile.influencerTelegramFollowers as number).toLocaleString()}</p>
+                  <p className="text-xs text-muted-foreground">Telegram</p>
+                </div>
+              )}
             </div>
 
             <div className="grid grid-cols-2 gap-2 mb-4">
@@ -2935,6 +2950,12 @@ export function CampaignsTab({
                 <a href={(viewingProfile.influencerYoutube as string).startsWith('http') ? viewingProfile.influencerYoutube as string : `https://youtube.com/${viewingProfile.influencerYoutube as string}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 px-3 py-2 rounded-lg border border-border hover:border-primary/50 hover:bg-primary/5 transition-all text-sm">
                   <Youtube className="h-4 w-4 shrink-0" />
                   <span className="truncate">{(viewingProfile.influencerYoutube as string).replace(/https?:\/\/(www\.)?youtube\.com\//g, '').split('?')[0]}</span>
+                </a>
+              )}
+              {(viewingProfile.influencerTelegram as string) && (
+                <a href={`https://t.me/${(viewingProfile.influencerTelegram as string).replace('@', '')}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 px-3 py-2 rounded-lg border border-border hover:border-primary/50 hover:bg-primary/5 transition-all text-sm">
+                  <Send className="h-4 w-4 shrink-0" />
+                  <span className="truncate">@{(viewingProfile.influencerTelegram as string).replace('@', '')}</span>
                 </a>
               )}
             </div>

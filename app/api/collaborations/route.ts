@@ -68,9 +68,10 @@ export async function GET(request: NextRequest) {
             campaign: { select: { id: true, title: true } },
             influencer: {
               select: {
-                id: true, handle: true, bio: true, niche: true,
+                id: true, handle: true, bio: true, niche: true, isVerified: true,
                 instagramFollowers: true, tiktokFollowers: true, youtubeSubscribers: true, twitterFollowers: true,
                 instagramHandle: true, tiktokHandle: true, youtubeHandle: true, twitterHandle: true,
+                telegramHandle: true, telegramFollowers: true,
                 pricePerPost: true, userId: true,
                 profile: { select: { avatarUrl: true } },
               },
