@@ -2402,20 +2402,25 @@ export function CampaignsTab({
 
                                 {/* Disputed status */}
                                 {selectedInfluencerForPipeline.collaborationStatus === "DISPUTED" && (
-                                  <div className="space-y-3">
-                                    <div className="flex items-center gap-2 px-4 py-3 rounded-lg bg-red-500/10 border border-red-500/20">
-                                      <AlertCircle className="h-5 w-5 text-red-600" />
-                                      <div>
-                                        <p className="text-sm font-medium text-red-600">Dispute filed — under review</p>
-                                        <p className="text-xs text-muted-foreground">Platform team will investigate and resolve.</p>
-                                      </div>
+                                  <div className="rounded-lg border border-red-500/20 overflow-hidden">
+                                    <div className="flex items-center gap-2 px-4 py-3 bg-red-500/10">
+                                      <AlertCircle className="h-4 w-4 text-red-600" />
+                                      <p className="text-sm font-medium text-red-600">Dispute filed — under review</p>
                                     </div>
-                                    {selectedInfluencerForPipeline.disputeReason && (
-                                      <div className="p-3 rounded-lg bg-muted/50 border">
-                                        <p className="text-xs text-muted-foreground mb-1">Dispute Reason:</p>
-                                        <p className="text-sm">{selectedInfluencerForPipeline.disputeReason}</p>
-                                      </div>
-                                    )}
+                                    {selectedInfluencerForPipeline.disputeReason && (() => {
+                                      const match = (selectedInfluencerForPipeline.disputeReason ?? '').match(/^\[(.+?)\]\s*(.*)/s);
+                                      const category = match ? match[1].replace(/-/g, ' ').replace(/\b\w/g, (c: string) => c.toUpperCase()) : null;
+                                      const comment = match ? match[2] : selectedInfluencerForPipeline.disputeReason;
+                                      return (
+                                        <div className="px-4 py-3 space-y-2">
+                                          {category && (
+                                            <span className="inline-block text-xs font-medium px-2 py-0.5 rounded-full bg-red-500/10 text-red-600 border border-red-500/20">{category}</span>
+                                          )}
+                                          {comment && <p className="text-sm text-muted-foreground">{comment}</p>}
+                                          <p className="text-xs text-muted-foreground">Platform team will investigate and resolve.</p>
+                                        </div>
+                                      );
+                                    })()}
                                   </div>
                                 )}
 

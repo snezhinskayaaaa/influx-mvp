@@ -2165,19 +2165,7 @@ export default function InfluencerDashboard() {
                             </div>
                           ) : selectedCampaignDetails.status === "disputed" ? (
                             <div className="space-y-3">
-                              <div className="flex items-center gap-2 px-4 py-3 rounded-lg bg-red-500/10 border border-red-500/20">
-                                <AlertCircle className="h-5 w-5 text-red-600" />
-                                <div>
-                                  <p className="text-sm font-medium text-red-600">Dispute filed — under review by platform team</p>
-                                  <p className="text-xs text-muted-foreground">Remaining payment is held until resolved.</p>
-                                </div>
-                              </div>
-                              {selectedCampaignDetails.disputeReason && (
-                                <div className="p-3 rounded-lg bg-muted/50 border">
-                                  <p className="text-xs text-muted-foreground mb-1">Dispute reason:</p>
-                                  <p className="text-sm">{selectedCampaignDetails.disputeReason}</p>
-                                </div>
-                              )}
+                              {/* Published links */}
                               {(selectedCampaignDetails.publishedUrls && selectedCampaignDetails.publishedUrls.length > 0) && (
                                 <div className="bg-background rounded-lg p-4 border border-border">
                                   <div className="flex items-center gap-2 mb-2">
@@ -2200,6 +2188,27 @@ export default function InfluencerDashboard() {
                                   </div>
                                 </div>
                               )}
+                              {/* Dispute info */}
+                              <div className="rounded-lg border border-red-500/20 overflow-hidden">
+                                <div className="flex items-center gap-2 px-4 py-3 bg-red-500/10">
+                                  <AlertCircle className="h-4 w-4 text-red-600" />
+                                  <p className="text-sm font-medium text-red-600">Dispute filed — under review</p>
+                                </div>
+                                {selectedCampaignDetails.disputeReason && (() => {
+                                  const match = selectedCampaignDetails.disputeReason.match(/^\[(.+?)\]\s*(.*)/s);
+                                  const category = match ? match[1].replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase()) : null;
+                                  const comment = match ? match[2] : selectedCampaignDetails.disputeReason;
+                                  return (
+                                    <div className="px-4 py-3 space-y-2">
+                                      {category && (
+                                        <span className="inline-block text-xs font-medium px-2 py-0.5 rounded-full bg-red-500/10 text-red-600 border border-red-500/20">{category}</span>
+                                      )}
+                                      {comment && <p className="text-sm text-muted-foreground">{comment}</p>}
+                                      <p className="text-xs text-muted-foreground">Remaining payment is held until resolved.</p>
+                                    </div>
+                                  );
+                                })()}
+                              </div>
                             </div>
                           ) : (selectedCampaignDetails.status === "completed" || selectedCampaignDetails.status === "resolved") ? (
                             <div className="space-y-3">
