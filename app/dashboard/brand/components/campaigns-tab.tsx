@@ -459,6 +459,7 @@ export function CampaignsTab({
                 brandTerms: (c.brandTerms as string) || undefined,
                 influencerTerms: (c.influencerTerms as string) || undefined,
                 disputeReason: (c.disputeReason as string) || undefined,
+                deliveredAt: (c.deliveredAt as string) || undefined,
                 // Profile details for popup
                 influencerBio: (inf?.bio as string) || '',
                 influencerNiche: Array.isArray(inf?.niche) ? (inf.niche as string[]).join(', ') : '',
@@ -2335,7 +2336,13 @@ export function CampaignsTab({
                                     <div className="flex items-center gap-2 px-4 py-3 rounded-lg bg-amber-500/10 border border-amber-500/20">
                                       <Clock className="h-5 w-5 text-amber-600" />
                                       <p className="text-xs text-muted-foreground">
-                                        Auto-release in 7 days if no action is taken
+                                        {(() => {
+                                          if (!selectedInfluencerForPipeline.deliveredAt) return 'Auto-release in 7 days if no action is taken';
+                                          const delivered = new Date(selectedInfluencerForPipeline.deliveredAt);
+                                          const releaseDate = new Date(delivered.getTime() + 7 * 24 * 60 * 60 * 1000);
+                                          const daysLeft = Math.max(0, Math.ceil((releaseDate.getTime() - Date.now()) / (24 * 60 * 60 * 1000)));
+                                          return daysLeft <= 0 ? 'Auto-release imminent — payment will be processed soon' : `Auto-release in ${daysLeft} day${daysLeft !== 1 ? 's' : ''} if no action is taken`;
+                                        })()}
                                       </p>
                                     </div>
                                     {!showDisputeInput ? (

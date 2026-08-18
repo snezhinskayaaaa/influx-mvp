@@ -143,6 +143,7 @@ interface Campaign {
   revisionCount?: number;
   contentUrl?: string;
   disputeReason?: string;
+  deliveredAt?: string;
   /** Collaboration message (may contain invitation text) */
   collaborationMessage?: string;
 }
@@ -410,6 +411,7 @@ export default function InfluencerDashboard() {
                 publishedUrl: (collab.publishedUrl as string) || undefined,
                 publishedUrls: Array.isArray(collab.publishedUrls) ? collab.publishedUrls as string[] : [],
                 disputeReason: (collab.disputeReason as string) || undefined,
+                deliveredAt: (collab.deliveredAt as string) || undefined,
                 collaborationMessage: (collab.message as string) || undefined,
                 brandTerms: (collab.brandTerms as string) || undefined,
                 influencerTerms: (collab.influencerTerms as string) || undefined,
@@ -2115,7 +2117,15 @@ export default function InfluencerDashboard() {
                               <div className="flex items-center gap-2 px-4 py-3 rounded-lg bg-green-500/10 border border-green-500/20">
                                 <Clock className="h-5 w-5 text-green-600" />
                                 <div>
-                                  <p className="text-sm font-medium text-green-600">Waiting for project approval. Auto-release in 7 days.</p>
+                                  <p className="text-sm font-medium text-green-600">
+                                    {(() => {
+                                      if (!selectedCampaignDetails.deliveredAt) return 'Waiting for project approval. Auto-release in 7 days.';
+                                      const delivered = new Date(selectedCampaignDetails.deliveredAt);
+                                      const releaseDate = new Date(delivered.getTime() + 7 * 24 * 60 * 60 * 1000);
+                                      const daysLeft = Math.max(0, Math.ceil((releaseDate.getTime() - Date.now()) / (24 * 60 * 60 * 1000)));
+                                      return daysLeft <= 0 ? 'Auto-release imminent — payment will be processed soon.' : `Waiting for project approval. Auto-release in ${daysLeft} day${daysLeft !== 1 ? 's' : ''}.`;
+                                    })()}
+                                  </p>
                                 </div>
                               </div>
                               {(selectedCampaignDetails.publishedUrls && selectedCampaignDetails.publishedUrls.length > 0) ? (

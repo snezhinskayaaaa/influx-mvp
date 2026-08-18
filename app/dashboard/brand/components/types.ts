@@ -165,6 +165,7 @@ export interface CampaignApplication {
 
   // Dispute
   disputeReason?: string;
+  deliveredAt?: string;
 }
 
 export interface Campaign {
