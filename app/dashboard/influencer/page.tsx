@@ -1862,7 +1862,7 @@ export default function InfluencerDashboard() {
                         <div className="flex-1 pb-6">
                           <h3 className="font-semibold mb-2">Content Creation & Approval</h3>
                           <p className="text-sm text-muted-foreground mb-3">
-                            Create content and submit links for brand review
+                            Create content and submit links for project review
                           </p>
 
                           {selectedCampaignDetails.status === "applied" || selectedCampaignDetails.status === "approved" ? (
@@ -1914,7 +1914,7 @@ export default function InfluencerDashboard() {
                               <div className="flex items-center gap-2 px-4 py-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
                                 <Clock className="h-5 w-5 text-blue-600" />
                                 <div>
-                                  <p className="text-sm font-medium text-blue-600">Content submitted. Waiting for brand review.</p>
+                                  <p className="text-sm font-medium text-blue-600">Content submitted. Waiting for project review.</p>
                                 </div>
                               </div>
                               {selectedCampaignDetails.contentUrl && (
@@ -2114,7 +2114,7 @@ export default function InfluencerDashboard() {
                               <div className="flex items-center gap-2 px-4 py-3 rounded-lg bg-green-500/10 border border-green-500/20">
                                 <Clock className="h-5 w-5 text-green-600" />
                                 <div>
-                                  <p className="text-sm font-medium text-green-600">Waiting for brand approval. Auto-release in 7 days.</p>
+                                  <p className="text-sm font-medium text-green-600">Waiting for project approval. Auto-release in 7 days.</p>
                                 </div>
                               </div>
                               {(selectedCampaignDetails.publishedUrls && selectedCampaignDetails.publishedUrls.length > 0) ? (
