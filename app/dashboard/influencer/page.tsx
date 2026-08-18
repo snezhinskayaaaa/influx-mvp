@@ -3215,17 +3215,17 @@ export default function InfluencerDashboard() {
       {/* Apply Modal */}
       {applyingCampaign && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-          <div className="bg-background border border-border rounded-2xl p-6 w-full max-w-md mx-4 shadow-2xl">
-            <h3 className="text-lg font-bold mb-1">Apply to Campaign</h3>
-            <p className="text-sm text-muted-foreground mb-3">{applyingCampaign.title}</p>
+          <div className="bg-background border border-border rounded-2xl p-4 sm:p-6 w-full max-w-md mx-4 shadow-2xl max-h-[90vh] overflow-y-auto">
+            <h3 className="text-sm sm:text-lg font-bold mb-0.5 sm:mb-1">Apply to Campaign</h3>
+            <p className="text-xs sm:text-sm text-muted-foreground mb-2 sm:mb-3">{applyingCampaign.title}</p>
 
             {/* Campaign description */}
             {applyingCampaign.description && (
-              <p className="text-sm text-muted-foreground mb-3 line-clamp-3">{applyingCampaign.description}</p>
+              <p className="text-xs sm:text-sm text-muted-foreground mb-2 sm:mb-3 line-clamp-3">{applyingCampaign.description}</p>
             )}
 
             {/* Campaign details summary */}
-            <div className="bg-muted/50 rounded-xl p-3 mb-3 space-y-2 text-sm">
+            <div className="bg-muted/50 rounded-lg sm:rounded-xl p-2.5 sm:p-3 mb-2 sm:mb-3 space-y-1.5 sm:space-y-2 text-xs sm:text-sm">
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Budget</span>
                 <span className="font-medium">${applyingCampaign.budgetMin || 0} – ${applyingCampaign.budgetMax || 0} / creator</span>
@@ -3257,64 +3257,64 @@ export default function InfluencerDashboard() {
             </div>
 
             {/* Target metrics — what the project expects */}
-            <div className="bg-primary/5 border border-primary/20 rounded-xl p-3 mb-4 space-y-2 text-sm">
-              <p className="text-xs font-semibold text-primary mb-1">Target Metrics (project expectations)</p>
+            <div className="bg-primary/5 border border-primary/20 rounded-lg sm:rounded-xl p-2.5 sm:p-3 mb-3 sm:mb-4 space-y-1.5 sm:space-y-2 text-xs sm:text-sm">
+              <p className="text-xs font-semibold text-primary mb-0.5 sm:mb-1">Target Metrics</p>
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Target views</span>
-                <span className="font-medium">{applyingCampaign.targetViews ? Number(applyingCampaign.targetViews).toLocaleString() : 'Not specified'}</span>
+                <span className="text-muted-foreground">Views</span>
+                <span className="font-medium">{applyingCampaign.targetViews ? Number(applyingCampaign.targetViews).toLocaleString() : '—'}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Target clicks</span>
-                <span className="font-medium">{applyingCampaign.targetClicks ? Number(applyingCampaign.targetClicks).toLocaleString() : 'Not specified'}</span>
+                <span className="text-muted-foreground">Clicks</span>
+                <span className="font-medium">{applyingCampaign.targetClicks ? Number(applyingCampaign.targetClicks).toLocaleString() : '—'}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Target engagements</span>
-                <span className="font-medium">{applyingCampaign.targetEngagements ? Number(applyingCampaign.targetEngagements).toLocaleString() : 'Not specified'}</span>
+                <span className="text-muted-foreground">Engagements</span>
+                <span className="font-medium">{applyingCampaign.targetEngagements ? Number(applyingCampaign.targetEngagements).toLocaleString() : '—'}</span>
               </div>
             </div>
 
-            <div className="space-y-4">
+            <div className="space-y-3 sm:space-y-4">
               <div>
-                <label className="text-sm font-medium mb-1 block">Your Price ($) for this collaboration</label>
+                <label className="text-xs sm:text-sm font-medium mb-1 block">Your Price ($)</label>
                 <input
                   type="number"
                   value={proposedPrice}
                   onChange={(e) => setProposedPrice(e.target.value)}
                   placeholder="Total price for all deliverables"
-                  className="w-full px-3 py-2 rounded-lg border border-border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                  className="w-full px-3 py-2 rounded-lg border border-border bg-background text-xs sm:text-sm h-10 focus:outline-none focus:ring-2 focus:ring-primary"
                 />
                 <p className="text-xs text-muted-foreground mt-1">
-                  Fixed price for the full collaboration. Project budget: ${applyingCampaign.budgetMin || 0} – ${applyingCampaign.budgetMax || 0}. Payment: 50% advance on start, 50% on delivery.
+                  Budget: ${applyingCampaign.budgetMin || 0} – ${applyingCampaign.budgetMax || 0}. Payment: 50/50.
                 </p>
               </div>
               <div>
-                <label className="text-sm font-medium mb-1 block">Message (optional)</label>
+                <label className="text-xs sm:text-sm font-medium mb-1 block">Message (optional)</label>
                 <textarea
                   value={applicationMessage}
                   onChange={(e) => setApplicationMessage(e.target.value)}
-                  placeholder="Why you're a great fit for this campaign..."
-                  rows={3}
-                  className="w-full px-3 py-2 rounded-lg border border-border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary resize-none"
+                  placeholder="Why you're a great fit..."
+                  rows={2}
+                  className="w-full px-3 py-2 rounded-lg border border-border bg-background text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-primary resize-none"
                 />
               </div>
 
-              {applyError && <p className="text-sm text-red-500">{applyError}</p>}
-              {applySuccess && <p className="text-sm text-green-500">{applySuccess}</p>}
+              {applyError && <p className="text-xs text-red-500">{applyError}</p>}
+              {applySuccess && <p className="text-xs text-green-500">{applySuccess}</p>}
 
-              <div className="flex gap-3">
+              <div className="flex gap-2 sm:gap-3">
                 <Button
                   variant="outline"
-                  className="flex-1"
+                  className="flex-1 h-10 text-xs sm:text-sm"
                   onClick={() => { setApplyingCampaign(null); setApplyError(""); }}
                 >
                   Cancel
                 </Button>
                 <Button
-                  className="flex-1"
+                  className="flex-1 h-10 text-xs sm:text-sm"
                   onClick={handleApply}
                   disabled={applyLoading || !proposedPrice}
                 >
-                  {applyLoading ? "Submitting..." : "Submit Application"}
+                  {applyLoading ? "Submitting..." : "Submit"}
                 </Button>
               </div>
             </div>
