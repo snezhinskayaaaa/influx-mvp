@@ -340,7 +340,9 @@ export default function InfluencerDashboard() {
               description: (c.description as string) || '',
               requirements: (c.deliverables as string[]) || [],
               platforms: Array.isArray(c.platforms) ? c.platforms as string[] : [],
-              deadline: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+              deadline: (c.deadline as string) || new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+              startDate: (c.startDate as string) || undefined,
+              endDate: (c.endDate as string) || undefined,
               status: 'open' as const,
               goal: (c.goal as string) || '',
               targetViews: (c.targetViews as string) || undefined,
@@ -392,7 +394,9 @@ export default function InfluencerDashboard() {
                 description: (campaign?.description as string) || '',
                 requirements: (collab.deliverables as string[]) || [],
                 platforms: Array.isArray(campaign?.platforms) ? campaign.platforms as string[] : [],
-                deadline: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+                deadline: (campaign?.deadline as string) || new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+                startDate: (campaign?.startDate as string) || undefined,
+                endDate: (campaign?.endDate as string) || undefined,
                 status: statusMap[(collab.status as string)] || 'applied',
                 goal: (campaign?.goal as string) || '',
                 targetViews: (campaign?.targetViews as string) || undefined,
@@ -700,7 +704,9 @@ export default function InfluencerDashboard() {
               description: (campaign?.description as string) || "",
               requirements: (collab.deliverables as string[]) || [],
               platforms: Array.isArray(campaign?.platforms) ? campaign.platforms as string[] : [],
-              deadline: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
+              deadline: (campaign?.deadline as string) || new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
+              startDate: (campaign?.startDate as string) || undefined,
+              endDate: (campaign?.endDate as string) || undefined,
               status: statusMap[(collab.status as string)] || "applied",
               goal: (campaign?.goal as string) || '',
               collaborationId: collab.id as string,
@@ -843,7 +849,9 @@ export default function InfluencerDashboard() {
               description: (campaign?.description as string) || "",
               requirements: (collab.deliverables as string[]) || [],
               platforms: Array.isArray(campaign?.platforms) ? campaign.platforms as string[] : [],
-              deadline: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
+              deadline: (campaign?.deadline as string) || new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
+              startDate: (campaign?.startDate as string) || undefined,
+              endDate: (campaign?.endDate as string) || undefined,
               status: statusMap[(collab.status as string)] || "applied",
               goal: (campaign?.goal as string) || '',
               collaborationId: collab.id as string,
@@ -1426,7 +1434,7 @@ export default function InfluencerDashboard() {
                           </div>
                         </div>
                         <div>
-                          <Label className="text-xs text-muted-foreground mb-1 block">Brand</Label>
+                          <Label className="text-xs text-muted-foreground mb-1 block">Project</Label>
                           <div className="text-sm font-medium">{selectedCampaignDetails.brand}</div>
                         </div>
                         <div>
