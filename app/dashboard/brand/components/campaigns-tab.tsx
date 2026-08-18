@@ -1963,27 +1963,6 @@ export function CampaignsTab({
                           </div>
                         )}
 
-                        {/* DISPUTED: Under review */}
-                        {selectedInfluencerForPipeline.collaborationStatus === "DISPUTED" && (
-                          <div className="space-y-3 pt-3 border-t">
-                            <div className="flex items-center gap-2 px-4 py-3 rounded-lg bg-red-500/10 border border-red-500/20">
-                              <AlertCircle className="h-5 w-5 text-red-600" />
-                              <div>
-                                <p className="text-sm font-medium text-red-600">Under review by platform team</p>
-                                <p className="text-xs text-muted-foreground">
-                                  We will investigate and resolve this dispute.
-                                </p>
-                              </div>
-                            </div>
-                            {selectedInfluencerForPipeline.disputeReason && (
-                              <div className="p-3 rounded-lg bg-muted/50 border border-border">
-                                <p className="text-xs text-muted-foreground mb-1">Dispute Reason:</p>
-                                <p className="text-sm">{selectedInfluencerForPipeline.disputeReason}</p>
-                              </div>
-                            )}
-                          </div>
-                        )}
-
                         {/* COMPLETED or RESOLVED: Payment summary */}
                         {(selectedInfluencerForPipeline.collaborationStatus === "COMPLETED" || selectedInfluencerForPipeline.collaborationStatus === "RESOLVED") && (
                           <div className="space-y-3 pt-3 border-t">
@@ -2254,7 +2233,7 @@ export function CampaignsTab({
               <div className="flex gap-4">
                 <div className="flex flex-col items-center">
                   <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold ${
-                    ["PUBLISHING", "DELIVERED", "COMPLETED", "RESOLVED"].includes(selectedInfluencerForPipeline.collaborationStatus ?? "")
+                    ["PUBLISHING", "DELIVERED", "COMPLETED", "RESOLVED", "DISPUTED"].includes(selectedInfluencerForPipeline.collaborationStatus ?? "")
                       ? "bg-primary text-primary-foreground"
                       : "bg-muted text-muted-foreground"
                   }`}>
@@ -2289,7 +2268,7 @@ export function CampaignsTab({
                           )}
                         </div>
 
-                        {!selectedInfluencerForPipeline.contentApproved && !["PUBLISHING", "DELIVERED", "COMPLETED", "RESOLVED"].includes(selectedInfluencerForPipeline.collaborationStatus ?? "") ? (
+                        {!selectedInfluencerForPipeline.contentApproved && !["PUBLISHING", "DELIVERED", "COMPLETED", "RESOLVED", "DISPUTED"].includes(selectedInfluencerForPipeline.collaborationStatus ?? "") ? (
                           <div className="text-center py-8 bg-muted/30 rounded-lg border border-dashed border-border">
                             <Clock className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
                             <p className="text-sm text-muted-foreground">
@@ -2420,6 +2399,25 @@ export function CampaignsTab({
                                   </div>
                                 )}
 
+
+                                {/* Disputed status */}
+                                {selectedInfluencerForPipeline.collaborationStatus === "DISPUTED" && (
+                                  <div className="space-y-3">
+                                    <div className="flex items-center gap-2 px-4 py-3 rounded-lg bg-red-500/10 border border-red-500/20">
+                                      <AlertCircle className="h-5 w-5 text-red-600" />
+                                      <div>
+                                        <p className="text-sm font-medium text-red-600">Dispute filed — under review</p>
+                                        <p className="text-xs text-muted-foreground">Platform team will investigate and resolve.</p>
+                                      </div>
+                                    </div>
+                                    {selectedInfluencerForPipeline.disputeReason && (
+                                      <div className="p-3 rounded-lg bg-muted/50 border">
+                                        <p className="text-xs text-muted-foreground mb-1">Dispute Reason:</p>
+                                        <p className="text-sm">{selectedInfluencerForPipeline.disputeReason}</p>
+                                      </div>
+                                    )}
+                                  </div>
+                                )}
 
                                 {/* Completed status */}
                                 {selectedInfluencerForPipeline.collaborationStatus === "COMPLETED" && (
