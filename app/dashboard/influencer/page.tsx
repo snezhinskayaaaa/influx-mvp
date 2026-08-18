@@ -1858,7 +1858,7 @@ export default function InfluencerDashboard() {
                         <div className="flex flex-col items-center">
                           <div
                             className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold ${
-                              ["active", "content_review", "revision", "publishing", "delivered", "completed", "resolved"].includes(selectedCampaignDetails.status)
+                              ["active", "content_review", "revision", "publishing", "delivered", "completed", "resolved", "disputed"].includes(selectedCampaignDetails.status)
                                 ? "bg-primary text-primary-foreground"
                                 : "bg-muted text-muted-foreground"
                             }`}
@@ -1998,22 +1998,6 @@ export default function InfluencerDashboard() {
                                 </div>
                               </div>
                             </div>
-                          ) : selectedCampaignDetails.status === "disputed" ? (
-                            <div className="space-y-2">
-                              <div className="flex items-center gap-2 px-4 py-3 rounded-lg bg-red-500/10 border border-red-500/20">
-                                <AlertCircle className="h-5 w-5 text-red-600" />
-                                <div>
-                                  <p className="text-sm font-medium text-red-600">Dispute filed — under review by platform team</p>
-                                  <p className="text-xs text-muted-foreground">Remaining payment is held until resolved.</p>
-                                </div>
-                              </div>
-                              {selectedCampaignDetails.disputeReason && (
-                                <div className="p-3 rounded-lg bg-muted/50 border">
-                                  <p className="text-xs text-muted-foreground mb-1">Dispute reason:</p>
-                                  <p className="text-sm">{selectedCampaignDetails.disputeReason}</p>
-                                </div>
-                              )}
-                            </div>
                           ) : selectedCampaignDetails.status === "cancelled" ? (
                             <div className="text-center py-8 bg-muted/30 rounded-lg border border-dashed border-border">
                               <Clock className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
@@ -2021,7 +2005,7 @@ export default function InfluencerDashboard() {
                                 Collaboration was cancelled
                               </p>
                             </div>
-                          ) : ["publishing", "delivered", "completed", "resolved"].includes(selectedCampaignDetails.status) ? (
+                          ) : ["publishing", "delivered", "completed", "resolved", "disputed"].includes(selectedCampaignDetails.status) ? (
                             <div className="flex items-center gap-2 px-4 py-3 rounded-lg bg-success/10 border border-success/20">
                               <CheckCircle2 className="h-5 w-5 text-success" />
                               <div className="flex-1">
@@ -2040,7 +2024,7 @@ export default function InfluencerDashboard() {
                         <div className="flex flex-col items-center">
                           <div
                             className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold ${
-                              ["publishing", "delivered", "completed", "resolved"].includes(selectedCampaignDetails.status)
+                              ["publishing", "delivered", "completed", "resolved", "disputed"].includes(selectedCampaignDetails.status)
                                 ? "bg-primary text-primary-foreground"
                                 : "bg-muted text-muted-foreground"
                             }`}
@@ -2180,7 +2164,7 @@ export default function InfluencerDashboard() {
                               ) : null}
                             </div>
                           ) : selectedCampaignDetails.status === "disputed" ? (
-                            <div className="space-y-2">
+                            <div className="space-y-3">
                               <div className="flex items-center gap-2 px-4 py-3 rounded-lg bg-red-500/10 border border-red-500/20">
                                 <AlertCircle className="h-5 w-5 text-red-600" />
                                 <div>
@@ -2192,6 +2176,28 @@ export default function InfluencerDashboard() {
                                 <div className="p-3 rounded-lg bg-muted/50 border">
                                   <p className="text-xs text-muted-foreground mb-1">Dispute reason:</p>
                                   <p className="text-sm">{selectedCampaignDetails.disputeReason}</p>
+                                </div>
+                              )}
+                              {(selectedCampaignDetails.publishedUrls && selectedCampaignDetails.publishedUrls.length > 0) && (
+                                <div className="bg-background rounded-lg p-4 border border-border">
+                                  <div className="flex items-center gap-2 mb-2">
+                                    <Rocket className="h-4 w-4 text-muted-foreground" />
+                                    <span className="text-sm font-medium">Published Content</span>
+                                  </div>
+                                  <div className="space-y-2">
+                                    {selectedCampaignDetails.publishedUrls.map((url, idx) => {
+                                      const format = selectedCampaignDetails.contentFormats[idx];
+                                      const label = format ? (FORMAT_LABELS[format] || format.replace(/-/g, " ").replace(/\b\w/g, c => c.toUpperCase())) : `Link ${idx + 1}`;
+                                      return (
+                                        <div key={idx}>
+                                          <span className="text-xs text-muted-foreground">{label}</span>
+                                          <a href={url} target="_blank" rel="noopener noreferrer" className="text-sm text-primary hover:underline break-all flex items-center gap-1">
+                                            {url} <ExternalLink className="h-3 w-3" />
+                                          </a>
+                                        </div>
+                                      );
+                                    })}
+                                  </div>
                                 </div>
                               )}
                             </div>
