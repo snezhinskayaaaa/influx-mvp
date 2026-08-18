@@ -54,8 +54,8 @@ export function generateAgreementPDF(data: AgreementData): Buffer {
 
   // Colors
   const primary = [59, 91, 219] as const // brand blue
-  const dark = [30, 30, 40] as const
-  const muted = [120, 120, 140] as const
+  const dark = [20, 20, 30] as const
+  const muted = [80, 80, 100] as const
   const light = [240, 242, 248] as const
 
   const checkPage = (needed: number) => {
@@ -97,7 +97,7 @@ export function generateAgreementPDF(data: AgreementData): Buffer {
 
   const addLabel = (text: string) => {
     checkPage(8)
-    doc.setFontSize(9)
+    doc.setFontSize(10)
     doc.setFont(fontName, 'normal')
     doc.setTextColor(...dark)
     doc.text(text, margin, y)
@@ -106,7 +106,7 @@ export function generateAgreementPDF(data: AgreementData): Buffer {
 
   const addBody = (text: string) => {
     checkPage(8)
-    doc.setFontSize(9)
+    doc.setFontSize(10)
     doc.setFont(fontName, 'normal')
     doc.setTextColor(...dark)
     const lines = doc.splitTextToSize(text, contentWidth)
@@ -116,7 +116,7 @@ export function generateAgreementPDF(data: AgreementData): Buffer {
 
   const addMuted = (text: string) => {
     checkPage(8)
-    doc.setFontSize(8)
+    doc.setFontSize(9)
     doc.setFont(fontName, 'normal')
     doc.setTextColor(...muted)
     const lines = doc.splitTextToSize(text, contentWidth)
@@ -127,7 +127,7 @@ export function generateAgreementPDF(data: AgreementData): Buffer {
 
   const addBullet = (text: string) => {
     checkPage(8)
-    doc.setFontSize(9)
+    doc.setFontSize(10)
     doc.setFont(fontName, 'normal')
     doc.setTextColor(...dark)
     const lines = doc.splitTextToSize(text, contentWidth - 8)
@@ -138,7 +138,7 @@ export function generateAgreementPDF(data: AgreementData): Buffer {
 
   const addNumberedItem = (num: number, text: string) => {
     checkPage(8)
-    doc.setFontSize(9)
+    doc.setFontSize(10)
     doc.setFont(fontName, 'normal')
     doc.setTextColor(...muted)
     doc.text(`${num}.`, margin + 2, y)
