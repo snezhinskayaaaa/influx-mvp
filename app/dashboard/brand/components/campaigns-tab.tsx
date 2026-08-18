@@ -2276,7 +2276,7 @@ export function CampaignsTab({
                               Publication by {selectedInfluencerForPipeline.influencerName}
                             </h3>
                             <p className="text-sm text-muted-foreground">
-                              Track published content and metrics
+                              Track published content
                             </p>
                           </div>
                           {selectedInfluencerForPipeline.metricsTargetReached && (
