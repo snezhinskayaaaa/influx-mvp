@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
 import { getCurrentUser } from '@/lib/auth'
 import { rateLimit } from '@/lib/rate-limit'
+import { checkCampaignAutoComplete } from '@/lib/campaign-auto-complete'
 
 export async function POST(
   request: NextRequest,
@@ -182,6 +183,9 @@ export async function POST(
           },
         })
       })
+
+      // Fire-and-forget: auto-complete campaign if all collabs done
+      checkCampaignAutoComplete(collaboration.campaignId)
 
       return NextResponse.json({ collaboration: result })
     } catch (txError) {

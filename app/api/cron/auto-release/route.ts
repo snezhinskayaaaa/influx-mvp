@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
 import { notifyBrandAutoRelease, notifyInfluencerPaymentReceived } from '@/lib/notifications'
+import { checkCampaignAutoComplete } from '@/lib/campaign-auto-complete'
 
 const CRON_SECRET = process.env.CRON_SECRET
 
@@ -73,6 +74,9 @@ export async function POST(request: NextRequest) {
         // Fire-and-forget notifications: auto-release completed
         notifyBrandAutoRelease(collab.campaign.brand.userId, collab.campaign.title, remaining)
         notifyInfluencerPaymentReceived(collab.influencer.userId, collab.campaign.title, remaining)
+
+        // Fire-and-forget: auto-complete campaign if all collabs done
+        checkCampaignAutoComplete(collab.campaignId)
 
         results.autoReleased++
       } catch (err) {
