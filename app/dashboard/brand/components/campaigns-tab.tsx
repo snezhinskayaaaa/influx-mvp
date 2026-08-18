@@ -198,7 +198,7 @@ export function CampaignsTab({
   useEffect(() => {
     if (!selectedCampaignDetails) return;
     const interval = setInterval(() => {
-      handleOpenCampaign(selectedCampaignDetails);
+      handleOpenCampaign(selectedCampaignDetails, true);
     }, 15000);
     return () => clearInterval(interval);
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -236,7 +236,7 @@ export function CampaignsTab({
       }
       showToast('Campaign started. 50% advance paid to creator.', 'success');
       // Refresh page to reflect changes
-      if (selectedCampaignDetails) await handleOpenCampaign(selectedCampaignDetails);
+      if (selectedCampaignDetails) await handleOpenCampaign(selectedCampaignDetails, true);
     } catch {
       showToast('Failed to start campaign', 'error');
     } finally {
@@ -261,7 +261,7 @@ export function CampaignsTab({
       showToast('Content approved. Waiting for creator to publish.', 'success');
       // Refresh pipeline data inline instead of full page reload
       if (selectedCampaignDetails) {
-        await handleOpenCampaign(selectedCampaignDetails);
+        await handleOpenCampaign(selectedCampaignDetails, true);
       }
     } catch {
       showToast('Failed to approve content', 'error');
@@ -296,7 +296,7 @@ export function CampaignsTab({
         });
       }
       setRevisionNoteText("");
-      if (selectedCampaignDetails) await handleOpenCampaign(selectedCampaignDetails);
+      if (selectedCampaignDetails) await handleOpenCampaign(selectedCampaignDetails, true);
     } catch {
       showToast('Failed to request revision', 'error');
     } finally {
@@ -319,7 +319,7 @@ export function CampaignsTab({
         return;
       }
       showToast('Delivery approved. Final payment released.', 'success');
-      if (selectedCampaignDetails) await handleOpenCampaign(selectedCampaignDetails);
+      if (selectedCampaignDetails) await handleOpenCampaign(selectedCampaignDetails, true);
     } catch {
       showToast('Failed to approve delivery', 'error');
     } finally {
@@ -344,7 +344,7 @@ export function CampaignsTab({
       showToast('Dispute filed. Platform team will review.', 'success');
       setDisputeReasonText("");
       setShowDisputeInput(false);
-      if (selectedCampaignDetails) await handleOpenCampaign(selectedCampaignDetails);
+      if (selectedCampaignDetails) await handleOpenCampaign(selectedCampaignDetails, true);
     } catch {
       showToast('Failed to file dispute', 'error');
     } finally {
@@ -410,11 +410,13 @@ export function CampaignsTab({
   };
 
   /** Open campaign detail view and fetch applications */
-  const handleOpenCampaign = async (campaign: Campaign) => {
+  const handleOpenCampaign = async (campaign: Campaign, keepInfluencer = false) => {
     // Only set campaign immediately on first open (no applicationsList yet)
     // On refresh, skip this to avoid flickering
     if (!selectedCampaignDetails || selectedCampaignDetails.id !== campaign.id) {
       setSelectedCampaignDetails(campaign);
+      setSelectedInfluencerForPipeline(null);
+    } else if (!keepInfluencer) {
       setSelectedInfluencerForPipeline(null);
     }
     try {
