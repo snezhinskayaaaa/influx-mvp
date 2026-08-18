@@ -2113,7 +2113,7 @@ export function CampaignsTab({
                                       <p className="text-xs text-muted-foreground mt-2">Your note: &quot;{selectedInfluencerForPipeline.revisionNote}&quot;</p>
                                     )}
                                   </div>
-                                ) : (<>
+                                ) : ["DISPUTED", "RESOLVED", "COMPLETED", "DELIVERED", "PUBLISHING"].includes(selectedInfluencerForPipeline.collaborationStatus ?? "") ? null : (<>
                                 <div className="flex gap-2">
                                   <Button
                                     onClick={() => handleApproveContent(selectedInfluencerForPipeline.collaborationId!)}
