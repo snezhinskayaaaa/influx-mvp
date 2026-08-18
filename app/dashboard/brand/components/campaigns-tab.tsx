@@ -2879,7 +2879,7 @@ export function CampaignsTab({
               <div>
                 <div className="flex items-center gap-2">
                   <h3 className="text-lg font-bold">{viewingProfile.influencerName as string}</h3>
-                  {viewingProfile.influencerVerified && (
+                  {(viewingProfile.influencerVerified as boolean) && (
                     <CheckCircle2 className="h-4 w-4 text-primary shrink-0" />
                   )}
                 </div>
