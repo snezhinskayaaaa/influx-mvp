@@ -1999,11 +1999,20 @@ export default function InfluencerDashboard() {
                               </div>
                             </div>
                           ) : selectedCampaignDetails.status === "disputed" ? (
-                            <div className="flex items-center gap-2 px-4 py-3 rounded-lg bg-red-500/10 border border-red-500/20">
-                              <AlertCircle className="h-5 w-5 text-red-600" />
-                              <div>
-                                <p className="text-sm font-medium text-red-600">Under review by platform team. Remaining payment is held.</p>
+                            <div className="space-y-2">
+                              <div className="flex items-center gap-2 px-4 py-3 rounded-lg bg-red-500/10 border border-red-500/20">
+                                <AlertCircle className="h-5 w-5 text-red-600" />
+                                <div>
+                                  <p className="text-sm font-medium text-red-600">Dispute filed — under review by platform team</p>
+                                  <p className="text-xs text-muted-foreground">Remaining payment is held until resolved.</p>
+                                </div>
                               </div>
+                              {selectedCampaignDetails.disputeReason && (
+                                <div className="p-3 rounded-lg bg-muted/50 border">
+                                  <p className="text-xs text-muted-foreground mb-1">Dispute reason:</p>
+                                  <p className="text-sm">{selectedCampaignDetails.disputeReason}</p>
+                                </div>
+                              )}
                             </div>
                           ) : selectedCampaignDetails.status === "cancelled" ? (
                             <div className="text-center py-8 bg-muted/30 rounded-lg border border-dashed border-border">
@@ -2171,11 +2180,20 @@ export default function InfluencerDashboard() {
                               ) : null}
                             </div>
                           ) : selectedCampaignDetails.status === "disputed" ? (
-                            <div className="flex items-center gap-2 px-4 py-3 rounded-lg bg-red-500/10 border border-red-500/20">
-                              <AlertCircle className="h-5 w-5 text-red-600" />
-                              <div>
-                                <p className="text-sm font-medium text-red-600">Under review by platform team. Remaining payment is held.</p>
+                            <div className="space-y-2">
+                              <div className="flex items-center gap-2 px-4 py-3 rounded-lg bg-red-500/10 border border-red-500/20">
+                                <AlertCircle className="h-5 w-5 text-red-600" />
+                                <div>
+                                  <p className="text-sm font-medium text-red-600">Dispute filed — under review by platform team</p>
+                                  <p className="text-xs text-muted-foreground">Remaining payment is held until resolved.</p>
+                                </div>
                               </div>
+                              {selectedCampaignDetails.disputeReason && (
+                                <div className="p-3 rounded-lg bg-muted/50 border">
+                                  <p className="text-xs text-muted-foreground mb-1">Dispute reason:</p>
+                                  <p className="text-sm">{selectedCampaignDetails.disputeReason}</p>
+                                </div>
+                              )}
                             </div>
                           ) : (selectedCampaignDetails.status === "completed" || selectedCampaignDetails.status === "resolved") ? (
                             <div className="space-y-3">

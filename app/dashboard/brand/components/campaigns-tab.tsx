@@ -185,6 +185,7 @@ export function CampaignsTab({
   const [priceModalValue, setPriceModalValue] = useState("");
   const [revisionNoteText, setRevisionNoteText] = useState("");
   const [disputeReasonText, setDisputeReasonText] = useState("");
+  const [disputeCategory, setDisputeCategory] = useState("");
   const [showRevisionInput, setShowRevisionInput] = useState(false);
   const [showDisputeInput, setShowDisputeInput] = useState(false);
   const [actionLoading, setActionLoading] = useState(false);
@@ -457,6 +458,7 @@ export function CampaignsTab({
                 revisionNote: (c.revisionNote as string) || undefined,
                 brandTerms: (c.brandTerms as string) || undefined,
                 influencerTerms: (c.influencerTerms as string) || undefined,
+                disputeReason: (c.disputeReason as string) || undefined,
                 // Profile details for popup
                 influencerBio: (inf?.bio as string) || '',
                 influencerNiche: Array.isArray(inf?.niche) ? (inf.niche as string[]).join(', ') : '',
@@ -1678,7 +1680,7 @@ export function CampaignsTab({
                         </div>
 
                         {/* Stage 1 content: status-aware rendering */}
-                        {["IN_PROGRESS", "CONTENT_REVIEW", "REVISION", "PUBLISHING", "DELIVERED", "COMPLETED", "RESOLVED"].includes(selectedInfluencerForPipeline.collaborationStatus ?? "") ? (
+                        {["IN_PROGRESS", "CONTENT_REVIEW", "REVISION", "PUBLISHING", "DELIVERED", "COMPLETED", "RESOLVED", "DISPUTED"].includes(selectedInfluencerForPipeline.collaborationStatus ?? "") ? (
                           /* Completed Stage 1: read-only summary with badges */
                           <div className="space-y-3">
                             <div className="flex items-center gap-2 px-4 py-3 rounded-lg bg-success/10 border border-success/20">
@@ -2378,9 +2380,21 @@ export function CampaignsTab({
                                         </Button>
                                       </div>
                                     ) : (
-                                      <div className="space-y-2">
+                                      <div className="space-y-3">
+                                        <Select value={disputeCategory} onValueChange={setDisputeCategory}>
+                                          <SelectTrigger className="h-10">
+                                            <SelectValue placeholder="Select dispute reason..." />
+                                          </SelectTrigger>
+                                          <SelectContent>
+                                            <SelectItem value="not-matching-brief">Content doesn&apos;t match brief</SelectItem>
+                                            <SelectItem value="low-quality">Low quality content</SelectItem>
+                                            <SelectItem value="not-published">Not published as agreed</SelectItem>
+                                            <SelectItem value="wrong-platform">Published on wrong platform</SelectItem>
+                                            <SelectItem value="other">Other</SelectItem>
+                                          </SelectContent>
+                                        </Select>
                                         <Textarea
-                                          placeholder="Describe the issue..."
+                                          placeholder="Describe the issue in detail..."
                                           value={disputeReasonText}
                                           onChange={(e) => setDisputeReasonText(e.target.value)}
                                           className="min-h-[80px]"
@@ -2389,14 +2403,14 @@ export function CampaignsTab({
                                           <Button
                                             variant="outline"
                                             className="border-red-500/30 text-red-600 hover:bg-red-500/10"
-                                            disabled={actionLoading || !disputeReasonText.trim()}
-                                            onClick={() => handleDispute(selectedInfluencerForPipeline.collaborationId!, disputeReasonText.trim())}
+                                            disabled={actionLoading || !disputeReasonText.trim() || !disputeCategory}
+                                            onClick={() => handleDispute(selectedInfluencerForPipeline.collaborationId!, `[${disputeCategory}] ${disputeReasonText.trim()}`)}
                                           >
                                             {actionLoading ? "Filing..." : "File Dispute"}
                                           </Button>
                                           <Button
                                             variant="ghost"
-                                            onClick={() => { setShowDisputeInput(false); setDisputeReasonText(""); }}
+                                            onClick={() => { setShowDisputeInput(false); setDisputeReasonText(""); setDisputeCategory(""); }}
                                           >
                                             Cancel
                                           </Button>
