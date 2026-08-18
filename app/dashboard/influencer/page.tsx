@@ -1204,8 +1204,8 @@ export default function InfluencerDashboard() {
                     <Card className="p-3 sm:p-6 hover:shadow-lg transition-shadow cursor-pointer" onClick={() => setApplyingCampaign(campaign)}>
                       <div className="flex gap-2.5 sm:gap-4">
                         {/* Brand Avatar */}
-                        <div className="flex-shrink-0" onClick={(e) => { e.stopPropagation(); setViewingBrand(campaign); }}>
-                          <div className="w-9 h-9 sm:w-16 sm:h-16 rounded-full bg-gradient-to-br from-primary/10 to-secondary/10 flex items-center justify-center text-sm sm:text-2xl overflow-hidden hover:ring-2 hover:ring-primary/30 transition-all">
+                        <div className="flex-shrink-0">
+                          <div className="w-9 h-9 sm:w-16 sm:h-16 rounded-full bg-gradient-to-br from-primary/10 to-secondary/10 flex items-center justify-center text-sm sm:text-2xl overflow-hidden">
                             {campaign.brandAvatar.startsWith('data:') || campaign.brandAvatar.startsWith('http') ? (
                               <img src={campaign.brandAvatar} alt="" className="w-full h-full object-cover" />
                             ) : (
@@ -1218,9 +1218,9 @@ export default function InfluencerDashboard() {
                         <div className="flex-1 min-w-0">
                           <div className="flex items-start justify-between gap-2 sm:gap-4 mb-1 sm:mb-2">
                             <div className="flex-1 min-w-0">
-                              <h3 className="text-sm sm:text-xl font-bold mb-0.5 truncate hover:text-primary transition-colors" onClick={(e) => { e.stopPropagation(); setViewingBrand(campaign); }}>{campaign.title}</h3>
+                              <h3 className="text-sm sm:text-xl font-bold mb-0.5 truncate">{campaign.title}</h3>
                               <div className="flex items-center gap-1.5 text-xs sm:text-sm text-muted-foreground">
-                                <span className="font-medium hover:text-primary cursor-pointer transition-colors" onClick={(e) => { e.stopPropagation(); setViewingBrand(campaign); }}>{campaign.brand}</span>
+                                <span className="font-medium">{campaign.brand}</span>
                                 <span>•</span>
                                 <span>{campaign.category}</span>
                               </div>
@@ -3212,74 +3212,30 @@ export default function InfluencerDashboard() {
         </main>
       </div>
 
-      {/* Brand Info Modal */}
-      {viewingBrand && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm" onClick={() => setViewingBrand(null)}>
-          <div className="bg-background border border-border rounded-2xl p-5 sm:p-6 w-full max-w-sm mx-4 shadow-2xl" onClick={(e) => e.stopPropagation()}>
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary/10 to-secondary/10 flex items-center justify-center text-lg overflow-hidden">
-                {viewingBrand.brandAvatar.startsWith('data:') || viewingBrand.brandAvatar.startsWith('http') ? (
-                  <img src={viewingBrand.brandAvatar} alt="" className="w-full h-full object-cover" />
-                ) : (
-                  <span>{viewingBrand.brandAvatar}</span>
-                )}
-              </div>
-              <div>
-                <h3 className="font-bold text-base">{viewingBrand.brand}</h3>
-                <span className="text-xs text-muted-foreground">{viewingBrand.category}</span>
-              </div>
-            </div>
-            <div className="space-y-3">
-              <div>
-                <h4 className="text-xs font-medium text-muted-foreground mb-1">Campaign</h4>
-                <p className="text-sm font-semibold">{viewingBrand.title}</p>
-              </div>
-              <div>
-                <h4 className="text-xs font-medium text-muted-foreground mb-1">Description</h4>
-                <p className="text-sm text-muted-foreground">{viewingBrand.description}</p>
-              </div>
-              <div className="flex gap-4">
-                <div>
-                  <h4 className="text-xs font-medium text-muted-foreground mb-1">Budget</h4>
-                  <p className="text-sm font-semibold text-primary">${viewingBrand.budgetMin} – ${viewingBrand.budgetMax}</p>
-                </div>
-                <div>
-                  <h4 className="text-xs font-medium text-muted-foreground mb-1">Deadline</h4>
-                  <p className="text-sm">{new Date(viewingBrand.deadline).toLocaleDateString()}</p>
-                </div>
-              </div>
-              {viewingBrand.requirements.length > 0 && (
-                <div>
-                  <h4 className="text-xs font-medium text-muted-foreground mb-1">Requirements</h4>
-                  <div className="flex flex-wrap gap-1.5">
-                    {viewingBrand.requirements.map((req, idx) => (
-                      <span key={idx} className="text-xs bg-muted/50 px-2 py-1 rounded">{req}</span>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-            <div className="flex gap-2 mt-5">
-              <Button variant="outline" className="flex-1 h-10 text-sm" onClick={() => setViewingBrand(null)}>Close</Button>
-              <Button className="flex-1 h-10 text-sm bg-gradient-to-r from-primary to-secondary" onClick={() => { setApplyingCampaign(viewingBrand); setViewingBrand(null); }}>Apply Now</Button>
-            </div>
-          </div>
-        </div>
-      )}
-
       {/* Apply Modal */}
       {applyingCampaign && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
           <div className="bg-background border border-border rounded-2xl p-6 w-full max-w-md mx-4 shadow-2xl">
             <h3 className="text-lg font-bold mb-1">Apply to Campaign</h3>
-            <p className="text-sm text-muted-foreground mb-2">{applyingCampaign.title}</p>
+            <p className="text-sm text-muted-foreground mb-3">{applyingCampaign.title}</p>
+
+            {/* Campaign description */}
+            {applyingCampaign.description && (
+              <p className="text-sm text-muted-foreground mb-3 line-clamp-3">{applyingCampaign.description}</p>
+            )}
 
             {/* Campaign details summary */}
-            <div className="bg-muted/50 rounded-xl p-3 mb-4 space-y-2 text-sm">
+            <div className="bg-muted/50 rounded-xl p-3 mb-3 space-y-2 text-sm">
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Budget</span>
                 <span className="font-medium">${applyingCampaign.budgetMin || 0} – ${applyingCampaign.budgetMax || 0} / creator</span>
               </div>
+              {applyingCampaign.category && (
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Niche</span>
+                  <span className="font-medium">{applyingCampaign.category}</span>
+                </div>
+              )}
               {applyingCampaign.platforms && applyingCampaign.platforms.length > 0 && (
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Platforms</span>
@@ -3288,8 +3244,8 @@ export default function InfluencerDashboard() {
               )}
               {applyingCampaign.contentFormats && applyingCampaign.contentFormats.length > 0 && (
                 <div className="flex justify-between items-start">
-                  <span className="text-muted-foreground">Deliverables</span>
-                  <span className="font-medium text-right">{applyingCampaign.contentFormats.map(f => f.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase())).join(', ')}</span>
+                  <span className="text-muted-foreground">Content type</span>
+                  <span className="font-medium text-right">{applyingCampaign.contentFormats.map(f => FORMAT_LABELS[f] || f.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase())).join(', ')}</span>
                 </div>
               )}
               {applyingCampaign.goal && (
