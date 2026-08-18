@@ -1896,7 +1896,7 @@ export default function InfluencerDashboard() {
                                 <p className="text-xs text-muted-foreground mb-2">
                                   Share a link to your content draft (Google Drive, Dropbox, etc.)
                                 </p>
-                                <div className="flex gap-2">
+                                <div className="flex items-center gap-2">
                                   <div className="relative flex-1">
                                     <LinkIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                                     <Input
@@ -1907,7 +1907,7 @@ export default function InfluencerDashboard() {
                                     />
                                   </div>
                                   <Button
-                                    className="bg-gradient-to-r from-primary to-secondary"
+                                    className="h-11 bg-gradient-to-r from-primary to-secondary"
                                     disabled={submitLoading || !contentLinkInput.trim()}
                                     onClick={() => handleSubmitContent(selectedCampaignDetails.id, { contentUrl: contentLinkInput.trim() })}
                                   >
@@ -1977,7 +1977,7 @@ export default function InfluencerDashboard() {
                               </div>
                               <div className="space-y-2">
                                 <Label className="text-sm font-medium">Submit Revised Content</Label>
-                                <div className="flex gap-2">
+                                <div className="flex items-center gap-2">
                                   <div className="relative flex-1">
                                     <LinkIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                                     <Input
@@ -1988,7 +1988,7 @@ export default function InfluencerDashboard() {
                                     />
                                   </div>
                                   <Button
-                                    className="bg-gradient-to-r from-primary to-secondary"
+                                    className="h-11 bg-gradient-to-r from-primary to-secondary"
                                     disabled={submitLoading || !contentLinkInput.trim()}
                                     onClick={() => handleSubmitContent(selectedCampaignDetails.id, { contentUrl: contentLinkInput.trim() })}
                                   >
