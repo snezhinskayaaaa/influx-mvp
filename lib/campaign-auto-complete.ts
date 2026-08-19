@@ -8,7 +8,7 @@ export async function checkCampaignAutoComplete(campaignId: string) {
   try {
     const campaign = await prisma.campaign.findUnique({
       where: { id: campaignId },
-      select: { id: true, status: true },
+      select: { id: true, status: true, desiredInfluencerCount: true },
     })
 
     if (!campaign || campaign.status === 'COMPLETED') return
@@ -21,24 +21,22 @@ export async function checkCampaignAutoComplete(campaignId: string) {
     // No collabs = nothing to complete
     if (collabs.length === 0) return
 
-    // Check if ALL active collabs (not APPLIED/INVITED/CANCELLED) are done
-    const activeCollabs = collabs.filter(c =>
-      c.status !== 'APPLIED' && c.status !== 'INVITED' && c.status !== 'CANCELLED'
-    )
-    if (activeCollabs.length === 0) return
-
-    const allDone = activeCollabs.every(c =>
+    // Count completed collabs (COMPLETED or RESOLVED)
+    const completedCollabs = collabs.filter(c =>
       c.status === 'COMPLETED' || c.status === 'RESOLVED'
     )
 
-    if (allDone) {
+    const needed = campaign.desiredInfluencerCount || 1
+
+    // Only complete campaign if enough KOLs finished
+    if (completedCollabs.length >= needed) {
       await prisma.campaign.update({
         where: { id: campaignId },
         data: { status: 'COMPLETED' },
       })
-      console.log(`[auto-complete] Campaign ${campaignId} completed (${activeCollabs.length} collabs done)`)
+      console.log(`[auto-complete] Campaign ${campaignId} completed (${completedCollabs.length}/${needed} collabs done)`)
     } else {
-      console.log(`[auto-complete] Campaign ${campaignId} NOT complete: ${collabs.map(c => c.status).join(', ')}`)
+      console.log(`[auto-complete] Campaign ${campaignId} not ready: ${completedCollabs.length}/${needed} done, statuses: ${collabs.map(c => c.status).join(', ')}`)
     }
   } catch (error) {
     console.error('Campaign auto-complete check failed:', error)
