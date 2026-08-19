@@ -53,10 +53,10 @@ export function generateAgreementPDF(data: AgreementData): Buffer {
   const formatUSD = (cents: number) => `$${(cents / 100).toFixed(2)}`
 
   // Colors
-  const primary = [59, 91, 219] as const // brand blue
-  const dark = [20, 20, 30] as const
-  const muted = [80, 80, 100] as const
-  const light = [240, 242, 248] as const
+  const primary = [50, 80, 200] as const // brand blue — more saturated
+  const dark = [0, 0, 0] as const // pure black for body text
+  const muted = [50, 50, 65] as const // dark grey for secondary text
+  const light = [235, 238, 245] as const
 
   const checkPage = (needed: number) => {
     if (y + needed > pageHeight - 30) {
