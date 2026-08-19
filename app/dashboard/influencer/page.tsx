@@ -1615,19 +1615,13 @@ export default function InfluencerDashboard() {
 
                   {/* Invitation Accept/Decline */}
                   {selectedCampaignDetails.status === "invited" && selectedCampaignDetails.collaborationId && (
-                    <Card className="p-5 border-2 border-violet-500/30 bg-violet-500/5">
-                      <div className="flex items-center gap-2 mb-3">
-                        <Mail className="h-5 w-5 text-violet-600" />
-                        <h3 className="font-semibold text-violet-600">You&apos;ve been invited</h3>
+                    <Card className="p-4 border border-violet-500/30 bg-violet-500/5">
+                      <div className="flex items-center gap-2 mb-2">
+                        <Mail className="h-4 w-4 text-violet-600" />
+                        <h3 className="text-sm font-semibold text-violet-600">You&apos;ve been invited</h3>
                       </div>
-                      <p className="text-sm text-muted-foreground mb-1">
-                        {selectedCampaignDetails.brand} has invited you to collaborate on this campaign.
-                      </p>
-                      {selectedCampaignDetails.collaborationMessage && (
-                        <p className="text-sm italic text-muted-foreground mb-3">&quot;{selectedCampaignDetails.collaborationMessage}&quot;</p>
-                      )}
-                      <p className="text-xs text-muted-foreground mb-4">
-                        Review the campaign details above and decide if you&apos;d like to participate. Accepting will move you to the negotiation stage.
+                      <p className="text-xs text-muted-foreground mb-2">
+                        {selectedCampaignDetails.brand} invited you to collaborate. Proposed price: <span className="font-semibold text-primary">${selectedCampaignDetails.budget}</span>
                       </p>
                       <div className="flex gap-3">
                         <Button
@@ -2588,57 +2582,6 @@ export default function InfluencerDashboard() {
                           <Button size="sm" variant="ghost" className="h-8 w-8 p-0" onClick={() => setSelectedCampaignDetails(campaign)}>
                             <Eye className="h-4 w-4" />
                           </Button>
-                          {campaign.status === "invited" && campaign.collaborationId && (
-                            <>
-                              <Button
-                                size="sm"
-                                className="h-8 text-xs bg-success/10 text-success border border-success/30 hover:bg-success/20"
-                                onClick={async (e) => {
-                                  e.stopPropagation();
-                                  try {
-                                    const res = await fetch(`/api/collaborations/${campaign.collaborationId}/review`, {
-                                      method: 'POST',
-                                      headers: { 'Content-Type': 'application/json' },
-                                      body: JSON.stringify({ action: 'accept_invitation' }),
-                                    });
-                                    if (res.ok) {
-                                      showToast('Invitation accepted!', 'success');
-                                      refreshCollaborations();
-                                    } else {
-                                      const data = await res.json();
-                                      showToast(data.error || 'Failed', 'error');
-                                    }
-                                  } catch { showToast('Failed to accept', 'error'); }
-                                }}
-                              >
-                                Accept
-                              </Button>
-                              <Button
-                                size="sm"
-                                variant="ghost"
-                                className="h-8 text-xs text-red-600 hover:bg-red-500/10"
-                                onClick={async (e) => {
-                                  e.stopPropagation();
-                                  try {
-                                    const res = await fetch(`/api/collaborations/${campaign.collaborationId}/review`, {
-                                      method: 'POST',
-                                      headers: { 'Content-Type': 'application/json' },
-                                      body: JSON.stringify({ action: 'decline_invitation' }),
-                                    });
-                                    if (res.ok) {
-                                      showToast('Invitation declined', 'success');
-                                      refreshCollaborations();
-                                    } else {
-                                      const data = await res.json();
-                                      showToast(data.error || 'Failed', 'error');
-                                    }
-                                  } catch { showToast('Failed to decline', 'error'); }
-                                }}
-                              >
-                                Decline
-                              </Button>
-                            </>
-                          )}
                           {(campaign.status === "applied" || campaign.status === "approved") && campaign.collaborationId && (
                             <Button
                               size="sm"
