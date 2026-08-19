@@ -1613,6 +1613,72 @@ export default function InfluencerDashboard() {
                     </div>
                   </Card>
 
+                  {/* Invitation Accept/Decline */}
+                  {selectedCampaignDetails.status === "invited" && selectedCampaignDetails.collaborationId && (
+                    <Card className="p-5 border-2 border-violet-500/30 bg-violet-500/5">
+                      <div className="flex items-center gap-2 mb-3">
+                        <Mail className="h-5 w-5 text-violet-600" />
+                        <h3 className="font-semibold text-violet-600">You&apos;ve been invited</h3>
+                      </div>
+                      <p className="text-sm text-muted-foreground mb-1">
+                        {selectedCampaignDetails.brand} has invited you to collaborate on this campaign.
+                      </p>
+                      {selectedCampaignDetails.collaborationMessage && (
+                        <p className="text-sm italic text-muted-foreground mb-3">&quot;{selectedCampaignDetails.collaborationMessage}&quot;</p>
+                      )}
+                      <p className="text-xs text-muted-foreground mb-4">
+                        Review the campaign details above and decide if you&apos;d like to participate. Accepting will move you to the negotiation stage.
+                      </p>
+                      <div className="flex gap-3">
+                        <Button
+                          className="flex-1 bg-gradient-to-r from-primary to-secondary hover:opacity-90"
+                          onClick={async () => {
+                            try {
+                              const res = await fetch(`/api/collaborations/${selectedCampaignDetails.collaborationId}/review`, {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ action: 'accept_invitation' }),
+                              });
+                              if (res.ok) {
+                                showToast('Invitation accepted!', 'success');
+                                refreshCollaborations();
+                              } else {
+                                const data = await res.json();
+                                showToast(data.error || 'Failed', 'error');
+                              }
+                            } catch { showToast('Failed to accept', 'error'); }
+                          }}
+                        >
+                          <CheckCircle2 className="h-4 w-4 mr-2" />
+                          Accept Invitation
+                        </Button>
+                        <Button
+                          variant="outline"
+                          className="flex-1 border-red-500/30 text-red-600 hover:bg-red-500/10"
+                          onClick={async () => {
+                            try {
+                              const res = await fetch(`/api/collaborations/${selectedCampaignDetails.collaborationId}/review`, {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ action: 'decline_invitation' }),
+                              });
+                              if (res.ok) {
+                                showToast('Invitation declined', 'success');
+                                setSelectedCampaignDetails(null);
+                                refreshCollaborations();
+                              } else {
+                                const data = await res.json();
+                                showToast(data.error || 'Failed', 'error');
+                              }
+                            } catch { showToast('Failed to decline', 'error'); }
+                          }}
+                        >
+                          Decline
+                        </Button>
+                      </div>
+                    </Card>
+                  )}
+
                   {/* Pipeline */}
                   <Card className="p-6">
                     <div className="flex items-center justify-between mb-6">
@@ -1637,7 +1703,7 @@ export default function InfluencerDashboard() {
                         <div className="flex flex-col items-center">
                           <div
                             className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold ${
-                              selectedCampaignDetails.status !== "applied"
+                              selectedCampaignDetails.status !== "applied" && selectedCampaignDetails.status !== "invited"
                                 ? "bg-primary text-primary-foreground"
                                 : "bg-muted text-muted-foreground"
                             }`}
@@ -1652,7 +1718,7 @@ export default function InfluencerDashboard() {
                             Review campaign details and approve collaboration terms
                           </p>
 
-                          {(selectedCampaignDetails.status === "applied" || selectedCampaignDetails.status === "approved") ? (
+                          {(selectedCampaignDetails.status === "invited" || selectedCampaignDetails.status === "applied" || selectedCampaignDetails.status === "approved") ? (
                             <div className="space-y-4">
                               {/* Creator Terms Input */}
                               <div className="space-y-2">
@@ -1687,6 +1753,15 @@ export default function InfluencerDashboard() {
                               </div>
 
                               {/* Approval Status */}
+                              {selectedCampaignDetails.status === "invited" && (
+                                <div className="flex items-center gap-2 px-4 py-3 rounded-lg bg-violet-500/10 border border-violet-500/20">
+                                  <Mail className="h-5 w-5 text-violet-600" />
+                                  <div>
+                                    <p className="text-sm font-medium text-violet-600">Invitation Pending</p>
+                                    <p className="text-xs text-muted-foreground">Accept or decline the invitation above to proceed</p>
+                                  </div>
+                                </div>
+                              )}
                               {selectedCampaignDetails.status === "applied" && (
                                 <div className="flex items-center gap-2 px-4 py-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
                                   <Clock className="h-5 w-5 text-yellow-600" />
