@@ -21,8 +21,10 @@ export async function checkCampaignAutoComplete(campaignId: string) {
     // No collabs = nothing to complete
     if (collabs.length === 0) return
 
-    // Check if ALL approved collabs (not APPLIED) are done
-    const activeCollabs = collabs.filter(c => c.status !== 'APPLIED')
+    // Check if ALL active collabs (not APPLIED/INVITED/CANCELLED) are done
+    const activeCollabs = collabs.filter(c =>
+      c.status !== 'APPLIED' && c.status !== 'INVITED' && c.status !== 'CANCELLED'
+    )
     if (activeCollabs.length === 0) return
 
     const allDone = activeCollabs.every(c =>
@@ -47,7 +49,7 @@ export async function checkCampaignAutoComplete(campaignId: string) {
 export async function checkAllCampaignsAutoComplete() {
   try {
     const activeCampaigns = await prisma.campaign.findMany({
-      where: { status: 'ACTIVE' },
+      where: { status: { in: ['ACTIVE', 'DRAFT', 'PAUSED'] } },
       select: { id: true },
     })
 
