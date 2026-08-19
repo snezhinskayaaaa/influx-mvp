@@ -176,7 +176,7 @@ export function CampaignsTab({
 
   const [selectedCampaignDetails, setSelectedCampaignDetails] = useState<Campaign | null>(null);
   const [campaignSearchQuery, setCampaignSearchQuery] = useState("");
-  const [campaignStatusFilter, setCampaignStatusFilter] = useState<"all" | "active" | "draft" | "paused">("all");
+  const [campaignStatusFilter, setCampaignStatusFilter] = useState<"all" | "active" | "draft" | "paused" | "completed">("all");
   const [isCampaignDetailsExpanded, setIsCampaignDetailsExpanded] = useState(false);
   const [isApplicationsExpanded, setIsApplicationsExpanded] = useState(false);
   const applicationsRef = useRef<HTMLDivElement>(null);
@@ -543,7 +543,7 @@ export function CampaignsTab({
                     : selectedCampaignDetails.status === "paused" ? "bg-amber-500"
                     : "bg-primary"
                   }`} />
-                  {selectedCampaignDetails.status === "active" ? "Active" : selectedCampaignDetails.status === "paused" ? "Paused" : "Draft"}
+                  {selectedCampaignDetails.status === "active" ? "Active" : selectedCampaignDetails.status === "paused" ? "Paused" : selectedCampaignDetails.status === "completed" ? "Completed" : "Draft"}
                 </Badge>
                 <Badge variant="outline" className="bg-muted text-foreground border-border">
                   ${selectedCampaignDetails.budgetMin} - ${selectedCampaignDetails.budgetMax} / influencer
@@ -2532,7 +2532,7 @@ export function CampaignsTab({
                 className="pl-9 h-11 bg-card"
               />
             </div>
-            <Select value={campaignStatusFilter} onValueChange={(value: "all" | "active" | "draft" | "paused") => setCampaignStatusFilter(value)}>
+            <Select value={campaignStatusFilter} onValueChange={(value: "all" | "active" | "draft" | "paused" | "completed") => setCampaignStatusFilter(value)}>
               <SelectTrigger className="w-[180px] h-11 bg-card">
                 <SelectValue placeholder="Status" />
               </SelectTrigger>
@@ -2540,6 +2540,7 @@ export function CampaignsTab({
                 <SelectItem value="all">All Status</SelectItem>
                 <SelectItem value="active">Active</SelectItem>
                 <SelectItem value="paused">Paused</SelectItem>
+                <SelectItem value="completed">Completed</SelectItem>
                 <SelectItem value="draft">Draft</SelectItem>
               </SelectContent>
             </Select>
@@ -2602,10 +2603,11 @@ export function CampaignsTab({
                     >
                       <div className={`w-1.5 h-1.5 rounded-full mr-1.5 ${
                         campaign.status === "active" ? "bg-success"
+                        : campaign.status === "completed" ? "bg-primary"
                         : campaign.status === "paused" ? "bg-amber-500"
                         : "bg-primary"
                       }`} />
-                      {campaign.status === "active" ? "Active" : campaign.status === "paused" ? "Paused" : "Draft"}
+                      {campaign.status === "active" ? "Active" : campaign.status === "paused" ? "Paused" : campaign.status === "completed" ? "Completed" : "Draft"}
                     </Badge>
                     <Badge
                       variant="outline"
@@ -2777,7 +2779,7 @@ export function CampaignsTab({
                             : campaign.status === "paused" ? "bg-amber-500"
                             : "bg-primary"
                           }`} />
-                          {campaign.status === "active" ? "Active" : campaign.status === "paused" ? "Paused" : "Draft"}
+                          {campaign.status === "active" ? "Active" : campaign.status === "paused" ? "Paused" : campaign.status === "completed" ? "Completed" : "Draft"}
                         </Badge>
                         <Badge variant="outline" className="bg-muted text-foreground border-border text-[10px] px-2 py-0 h-5">
                           ${campaign.budgetMin}-${campaign.budgetMax}/inf

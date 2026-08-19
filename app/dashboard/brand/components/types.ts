@@ -173,7 +173,7 @@ export interface CampaignApplication {
 export interface Campaign {
   id: number;
   title: string;
-  status: "active" | "draft" | "paused";
+  status: "active" | "draft" | "paused" | "completed";
   budgetMin: string;
   budgetMax: string;
   applications: number;
