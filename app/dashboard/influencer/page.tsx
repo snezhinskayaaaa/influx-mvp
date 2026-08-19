@@ -1682,6 +1682,7 @@ export default function InfluencerDashboard() {
                         <span className="font-medium text-violet-600">{selectedCampaignDetails.brand}</span>
                         <span className="text-muted-foreground"> invited you · </span>
                         <span className="font-semibold text-primary">${selectedCampaignDetails.budget}</span>
+                        <span className="text-muted-foreground text-xs"> (starting offer, negotiable)</span>
                       </p>
                       <div className="flex gap-2 shrink-0">
                         <Button
