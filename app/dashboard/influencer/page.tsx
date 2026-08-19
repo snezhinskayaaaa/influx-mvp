@@ -120,8 +120,10 @@ interface Campaign {
   productName?: string;
   productPrice?: string;
   productLink?: string;
+  productDescription?: string;
   brandTag?: string;
   hashtags?: string;
+  creatorScript?: string;
   detailedRequirements?: string;
   influencerTerms?: string;
   brandTerms?: string;
@@ -353,9 +355,11 @@ export default function InfluencerDashboard() {
               productName: (c.productName as string) || undefined,
               productPrice: (c.productPrice as string) || undefined,
               productLink: (c.productLink as string) || undefined,
+              productDescription: (c.productDescription as string) || undefined,
               brandTag: (c.brandTag as string) || undefined,
               hashtags: (c.hashtags as string) || undefined,
-              detailedRequirements: (c.detailedRequirements as string) || undefined,
+              creatorScript: (c.creatorScript as string) || undefined,
+              detailedRequirements: (c.deliverables as string[])?.join(', ') || undefined,
             }));
             setDiscoverCampaigns(mapped);
           }
@@ -414,9 +418,11 @@ export default function InfluencerDashboard() {
                 productName: (campaign?.productName as string) || undefined,
                 productPrice: (campaign?.productPrice as string) || undefined,
                 productLink: (campaign?.productLink as string) || undefined,
+                productDescription: (campaign?.productDescription as string) || undefined,
                 brandTag: (campaign?.brandTag as string) || undefined,
                 hashtags: (campaign?.hashtags as string) || undefined,
-                detailedRequirements: (campaign?.detailedRequirements as string) || undefined,
+                creatorScript: (campaign?.creatorScript as string) || undefined,
+                detailedRequirements: (campaign?.deliverables as string[])?.join(', ') || undefined,
                 collaborationId: collab.id as string,
                 influencerAgreed: collab.influencerAgreed as boolean | undefined,
                 revisionNote: (collab.revisionNote as string) || undefined,
@@ -1616,7 +1622,7 @@ export default function InfluencerDashboard() {
                           )}
 
                           {/* Product Details */}
-                          {(selectedCampaignDetails.productName || selectedCampaignDetails.productLink) && (
+                          {(selectedCampaignDetails.productName || selectedCampaignDetails.productLink || selectedCampaignDetails.productDescription) && (
                             <div className="border-t pt-4">
                               <Label className="text-sm font-semibold mb-3 block">Product Details</Label>
                               <div className="space-y-3">
@@ -1645,6 +1651,12 @@ export default function InfluencerDashboard() {
                                     </a>
                                   </div>
                                 )}
+                                {selectedCampaignDetails.productDescription && (
+                                  <div>
+                                    <Label className="text-xs text-muted-foreground mb-1 block">Project Description</Label>
+                                    <p className="text-sm text-muted-foreground whitespace-pre-wrap">{selectedCampaignDetails.productDescription}</p>
+                                  </div>
+                                )}
                               </div>
                             </div>
                           )}
@@ -1652,9 +1664,10 @@ export default function InfluencerDashboard() {
                           {/* Instructions */}
                           {(selectedCampaignDetails.brandTag ||
                             selectedCampaignDetails.hashtags ||
+                            selectedCampaignDetails.creatorScript ||
                             selectedCampaignDetails.detailedRequirements) && (
                             <div className="border-t pt-4">
-                              <Label className="text-sm font-semibold mb-3 block">Brand Instructions</Label>
+                              <Label className="text-sm font-semibold mb-3 block">Instructions for Creators</Label>
                               <div className="space-y-3">
                                 {selectedCampaignDetails.brandTag && (
                                   <div>
@@ -1668,10 +1681,16 @@ export default function InfluencerDashboard() {
                                     <p className="text-sm">{selectedCampaignDetails.hashtags}</p>
                                   </div>
                                 )}
+                                {selectedCampaignDetails.creatorScript && (
+                                  <div>
+                                    <Label className="text-xs text-muted-foreground mb-1 block">Creator Script</Label>
+                                    <p className="text-sm text-muted-foreground whitespace-pre-wrap">{selectedCampaignDetails.creatorScript}</p>
+                                  </div>
+                                )}
                                 {selectedCampaignDetails.detailedRequirements && (
                                   <div>
                                     <Label className="text-xs text-muted-foreground mb-1 block">
-                                      Detailed Requirements
+                                      Must Mention / Key Talking Points
                                     </Label>
                                     <p className="text-sm text-muted-foreground whitespace-pre-wrap">
                                       {selectedCampaignDetails.detailedRequirements}
