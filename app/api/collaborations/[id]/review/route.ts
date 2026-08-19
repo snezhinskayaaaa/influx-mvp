@@ -52,9 +52,13 @@ export async function POST(
       }
 
       if (action === 'accept_invitation') {
+        // Skip APPLIED — go straight to NEGOTIATING with the proposed price as agreedPrice
         const updated = await prisma.collaboration.update({
           where: { id },
-          data: { status: 'APPLIED' },
+          data: {
+            status: 'NEGOTIATING',
+            agreedPrice: collaboration.proposedPrice,
+          },
         })
         return NextResponse.json({ collaboration: updated })
       } else {
