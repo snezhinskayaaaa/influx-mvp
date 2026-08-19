@@ -194,7 +194,7 @@ export async function POST(
       )
 
       // Fire-and-forget: auto-complete campaign if all collabs done
-      checkCampaignAutoComplete(collaboration.campaignId)
+      await checkCampaignAutoComplete(collaboration.campaignId)
 
       return NextResponse.json({ collaboration: result })
     } catch (txError) {

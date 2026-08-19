@@ -165,8 +165,8 @@ export async function POST(
           // Fire-and-forget notification: final payment received
           notifyInfluencerPaymentReceived(collaboration.influencer.userId, collaboration.campaign.title, remainingPayout)
 
-          // Fire-and-forget: auto-complete campaign if all collabs done
-          checkCampaignAutoComplete(collaboration.campaignId)
+          // Auto-complete campaign if all collabs done
+          await checkCampaignAutoComplete(collaboration.campaignId)
 
           // Fire-and-forget: check founding member eligibility for creator
           fetch(new URL('/api/founding/check', request.url), {

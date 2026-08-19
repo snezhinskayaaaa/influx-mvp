@@ -36,6 +36,9 @@ export async function checkCampaignAutoComplete(campaignId: string) {
         where: { id: campaignId },
         data: { status: 'COMPLETED' },
       })
+      console.log(`[auto-complete] Campaign ${campaignId} completed (${activeCollabs.length} collabs done)`)
+    } else {
+      console.log(`[auto-complete] Campaign ${campaignId} NOT complete: ${collabs.map(c => c.status).join(', ')}`)
     }
   } catch (error) {
     console.error('Campaign auto-complete check failed:', error)
