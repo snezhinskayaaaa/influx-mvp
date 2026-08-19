@@ -1542,6 +1542,67 @@ export default function InfluencerDashboard() {
                             )}
                           </div>
 
+                          {/* Content Formats */}
+                          {selectedCampaignDetails.contentFormats && selectedCampaignDetails.contentFormats.length > 0 && (
+                            <div>
+                              <Label className="text-sm font-semibold mb-2 block">Content Type</Label>
+                              <div className="flex flex-wrap gap-2">
+                                {selectedCampaignDetails.contentFormats.map((format) => (
+                                  <Badge key={format} variant="outline" className="capitalize">
+                                    {FORMAT_LABELS[format] || format.replace(/-/g, " ")}
+                                  </Badge>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+
+                          {/* Requirements / Deliverables */}
+                          {selectedCampaignDetails.requirements && selectedCampaignDetails.requirements.length > 0 && (
+                            <div>
+                              <Label className="text-sm font-semibold mb-2 block">Requirements</Label>
+                              <div className="flex flex-wrap gap-2">
+                                {selectedCampaignDetails.requirements.map((req, idx) => (
+                                  <Badge key={idx} variant="outline">{req}</Badge>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+
+                          {/* Target Metrics */}
+                          {(selectedCampaignDetails.targetViews || selectedCampaignDetails.targetClicks || selectedCampaignDetails.targetEngagements) && (
+                            <div>
+                              <Label className="text-sm font-semibold mb-2 block">Target Metrics</Label>
+                              <div className="grid grid-cols-3 gap-3">
+                                {selectedCampaignDetails.targetViews && (
+                                  <div className="p-2 rounded-lg bg-primary/5 border border-primary/20 text-center">
+                                    <p className="text-sm font-bold text-primary">{Number(selectedCampaignDetails.targetViews).toLocaleString()}</p>
+                                    <p className="text-xs text-muted-foreground">Views</p>
+                                  </div>
+                                )}
+                                {selectedCampaignDetails.targetClicks && (
+                                  <div className="p-2 rounded-lg bg-primary/5 border border-primary/20 text-center">
+                                    <p className="text-sm font-bold text-primary">{Number(selectedCampaignDetails.targetClicks).toLocaleString()}</p>
+                                    <p className="text-xs text-muted-foreground">Clicks</p>
+                                  </div>
+                                )}
+                                {selectedCampaignDetails.targetEngagements && (
+                                  <div className="p-2 rounded-lg bg-primary/5 border border-primary/20 text-center">
+                                    <p className="text-sm font-bold text-primary">{Number(selectedCampaignDetails.targetEngagements).toLocaleString()}</p>
+                                    <p className="text-xs text-muted-foreground">Engagements</p>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          )}
+
+                          {/* Niche */}
+                          {selectedCampaignDetails.category && (
+                            <div>
+                              <Label className="text-sm font-semibold mb-2 block">Niche</Label>
+                              <Badge variant="outline" className="text-primary border-primary/30">{selectedCampaignDetails.category}</Badge>
+                            </div>
+                          )}
+
                           {/* Product Details */}
                           {(selectedCampaignDetails.productName || selectedCampaignDetails.productLink) && (
                             <div className="border-t pt-4">
