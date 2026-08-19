@@ -1772,18 +1772,6 @@ export default function InfluencerDashboard() {
                       <h2 className="text-xl font-bold">Campaign Progress</h2>
                     </div>
 
-                    {/* Download Agreement — available after negotiation is complete */}
-                    {["active", "content_review", "revision", "publishing", "delivered", "completed", "disputed", "resolved"].includes(selectedCampaignDetails?.status || "") && selectedCampaignDetails?.collaborationId && (
-                      <a
-                        href={`/api/collaborations/${selectedCampaignDetails.collaborationId}/agreement`}
-                        download
-                        className="inline-flex items-center gap-2 text-sm text-primary hover:underline mb-4"
-                      >
-                        <FileText className="h-4 w-4" />
-                        Download Agreement
-                      </a>
-                    )}
-
                     <div className="space-y-6">
                       {/* Stage 1: Negotiation */}
                       <div className="flex gap-4">
@@ -2020,6 +2008,17 @@ export default function InfluencerDashboard() {
                                   </p>
                                 </div>
                               </div>
+
+                              {selectedCampaignDetails.collaborationId && (
+                                <a
+                                  href={`/api/collaborations/${selectedCampaignDetails.collaborationId}/agreement`}
+                                  download
+                                  className="inline-flex items-center gap-2 text-sm text-primary hover:underline"
+                                >
+                                  <FileText className="h-4 w-4" />
+                                  Download Agreement
+                                </a>
+                              )}
                             </div>
                           )}
                         </div>
