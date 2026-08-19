@@ -2596,6 +2596,8 @@ export function CampaignsTab({
                       className={`w-[80px] justify-center ${
                         campaign.status === "active"
                           ? "bg-success/10 text-success border-success/20 hover:bg-success/20"
+                          : campaign.status === "completed"
+                          ? "bg-gray-500/10 text-gray-600 border-gray-500/20"
                           : campaign.status === "paused"
                           ? "bg-amber-500/10 text-amber-600 border-amber-500/20 hover:bg-amber-500/20"
                           : "bg-primary/10 text-primary border-primary/20 hover:bg-primary/20"
@@ -2603,7 +2605,7 @@ export function CampaignsTab({
                     >
                       <div className={`w-1.5 h-1.5 rounded-full mr-1.5 ${
                         campaign.status === "active" ? "bg-success"
-                        : campaign.status === "completed" ? "bg-primary"
+                        : campaign.status === "completed" ? "bg-gray-400"
                         : campaign.status === "paused" ? "bg-amber-500"
                         : "bg-primary"
                       }`} />
