@@ -350,6 +350,12 @@ export default function InfluencerDashboard() {
               targetViews: (c.targetViews as string) || undefined,
               targetClicks: (c.targetClicks as string) || undefined,
               targetEngagements: (c.targetEngagements as string) || undefined,
+              productName: (c.productName as string) || undefined,
+              productPrice: (c.productPrice as string) || undefined,
+              productLink: (c.productLink as string) || undefined,
+              brandTag: (c.brandTag as string) || undefined,
+              hashtags: (c.hashtags as string) || undefined,
+              detailedRequirements: (c.detailedRequirements as string) || undefined,
             }));
             setDiscoverCampaigns(mapped);
           }
@@ -405,6 +411,12 @@ export default function InfluencerDashboard() {
                 targetViews: (campaign?.targetViews as string) || undefined,
                 targetClicks: (campaign?.targetClicks as string) || undefined,
                 targetEngagements: (campaign?.targetEngagements as string) || undefined,
+                productName: (campaign?.productName as string) || undefined,
+                productPrice: (campaign?.productPrice as string) || undefined,
+                productLink: (campaign?.productLink as string) || undefined,
+                brandTag: (campaign?.brandTag as string) || undefined,
+                hashtags: (campaign?.hashtags as string) || undefined,
+                detailedRequirements: (campaign?.detailedRequirements as string) || undefined,
                 collaborationId: collab.id as string,
                 influencerAgreed: collab.influencerAgreed as boolean | undefined,
                 revisionNote: (collab.revisionNote as string) || undefined,
