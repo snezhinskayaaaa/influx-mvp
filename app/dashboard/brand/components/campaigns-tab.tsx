@@ -2591,26 +2591,30 @@ export function CampaignsTab({
                     })()}
                   </div>
                   <div className="flex items-center gap-2">
+                    {campaign.status === "completed" ? (
+                      <span className="inline-flex items-center w-[80px] justify-center rounded-full border px-2.5 py-0.5 text-xs font-semibold" style={{ backgroundColor: 'rgba(107,114,128,0.1)', color: '#6b7280', borderColor: 'rgba(107,114,128,0.3)' }}>
+                        <span className="w-1.5 h-1.5 rounded-full mr-1.5" style={{ backgroundColor: '#9ca3af' }} />
+                        Completed
+                      </span>
+                    ) : (
                     <Badge
-                      variant="outline"
+                      variant={campaign.status === "active" ? "default" : "secondary"}
                       className={`w-[80px] justify-center ${
                         campaign.status === "active"
-                          ? "bg-success/10 text-success border-success/20"
-                          : campaign.status === "completed"
-                          ? "bg-gray-100 text-gray-500 border-gray-300"
+                          ? "bg-success/10 text-success border-success/20 hover:bg-success/20"
                           : campaign.status === "paused"
-                          ? "bg-amber-500/10 text-amber-600 border-amber-500/20"
-                          : "bg-primary/10 text-primary border-primary/20"
+                          ? "bg-amber-500/10 text-amber-600 border-amber-500/20 hover:bg-amber-500/20"
+                          : "bg-primary/10 text-primary border-primary/20 hover:bg-primary/20"
                       }`}
                     >
                       <div className={`w-1.5 h-1.5 rounded-full mr-1.5 ${
                         campaign.status === "active" ? "bg-success"
-                        : campaign.status === "completed" ? "bg-gray-400"
                         : campaign.status === "paused" ? "bg-amber-500"
                         : "bg-primary"
                       }`} />
-                      {campaign.status === "active" ? "Active" : campaign.status === "paused" ? "Paused" : campaign.status === "completed" ? "Completed" : "Draft"}
+                      {campaign.status === "active" ? "Active" : campaign.status === "paused" ? "Paused" : "Draft"}
                     </Badge>
+                    )}
                     <Badge
                       variant="outline"
                       className="bg-muted text-foreground border-border text-xs"
@@ -2766,13 +2770,17 @@ export function CampaignsTab({
                         })()}
                       </div>
                       <div className="flex items-center gap-1.5 flex-wrap">
+                        {campaign.status === "completed" ? (
+                        <span className="inline-flex items-center rounded-full border px-2 py-0 h-5 text-[10px] font-semibold" style={{ backgroundColor: 'rgba(107,114,128,0.1)', color: '#6b7280', borderColor: 'rgba(107,114,128,0.3)' }}>
+                          <span className="w-1.5 h-1.5 rounded-full mr-1" style={{ backgroundColor: '#9ca3af' }} />
+                          Completed
+                        </span>
+                        ) : (
                         <Badge
-                          variant="outline"
+                          variant={campaign.status === "active" ? "default" : "secondary"}
                           className={`text-[10px] px-2 py-0 h-5 ${
                             campaign.status === "active"
                               ? "bg-success/10 text-success border-success/20"
-                              : campaign.status === "completed"
-                              ? "bg-gray-100 text-gray-500 border-gray-300"
                               : campaign.status === "paused"
                               ? "bg-amber-500/10 text-amber-600 border-amber-500/20"
                               : "bg-primary/10 text-primary border-primary/20"
@@ -2780,12 +2788,12 @@ export function CampaignsTab({
                         >
                           <div className={`w-1.5 h-1.5 rounded-full mr-1 ${
                             campaign.status === "active" ? "bg-success"
-                            : campaign.status === "completed" ? "bg-gray-400"
                             : campaign.status === "paused" ? "bg-amber-500"
                             : "bg-primary"
                           }`} />
-                          {campaign.status === "active" ? "Active" : campaign.status === "paused" ? "Paused" : campaign.status === "completed" ? "Completed" : "Draft"}
+                          {campaign.status === "active" ? "Active" : campaign.status === "paused" ? "Paused" : "Draft"}
                         </Badge>
+                        )}
                         <Badge variant="outline" className="bg-muted text-foreground border-border text-[10px] px-2 py-0 h-5">
                           ${campaign.budgetMin}-${campaign.budgetMax}/inf
                         </Badge>
