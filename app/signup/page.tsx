@@ -183,9 +183,9 @@ function SignupForm() {
                   <Building2 className={`h-4 w-4 sm:h-5 sm:w-5 mb-1 sm:mb-1.5 ${
                     userType === "brand" ? "text-primary" : "text-muted-foreground"
                   }`} />
-                  <div className="text-xs sm:text-sm font-semibold">Brand</div>
+                  <div className="text-xs sm:text-sm font-semibold">Project</div>
                   <div className="text-[10px] sm:text-xs text-muted-foreground">
-                    Find AI talent
+                    Find KOL talent
                   </div>
                 </button>
               </div>
