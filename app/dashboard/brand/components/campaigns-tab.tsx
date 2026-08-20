@@ -2592,14 +2592,14 @@ export function CampaignsTab({
                   </div>
                   <div className="flex items-center gap-2">
                     {campaign.status === "completed" ? (
-                      <span className="inline-flex items-center w-[80px] justify-center rounded-full border px-2.5 py-0.5 text-xs font-semibold" style={{ backgroundColor: 'rgba(107,114,128,0.1)', color: '#6b7280', borderColor: 'rgba(107,114,128,0.3)' }}>
-                        <span className="w-1.5 h-1.5 rounded-full mr-1.5" style={{ backgroundColor: '#9ca3af', display: 'inline-block', width: '6px', height: '6px', minWidth: '6px' }} />
+                      <span className="inline-flex items-center w-[100px] justify-center rounded-full border px-3 py-1 text-sm font-medium" style={{ backgroundColor: 'rgba(107,114,128,0.1)', color: '#6b7280', borderColor: 'rgba(107,114,128,0.3)' }}>
+                        <span className="w-2 h-2 rounded-full mr-2" style={{ backgroundColor: '#9ca3af', display: 'inline-block', width: '8px', height: '8px', minWidth: '8px' }} />
                         Completed
                       </span>
                     ) : (
                     <Badge
                       variant={campaign.status === "active" ? "default" : "secondary"}
-                      className={`w-[80px] justify-center ${
+                      className={`w-[100px] justify-center py-1 text-sm font-medium ${
                         campaign.status === "active"
                           ? "bg-success/10 text-success border-success/20 hover:bg-success/20"
                           : campaign.status === "paused"
@@ -2607,7 +2607,7 @@ export function CampaignsTab({
                           : "bg-primary/10 text-primary border-primary/20 hover:bg-primary/20"
                       }`}
                     >
-                      <div className={`w-1.5 h-1.5 rounded-full mr-1.5 ${
+                      <div className={`w-2 h-2 rounded-full mr-2 ${
                         campaign.status === "active" ? "bg-success"
                         : campaign.status === "paused" ? "bg-amber-500"
                         : "bg-primary"
