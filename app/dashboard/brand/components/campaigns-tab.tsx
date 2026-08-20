@@ -2593,7 +2593,7 @@ export function CampaignsTab({
                   <div className="flex items-center gap-2">
                     {campaign.status === "completed" ? (
                       <span className="inline-flex items-center w-[80px] justify-center rounded-full border px-2.5 py-0.5 text-xs font-semibold" style={{ backgroundColor: 'rgba(107,114,128,0.1)', color: '#6b7280', borderColor: 'rgba(107,114,128,0.3)' }}>
-                        <span className="w-1.5 h-1.5 rounded-full mr-1.5" style={{ backgroundColor: '#9ca3af' }} />
+                        <span className="w-1.5 h-1.5 rounded-full mr-1.5" style={{ backgroundColor: '#9ca3af', display: 'inline-block', width: '6px', height: '6px', minWidth: '6px' }} />
                         Completed
                       </span>
                     ) : (
@@ -2772,7 +2772,7 @@ export function CampaignsTab({
                       <div className="flex items-center gap-1.5 flex-wrap">
                         {campaign.status === "completed" ? (
                         <span className="inline-flex items-center rounded-full border px-2 py-0 h-5 text-[10px] font-semibold" style={{ backgroundColor: 'rgba(107,114,128,0.1)', color: '#6b7280', borderColor: 'rgba(107,114,128,0.3)' }}>
-                          <span className="w-1.5 h-1.5 rounded-full mr-1" style={{ backgroundColor: '#9ca3af' }} />
+                          <span className="w-1.5 h-1.5 rounded-full mr-1" style={{ backgroundColor: '#9ca3af', display: 'inline-block', width: '6px', height: '6px', minWidth: '6px' }} />
                           Completed
                         </span>
                         ) : (
