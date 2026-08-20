@@ -50,8 +50,8 @@ export default function VideoTypePage() {
 
   return (
     <OnboardingLayout
-      currentStep={7}
-      totalSteps={8}
+      currentStep={6}
+      totalSteps={7}
       title="Video Type"
       subtitle="Which types of video you want?"
       onBack={handleBack}

@@ -61,15 +61,15 @@ export default function OnboardingStep5() {
   };
 
   const handleBack = () => {
-    router.push("/onboarding/brand/step-4");
+    router.push("/onboarding/brand/step-3");
   };
 
   const isValid = monthlyTarget && selectedPlatforms.length > 0 && selectedCategories.length > 0;
 
   return (
     <OnboardingLayout
-      currentStep={6}
-      totalSteps={8}
+      currentStep={5}
+      totalSteps={7}
       title="Your preferences"
       subtitle="Help us match you with the perfect AI influencers for your campaigns."
       onBack={handleBack}
