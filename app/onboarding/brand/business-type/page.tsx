@@ -38,7 +38,7 @@ export default function BusinessTypePage() {
   return (
     <OnboardingLayout
       currentStep={3}
-      totalSteps={7}
+      totalSteps={6}
       title="Project category"
       subtitle="Select the category that best describes your project."
       onBack={handleBack}

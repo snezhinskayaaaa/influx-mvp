@@ -26,7 +26,7 @@ export default function OnboardingStep3() {
   const handleNext = () => {
     if (selectedIndustry) {
       localStorage.setItem("brand_onboarding_industry", selectedIndustry);
-      router.push("/onboarding/brand/step-5");
+      router.push("/onboarding/brand/video-type");
     }
   };
 
@@ -37,7 +37,7 @@ export default function OnboardingStep3() {
   return (
     <OnboardingLayout
       currentStep={4}
-      totalSteps={7}
+      totalSteps={6}
       title="Business industry"
       subtitle="Which industry does your business primarily operate in? Please choose the industry that best matches your business."
       onBack={handleBack}

@@ -45,13 +45,13 @@ export default function VideoTypePage() {
   };
 
   const handleBack = () => {
-    router.push("/onboarding/brand/step-5");
+    router.push("/onboarding/brand/step-3");
   };
 
   return (
     <OnboardingLayout
-      currentStep={6}
-      totalSteps={7}
+      currentStep={5}
+      totalSteps={6}
       title="Video Type"
       subtitle="Which types of video you want?"
       onBack={handleBack}

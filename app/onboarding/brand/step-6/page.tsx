@@ -84,8 +84,8 @@ export default function OnboardingStep6() {
 
   return (
     <OnboardingLayout
-      currentStep={7}
-      totalSteps={7}
+      currentStep={6}
+      totalSteps={6}
       title="Campaign goals"
       subtitle="What is your primary objective in collaborating with AI influencers?"
       onBack={handleBack}
