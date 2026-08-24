@@ -267,7 +267,7 @@ export default function Home() {
               Complete flexibility
             </h2>
             <p className="text-sm sm:text-lg text-muted-foreground max-w-3xl mx-auto px-4">
-              Set your own terms. Both brands and influencers have full control over pricing, deliverables, and collaboration conditions.
+              Set your own terms. Both projects and creators have full control over pricing, deliverables, and collaboration conditions.
             </p>
           </div>
 
