@@ -2223,13 +2223,13 @@ export function CampaignsTab({
                                   </div>
                                 </div>
 
-                                {/* Brand Feedback */}
+                                {/* Project Feedback */}
                                 {revision.brandFeedback && (
                                   <div className="bg-background rounded-md p-3 border border-border">
                                     <div className="flex items-center gap-2 mb-2">
                                       <MessageSquare className="h-3.5 w-3.5 text-muted-foreground" />
                                       <span className="text-xs font-medium text-muted-foreground">
-                                        Brand Feedback
+                                        Project Feedback
                                         {revision.feedbackAt && (
                                           <span className="ml-2">
                                             • {new Date(revision.feedbackAt).toLocaleDateString('en-US', {

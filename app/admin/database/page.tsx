@@ -383,8 +383,8 @@ export default function AdminDatabase() {
   const deleteBrand = (brandId: string, userId: string, companyName: string) => {
     setConfirmModal({
       show: true,
-      title: "Delete Brand",
-      message: `Are you sure you want to delete brand "${companyName}"? This will also delete the associated user profile and all related data.`,
+      title: "Delete Project",
+      message: `Are you sure you want to delete project "${companyName}"? This will also delete the associated user profile and all related data.`,
       variant: "danger",
       onConfirm: async () => {
         setConfirmModal(null);
@@ -393,14 +393,14 @@ export default function AdminDatabase() {
           const res = await fetch(`/api/admin/users/${userId}`, { method: "DELETE" });
           if (res.ok) {
             setBrands((prev) => prev.filter((b) => b.id !== brandId));
-            showToast("Brand deleted successfully", "success");
+            showToast("Project deleted successfully", "success");
           } else {
             const data = await res.json();
-            showToast(data.error || "Failed to delete brand", "error");
+            showToast(data.error || "Failed to delete project", "error");
           }
         } catch (error) {
-          console.error("Failed to delete brand:", error);
-          showToast("Failed to delete brand", "error");
+          console.error("Failed to delete project:", error);
+          showToast("Failed to delete project", "error");
         } finally {
           setActionLoading(null);
         }

@@ -99,7 +99,7 @@ export async function POST(request: NextRequest) {
     if (role === 'BRAND') {
       if (!roleData.companyName || typeof roleData.companyName !== 'string') {
         return NextResponse.json(
-          { success: false, error: 'Company name is required for brands' },
+          { success: false, error: 'Company name is required for projects' },
           { status: 400 }
         )
       }

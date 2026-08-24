@@ -104,7 +104,7 @@ export default function InfluencersPage() {
               </h1>
 
               <p className="mt-6 text-lg text-muted-foreground sm:text-xl leading-relaxed">
-                AI influencers, crypto KOLs, and Web3 creators — connect with crypto-native projects, set your rates, and get paid in USDC/USDT. 50% advance when you start — never work for free.
+                Crypto KOLs, Web3 creators, and AI creators — connect with crypto-native projects, set your rates, and get paid in USDC/USDT. 50% advance when you start — never work for free.
               </p>
 
               <div className="mt-10">
@@ -510,7 +510,7 @@ export default function InfluencersPage() {
           {/* Who's on Influx */}
           <div className="mt-12 text-center">
             <p className="text-base lg:text-lg text-muted-foreground max-w-3xl mx-auto">
-              <span className="font-semibold text-foreground">Who&apos;s on Influx:</span> AI influencers, crypto Twitter KOLs, YouTube & video creators, and anon accounts. If you have an audience in crypto, you belong here.
+              <span className="font-semibold text-foreground">Who&apos;s on Influx:</span> Crypto KOLs, YouTube & video creators, anon accounts, and AI creators. If you have an audience in crypto, you belong here.
             </p>
           </div>
         </div>
@@ -743,7 +743,7 @@ export default function InfluencersPage() {
                   </div>
                   <h4 className="font-bold text-xs lg:text-base mb-1 lg:mb-2">Content Review</h4>
                   <p className="text-[10px] lg:text-sm text-muted-foreground leading-relaxed">
-                    Brand reviews your content with up to 3 revision rounds. Clear feedback loop.
+                    Project reviews your content with up to 3 revision rounds. Clear feedback loop.
                   </p>
                 </div>
 

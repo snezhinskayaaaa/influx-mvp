@@ -2182,7 +2182,7 @@ export default function InfluencerDashboard() {
                               <div className="flex-1">
                                 <p className="text-sm font-medium text-success">Content Approved</p>
                                 <p className="text-xs text-muted-foreground">
-                                  Brand has approved your content
+                                  Project has approved your content
                                 </p>
                               </div>
                             </div>

@@ -207,7 +207,7 @@ export default function AdminSettings() {
                     onChange={(e) => setDepositFee(e.target.value)}
                   />
                   <p className="text-xs text-muted-foreground">
-                    Standard fee for brand deposits. Founding Members pay 2% (locked).
+                    Standard fee for project deposits. Founding Members pay 2% (locked).
                   </p>
                 </div>
 

@@ -151,7 +151,7 @@ export function ProfileTab({
             </Label>
             <Textarea
               id="company-bio"
-              placeholder="Tell influencers about your brand, values, and what you're looking for..."
+              placeholder="Tell creators about your project, values, and what you're looking for..."
               value={companyBio}
               onChange={(e) => setCompanyBio(e.target.value)}
               rows={5}

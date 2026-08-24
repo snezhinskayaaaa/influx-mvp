@@ -899,7 +899,7 @@ export default function BrandDashboard() {
                   </div>
                   <div className="flex-1">
                     <h3 className="font-semibold text-base mb-1">Delivered</h3>
-                    <p className="text-xs text-muted-foreground">Content published and awaiting brand approval</p>
+                    <p className="text-xs text-muted-foreground">Content published and awaiting project approval</p>
                   </div>
                   {(selectedInfluencerDetails.timelineStage || 1) > 5 && (
                     <CheckCircle2 className="h-5 w-5 text-green-500" />

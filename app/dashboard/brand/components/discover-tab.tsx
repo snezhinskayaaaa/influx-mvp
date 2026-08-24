@@ -118,7 +118,7 @@ export function DiscoverTab({ influencers, onCollaborate }: DiscoverTabProps) {
     >
       <div className="mb-6">
         <h1 className="text-xl sm:text-3xl font-bold mb-2">Discover Talent</h1>
-        <p className="text-muted-foreground text-sm sm:text-base">Find the perfect creators for your brand</p>
+        <p className="text-muted-foreground text-sm sm:text-base">Find the perfect creators for your project</p>
       </div>
 
       {/* Search & Filters */}

@@ -98,7 +98,7 @@ export default function TermsPage() {
                   Our services include, but are not limited to:
                 </p>
                 <ul className="list-disc pl-6 space-y-2">
-                  <li>A marketplace for Web3 projects to discover and engage AI influencers, crypto KOLs, Web3 video creators, and anon accounts</li>
+                  <li>A marketplace for Web3 projects to discover and engage crypto KOLs, Web3 creators, AI creators, and anon accounts</li>
                   <li>Campaign management tools for creating, tracking, and optimizing marketing campaigns</li>
                   <li>A secure wallet system for depositing stablecoins, processing campaign payments, and withdrawing earnings</li>
                   <li>Analytics dashboards for monitoring campaign performance and ROI</li>
@@ -120,7 +120,7 @@ export default function TermsPage() {
                 </p>
                 <ul className="list-disc pl-6 space-y-2">
                   <li><strong className="text-foreground">Project Accounts:</strong> For Web3 projects, DeFi protocols, DAOs, NFT collections, exchanges, and blockchain companies seeking to launch influencer marketing campaigns.</li>
-                  <li><strong className="text-foreground">Creator Accounts:</strong> For AI influencers, crypto KOLs, Web3 video creators, and anon accounts who wish to monetize their content through project collaborations.</li>
+                  <li><strong className="text-foreground">Creator Accounts:</strong> For crypto KOLs, Web3 creators, AI creators, and anon accounts who wish to monetize their content through project collaborations.</li>
                 </ul>
 
                 <h3 className="text-lg font-semibold text-foreground mt-6">3.2 Account Responsibilities</h3>
@@ -270,7 +270,7 @@ export default function TermsPage() {
                   All creator profiles on INFLUXconnect must adhere to the following content guidelines:
                 </p>
                 <ul className="list-disc pl-6 space-y-2">
-                  <li><strong className="text-foreground">AI Transparency:</strong> AI influencers must be clearly identified as virtual or AI-generated personas. Deceptive practices intended to mislead audiences into believing an AI influencer is a real person are strictly prohibited.</li>
+                  <li><strong className="text-foreground">AI Transparency:</strong> AI creators must be clearly identified as virtual or AI-generated personas. Deceptive practices intended to mislead audiences into believing an AI creator is a real person are strictly prohibited.</li>
                   <li><strong className="text-foreground">Paid Partnership Disclosure:</strong> All creators, including crypto KOLs and Web3 video creators, must disclose paid partnerships per FTC guidelines and applicable platform-specific rules. Sponsored content must be clearly labeled as such.</li>
                   <li><strong className="text-foreground">Platform-Specific Disclosure Rules:</strong> Content must comply with AI and crypto disclosure rules specific to each distribution platform, including but not limited to TikTok, Instagram, and X (formerly Twitter).</li>
                   <li><strong className="text-foreground">No Market Manipulation:</strong> Content that constitutes market manipulation, pump and dump schemes, or misleading financial advice is strictly prohibited. Creators must not make guarantees about token prices, investment returns, or financial outcomes.</li>

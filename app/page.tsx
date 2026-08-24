@@ -162,7 +162,7 @@ export default function Home() {
               </span>
               <span className="flex items-center gap-2 text-xs sm:text-sm text-muted-foreground">
                 <Users className="h-3.5 w-3.5 text-primary" />
-                AI influencers + crypto KOLs
+                Crypto KOLs + Web3 creators
               </span>
               <span className="flex items-center gap-2 text-xs sm:text-sm text-muted-foreground">
                 <Zap className="h-3.5 w-3.5 text-primary" />
@@ -245,7 +245,7 @@ export default function Home() {
               </div>
               <h3 className="text-sm sm:text-base lg:text-lg font-semibold mb-1 sm:mb-2">Influencer Type</h3>
               <p className="text-xs sm:text-sm text-muted-foreground leading-snug">
-                AI influencers, crypto KOLs, anon accounts, or Web3 video creators — your call.
+                Crypto KOLs, Web3 creators, anon accounts, or AI creators — your call.
               </p>
               </Card>
             </motion.div>
@@ -437,7 +437,7 @@ export default function Home() {
                   </div>
                   <h3 className="text-lg sm:text-xl md:text-2xl font-semibold mb-2 sm:mb-3 md:mb-4">TikTok</h3>
                   <p className="text-xs sm:text-sm md:text-base text-muted-foreground mb-3 sm:mb-4 flex-1">
-                    Viral content at scale. AI influencers create trending videos with perfect timing and consistency, driving massive reach among Gen Z and millennial audiences with authentic, relatable content.
+                    Viral content at scale. Creators produce trending videos with perfect timing and consistency, driving massive reach among Gen Z and millennial audiences with authentic, relatable content.
                   </p>
                   <ul className="space-y-2 mt-auto">
                     <li className="flex items-start gap-2">
@@ -487,7 +487,7 @@ export default function Home() {
                   </div>
                   <h3 className="text-lg sm:text-xl md:text-2xl font-semibold mb-2 sm:mb-3 md:mb-4">Twitch</h3>
                   <p className="text-xs sm:text-sm md:text-base text-muted-foreground mb-3 sm:mb-4 flex-1">
-                    Live streaming excellence. AI influencers deliver engaging real-time content with unmatched reliability, building loyal gaming and lifestyle communities that tune in consistently.
+                    Live streaming excellence. Creators deliver engaging real-time content with unmatched reliability, building loyal gaming and lifestyle communities that tune in consistently.
                   </p>
                   <ul className="space-y-2 mt-auto">
                     <li className="flex items-start gap-2">
@@ -512,7 +512,7 @@ export default function Home() {
                   </div>
                   <h3 className="text-lg sm:text-xl md:text-2xl font-semibold mb-2 sm:mb-3 md:mb-4">Instagram</h3>
                   <p className="text-xs sm:text-sm md:text-base text-muted-foreground mb-3 sm:mb-4 flex-1">
-                    Perfect for visual storytelling and brand aesthetics. AI influencers maintain consistent posting schedules with 24/7 engagement, achieving up to 3x higher interaction rates than human creators.
+                    Perfect for visual storytelling and project aesthetics. Creators maintain consistent posting schedules with 24/7 engagement, achieving up to 3x higher interaction rates than human creators.
                   </p>
                   <ul className="space-y-1 sm:space-y-2 mt-auto">
                     <li className="flex items-start gap-1.5 sm:gap-2">
