@@ -100,54 +100,38 @@ export function Navigation() {
 
       {/* Mobile Menu */}
       {isMobileMenuOpen && (
-        <div className="md:hidden fixed inset-0 top-[72px] bg-background/95 backdrop-blur-lg z-40">
-          <div className="container px-6 py-6 flex flex-col gap-4">
-            <Button
-              asChild
-              variant="ghost"
-              size="lg"
-              className="w-full justify-start text-base font-medium text-muted-foreground hover:bg-muted/50 hover:text-foreground"
+        <div className="md:hidden absolute left-0 right-0 top-full bg-background border-b border-border shadow-lg z-40">
+          <div className="px-4 py-3 flex flex-col gap-1">
+            <Link
+              href="/brands"
               onClick={() => setIsMobileMenuOpen(false)}
+              className="px-3 py-2.5 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted/50 rounded-lg transition-colors"
             >
-              <Link href="/brands">
-                Browse Talent
-              </Link>
-            </Button>
-            <Button
-              asChild
-              variant="ghost"
-              size="lg"
-              className="w-full justify-start text-base font-medium text-muted-foreground hover:bg-muted/50 hover:text-foreground"
+              Browse Talent
+            </Link>
+            <Link
+              href="/influencers"
               onClick={() => setIsMobileMenuOpen(false)}
+              className="px-3 py-2.5 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted/50 rounded-lg transition-colors"
             >
-              <Link href="/influencers">
-                Monetize Content
-              </Link>
-            </Button>
-            <Button
-              asChild
-              variant="ghost"
-              size="lg"
-              className="w-full justify-start text-base font-medium text-muted-foreground hover:bg-muted/50 hover:text-foreground"
+              Monetize Content
+            </Link>
+            <Link
+              href="/pricing"
               onClick={() => setIsMobileMenuOpen(false)}
+              className="px-3 py-2.5 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted/50 rounded-lg transition-colors"
             >
-              <Link href="/pricing">
-                Pricing
-              </Link>
-            </Button>
-
-            <div className="border-t pt-4 mt-2 space-y-3">
-              <Button
-                asChild
-                size="lg"
-                className="w-full bg-primary/10 hover:bg-primary/15 backdrop-blur-sm border-2 border-primary/30 text-primary rounded-xl transition-all"
+              Pricing
+            </Link>
+            <div className="border-t mt-1 pt-2">
+              <Link
+                href="/signup"
                 onClick={() => setIsMobileMenuOpen(false)}
+                className="flex items-center justify-center gap-2 px-3 py-2.5 text-sm font-medium bg-gradient-to-r from-primary to-secondary text-white rounded-lg"
               >
-                <Link href="/signup">
-                  Get Started
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Link>
-              </Button>
+                Get Started
+                <ArrowRight className="h-4 w-4" />
+              </Link>
             </div>
           </div>
         </div>
