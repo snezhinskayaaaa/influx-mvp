@@ -341,10 +341,10 @@ export function CreateCampaignTab({ campaigns, setCampaigns, setActiveTab }: Cre
             </div>
           </div>
 
-          {/* Number of AI Influencers */}
+          {/* Number of Creators */}
           <div>
             <Label htmlFor="influencer-count" className="text-sm font-medium mb-2 block">
-              Number of AI Influencers
+              Number of Creators
             </Label>
             <Input
               id="influencer-count"

@@ -56,7 +56,7 @@ export async function POST(request: NextRequest) {
               userId: collab.campaign.brand.userId,
               type: 'CAMPAIGN_PAYOUT_AUTO',
               amount: remaining,
-              description: 'Auto-released: brand did not respond within 7 days',
+              description: 'Auto-released: project did not respond within 7 days',
               referenceId: collab.id,
             },
           }),

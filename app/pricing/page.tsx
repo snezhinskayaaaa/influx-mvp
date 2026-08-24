@@ -49,7 +49,7 @@ const staggerContainer = {
 };
 
 export default function PricingPage() {
-  const [userType, setUserType] = useState<"brands" | "creators">("brands");
+  const [userType, setUserType] = useState<"projects" | "creators">("projects");
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [foundingStats, setFoundingStats] = useState({ projects: 0, creators: 0 });
 
@@ -88,9 +88,9 @@ export default function PricingPage() {
               {/* Toggle */}
               <div className="inline-flex items-center p-1 bg-muted rounded-full border border-border">
                 <button
-                  onClick={() => setUserType("brands")}
+                  onClick={() => setUserType("projects")}
                   className={`px-6 py-2.5 rounded-full text-sm font-medium transition-all ${
-                    userType === "brands"
+                    userType === "projects"
                       ? "bg-primary text-primary-foreground shadow-md"
                       : "text-muted-foreground hover:text-foreground"
                   }`}
@@ -160,7 +160,7 @@ export default function PricingPage() {
           {/* Main Offer Card */}
           <Card className="p-6 sm:p-8 lg:p-10 bg-gradient-to-br from-primary/10 via-background to-secondary/10 backdrop-blur-xl border-2 border-primary/30 shadow-2xl mb-8">
             <div className="grid md:grid-cols-2 gap-8 lg:gap-12">
-              {/* For Brands */}
+              {/* For Projects */}
               <div className="space-y-6">
                 <div className="flex items-start gap-4">
                   <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center shrink-0">
@@ -414,8 +414,8 @@ export default function PricingPage() {
         </motion.section>
       )}
 
-      {/* Pricing Cards - Brands */}
-      {userType === "brands" && (
+      {/* Pricing Cards - Projects */}
+      {userType === "projects" && (
         <motion.section
           initial="hidden"
           animate="visible"

@@ -240,7 +240,7 @@ export async function PATCH(
                   userId: campaign.brand.userId,
                   type: 'CAMPAIGN_UNFREEZE',
                   amount: frozenRemainder,
-                  description: 'Frozen remainder returned due to brand cancellation (advance kept by influencer)',
+                  description: 'Frozen remainder returned due to project cancellation (advance kept by influencer)',
                   referenceId: collaboration.id,
                 },
               })

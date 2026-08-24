@@ -466,7 +466,7 @@ export default function AdminDatabase() {
 
   const tabs: { key: TabKey; label: string; icon: typeof Users }[] = [
     { key: "users", label: "Users", icon: UserCircle },
-    { key: "brands", label: "Brands", icon: Building2 },
+    { key: "brands", label: "Projects", icon: Building2 },
     { key: "influencers", label: "Influencers", icon: Users },
     { key: "transactions", label: "Transactions", icon: ArrowLeftRight },
     { key: "campaigns", label: "Campaigns", icon: Target },

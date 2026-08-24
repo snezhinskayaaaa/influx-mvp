@@ -61,14 +61,14 @@ const mockInfluencerProfiles: InfluencerProfile[] = [
   {
     id: 1,
     name: "Luna AI",
-    niche: "DeFi & Trading · AI Influencer",
+    niche: "DeFi & Trading · Creator",
     followers: "250K",
     image: "/influencer-1.png"
   },
   {
     id: 2,
     name: "Ava Digital",
-    niche: "NFT & Culture · AI Influencer",
+    niche: "NFT & Culture · Creator",
     followers: "180K",
     image: "/influencer-2.png"
   },
@@ -96,7 +96,7 @@ const mockInfluencerProfiles: InfluencerProfile[] = [
   {
     id: 6,
     name: "Iris Creative",
-    niche: "AI x Crypto · AI Influencer",
+    niche: "AI x Crypto · Creator",
     followers: "210K",
     image: "/influencer-6.png"
   }

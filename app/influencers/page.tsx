@@ -657,7 +657,7 @@ export default function InfluencersPage() {
                 </div>
                 <div className="flex items-start gap-2 lg:gap-3">
                   <ArrowDownCircle className="h-4 w-4 lg:h-5 lg:w-5 text-success shrink-0 mt-0.5 lg:mt-1" />
-                  <p className="text-xs lg:text-base text-muted-foreground">50% on delivery — released when brand approves</p>
+                  <p className="text-xs lg:text-base text-muted-foreground">50% on delivery — released when project approves</p>
                 </div>
                 <div className="flex items-start gap-2 lg:gap-3">
                   <ArrowDownCircle className="h-4 w-4 lg:h-5 lg:w-5 text-success shrink-0 mt-0.5 lg:mt-1" />
@@ -759,7 +759,7 @@ export default function InfluencersPage() {
                   </div>
                   <h4 className="font-bold text-xs lg:text-base mb-1 lg:mb-2">Final Payment</h4>
                   <p className="text-[10px] lg:text-sm text-muted-foreground leading-relaxed">
-                    Remaining 50% releases on approval. Auto-releases after 7 days if brand doesn&apos;t respond.
+                    Remaining 50% releases on approval. Auto-releases after 7 days if project doesn&apos;t respond.
                   </p>
                 </div>
               </div>
