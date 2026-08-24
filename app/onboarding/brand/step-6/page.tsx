@@ -79,13 +79,13 @@ export default function OnboardingStep6() {
   };
 
   const handleBack = () => {
-    router.push("/onboarding/brand/video-type");
+    router.push("/onboarding/brand/step-3");
   };
 
   return (
     <OnboardingLayout
-      currentStep={6}
-      totalSteps={6}
+      currentStep={5}
+      totalSteps={5}
       title="Campaign goals"
       subtitle="What is your primary objective in collaborating with AI influencers?"
       onBack={handleBack}
