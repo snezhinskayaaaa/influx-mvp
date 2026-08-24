@@ -576,8 +576,8 @@ export default function Home() {
                 { name: "Wallets & Security", subtitle: "Wallets, custody & security tools", image: "https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=400&h=300&fit=crop" },
                 { name: "Other", subtitle: "Everything else in Web3", image: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=400&h=300&fit=crop" },
               ].map((vertical) => (
-                <CarouselItem key={vertical.name} className="pl-2 md:pl-4 basis-[85%] sm:basis-1/2 md:basis-1/3 lg:basis-1/4">
-                  <div className="relative overflow-hidden h-64 sm:h-72 rounded-xl border border-border hover:border-primary/50 transition-all cursor-pointer group">
+                <CarouselItem key={vertical.name} className="pl-2 md:pl-4 basis-[45%] sm:basis-1/2 md:basis-1/3 lg:basis-1/4">
+                  <div className="relative overflow-hidden h-40 sm:h-72 rounded-xl border border-border hover:border-primary/50 transition-all cursor-pointer group">
                     <Image
                       src={vertical.image}
                       alt={vertical.name}
