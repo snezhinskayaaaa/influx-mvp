@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { OnboardingLayout } from "@/components/onboarding-layout";
 import { Button } from "@/components/ui/button";
-import { Check } from "lucide-react";
+import { Check, Sparkles } from "lucide-react";
 
 const industries = [
   "DeFi",
@@ -22,11 +22,47 @@ const industries = [
 export default function OnboardingStep3() {
   const router = useRouter();
   const [selectedIndustry, setSelectedIndustry] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleNext = () => {
+  const handleComplete = async () => {
     if (selectedIndustry) {
-      localStorage.setItem("brand_onboarding_industry", selectedIndustry);
-      router.push("/onboarding/brand/step-6");
+      setIsSubmitting(true);
+      try {
+        const res = await fetch("/api/brands/me", {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            companyName: localStorage.getItem("brand_onboarding_name") || "",
+            website: localStorage.getItem("brand_onboarding_website") || "",
+            description: localStorage.getItem("brand_onboarding_description") || "",
+            industry: selectedIndustry,
+          }),
+        });
+
+        if (!res.ok) {
+          const data = await res.json();
+          throw new Error(data.error || "Failed to save profile");
+        }
+
+        // Clean up localStorage
+        const keys = [
+          "brand_onboarding_source",
+          "brand_onboarding_website",
+          "brand_onboarding_name",
+          "brand_onboarding_description",
+          "brand_onboarding_special",
+          "brand_onboarding_business_type",
+          "brand_onboarding_industry",
+        ];
+        keys.forEach((key) => localStorage.removeItem(key));
+
+        router.push("/dashboard/brand");
+      } catch (err) {
+        setIsSubmitting(false);
+        const message = err instanceof Error ? err.message : 'Something went wrong';
+        alert(message);
+        console.error("Brand onboarding error:", err);
+      }
     }
   };
 
@@ -37,9 +73,9 @@ export default function OnboardingStep3() {
   return (
     <OnboardingLayout
       currentStep={4}
-      totalSteps={5}
+      totalSteps={4}
       title="Business industry"
-      subtitle="Which industry does your business primarily operate in? Please choose the industry that best matches your business."
+      subtitle="Which industry does your project primarily operate in?"
       onBack={handleBack}
     >
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mb-8">
@@ -66,11 +102,21 @@ export default function OnboardingStep3() {
       </div>
 
       <Button
-        onClick={handleNext}
-        disabled={!selectedIndustry}
+        onClick={handleComplete}
+        disabled={!selectedIndustry || isSubmitting}
         className="w-full h-12 sm:h-14 bg-gradient-to-r from-primary to-secondary hover:opacity-90 text-base sm:text-lg"
       >
-        Next
+        {isSubmitting ? (
+          <>
+            <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
+            Setting up your account...
+          </>
+        ) : (
+          <>
+            <Sparkles className="h-5 w-5 mr-2" />
+            Complete & Start Discovering
+          </>
+        )}
       </Button>
     </OnboardingLayout>
   );

@@ -34,7 +34,7 @@ export default function OnboardingStep2() {
   return (
     <OnboardingLayout
       currentStep={2}
-      totalSteps={5}
+      totalSteps={4}
       title="Project details"
       subtitle="Tell creators about your project so they can understand what you do and decide if it's a good fit."
       onBack={handleBack}

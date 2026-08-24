@@ -37,7 +37,7 @@ export default function OnboardingStep1() {
   return (
     <OnboardingLayout
       currentStep={1}
-      totalSteps={5}
+      totalSteps={4}
       title="How did you hear about us?"
       subtitle="We want to know how you found out about Influx so we can improve our marketing efforts."
     >
