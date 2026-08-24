@@ -633,37 +633,37 @@ export default function Home() {
           {/* Two Cards */}
           <div className="grid md:grid-cols-2 gap-6 lg:gap-8 mb-8">
             {/* Card 1: Founding Projects */}
-            <Card className="p-6 sm:p-8 bg-gradient-to-br from-primary/10 via-background to-primary/5 backdrop-blur-xl border-2 border-primary/30 shadow-2xl relative">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/20 border border-primary/30 mb-6">
+            <Card className="p-4 sm:p-8 bg-gradient-to-br from-primary/10 via-background to-primary/5 backdrop-blur-xl border-2 border-primary/30 shadow-2xl relative">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/20 border border-primary/30 mb-3 sm:mb-6">
                 <Flame className="h-3.5 w-3.5 text-primary" />
                 <span className="text-xs font-semibold text-primary">10 SPOTS</span>
               </div>
 
-              <div className="flex items-start gap-4 mb-6">
-                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center shrink-0">
-                  <Building2 className="h-6 w-6 text-primary" />
+              <div className="flex items-start gap-3 sm:gap-4 mb-3 sm:mb-6">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center shrink-0">
+                  <Building2 className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
                 </div>
                 <div>
-                  <h3 className="text-xl font-bold mb-1">Founding Projects</h3>
-                  <p className="text-sm text-muted-foreground">For the first 10 Web3 projects</p>
+                  <h3 className="text-base sm:text-xl font-bold mb-0.5">Founding Projects</h3>
+                  <p className="text-xs sm:text-sm text-muted-foreground">For the first 10 Web3 projects</p>
                 </div>
               </div>
 
-              <div className="bg-gradient-to-br from-primary/5 to-transparent p-6 rounded-2xl border border-primary/20 mb-6">
-                <div className="flex items-baseline gap-2 mb-4">
-                  <span className="text-4xl font-bold text-primary">2%</span>
-                  <span className="text-lg text-muted-foreground">on deposit</span>
+              <div className="bg-gradient-to-br from-primary/5 to-transparent p-4 sm:p-6 rounded-xl sm:rounded-2xl border border-primary/20 mb-3 sm:mb-6">
+                <div className="flex items-baseline gap-2 mb-2 sm:mb-4">
+                  <span className="text-2xl sm:text-4xl font-bold text-primary">2%</span>
+                  <span className="text-sm sm:text-lg text-muted-foreground">on deposit</span>
                 </div>
-                <p className="text-sm text-muted-foreground mb-4">
+                <p className="text-xs sm:text-sm text-muted-foreground mb-2 sm:mb-4">
                   Add $1,000 → Get $980 campaign budget
                 </p>
-                <div className="flex items-center gap-2 text-sm">
-                  <Check className="h-4 w-4 text-primary" />
+                <div className="flex items-center gap-2 text-xs sm:text-sm">
+                  <Check className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-primary" />
                   <span className="text-muted-foreground">vs. 4% standard rate</span>
                 </div>
               </div>
 
-              <div className="space-y-3 mb-6">
+              <div className="space-y-2 sm:space-y-3 mb-3 sm:mb-6">
                 <div className="flex items-start gap-3">
                   <Crown className="h-5 w-5 text-amber-500 shrink-0 mt-0.5" />
                   <div>
@@ -679,11 +679,11 @@ export default function Home() {
                 </div>
               </div>
 
-              <div className="text-center text-sm text-muted-foreground mb-4">
+              <div className="text-center text-xs sm:text-sm text-muted-foreground mb-3 sm:mb-4">
                 <span className="font-semibold text-primary">{foundingStats.projects}</span> / 10 registered
               </div>
 
-              <Button asChild className="w-full bg-gradient-to-r from-primary to-primary/80 text-white hover:opacity-90 h-12 text-sm rounded-xl">
+              <Button asChild className="w-full bg-gradient-to-r from-primary to-primary/80 text-white hover:opacity-90 h-10 sm:h-12 text-xs sm:text-sm rounded-xl">
                 <Link href="/signup?type=brand">
                   <Crown className="mr-2 h-4 w-4" />
                   Become a Founding Project
@@ -696,52 +696,52 @@ export default function Home() {
             </Card>
 
             {/* Card 2: Founding Creators */}
-            <Card className="p-6 sm:p-8 bg-gradient-to-br from-secondary/10 via-background to-secondary/5 backdrop-blur-xl border-2 border-secondary/30 shadow-2xl relative">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-secondary/20 border border-secondary/30 mb-6">
+            <Card className="p-4 sm:p-8 bg-gradient-to-br from-secondary/10 via-background to-secondary/5 backdrop-blur-xl border-2 border-secondary/30 shadow-2xl relative">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-secondary/20 border border-secondary/30 mb-3 sm:mb-6">
                 <Flame className="h-3.5 w-3.5 text-secondary" />
                 <span className="text-xs font-semibold text-secondary">20 SPOTS</span>
               </div>
 
-              <div className="flex items-start gap-4 mb-6">
-                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-secondary/20 to-secondary/10 flex items-center justify-center shrink-0">
-                  <Sparkles className="h-6 w-6 text-secondary" />
+              <div className="flex items-start gap-3 sm:gap-4 mb-3 sm:mb-6">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-gradient-to-br from-secondary/20 to-secondary/10 flex items-center justify-center shrink-0">
+                  <Sparkles className="h-5 w-5 sm:h-6 sm:w-6 text-secondary" />
                 </div>
                 <div>
-                  <h3 className="text-xl font-bold mb-1">Founding Creators</h3>
-                  <p className="text-sm text-muted-foreground">For the first 20 creators</p>
+                  <h3 className="text-base sm:text-xl font-bold mb-0.5">Founding Creators</h3>
+                  <p className="text-xs sm:text-sm text-muted-foreground">For the first 20 creators</p>
                 </div>
               </div>
 
-              <div className="bg-gradient-to-br from-secondary/5 to-transparent p-6 rounded-2xl border border-secondary/20 mb-6">
-                <div className="flex items-baseline gap-2 mb-4">
-                  <span className="text-4xl font-bold text-secondary">3%</span>
-                  <span className="text-lg text-muted-foreground">on withdrawal</span>
+              <div className="bg-gradient-to-br from-secondary/5 to-transparent p-4 sm:p-6 rounded-xl sm:rounded-2xl border border-secondary/20 mb-3 sm:mb-6">
+                <div className="flex items-baseline gap-2 mb-2 sm:mb-4">
+                  <span className="text-2xl sm:text-4xl font-bold text-secondary">3%</span>
+                  <span className="text-sm sm:text-lg text-muted-foreground">on withdrawal</span>
                 </div>
-                <p className="text-sm text-muted-foreground mb-4">
+                <p className="text-xs sm:text-sm text-muted-foreground mb-2 sm:mb-4">
                   Earn $1,000 → Receive $970 (includes gas fees)
                 </p>
-                <div className="flex items-center gap-2 text-sm">
-                  <Check className="h-4 w-4 text-secondary" />
+                <div className="flex items-center gap-2 text-xs sm:text-sm">
+                  <Check className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-secondary" />
                   <span className="text-muted-foreground">vs. 6% standard rate</span>
                 </div>
               </div>
 
-              <div className="space-y-3 mb-6">
+              <div className="space-y-2 sm:space-y-3 mb-3 sm:mb-6">
                 <div className="flex items-start gap-3">
                   <Crown className="h-5 w-5 text-amber-500 shrink-0 mt-0.5" />
                   <div>
-                    <p className="font-medium text-sm">Permanent status — immediately</p>
+                    <p className="font-medium text-xs sm:text-sm">Permanent status — immediately</p>
                     <p className="text-xs text-muted-foreground">No conditions. Sign up, lock your rate forever.</p>
                   </div>
                 </div>
-                <div className="h-5" aria-hidden="true" />
+                <div className="h-3 sm:h-5" aria-hidden="true" />
               </div>
 
-              <div className="text-center text-sm text-muted-foreground mb-4">
+              <div className="text-center text-xs sm:text-sm text-muted-foreground mb-3 sm:mb-4">
                 <span className="font-semibold text-secondary">{foundingStats.creators}</span> / 20 taken
               </div>
 
-              <Button asChild className="w-full bg-gradient-to-r from-secondary to-secondary/80 text-white hover:opacity-90 h-12 text-sm rounded-xl">
+              <Button asChild className="w-full bg-gradient-to-r from-secondary to-secondary/80 text-white hover:opacity-90 h-10 sm:h-12 text-xs sm:text-sm rounded-xl">
                 <Link href="/signup?type=influencer">
                   <Sparkles className="mr-2 h-4 w-4" />
                   Become a Founding Creator
