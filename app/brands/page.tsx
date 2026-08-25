@@ -201,7 +201,7 @@ export default function BrandsPage() {
               <div className="mt-5 sm:mt-10">
                 <Button size="lg" asChild className="w-full sm:w-64 bg-primary/10 hover:bg-primary/15 backdrop-blur-sm border-2 border-primary/30 h-11 sm:h-14 text-sm sm:text-base transition-all">
                   <Link href="/signup?type=brand" className="flex items-center justify-center">
-                    <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent font-medium">Explore the marketplace</span>
+                    <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent font-medium">Launch a campaign</span>
                   </Link>
                 </Button>
               </div>

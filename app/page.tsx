@@ -101,31 +101,31 @@ export default function Home() {
         initial="hidden"
         animate="visible"
         variants={fadeInUp}
-        className="relative overflow-hidden bg-gradient-to-b from-background to-background pt-32 pb-24 sm:pt-40 sm:pb-32"
+        className="relative overflow-hidden bg-gradient-to-b from-background to-background pt-24 pb-16 sm:pt-40 sm:pb-32"
       >
-        <div className="container px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center max-w-7xl mx-auto">
+        <div className="container px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-12 items-center max-w-7xl mx-auto">
             {/* Left Column - Text Content */}
             <div className="text-left">
-              <Badge className="mb-4 bg-primary/10 text-primary border-primary/30 text-xs font-semibold tracking-wider">
+              <Badge className="mb-3 sm:mb-4 bg-primary/10 text-primary border-primary/30 text-xs font-semibold tracking-wider">
                 FOR WEB3 PROJECTS
               </Badge>
-              <h1 className="text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
+              <h1 className="text-2xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
                 Influencer marketing,{" "}
                 <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
                   built for Web3
                 </span>
               </h1>
-              <p className="mt-6 text-lg text-muted-foreground sm:text-xl leading-relaxed">
+              <p className="mt-3 sm:mt-6 text-sm sm:text-xl text-muted-foreground leading-relaxed">
                 The crypto-native platform where DeFi, NFT, GameFi, L2s and exchanges find influencers, launch campaigns, and pay in crypto. 50/50 secure payments — no more risky DMs.
               </p>
-              <div className="mt-10 flex flex-col sm:flex-row items-start gap-4">
-                <Button size="lg" asChild className="w-full sm:w-64 bg-primary/10 hover:bg-primary/15 backdrop-blur-sm border-2 border-primary/30 h-14 text-base transition-all">
+              <div className="mt-5 sm:mt-10 flex flex-col sm:flex-row items-start gap-3 sm:gap-4">
+                <Button size="lg" asChild className="w-full sm:w-64 bg-primary/10 hover:bg-primary/15 backdrop-blur-sm border-2 border-primary/30 h-11 sm:h-14 text-sm sm:text-base transition-all">
                   <Link href="/brands" className="flex items-center justify-center">
                     <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent font-medium">Launch a campaign</span>
                   </Link>
                 </Button>
-                <Button size="lg" variant="outline" asChild className="w-full sm:w-64 h-14 text-base border-muted-foreground/30 text-muted-foreground hover:bg-muted hover:text-foreground transition-all">
+                <Button size="lg" variant="outline" asChild className="w-full sm:w-64 h-11 sm:h-14 text-sm sm:text-base border-muted-foreground/30 text-muted-foreground hover:bg-muted hover:text-foreground transition-all">
                   <Link href="/influencers" className="flex items-center justify-center">
                     Join as a creator
                   </Link>
@@ -134,7 +134,7 @@ export default function Home() {
             </div>
 
             {/* Right Column - Creator Image */}
-            <div className="relative h-[500px] lg:h-[600px] rounded-3xl overflow-hidden">
+            <div className="relative h-[300px] sm:h-[500px] lg:h-[600px] rounded-2xl sm:rounded-3xl overflow-hidden">
               <Image
                 src="/ai-influencer-hero-old.jpeg"
                 alt="Creator"
