@@ -78,10 +78,10 @@ export default function PricingPage() {
               <Badge className="mb-4 sm:mb-6 bg-primary/10 text-primary border-primary/30 text-xs sm:text-sm">
                 Simple, Transparent Pricing
               </Badge>
-              <h1 className="text-3xl font-bold tracking-tight sm:text-5xl lg:text-6xl mb-4 sm:mb-6">
+              <h1 className="text-2xl font-bold tracking-tight sm:text-5xl lg:text-6xl mb-4 sm:mb-6">
                 Simple, crypto-native pricing
               </h1>
-              <p className="text-base text-muted-foreground sm:text-xl max-w-xl mx-auto mb-6 sm:mb-10">
+              <p className="text-sm text-muted-foreground sm:text-xl max-w-xl mx-auto mb-6 sm:mb-10">
                 Whether you&apos;re a Web3 project looking for creators or a KOL ready to get paid in crypto — pick your plan.
               </p>
 
@@ -134,13 +134,13 @@ export default function PricingPage() {
               <Flame className="h-4 w-4 text-amber-500" />
             </div>
 
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4">
+            <h2 className="text-xl sm:text-4xl lg:text-5xl font-bold mb-3 sm:mb-4">
               <span className="bg-gradient-to-r from-primary via-amber-500 to-secondary bg-clip-text text-transparent">
                 Founding Member Programs
               </span>
             </h2>
 
-            <p className="text-base sm:text-lg text-muted-foreground max-w-3xl mx-auto mb-6">
+            <p className="text-sm sm:text-lg text-muted-foreground max-w-3xl mx-auto mb-4 sm:mb-6">
               10 spots for projects, 20 spots for creators — lock in the lowest rates forever
             </p>
 
@@ -158,8 +158,8 @@ export default function PricingPage() {
           </div>
 
           {/* Main Offer Card */}
-          <Card className="p-6 sm:p-8 lg:p-10 bg-gradient-to-br from-primary/10 via-background to-secondary/10 backdrop-blur-xl border-2 border-primary/30 shadow-2xl mb-8">
-            <div className="grid md:grid-cols-2 gap-8 lg:gap-12">
+          <Card className="p-4 sm:p-8 lg:p-10 bg-gradient-to-br from-primary/10 via-background to-secondary/10 backdrop-blur-xl border-2 border-primary/30 shadow-2xl mb-8">
+            <div className="grid md:grid-cols-2 gap-4 sm:gap-8 lg:gap-12">
               {/* For Projects */}
               <div className="space-y-6">
                 <div className="flex items-start gap-4">
@@ -174,8 +174,8 @@ export default function PricingPage() {
 
                 <div className="bg-gradient-to-br from-primary/5 to-transparent p-6 rounded-2xl border border-primary/20">
                   <div className="flex items-baseline gap-2 mb-4">
-                    <span className="text-4xl font-bold text-primary">2%</span>
-                    <span className="text-lg text-muted-foreground">on deposit</span>
+                    <span className="text-2xl sm:text-4xl font-bold text-primary">2%</span>
+                    <span className="text-sm sm:text-lg text-muted-foreground">on deposit</span>
                   </div>
                   <p className="text-sm text-muted-foreground mb-4">
                     Add $1,000 → Get $980 campaign budget
@@ -211,8 +211,8 @@ export default function PricingPage() {
 
                 <div className="bg-gradient-to-br from-secondary/5 to-transparent p-6 rounded-2xl border border-secondary/20">
                   <div className="flex items-baseline gap-2 mb-4">
-                    <span className="text-4xl font-bold text-secondary">3%</span>
-                    <span className="text-lg text-muted-foreground">on withdrawal</span>
+                    <span className="text-2xl sm:text-4xl font-bold text-secondary">3%</span>
+                    <span className="text-sm sm:text-lg text-muted-foreground">on withdrawal</span>
                   </div>
                   <p className="text-sm text-muted-foreground mb-4">
                     Earn $1,000 → Receive $970 (includes gas fees)
@@ -273,13 +273,13 @@ export default function PricingPage() {
               </div>
               <div className="flex items-center justify-center gap-8">
                 <div className="text-center">
-                  <div className="text-3xl font-bold text-primary mb-1">5%</div>
+                  <div className="text-xl sm:text-3xl font-bold text-primary mb-1">5%</div>
                   <div className="text-xs text-muted-foreground">Founding Members</div>
                   <div className="text-xs font-medium text-primary">(2% + 3%)</div>
                 </div>
                 <div className="text-2xl text-muted-foreground">→</div>
                 <div className="text-center">
-                  <div className="text-3xl font-bold text-muted-foreground mb-1">10%</div>
+                  <div className="text-xl sm:text-3xl font-bold text-muted-foreground mb-1">10%</div>
                   <div className="text-xs text-muted-foreground">Standard Rate</div>
                   <div className="text-xs font-medium text-muted-foreground">(4% + 6%)</div>
                 </div>
@@ -292,7 +292,7 @@ export default function PricingPage() {
 
           {/* CTA */}
           <div className="text-center">
-            <Button asChild size="lg" className="bg-gradient-to-r from-primary to-secondary text-white hover:opacity-90 transition-all h-14 text-base px-10 rounded-2xl shadow-xl">
+            <Button asChild size="lg" className="bg-gradient-to-r from-primary to-secondary text-white hover:opacity-90 transition-all h-11 sm:h-14 text-sm sm:text-base px-6 sm:px-10 rounded-xl sm:rounded-2xl shadow-xl">
               <Link href="/signup">
                 <Crown className="mr-2 h-5 w-5" />
                 Claim Your Spot
@@ -351,7 +351,7 @@ export default function PricingPage() {
                   </div>
 
                   <Button asChild variant="outline" className="w-full text-sm h-10">
-                    <Link href="/signup?type=creator&plan=free">
+                    <Link href="/signup?type=brand&plan=free">
                       Get Started Free
                       <ArrowRight className="ml-2 h-4 w-4" />
                     </Link>
@@ -467,7 +467,7 @@ export default function PricingPage() {
                   </div>
 
                   <Button asChild variant="outline" className="w-full text-sm h-10">
-                    <Link href="/signup?type=brand&plan=free">
+                    <Link href="/signup?type=influencer&plan=free">
                       Get Started Free
                       <ArrowRight className="ml-2 h-4 w-4" />
                     </Link>
@@ -548,7 +548,7 @@ export default function PricingPage() {
       >
         <div className="container px-6 lg:px-8 max-w-4xl mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-3xl sm:text-4xl font-bold mb-4">
+            <h2 className="text-xl sm:text-4xl font-bold mb-4">
               Frequently Asked Questions
             </h2>
           </div>

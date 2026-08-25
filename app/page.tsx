@@ -305,7 +305,7 @@ export default function Home() {
                 </li>
               </ul>
               <Button asChild variant="outline" className="w-full border-primary/40 text-primary hover:bg-primary/10">
-                <Link href="/projects">
+                <Link href="/signup?type=brand">
                   Start as project
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
@@ -340,7 +340,7 @@ export default function Home() {
                 </li>
               </ul>
               <Button asChild variant="outline" className="w-full border-secondary/40 text-secondary hover:bg-secondary/10">
-                <Link href="/influencers">
+                <Link href="/signup?type=influencer">
                   Join as creator
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
