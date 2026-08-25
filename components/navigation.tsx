@@ -100,8 +100,8 @@ export function Navigation() {
 
       {/* Mobile Menu */}
       {isMobileMenuOpen && (
-        <div className="md:hidden absolute left-0 right-0 top-full bg-background border-b border-border shadow-lg z-40">
-          <div className="px-4 py-3 flex flex-col gap-1">
+        <div className="md:hidden fixed left-0 right-0 top-0 bottom-0 bg-background z-50 pt-20">
+          <div className="px-6 py-4 flex flex-col gap-1">
             <Link
               href="/brands"
               onClick={() => setIsMobileMenuOpen(false)}
