@@ -194,11 +194,11 @@ export default function BrandsPage() {
                 Influencer campaigns for Web3 projects
               </h1>
 
-              <p className="mt-6 text-lg text-muted-foreground sm:text-xl leading-relaxed">
+              <p className="mt-3 sm:mt-6 text-sm sm:text-xl text-muted-foreground leading-relaxed">
                 Discover creators. Fund in crypto. Launch in minutes. 50/50 payments protect every deal.
               </p>
 
-              <div className="mt-10">
+              <div className="mt-5 sm:mt-10">
                 <Button size="lg" asChild className="w-full sm:w-64 bg-primary/10 hover:bg-primary/15 backdrop-blur-sm border-2 border-primary/30 h-11 sm:h-14 text-sm sm:text-base transition-all">
                   <Link href="/signup?type=brand" className="flex items-center justify-center">
                     <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent font-medium">Explore the marketplace</span>
@@ -306,7 +306,7 @@ export default function BrandsPage() {
                     <Building2 className="h-7 w-7 text-primary" />
                   </div>
                   <div>
-                    <h3 className="text-2xl font-bold mb-2">Launch Pricing</h3>
+                    <h3 className="text-lg sm:text-2xl font-bold mb-1 sm:mb-2">Launch Pricing</h3>
                     <p className="text-muted-foreground">Lock in the best rates</p>
                   </div>
                 </div>
@@ -314,7 +314,7 @@ export default function BrandsPage() {
                 <div className="bg-gradient-to-br from-primary/10 to-transparent p-4 sm:p-6 rounded-xl sm:rounded-2xl border-2 border-primary/30 mb-4 sm:mb-6">
                   <div className="flex items-baseline gap-3 mb-4">
                     <span className="text-3xl sm:text-5xl font-bold text-primary">2%</span>
-                    <span className="text-xl text-muted-foreground">platform fee</span>
+                    <span className="text-sm sm:text-xl text-muted-foreground">platform fee</span>
                   </div>
                   <p className="text-sm text-muted-foreground mb-4">
                     Only when you deposit funds to your campaign balance
@@ -469,54 +469,54 @@ export default function BrandsPage() {
         className="py-20 px-4"
       >
         <div className="container max-w-7xl mx-auto">
-          <div className="text-center mb-12">
-            <Badge className="mb-4 bg-primary/10 text-primary border-primary/20">
+          <div className="text-center mb-6 sm:mb-12">
+            <Badge className="mb-3 sm:mb-4 bg-primary/10 text-primary border-primary/20 text-xs">
               Why Choose Influx
             </Badge>
-            <h2 className="text-xl sm:text-4xl lg:text-5xl font-bold mb-3 sm:mb-4">
+            <h2 className="text-xl sm:text-4xl lg:text-5xl font-bold mb-2 sm:mb-4">
               Built for crypto growth
             </h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+            <p className="text-sm sm:text-lg text-muted-foreground max-w-2xl mx-auto">
               Everything you need to run KOL campaigns — from discovery to payment
             </p>
           </div>
 
           <div className="flex overflow-x-auto gap-4 pb-4 lg:grid lg:grid-cols-4 lg:gap-6 lg:overflow-visible snap-x snap-mandatory lg:snap-none">
-            <Card className="text-center p-4 lg:p-6 border-2 hover:border-primary/40 transition-all hover:shadow-lg min-w-[240px] lg:min-w-0 snap-center">
+            <Card className="text-center p-4 lg:p-6 border-2 hover:border-primary/40 transition-all hover:shadow-lg min-w-[160px] lg:min-w-0 snap-center">
               <div className="w-12 h-12 lg:w-16 lg:h-16 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-3 lg:mb-4">
                 <Target className="h-6 w-6 lg:h-8 lg:w-8 text-primary" />
               </div>
-              <h3 className="text-base lg:text-xl font-semibold mb-2 lg:mb-3">Crypto-native creators</h3>
+              <h3 className="text-sm lg:text-xl font-semibold mb-1.5 lg:mb-3">Crypto-native creators</h3>
               <p className="text-muted-foreground text-xs lg:text-sm">
                 Access KOLs across DeFi, NFT, GameFi, L2 and other Web3 verticals who speak your audience&#39;s language.
               </p>
             </Card>
 
-            <Card className="text-center p-4 lg:p-6 border-2 hover:border-secondary/40 transition-all hover:shadow-lg min-w-[240px] lg:min-w-0 snap-center">
+            <Card className="text-center p-4 lg:p-6 border-2 hover:border-secondary/40 transition-all hover:shadow-lg min-w-[160px] lg:min-w-0 snap-center">
               <div className="w-12 h-12 lg:w-16 lg:h-16 rounded-2xl bg-secondary/10 flex items-center justify-center mx-auto mb-3 lg:mb-4">
                 <TrendingUp className="h-6 w-6 lg:h-8 lg:w-8 text-secondary" />
               </div>
-              <h3 className="text-base lg:text-xl font-semibold mb-2 lg:mb-3">50/50 safe payments</h3>
+              <h3 className="text-sm lg:text-xl font-semibold mb-1.5 lg:mb-3">50/50 safe payments</h3>
               <p className="text-muted-foreground text-xs lg:text-sm">
                 50% advance on start, 50% on delivery. Funds are frozen until work is done — both sides are protected.
               </p>
             </Card>
 
-            <Card className="text-center p-4 lg:p-6 border-2 hover:border-success/40 transition-all hover:shadow-lg min-w-[240px] lg:min-w-0 snap-center">
+            <Card className="text-center p-4 lg:p-6 border-2 hover:border-success/40 transition-all hover:shadow-lg min-w-[160px] lg:min-w-0 snap-center">
               <div className="w-12 h-12 lg:w-16 lg:h-16 rounded-2xl bg-muted/80 flex items-center justify-center mx-auto mb-3 lg:mb-4">
                 <Zap className="h-6 w-6 lg:h-8 lg:w-8 text-foreground" />
               </div>
-              <h3 className="text-base lg:text-xl font-semibold mb-2 lg:mb-3">Fast deployment</h3>
+              <h3 className="text-sm lg:text-xl font-semibold mb-1.5 lg:mb-3">Fast deployment</h3>
               <p className="text-muted-foreground text-xs lg:text-sm">
                 Launch campaigns in days, not weeks of DM back-and-forth. Negotiate, agree, and start — all in one place.
               </p>
             </Card>
 
-            <Card className="text-center p-4 lg:p-6 border-2 border-primary/30 hover:border-primary/50 transition-all hover:shadow-lg bg-gradient-to-br from-primary/5 to-transparent min-w-[240px] lg:min-w-0 snap-center">
+            <Card className="text-center p-4 lg:p-6 border-2 border-primary/30 hover:border-primary/50 transition-all hover:shadow-lg bg-gradient-to-br from-primary/5 to-transparent min-w-[160px] lg:min-w-0 snap-center">
               <div className="w-12 h-12 lg:w-16 lg:h-16 rounded-2xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center mx-auto mb-3 lg:mb-4">
                 <DollarSign className="h-6 w-6 lg:h-8 lg:w-8 text-primary-foreground" />
               </div>
-              <h3 className="text-base lg:text-xl font-semibold mb-2 lg:mb-3">Pay in stablecoins</h3>
+              <h3 className="text-sm lg:text-xl font-semibold mb-1.5 lg:mb-3">Pay in stablecoins</h3>
               <p className="text-muted-foreground text-xs lg:text-sm">
                 Fund campaigns from your treasury in USDC/USDT. Budgets are dollar-denominated — no FX surprises, no bank delays, no chargebacks.
               </p>
@@ -538,7 +538,7 @@ export default function BrandsPage() {
             <Badge className="mb-3 lg:mb-4 bg-primary/10 text-primary border-primary/20 text-xs lg:text-sm">
               Simple 4-Step Process
             </Badge>
-            <h2 className="text-2xl sm:text-3xl lg:text-5xl font-bold mb-2 lg:mb-4">
+            <h2 className="text-xl sm:text-3xl lg:text-5xl font-bold mb-2 lg:mb-4">
               Your Journey to Success
             </h2>
             <p className="text-sm lg:text-lg text-muted-foreground max-w-2xl mx-auto">
@@ -641,7 +641,7 @@ export default function BrandsPage() {
             <Badge className="mb-3 lg:mb-4 bg-primary/10 text-primary border-primary/20 text-xs lg:text-sm">
               Flexible Pricing Options
             </Badge>
-            <h2 className="text-2xl sm:text-3xl lg:text-5xl font-bold mb-2 lg:mb-4">
+            <h2 className="text-xl sm:text-3xl lg:text-5xl font-bold mb-2 lg:mb-4">
               Choose Your Plan
             </h2>
             <p className="text-sm lg:text-lg text-muted-foreground max-w-2xl mx-auto">
@@ -750,7 +750,7 @@ export default function BrandsPage() {
                 <div className="w-10 h-10 lg:w-12 lg:h-12 rounded-xl bg-success/10 flex items-center justify-center">
                   <Lock className="h-5 w-5 lg:h-6 lg:w-6 text-success" />
                 </div>
-                <h3 className="text-lg lg:text-2xl font-bold">50/50 Secure Payments</h3>
+                <h3 className="text-base sm:text-lg lg:text-2xl font-bold">50/50 Secure Payments</h3>
               </div>
 
               <div className="space-y-2 lg:space-y-4">
@@ -779,7 +779,7 @@ export default function BrandsPage() {
                 <div className="w-10 h-10 lg:w-12 lg:h-12 rounded-xl bg-primary/10 flex items-center justify-center">
                   <CheckSquare className="h-5 w-5 lg:h-6 lg:w-6 text-primary" />
                 </div>
-                <h3 className="text-lg lg:text-2xl font-bold">Built-in Review Process</h3>
+                <h3 className="text-base sm:text-lg lg:text-2xl font-bold">Built-in Review Process</h3>
               </div>
 
               <div className="space-y-2 lg:space-y-4">
@@ -809,7 +809,7 @@ export default function BrandsPage() {
               <div className="w-10 h-10 lg:w-12 lg:h-12 rounded-xl bg-secondary/10 flex items-center justify-center">
                 <CreditCard className="h-5 w-5 lg:h-6 lg:w-6 text-secondary" />
               </div>
-              <h3 className="text-lg lg:text-2xl font-bold">50/50 Payment Flow</h3>
+              <h3 className="text-base sm:text-lg lg:text-2xl font-bold">50/50 Payment Flow</h3>
             </div>
 
             <div className="relative">
