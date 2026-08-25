@@ -177,20 +177,20 @@ export default function BrandsPage() {
         initial="hidden"
         animate="visible"
         variants={fadeInUp}
-        className="relative pt-32 sm:pt-40 pb-24 sm:pb-32 px-4 overflow-hidden"
+        className="relative pt-24 sm:pt-40 pb-16 sm:pb-32 px-4 overflow-hidden"
       >
         <div className="container max-w-7xl mx-auto relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             {/* Left - Text Content */}
             <div className="text-left">
-              <div className="inline-flex items-center gap-2 px-4 sm:px-5 py-2 rounded-full bg-primary/10 border border-primary/20 backdrop-blur-sm mb-6">
+              <div className="inline-flex items-center gap-2 px-4 sm:px-5 py-2 rounded-full bg-primary/10 border border-primary/20 backdrop-blur-sm mb-4 sm:mb-6">
                 <Sparkles className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-primary" />
                 <span className="text-xs sm:text-sm font-medium text-primary">
                   FOR WEB3 PROJECTS
                 </span>
               </div>
 
-              <h1 className="text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
+              <h1 className="text-2xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
                 Influencer campaigns for Web3 projects
               </h1>
 
@@ -199,7 +199,7 @@ export default function BrandsPage() {
               </p>
 
               <div className="mt-10">
-                <Button size="lg" asChild className="w-full sm:w-64 bg-primary/10 hover:bg-primary/15 backdrop-blur-sm border-2 border-primary/30 h-14 text-base transition-all">
+                <Button size="lg" asChild className="w-full sm:w-64 bg-primary/10 hover:bg-primary/15 backdrop-blur-sm border-2 border-primary/30 h-11 sm:h-14 text-sm sm:text-base transition-all">
                   <Link href="/signup?type=brand" className="flex items-center justify-center">
                     <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent font-medium">Explore the marketplace</span>
                   </Link>
@@ -278,13 +278,13 @@ export default function BrandsPage() {
               <Flame className="h-4 w-4 text-amber-500" />
             </div>
 
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4">
+            <h2 className="text-xl sm:text-4xl lg:text-5xl font-bold mb-3 sm:mb-4">
               <span className="bg-gradient-to-r from-primary via-amber-500 to-secondary bg-clip-text text-transparent">
                 Be a Founding Project
               </span>
             </h2>
 
-            <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto mb-6">
+            <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto mb-4 sm:mb-6">
               Join as one of the first 10 projects and lock in the lowest rates forever
             </p>
 
@@ -297,12 +297,12 @@ export default function BrandsPage() {
           </div>
 
           {/* Main Benefits Card */}
-          <Card className="p-6 sm:p-10 lg:p-12 bg-gradient-to-br from-primary/10 via-background to-amber-500/10 backdrop-blur-xl border-2 border-primary/30 shadow-2xl mb-10">
-            <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 mb-8">
+          <Card className="p-4 sm:p-10 lg:p-12 bg-gradient-to-br from-primary/10 via-background to-amber-500/10 backdrop-blur-xl border-2 border-primary/30 shadow-2xl mb-10">
+            <div className="grid lg:grid-cols-2 gap-4 sm:gap-8 lg:gap-12 mb-4 sm:mb-8">
               {/* Left: Pricing */}
               <div>
-                <div className="flex items-start gap-4 mb-6">
-                  <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary/30 to-primary/10 flex items-center justify-center shrink-0">
+                <div className="flex items-start gap-4 mb-4 sm:mb-6">
+                  <div className="w-10 h-10 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl bg-gradient-to-br from-primary/30 to-primary/10 flex items-center justify-center shrink-0">
                     <Building2 className="h-7 w-7 text-primary" />
                   </div>
                   <div>
@@ -311,9 +311,9 @@ export default function BrandsPage() {
                   </div>
                 </div>
 
-                <div className="bg-gradient-to-br from-primary/10 to-transparent p-6 rounded-2xl border-2 border-primary/30 mb-6">
+                <div className="bg-gradient-to-br from-primary/10 to-transparent p-4 sm:p-6 rounded-xl sm:rounded-2xl border-2 border-primary/30 mb-4 sm:mb-6">
                   <div className="flex items-baseline gap-3 mb-4">
-                    <span className="text-5xl font-bold text-primary">2%</span>
+                    <span className="text-3xl sm:text-5xl font-bold text-primary">2%</span>
                     <span className="text-xl text-muted-foreground">platform fee</span>
                   </div>
                   <p className="text-sm text-muted-foreground mb-4">
@@ -344,7 +344,7 @@ export default function BrandsPage() {
 
               {/* Right: Benefits */}
               <div>
-                <h3 className="text-xl font-bold mb-6">What You Get as a Founding Project</h3>
+                <h3 className="text-xl font-bold mb-4 sm:mb-6">What You Get as a Founding Project</h3>
                 <div className="space-y-4">
                   <div className="flex items-start gap-3 p-3 rounded-lg hover:bg-muted/30 transition-colors">
                     <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
@@ -401,7 +401,7 @@ export default function BrandsPage() {
 
             {/* How to Qualify */}
             <div className="pt-8 border-t border-border/50">
-              <h4 className="font-bold text-center mb-6">How to Become a Founding Project</h4>
+              <h4 className="font-bold text-center mb-4 sm:mb-6">How to Become a Founding Project</h4>
               <div className="grid sm:grid-cols-3 gap-4">
                 <div className="bg-muted/30 p-5 rounded-xl border border-border/50 text-center">
                   <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center text-base font-bold text-primary mb-4 mx-auto">1</div>
@@ -424,7 +424,7 @@ export default function BrandsPage() {
 
           {/* CTA */}
           <div className="text-center">
-            <Button asChild size="lg" className="bg-gradient-to-r from-primary to-secondary text-white hover:opacity-90 transition-all h-16 text-lg px-12 rounded-2xl shadow-2xl">
+            <Button asChild size="lg" className="bg-gradient-to-r from-primary to-secondary text-white hover:opacity-90 transition-all h-12 sm:h-16 text-sm sm:text-lg px-8 sm:px-12 rounded-xl sm:rounded-2xl shadow-2xl">
               <Link href="/signup?type=brand" className="flex items-center justify-center">
                 <Crown className="mr-2 h-6 w-6" />
                 Become a Founding Project
@@ -473,7 +473,7 @@ export default function BrandsPage() {
             <Badge className="mb-4 bg-primary/10 text-primary border-primary/20">
               Why Choose Influx
             </Badge>
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4">
+            <h2 className="text-xl sm:text-4xl lg:text-5xl font-bold mb-3 sm:mb-4">
               Built for crypto growth
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
@@ -735,7 +735,7 @@ export default function BrandsPage() {
             <Badge className="mb-4 bg-success/10 text-success border-success/20">
               Secure & Transparent
             </Badge>
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4">
+            <h2 className="text-xl sm:text-4xl lg:text-5xl font-bold mb-3 sm:mb-4">
               Protected Payment System
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
@@ -746,7 +746,7 @@ export default function BrandsPage() {
           <div className="flex overflow-x-auto gap-4 pb-4 md:grid md:grid-cols-2 md:gap-8 md:overflow-visible snap-x snap-mandatory md:snap-none mb-8 lg:mb-12">
             {/* 50/50 Secure Payments */}
             <Card className="p-5 lg:p-8 bg-gradient-to-br from-success/5 to-transparent border-success/20 min-w-[300px] md:min-w-0 snap-center">
-              <div className="flex items-center gap-2 lg:gap-3 mb-4 lg:mb-6">
+              <div className="flex items-center gap-2 lg:gap-3 mb-4 lg:mb-4 sm:mb-6">
                 <div className="w-10 h-10 lg:w-12 lg:h-12 rounded-xl bg-success/10 flex items-center justify-center">
                   <Lock className="h-5 w-5 lg:h-6 lg:w-6 text-success" />
                 </div>
@@ -775,7 +775,7 @@ export default function BrandsPage() {
 
             {/* Built-in Review Process */}
             <Card className="p-5 lg:p-8 bg-gradient-to-br from-primary/5 to-transparent border-primary/20 min-w-[300px] md:min-w-0 snap-center">
-              <div className="flex items-center gap-2 lg:gap-3 mb-4 lg:mb-6">
+              <div className="flex items-center gap-2 lg:gap-3 mb-4 lg:mb-4 sm:mb-6">
                 <div className="w-10 h-10 lg:w-12 lg:h-12 rounded-xl bg-primary/10 flex items-center justify-center">
                   <CheckSquare className="h-5 w-5 lg:h-6 lg:w-6 text-primary" />
                 </div>
@@ -871,7 +871,7 @@ export default function BrandsPage() {
 
           {/* CTA */}
           <div className="text-center mt-12">
-            <Button asChild size="lg" className="bg-primary/10 hover:bg-primary/15 backdrop-blur-sm border-2 border-primary/30 h-14 text-base transition-all rounded-xl px-8">
+            <Button asChild size="lg" className="bg-primary/10 hover:bg-primary/15 backdrop-blur-sm border-2 border-primary/30 h-11 sm:h-14 text-sm sm:text-base transition-all rounded-xl px-8">
               <Link href="/signup?type=brand" className="flex items-center justify-center">
                 <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent font-medium">Start Your Campaign</span>
                 <ArrowRight className="ml-2 h-5 w-5 text-primary" />
