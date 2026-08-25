@@ -57,7 +57,7 @@ export function Navigation() {
           {/* Navigation Links */}
           <div className="hidden md:flex items-center gap-4">
             <Button asChild variant="ghost" size="sm" className="text-sm font-medium text-muted-foreground hover:bg-muted/50 hover:text-foreground">
-              <Link href="/brands">
+              <Link href="/projects">
                 Browse Talent
               </Link>
             </Button>
@@ -103,7 +103,7 @@ export function Navigation() {
         <div className={`md:hidden ${isScrolled ? "max-w-5xl mx-auto bg-background/95 backdrop-blur-xl border border-border/50 border-t-0 rounded-b-2xl shadow-lg" : "bg-background border-b border-border shadow-lg"}`}>
           <div className="px-6 py-3 flex flex-col gap-1">
             <Link
-              href="/brands"
+              href="/projects"
               onClick={() => setIsMobileMenuOpen(false)}
               className="px-3 py-2.5 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted/50 rounded-lg transition-colors"
             >
