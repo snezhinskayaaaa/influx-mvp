@@ -86,29 +86,29 @@ export default function InfluencersPage() {
         initial="hidden"
         animate="visible"
         variants={fadeInUp}
-        className="relative pt-32 sm:pt-40 pb-24 sm:pb-32 px-4 overflow-hidden"
+        className="relative pt-24 sm:pt-40 pb-16 sm:pb-32 px-4 overflow-hidden"
       >
         <div className="container max-w-7xl mx-auto relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             {/* Left - Text Content */}
             <div className="text-left">
-              <div className="inline-flex items-center gap-2 px-4 sm:px-5 py-2 rounded-full bg-secondary/10 border border-secondary/20 backdrop-blur-sm mb-6">
+              <div className="inline-flex items-center gap-2 px-4 sm:px-5 py-2 rounded-full bg-secondary/10 border border-secondary/20 backdrop-blur-sm mb-4 sm:mb-6">
                 <Sparkles className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-secondary" />
                 <span className="text-xs sm:text-sm font-medium text-secondary">
                   FOR CREATORS & KOLs
                 </span>
               </div>
 
-              <h1 className="text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
+              <h1 className="text-2xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
                 Get paid in crypto for the collabs you already do
               </h1>
 
-              <p className="mt-6 text-lg text-muted-foreground sm:text-xl leading-relaxed">
+              <p className="mt-3 sm:mt-6 text-sm sm:text-xl text-muted-foreground leading-relaxed">
                 Crypto KOLs, Web3 creators, and AI creators — connect with crypto-native projects, set your rates, and get paid in USDC/USDT. 50% advance when you start — never work for free.
               </p>
 
-              <div className="mt-10">
-                <Button size="lg" asChild className="w-full sm:w-64 bg-secondary/10 hover:bg-secondary/15 backdrop-blur-sm border-2 border-secondary/30 h-14 text-base transition-all rounded-xl px-8">
+              <div className="mt-5 sm:mt-10">
+                <Button size="lg" asChild className="w-full sm:w-64 bg-secondary/10 hover:bg-secondary/15 backdrop-blur-sm border-2 border-secondary/30 h-11 sm:h-14 text-sm sm:text-base transition-all rounded-xl px-8">
                   <Link href="/signup?type=influencer" className="flex items-center justify-center">
                     <span className="bg-gradient-to-r from-secondary to-primary bg-clip-text text-transparent font-medium">Join as a creator</span>
                     <ArrowRight className="ml-2 h-5 w-5 text-secondary" />
@@ -262,13 +262,13 @@ export default function InfluencersPage() {
               <Flame className="h-4 w-4 text-amber-500" />
             </div>
 
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4">
+            <h2 className="text-xl sm:text-4xl lg:text-5xl font-bold mb-3 sm:mb-4">
               <span className="bg-gradient-to-r from-secondary via-amber-500 to-primary bg-clip-text text-transparent">
                 Be a Founding Creator
               </span>
             </h2>
 
-            <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto mb-6">
+            <p className="text-sm sm:text-sm sm:text-lg text-muted-foreground max-w-2xl mx-auto mb-4 sm:mb-6">
               Join as one of the first 20 creators and lock in the lowest withdrawal fees forever
             </p>
 
@@ -281,12 +281,12 @@ export default function InfluencersPage() {
           </div>
 
           {/* Main Benefits Card */}
-          <Card className="p-6 sm:p-10 lg:p-12 bg-gradient-to-br from-secondary/10 via-background to-amber-500/10 backdrop-blur-xl border-2 border-secondary/30 shadow-2xl mb-10">
-            <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 mb-8">
+          <Card className="p-4 sm:p-10 lg:p-12 bg-gradient-to-br from-secondary/10 via-background to-amber-500/10 backdrop-blur-xl border-2 border-secondary/30 shadow-2xl mb-10">
+            <div className="grid lg:grid-cols-2 gap-4 sm:gap-8 lg:gap-12 mb-4 sm:mb-8">
               {/* Left: Pricing */}
               <div>
                 <div className="flex items-start gap-4 mb-6">
-                  <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-secondary/30 to-secondary/10 flex items-center justify-center shrink-0">
+                  <div className="w-10 h-10 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl bg-gradient-to-br from-secondary/30 to-secondary/10 flex items-center justify-center shrink-0">
                     <Sparkles className="h-7 w-7 text-secondary" />
                   </div>
                   <div>
@@ -295,10 +295,10 @@ export default function InfluencersPage() {
                   </div>
                 </div>
 
-                <div className="bg-gradient-to-br from-secondary/10 to-transparent p-6 rounded-2xl border-2 border-secondary/30 mb-6">
+                <div className="bg-gradient-to-br from-secondary/10 to-transparent p-4 sm:p-6 rounded-xl sm:rounded-2xl border-2 border-secondary/30 mb-6">
                   <div className="flex items-baseline gap-3 mb-4">
-                    <span className="text-5xl font-bold text-secondary">3%</span>
-                    <span className="text-xl text-muted-foreground">withdrawal fee</span>
+                    <span className="text-3xl sm:text-5xl font-bold text-secondary">3%</span>
+                    <span className="text-sm sm:text-xl text-muted-foreground">withdrawal fee</span>
                   </div>
                   <p className="text-sm text-muted-foreground mb-4">
                     Only when you cash out your earnings (includes gas fees)
@@ -328,7 +328,7 @@ export default function InfluencersPage() {
 
               {/* Right: Benefits */}
               <div>
-                <h3 className="text-xl font-bold mb-6">What You Get as a Founding Creator</h3>
+                <h3 className="text-base sm:text-xl font-bold mb-3 sm:mb-6">What You Get as a Founding Creator</h3>
                 <div className="space-y-4">
                   <div className="flex items-start gap-3 p-3 rounded-lg hover:bg-muted/30 transition-colors">
                     <div className="w-8 h-8 rounded-lg bg-secondary/10 flex items-center justify-center shrink-0">
@@ -408,7 +408,7 @@ export default function InfluencersPage() {
 
           {/* CTA */}
           <div className="text-center">
-            <Button asChild size="lg" className="bg-gradient-to-r from-secondary to-primary text-white hover:opacity-90 transition-all h-16 text-lg px-12 rounded-2xl shadow-2xl">
+            <Button asChild size="lg" className="bg-gradient-to-r from-secondary to-primary text-white hover:opacity-90 transition-all h-12 sm:h-16 text-sm sm:text-lg px-8 sm:px-12 rounded-xl sm:rounded-2xl shadow-2xl">
               <Link href="/signup?type=influencer" className="flex items-center justify-center">
                 <Crown className="mr-2 h-6 w-6" />
                 Become a Founding Creator
@@ -434,7 +434,7 @@ export default function InfluencersPage() {
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-6 text-center">
             <div className="flex items-center gap-2">
               <DollarSign className="h-5 w-5 text-secondary" />
-              <span className="text-lg sm:text-xl font-bold text-foreground">50% upfront, guaranteed</span>
+              <span className="text-sm sm:text-xl font-bold text-foreground">50% upfront, guaranteed</span>
             </div>
             <span className="hidden sm:block text-muted-foreground">•</span>
             <p className="text-sm sm:text-base text-muted-foreground">
@@ -457,50 +457,50 @@ export default function InfluencersPage() {
             <Badge className="mb-4 bg-secondary/10 text-secondary border-secondary/20">
               Why Choose Influx
             </Badge>
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4">
+            <h2 className="text-xl sm:text-4xl lg:text-5xl font-bold mb-3 sm:mb-4">
               Built for crypto creators
             </h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+            <p className="text-sm sm:text-lg text-muted-foreground max-w-2xl mx-auto">
               The only platform where you control your rates, terms, and partnerships
             </p>
           </div>
 
           <div className="flex overflow-x-auto gap-4 pb-4 lg:grid lg:grid-cols-4 lg:gap-6 lg:overflow-visible snap-x snap-mandatory lg:snap-none">
-            <Card className="text-center p-4 lg:p-6 border-2 hover:border-secondary/40 transition-all hover:shadow-lg min-w-[240px] lg:min-w-0 snap-center">
+            <Card className="text-center p-4 lg:p-6 border-2 hover:border-secondary/40 transition-all hover:shadow-lg min-w-[160px] lg:min-w-0 snap-center">
               <div className="w-12 h-12 lg:w-16 lg:h-16 rounded-2xl bg-secondary/10 flex items-center justify-center mx-auto mb-3 lg:mb-4">
                 <DollarSign className="h-6 w-6 lg:h-8 lg:w-8 text-secondary" />
               </div>
-              <h3 className="text-base lg:text-xl font-semibold mb-2 lg:mb-3">Set Your Rates</h3>
+              <h3 className="text-sm lg:text-xl font-semibold mb-1.5 lg:mb-3">Set Your Rates</h3>
               <p className="text-muted-foreground text-xs lg:text-sm">
                 You price your work. Get paid in stablecoins, keep control.
               </p>
             </Card>
 
-            <Card className="text-center p-4 lg:p-6 border-2 hover:border-primary/40 transition-all hover:shadow-lg min-w-[240px] lg:min-w-0 snap-center">
+            <Card className="text-center p-4 lg:p-6 border-2 hover:border-primary/40 transition-all hover:shadow-lg min-w-[160px] lg:min-w-0 snap-center">
               <div className="w-12 h-12 lg:w-16 lg:h-16 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-3 lg:mb-4">
                 <Shield className="h-6 w-6 lg:h-8 lg:w-8 text-primary" />
               </div>
-              <h3 className="text-base lg:text-xl font-semibold mb-2 lg:mb-3">Secure Payments</h3>
+              <h3 className="text-sm lg:text-xl font-semibold mb-1.5 lg:mb-3">Secure Payments</h3>
               <p className="text-muted-foreground text-xs lg:text-sm">
                 50% advance upfront. Remaining 50% after publication and project approval, or auto-releases in 7 days.
               </p>
             </Card>
 
-            <Card className="text-center p-4 lg:p-6 border-2 hover:border-primary/40 transition-all hover:shadow-lg min-w-[240px] lg:min-w-0 snap-center">
+            <Card className="text-center p-4 lg:p-6 border-2 hover:border-primary/40 transition-all hover:shadow-lg min-w-[160px] lg:min-w-0 snap-center">
               <div className="w-12 h-12 lg:w-16 lg:h-16 rounded-2xl bg-muted/80 flex items-center justify-center mx-auto mb-3 lg:mb-4">
                 <Target className="h-6 w-6 lg:h-8 lg:w-8 text-foreground" />
               </div>
-              <h3 className="text-base lg:text-xl font-semibold mb-2 lg:mb-3">Perfect Matches</h3>
+              <h3 className="text-sm lg:text-xl font-semibold mb-1.5 lg:mb-3">Perfect Matches</h3>
               <p className="text-muted-foreground text-xs lg:text-sm">
                 Connect with Web3 projects that fit your niche and audience.
               </p>
             </Card>
 
-            <Card className="text-center p-4 lg:p-6 border-2 border-secondary/30 hover:border-secondary/50 transition-all hover:shadow-lg bg-gradient-to-br from-secondary/5 to-transparent min-w-[240px] lg:min-w-0 snap-center">
+            <Card className="text-center p-4 lg:p-6 border-2 border-secondary/30 hover:border-secondary/50 transition-all hover:shadow-lg bg-gradient-to-br from-secondary/5 to-transparent min-w-[160px] lg:min-w-0 snap-center">
               <div className="w-12 h-12 lg:w-16 lg:h-16 rounded-2xl bg-gradient-to-br from-secondary to-primary flex items-center justify-center mx-auto mb-3 lg:mb-4">
                 <Sparkles className="h-6 w-6 lg:h-8 lg:w-8 text-primary-foreground" />
               </div>
-              <h3 className="text-base lg:text-xl font-semibold mb-2 lg:mb-3">Full Control</h3>
+              <h3 className="text-sm lg:text-xl font-semibold mb-1.5 lg:mb-3">Full Control</h3>
               <p className="text-muted-foreground text-xs lg:text-sm">
                 Approve every collaboration. Keep full creative freedom.
               </p>
@@ -532,7 +532,7 @@ export default function InfluencersPage() {
             <h2 className="text-2xl sm:text-3xl lg:text-5xl font-bold mb-2 lg:mb-4">
               Start Earning Today
             </h2>
-            <p className="text-sm lg:text-lg text-muted-foreground max-w-2xl mx-auto">
+            <p className="text-sm lg:text-sm sm:text-lg text-muted-foreground max-w-2xl mx-auto">
               From profile to payment in four simple steps
             </p>
           </div>
@@ -609,7 +609,7 @@ export default function InfluencersPage() {
 
           {/* CTA */}
           <div className="text-center mt-8 lg:mt-12">
-            <Button size="lg" asChild className="bg-secondary/10 hover:bg-secondary/15 backdrop-blur-sm border-2 border-secondary/30 h-14 text-base transition-all rounded-xl px-8">
+            <Button size="lg" asChild className="bg-secondary/10 hover:bg-secondary/15 backdrop-blur-sm border-2 border-secondary/30 h-11 sm:h-14 text-sm sm:text-base transition-all rounded-xl px-8">
               <Link href="/signup?type=influencer" className="flex items-center justify-center">
                 <span className="bg-gradient-to-r from-secondary to-primary bg-clip-text text-transparent font-medium">Start Earning Now</span>
                 <ArrowRight className="ml-2 h-5 w-5 text-secondary" />
@@ -632,10 +632,10 @@ export default function InfluencersPage() {
             <Badge className="mb-4 bg-success/10 text-success border-success/20">
               Secure & Transparent
             </Badge>
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4">
+            <h2 className="text-xl sm:text-4xl lg:text-5xl font-bold mb-3 sm:mb-4">
               Your Earnings Are Protected
             </h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+            <p className="text-sm sm:text-lg text-muted-foreground max-w-2xl mx-auto">
               Every payment uses our 50/50 split with built-in review and auto-release protection
             </p>
           </div>
@@ -768,7 +768,7 @@ export default function InfluencersPage() {
 
           {/* CTA */}
           <div className="text-center mt-12">
-            <Button asChild size="lg" className="bg-primary/10 hover:bg-primary/15 backdrop-blur-sm border-2 border-primary/30 h-14 text-base transition-all rounded-xl px-8">
+            <Button asChild size="lg" className="bg-primary/10 hover:bg-primary/15 backdrop-blur-sm border-2 border-primary/30 h-11 sm:h-14 text-sm sm:text-base transition-all rounded-xl px-8">
               <Link href="/signup?type=influencer" className="flex items-center justify-center">
                 <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent font-medium">Start Earning Today</span>
                 <ArrowRight className="ml-2 h-5 w-5 text-secondary" />
@@ -794,7 +794,7 @@ export default function InfluencersPage() {
             <h2 className="text-2xl sm:text-3xl lg:text-5xl font-bold mb-2 lg:mb-4">
               Choose Your Plan
             </h2>
-            <p className="text-sm lg:text-lg text-muted-foreground max-w-2xl mx-auto">
+            <p className="text-sm lg:text-sm sm:text-lg text-muted-foreground max-w-2xl mx-auto">
               Start free or unlock premium features
             </p>
           </div>
@@ -884,10 +884,10 @@ export default function InfluencersPage() {
             <Badge className="mb-4 bg-primary/10 text-primary border-primary/20">
               Secure & Reliable
             </Badge>
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4">
+            <h2 className="text-xl sm:text-4xl lg:text-5xl font-bold mb-3 sm:mb-4">
               Your Money is Protected
             </h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+            <p className="text-sm sm:text-lg text-muted-foreground max-w-2xl mx-auto">
               Every payment uses our 50/50 split with auto-release protection
             </p>
           </div>
@@ -954,7 +954,7 @@ export default function InfluencersPage() {
 
           {/* CTA */}
           <div className="text-center">
-            <Button asChild size="lg" className="w-full sm:w-64 bg-secondary/10 hover:bg-secondary/15 backdrop-blur-sm border-2 border-secondary/30 h-14 text-base transition-all rounded-xl px-8">
+            <Button asChild size="lg" className="w-full sm:w-64 bg-secondary/10 hover:bg-secondary/15 backdrop-blur-sm border-2 border-secondary/30 h-11 sm:h-14 text-sm sm:text-base transition-all rounded-xl px-8">
               <Link href="/signup?type=influencer" className="flex items-center justify-center">
                 <span className="bg-gradient-to-r from-secondary to-primary bg-clip-text text-transparent font-medium">Join Now</span>
                 <ArrowRight className="ml-2 h-5 w-5 text-secondary" />
@@ -981,7 +981,7 @@ export default function InfluencersPage() {
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4">
               How Withdrawals Work
             </h2>
-            <p className="text-base md:text-lg text-muted-foreground max-w-2xl mx-auto">
+            <p className="text-base md:text-sm sm:text-lg text-muted-foreground max-w-2xl mx-auto">
               Industry-low 3% fee on withdrawals. Founding creators lock this rate forever.
             </p>
           </div>
