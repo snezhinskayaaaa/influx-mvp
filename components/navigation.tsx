@@ -40,7 +40,7 @@ export function Navigation() {
       <div
         className={`transition-all duration-300 ${
           isScrolled
-            ? "max-w-5xl mx-auto bg-background/70 backdrop-blur-xl border border-border/50 rounded-full shadow-lg px-6 py-3"
+            ? `max-w-5xl mx-auto bg-background/95 backdrop-blur-xl border border-border/50 shadow-lg px-6 py-3 ${isMobileMenuOpen ? "rounded-t-2xl border-b-0" : "rounded-full"}`
             : "container px-4 bg-transparent"
         }`}
       >
@@ -100,8 +100,8 @@ export function Navigation() {
 
       {/* Mobile Menu */}
       {isMobileMenuOpen && (
-        <div className="md:hidden fixed left-0 right-0 top-0 bottom-0 bg-background z-50 pt-20">
-          <div className="px-6 py-4 flex flex-col gap-1">
+        <div className={`md:hidden ${isScrolled ? "max-w-5xl mx-auto bg-background/95 backdrop-blur-xl border border-border/50 border-t-0 rounded-b-2xl shadow-lg" : "bg-background border-b border-border shadow-lg"}`}>
+          <div className="px-6 py-3 flex flex-col gap-1">
             <Link
               href="/brands"
               onClick={() => setIsMobileMenuOpen(false)}
