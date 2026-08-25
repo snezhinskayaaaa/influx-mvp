@@ -38,7 +38,7 @@ export function Navigation() {
       }`}
     >
       <div
-        className={`transition-all duration-300 ${
+        className={`${isMobileMenuOpen ? "" : "transition-all duration-300"} ${
           isScrolled
             ? `max-w-5xl mx-auto bg-background/95 backdrop-blur-xl border border-border/50 shadow-lg px-6 py-3 ${isMobileMenuOpen ? "rounded-t-2xl border-b-0" : "rounded-full"}`
             : "container px-4 bg-transparent"
