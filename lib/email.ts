@@ -15,6 +15,16 @@ function getResend(): Resend {
 const FROM_EMAIL = process.env.FROM_EMAIL || 'Influx <noreply@aiinflux.io>'
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
 
+/** Escape HTML special characters to prevent injection in email templates */
+function escapeHtml(text: string): string {
+  return text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
+}
+
 export async function sendVerificationEmail(email: string, token: string) {
   const verifyUrl = `${APP_URL}/verify-email?token=${token}`
 
@@ -85,11 +95,11 @@ export async function sendCollaborationEmail(
     subject: `Influx: ${subject}`,
     html: `
       <div style="font-family: 'Inter', sans-serif; max-width: 600px; margin: 0 auto; padding: 40px 20px;">
-        <h1 style="font-size: 24px; font-weight: bold; margin-bottom: 16px;">${heading}</h1>
-        <p style="color: #666; font-size: 16px; margin-bottom: 24px;">${body}</p>
+        <h1 style="font-size: 24px; font-weight: bold; margin-bottom: 16px;">${escapeHtml(heading)}</h1>
+        <p style="color: #666; font-size: 16px; margin-bottom: 24px;">${escapeHtml(body)}</p>
         ${ctaText && ctaUrl ? `
-          <a href="${ctaUrl}" style="display: inline-block; background-color: #4F46E5; color: #ffffff; padding: 12px 32px; border-radius: 8px; text-decoration: none; font-weight: 600;">
-            ${ctaText}
+          <a href="${escapeHtml(ctaUrl)}" style="display: inline-block; background-color: #4F46E5; color: #ffffff; padding: 12px 32px; border-radius: 8px; text-decoration: none; font-weight: 600;">
+            ${escapeHtml(ctaText)}
           </a>
         ` : ''}
         <p style="color: #999; font-size: 12px; margin-top: 32px;">
