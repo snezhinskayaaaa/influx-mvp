@@ -7,7 +7,7 @@ import { verifySync } from 'otplib'
 export async function POST(request: NextRequest) {
   try {
     const ip = request.headers.get('x-forwarded-for') || 'unknown'
-    const { success } = rateLimit(`login:${ip}`, 5, 60000) // 5 attempts per minute
+    const { success } = await rateLimit(`login:${ip}`, 5, 60000) // 5 attempts per minute
     if (!success) {
       return NextResponse.json({ error: 'Too many login attempts. Please wait a minute.' }, { status: 429 })
     }

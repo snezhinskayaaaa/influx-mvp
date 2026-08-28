@@ -19,7 +19,7 @@ export async function POST(
       return NextResponse.json({ error: 'Access denied' }, { status: 403 })
     }
 
-    const { success } = rateLimit(`collab-resolve:${user.userId}`, 3, 60000)
+    const { success } = await rateLimit(`collab-resolve:${user.userId}`, 3, 60000)
     if (!success) {
       return NextResponse.json({ error: 'Too many requests. Please wait a minute.' }, { status: 429 })
     }

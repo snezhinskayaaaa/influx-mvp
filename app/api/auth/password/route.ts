@@ -6,7 +6,7 @@ import { rateLimit } from '@/lib/rate-limit'
 export async function PATCH(request: NextRequest) {
   try {
     const ip = request.headers.get('x-forwarded-for') || 'unknown'
-    const { success } = rateLimit(`password:${ip}`, 3, 60000) // 3 attempts per minute
+    const { success } = await rateLimit(`password:${ip}`, 3, 60000) // 3 attempts per minute
     if (!success) {
       return NextResponse.json({ error: 'Too many attempts. Please wait a minute.' }, { status: 429 })
     }

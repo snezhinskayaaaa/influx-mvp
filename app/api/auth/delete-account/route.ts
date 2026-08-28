@@ -11,7 +11,7 @@ export async function POST(request: NextRequest) {
     }
 
     const ip = request.headers.get('x-forwarded-for') || 'unknown'
-    const { success } = rateLimit(`delete-account:${ip}`, 3, 900000) // 3 attempts per 15 minutes
+    const { success } = await rateLimit(`delete-account:${ip}`, 3, 900000) // 3 attempts per 15 minutes
     if (!success) {
       return NextResponse.json({ error: 'Too many requests. Please wait a few minutes.' }, { status: 429 })
     }

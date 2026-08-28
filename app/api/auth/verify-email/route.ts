@@ -1,9 +1,13 @@
+import { rateLimit } from '@/lib/rate-limit'
 import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
 import { jwtVerify } from 'jose'
 
 export async function POST(request: NextRequest) {
   try {
+    const ip = request.headers.get('x-forwarded-for') || 'unknown'
+    const { success } = await rateLimit(`verify-email:${ip}`, 5, 60000)
+    if (!success) return NextResponse.json({ error: 'Too many attempts. Please wait a minute.' }, { status: 429 })
     const { token } = await request.json()
 
     if (!token) {

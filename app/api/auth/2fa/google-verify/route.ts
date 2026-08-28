@@ -1,3 +1,4 @@
+import { rateLimit } from '@/lib/rate-limit'
 import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
 import { createToken, setAuthCookie } from '@/lib/auth'
@@ -10,6 +11,12 @@ import { verifySync } from 'otplib'
  */
 export async function POST(request: NextRequest) {
   try {
+    const ip = request.headers.get('x-forwarded-for') || 'unknown'
+    const { success } = await rateLimit(`2fa-google-verify:${ip}`, 5, 60000)
+    if (!success) {
+      return NextResponse.json({ error: 'Too many attempts. Please wait a minute.' }, { status: 429 })
+    }
+
     const body = await request.json()
     const { email, totpCode } = body as { email: string; totpCode: string }
 

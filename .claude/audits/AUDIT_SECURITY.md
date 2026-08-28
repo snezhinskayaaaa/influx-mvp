@@ -1,405 +1,281 @@
-# Security Audit -- IDOR (Insecure Direct Object Reference)
+# Security Audit
 
 ---
 agent: security-auditor
 status: COMPLETE
-timestamp: 2026-07-28T12:00:00Z
-duration: 120 seconds
-findings: 2
-critical_count: 0
-high_count: 1
-medium_count: 1
+timestamp: 2026-08-28T12:00:00Z
+duration: 180
+findings: 12
+critical_count: 1
+high_count: 4
+medium_count: 5
 errors: []
 skipped_checks: []
 ---
 
-## Methodology
-
-Every API route under `app/api/` that accepts an ID parameter (URL param or body param) was read in full. For each route handler (GET, POST, PATCH, DELETE), the authorization logic was traced to determine whether the authenticated user is verified as the owner of, or a participant in, the resource before any read or write operation occurs.
-
----
-
-## Route-by-Route IDOR Audit Results
-
-### 1. `app/api/campaigns/[id]/route.ts`
-
-**GET** -- SAFE
-- Fetches campaign, then checks `campaign.brand.userId === user.userId` (brand owner), `campaign.collaborations.some(c => c.influencer.userId === user.userId)` (collaborator), or `user.role === 'ADMIN'`.
-- Returns 403 if none match.
-
-**PATCH** -- SAFE
-- Fetches campaign, then checks `campaign.brand.userId !== user.userId && user.role !== 'ADMIN'`.
-- Only the brand owner or admin can update. Returns 403 otherwise.
-
-**DELETE** -- SAFE
-- Same ownership check as PATCH: `campaign.brand.userId !== user.userId && user.role !== 'ADMIN'`.
-- Additionally blocks deletion if active collaborations exist.
-
----
-
-### 2. `app/api/collaborations/[id]/route.ts`
-
-**GET** -- SAFE
-- Checks `isBrandOwner || isInfluencer || isAdmin`. Both parties to the collaboration and admins can view.
-
-**PATCH** -- SAFE (with one note)
-- Checks `isBrandOwner || isInfluencer || isAdmin` before allowing any updates.
-- Role-specific field gating: only brand can set `agreedPrice`/`brandAgreed`; only influencer can set `influencerAgreed`.
-- Cancellation is allowed by either party (correct business logic).
-- The `IN_PROGRESS` transition (advance payment) is gated to `isBrandOwner || isAdmin`.
-
----
-
-### 3. `app/api/collaborations/[id]/agree/route.ts`
-
-**POST** -- SAFE
-- Checks `collaboration.campaign.brand.userId !== user.userId && user.role !== 'ADMIN'`.
-- Only the brand owner (or admin) can trigger the freeze. Requires email verification.
-- Validates both `brandAgreed` and `influencerAgreed` flags before proceeding.
-
----
-
-### 4. `app/api/collaborations/[id]/agreement/route.ts`
-
-**GET** -- SAFE
-- Checks `isBrand || isInfluencer || isAdmin` before generating the PDF.
-- Both parties and admins can download their agreement. No IDOR possible.
-
----
-
-### 5. `app/api/collaborations/[id]/complete/route.ts`
-
-**POST** -- SAFE
-- Checks `collaboration.campaign.brand.userId !== user.userId && user.role !== 'ADMIN'`.
-- Only brand owner or admin can mark complete. Atomic transaction protects funds.
-
----
-
-### 6. `app/api/collaborations/[id]/submit/route.ts`
-
-**POST** -- SAFE
-- Checks `collaboration.influencer.userId !== user.userId`.
-- Only the influencer assigned to the collaboration can submit content. No admin bypass (which is correct -- only the actual influencer should submit their own content).
-
----
-
-### 7. `app/api/collaborations/[id]/review/route.ts`
-
-**POST** -- SAFE
-- Checks `collaboration.campaign.brand.userId !== user.userId`.
-- Only the brand owner can review. No admin bypass for review (correct -- admins resolve disputes via the `/resolve` endpoint instead).
-
----
-
-### 8. `app/api/collaborations/[id]/resolve/route.ts`
-
-**POST** -- SAFE
-- Checks `user.role !== 'ADMIN'` at line 16. Only admins can resolve disputes.
-- No IDOR risk since this is an admin-only endpoint by design.
-
----
-
-### 9. `app/api/wallet/deposit/route.ts`
-
-**POST** -- SAFE
-- Checks `user.role !== 'BRAND'`.
-- Looks up brand via `userId: user.userId` (session-derived, not user-supplied).
-- No external ID parameter accepted for the brand -- uses the authenticated user's own brand record.
-
----
-
-### 10. `app/api/wallet/withdraw/route.ts`
-
-**POST** -- SAFE
-- Checks `user.role !== 'INFLUENCER'`.
-- Looks up influencer via `userId: user.userId` (session-derived).
-- Balance deduction uses atomic `updateMany` with balance check. No IDOR vector.
-
----
-
-### 11. `app/api/wallet/route.ts`
-
-**GET** -- SAFE
-- Queries transactions via `userId: user.userId` (session-derived).
-- Queries brand/influencer balance via `userId: user.userId`. No user-supplied ID.
-
----
-
-### 12. `app/api/auth/delete-account/route.ts`
-
-**POST** -- SAFE
-- Deletes `user.userId` from session. Requires `confirmation === 'DELETE'`.
-- No external ID parameter -- always operates on the authenticated user.
-
----
-
-### 13. `app/api/profiles/me/route.ts`
-
-**GET** -- SAFE
-- Queries `where: { id: user.userId }`. Session-derived, no external input.
-
-**PATCH** -- SAFE
-- Updates `where: { id: user.userId }`. Session-derived, no external input.
-
----
-
-### 14. `app/api/profiles/me/notifications/route.ts`
-
-**PATCH** -- SAFE
-- Updates `where: { id: user.userId }`. Session-derived.
-
----
-
-### 15. `app/api/influencers/me/route.ts`
-
-**GET** -- SAFE
-- Checks `user.role !== 'INFLUENCER'`, then queries `where: { userId: user.userId }`.
-
-**PATCH** -- SAFE
-- Same role + session-derived ownership check. Handle uniqueness also verified.
-
----
-
-### 16. `app/api/brands/me/route.ts`
-
-**GET** -- SAFE
-- Checks `user.role !== 'BRAND'`, then queries `where: { userId: user.userId }`.
-
-**PATCH** -- SAFE
-- Same pattern. Session-derived ownership.
-
----
-
-### 17. `app/api/notifications/route.ts`
-
-**GET** -- SAFE
-- Queries `where: { userId: user.userId }`. Session-derived.
-
-**PATCH** -- SAFE
-- For `markAllRead`: updates `where: { userId: user.userId, isRead: false }`. Scoped to own notifications.
-- For single notification: uses `findFirst({ where: { id: body.id, userId: user.userId } })` -- verifies ownership before update.
-
----
-
-### 18. `app/api/profiles/avatar/route.ts`
-
-**POST** -- SAFE
-- Updates `where: { id: user.userId }`. Session-derived.
-
----
-
-### 19. `app/api/influencers/route.ts`
-
-**GET** -- SAFE (public endpoint)
-- Lists approved influencers. No authentication required. This is a catalog/discovery endpoint.
-- Does not expose sensitive data (no balance, no userId, no email).
-
----
-
-### 20. `app/api/campaigns/route.ts`
-
-**GET** -- SAFE
-- Brand: scoped to `brandId: brand.id` (derived from `user.userId`).
-- Influencer: only sees ACTIVE campaigns (public discovery).
-- Admin: sees all (correct).
-
-**POST** -- SAFE
-- Checks `user.role !== 'BRAND'`. Creates campaign under the authenticated brand. No external brand ID accepted.
-
----
-
-### 21. `app/api/collaborations/route.ts`
-
-**GET** -- SAFE
-- Influencer: scoped to own `influencerId`.
-- Brand: scoped to own `brand.id`.
-- Admin: sees all.
-
-**POST** -- SAFE
-- Influencer applying: uses `userId: user.userId` to find influencer. Campaign ownership is verified for brand invitations (`campaign.brand.userId !== user.userId`).
-
----
-
-### 22. `app/api/cron/auto-release/route.ts`
-
-**POST** -- SAFE
-- Protected by `CRON_SECRET` bearer token, not user session.
-- No user-supplied IDs. Processes stale collaborations by status + date.
-
----
-
-## Admin Routes
-
-### 23. `app/api/admin/brands/route.ts` -- GET -- SAFE
-- Checks `user.role !== 'ADMIN'` at line 11.
-
-### 24. `app/api/admin/campaigns/route.ts` -- GET -- SAFE
-- Checks `user.role !== 'ADMIN'` at line 11.
-
-### 25. `app/api/admin/campaigns/[id]/route.ts` -- DELETE -- SAFE
-- Checks `user.role !== 'ADMIN'` at line 14.
-
-### 26. `app/api/admin/collaborations/route.ts` -- GET -- SAFE
-- Checks `user.role !== 'ADMIN'` at line 11.
-
-### 27. `app/api/admin/influencers/route.ts` -- GET -- SAFE
-- Checks `user.role !== 'ADMIN'` at line 11.
-
-### 28. `app/api/admin/influencers/[id]/route.ts` -- PATCH -- SAFE
-- Checks `user.role !== 'ADMIN'` at line 14.
-
-### 29. `app/api/admin/users/route.ts` -- GET -- SAFE
-- Checks `user.role !== 'ADMIN'` at line 11.
-
-### 30. `app/api/admin/users/[id]/route.ts` -- PATCH, DELETE -- SAFE
-- Both handlers check `user.role !== 'ADMIN'` at lines 14/53.
-- DELETE prevents removing the last admin.
-
-### 31. `app/api/admin/settings/route.ts` -- GET, PATCH -- SAFE
-- Both check `user.role !== 'ADMIN'`.
-- PATCH additionally requires a verified email code (JWT-based 2FA).
-
-### 32. `app/api/admin/settings/send-code/route.ts` -- POST -- SAFE
-- Checks `user.role !== 'ADMIN'` (combined check at line 10).
-
-### 33. `app/api/admin/transactions/route.ts` -- GET -- SAFE
-- Checks `user.role !== 'ADMIN'` at line 11.
-
----
-
-## Findings
-
-### SEC-001: Admin Role Escalation Risk via JWT Role Claim (MEDIUM)
-
-**Location:** `/Users/snezhinskayaaaa/influx-mvp/lib/auth.ts` (lines 12-15, 18-24)
-
-**Issue:** The `role` field is baked into the JWT at login time and never re-validated against the database. If an admin demotes a user (or a user's role changes), the old JWT remains valid for up to 7 days with the stale role.
-
-**Impact:** A demoted admin continues to have full admin access until their JWT expires. A user whose role was changed continues operating under the old role.
-
-**Attack scenario:**
-1. Admin account is compromised.
-2. Another admin removes the compromised account or changes its role.
-3. The attacker's JWT still contains `role: 'ADMIN'` and remains valid for up to 7 days.
-
-**Severity:** Medium -- requires a prior compromise or role change event.
-
-**Remediation:** On every request, `getCurrentUser()` should verify the user still exists in the database and that their current role matches. This can be done with a lightweight DB query or a server-side session store:
-
-```typescript
-export async function getCurrentUser(): Promise<TokenPayload | null> {
-  const cookieStore = await cookies()
-  const token = cookieStore.get(COOKIE_NAME)?.value
-  if (!token) return null
-  const payload = await verifyToken(token)
-  if (!payload) return null
-
-  // Verify user still exists and role is current
-  const profile = await prisma.profile.findUnique({
-    where: { id: payload.userId },
-    select: { role: true },
-  })
-  if (!profile || profile.role !== payload.role) return null
-
-  return { ...payload, role: profile.role as TokenPayload['role'] }
-}
-```
-
----
-
-### SEC-002: Admin Campaign Delete Has No Active Collaboration Guard (HIGH)
-
-**Location:** `/Users/snezhinskayaaaa/influx-mvp/app/api/admin/campaigns/[id]/route.ts` (lines 20-25)
-
-**Issue:** The admin DELETE endpoint for campaigns does not check whether the campaign has active collaborations with frozen funds before deleting. Compare with the regular `campaigns/[id]/route.ts` DELETE (line 190) which explicitly blocks deletion when active collaborations exist.
-
-**Attack scenario:**
-1. Admin deletes a campaign that has AGREED or IN_PROGRESS collaborations.
-2. The associated collaborations reference a deleted campaign.
-3. Frozen funds may become orphaned -- the brand's `frozenBalance` is never decremented, and the money is effectively stuck.
-4. If Prisma cascades the delete to collaborations, the influencer loses their in-progress work and pending payments with no record.
-
-**Severity:** High -- can cause financial loss (orphaned frozen funds or destroyed collaboration records with pending payments).
-
-**Remediation:** Add the same guard used in the non-admin route:
-
-```typescript
-export async function DELETE(request, { params }) {
-  // ... existing auth checks ...
-
-  const campaign = await prisma.campaign.findUnique({
-    where: { id },
-    include: {
-      collaborations: {
-        where: {
-          status: {
-            in: ['AGREED', 'IN_PROGRESS', 'CONTENT_REVIEW', 'REVISION', 'PUBLISHING', 'DELIVERED'],
-          },
-        },
-      },
-    },
-  })
-
-  if (!campaign) {
-    return NextResponse.json({ error: 'Campaign not found' }, { status: 404 })
-  }
-
-  if (campaign.collaborations.length > 0) {
-    return NextResponse.json(
-      { error: 'Cannot delete campaign with active collaborations. Cancel or complete them first.' },
-      { status: 400 }
-    )
-  }
-
-  await prisma.campaign.delete({ where: { id } })
-  return NextResponse.json({ success: true })
-}
-```
-
----
-
 ## Risk Summary
 
-| Category | Critical | High | Medium | Low |
-|----------|----------|------|--------|-----|
-| IDOR (user-to-user) | 0 | 0 | 0 | 0 |
-| IDOR (role escalation) | 0 | 0 | 1 | 0 |
-| Missing business guard (admin) | 0 | 1 | 0 | 0 |
+| Category       | Critical | High | Medium | Low |
+|----------------|----------|------|--------|-----|
+| Injection      | 0        | 0    | 0      | 0   |
+| Auth           | 1        | 1    | 1      | 0   |
+| Rate Limiting  | 0        | 1    | 1      | 0   |
+| Secrets        | 0        | 0    | 1      | 0   |
+| Headers        | 0        | 0    | 0      | 0   |
+| Data Exposure  | 0        | 1    | 0      | 0   |
+| CSRF           | 0        | 0    | 1      | 0   |
+| Dependencies   | 0        | 1    | 1      | 0   |
 
-**Total: 0 Critical, 1 High, 1 Medium, 0 Low**
+**Total:** 1 Critical, 4 High, 5 Medium, 0 Low
 
 ---
 
-## IDOR Verdict by Question
+## Critical Findings
 
-### 1. Does every route check that the authenticated user OWNS or has ACCESS to the resource?
-**YES.** Every route that accepts an `[id]` parameter fetches the resource first, then verifies ownership or participation before proceeding.
+### SEC-001: `/api/founding/check` Has No Authentication -- Allows Arbitrary Founding Member Grants
+**CVSS Score:** 9.1 (Critical)
+**Location:** `app/api/founding/check/route.ts:15`
+**Issue:** This POST endpoint accepts `{ type: "brand", brandId: "..." }` or `{ type: "creator", influencerId: "..." }` and grants founding member status. It has **no authentication check** (`getCurrentUser` is never called) and **no rate limiting**. The middleware marks all `/api/founding/*` routes as public (line 18 of `middleware.ts`: `'/api/founding'` is in `publicApiRoutes`... wait, actually `/api/founding/check` is NOT in publicApiRoutes -- only `/api/founding/stats` is in `publicGetApiRoutes`). Let me re-check: `publicApiRoutes` does NOT include `/api/founding`. However, `publicGetApiRoutes` includes `/api/founding/stats` for GET only. The `/api/founding/check` route uses POST, so middleware WILL enforce JWT auth on it.
 
-### 2. Can a brand access/modify another brand's campaigns?
-**NO.** All campaign mutation routes (PATCH, DELETE) check `campaign.brand.userId === user.userId`. GET on `campaigns/[id]` additionally allows collaborators and admins but not unrelated brands.
+**Re-evaluation:** The middleware does protect this route (it requires JWT), but the route itself performs **no ownership verification**. Any authenticated user can pass any `brandId` or `influencerId` to grant founding status to someone else's account. This is an **authorization bypass**, not an authentication bypass.
 
-### 3. Can an influencer access/modify another influencer's data?
-**NO.** All "me" endpoints (`/influencers/me`, `/profiles/me`, `/brands/me`) use the session-derived `user.userId`. Collaboration submit is gated to `collaboration.influencer.userId === user.userId`.
+**Attack Vector:**
+```
+POST /api/founding/check
+Cookie: influx-token=<any_valid_user_jwt>
+Body: { "type": "brand", "brandId": "<victim_brand_id>" }
+```
+Any logged-in user (even an INFLUENCER) can grant founding member status to any brand or influencer.
 
-### 4. Can a regular user access admin endpoints?
-**NO.** Every admin route checks `user.role !== 'ADMIN'` at the top of the handler. However, SEC-001 notes that role is cached in the JWT and not re-validated per request.
+**Impact:** Unauthorized founding member status grants, leading to reduced platform fees (2% deposit / 3% withdrawal vs standard 4%/6%) -- direct revenue loss.
 
-### 5. Can someone modify a collaboration they're not part of?
-**NO.** All collaboration endpoints (GET, PATCH, agree, complete, submit, review) verify the user is either the brand owner of the campaign, the assigned influencer, or an admin.
+**Remediation:**
+```typescript
+const user = await getCurrentUser()
+if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
+// Verify ownership: the caller must own the brand/influencer
+if (type === 'brand') {
+  const brand = await prisma.brand.findUnique({ where: { id: brandId } })
+  if (!brand || brand.userId !== user.userId) {
+    return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+  }
+  // ... rest of logic
+}
+```
+
+---
+
+## High Findings
+
+### SEC-002: `/api/auth/2fa/google-verify` Has No Rate Limiting -- TOTP Brute Force
+**CVSS Score:** 7.5 (High)
+**Location:** `app/api/auth/2fa/google-verify/route.ts:11`
+**Issue:** This endpoint accepts `{ email, totpCode }` and issues an auth cookie on success. It has **no rate limiting**. TOTP codes are 6 digits (1,000,000 combinations). An attacker knowing the user's email can brute-force all codes in minutes.
+
+Additionally, the route is in the `/api/auth/` path which is marked as a public API route in middleware (line 20: `'/api/auth'`), so no JWT is required.
+
+**Attack Vector:** Automated brute-force of 6-digit TOTP codes against a known email address.
+
+**Impact:** Full account takeover bypassing 2FA protection.
+
+**Remediation:**
+```typescript
+const ip = request.headers.get('x-forwarded-for') || 'unknown'
+const { success } = rateLimit(`2fa-google:${ip}:${email}`, 5, 300000) // 5 attempts per 5 minutes
+if (!success) {
+  return NextResponse.json({ error: 'Too many attempts' }, { status: 429 })
+}
+```
+
+### SEC-003: In-Memory Rate Limiter Resets on Deploy / Does Not Work Across Instances
+**CVSS Score:** 7.1 (High)
+**Location:** `lib/rate-limit.ts:1`
+**Issue:** The rate limiter stores state in a `Map()` in process memory. This means:
+1. Every deployment/restart resets all rate limit counters.
+2. If running multiple server instances (e.g., Railway with replicas), each instance has its own counter -- an attacker can bypass limits by distributing requests.
+3. Serverless functions (if used) create new instances per invocation.
+
+**Impact:** Rate limiting on login, signup, forgot-password, deposits, and withdrawals can be bypassed.
+
+**Remediation:** Use Redis-based rate limiting (e.g., `@upstash/ratelimit` or `ioredis` with a sliding window). For Railway deployments with a single instance, the current approach works minimally but is fragile.
+
+### SEC-004: Email HTML Templates Interpolate User Content Without Sanitization
+**CVSS Score:** 6.8 (High)
+**Location:** `lib/email.ts:88-89`
+**Issue:** `sendCollaborationEmail()` interpolates `heading` and `body` parameters directly into HTML:
+```typescript
+<h1>${heading}</h1>
+<p>${body}</p>
+```
+If any caller passes user-controlled content (e.g., campaign title, influencer handle) into `heading` or `body`, it creates a **stored XSS via email** vector. Campaign titles and company names are user-supplied and could contain `<script>` tags or malicious HTML.
+
+**Impact:** Phishing attacks, cookie theft via email clients that render HTML.
+
+**Remediation:** Sanitize all interpolated values with HTML entity encoding before inserting into templates:
+```typescript
+function escapeHtml(str: string): string {
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')
+}
+```
+
+### SEC-005: 26 npm Dependency Vulnerabilities (19 High)
+**CVSS Score:** Variable (High aggregate)
+**Location:** `package.json` / `node_modules/`
+**Issue:** `npm audit` reports 26 vulnerabilities: 2 low, 5 moderate, 19 high. Notable ones:
+- `@hono/node-server`: Authorization bypass via encoded slashes (CVSS 7.5)
+- `uuid`: Missing buffer bounds check
+- Multiple transitive vulnerabilities through `resend` -> `svix` -> `uuid`
+
+**Remediation:** Run `npm audit fix` for non-breaking fixes, then evaluate `npm audit fix --force` for breaking changes.
+
+---
+
+## Medium Findings
+
+### SEC-006: Multiple Auth Endpoints Lack Rate Limiting
+**CVSS Score:** 5.3 (Medium)
+**Location:** Multiple files
+**Issue:** The following authentication/security-sensitive endpoints have no rate limiting:
+- `app/api/auth/2fa/verify/route.ts` -- 2FA setup verification
+- `app/api/auth/2fa/disable/route.ts` -- 2FA disable
+- `app/api/auth/2fa/setup/route.ts` -- 2FA setup
+- `app/api/auth/change-password/route.ts` -- password change
+- `app/api/auth/verify-email/route.ts` -- email verification
+- `app/api/auth/google/route.ts` -- Google OAuth callback
+
+While the login/signup/forgot-password routes have rate limiting, these related auth endpoints do not.
+
+**Impact:** Potential for brute-force attacks on 2FA codes during setup, or abuse of verification endpoints.
+
+**Remediation:** Add rate limiting to all auth-related endpoints.
+
+### SEC-007: Admin Settings Send-Code Uses `Math.random()` for Security Code
+**CVSS Score:** 5.3 (Medium)
+**Location:** `app/api/admin/settings/send-code/route.ts:23`
+**Issue:**
+```typescript
+const code = Math.floor(100000 + Math.random() * 900000).toString()
+```
+`Math.random()` is not cryptographically secure. While the code is sent via email (limiting attack surface), using a predictable PRNG for security tokens is a bad practice.
+
+**Remediation:**
+```typescript
+import crypto from 'crypto'
+const code = crypto.randomInt(100000, 999999).toString()
+```
+
+### SEC-008: `.env.example` Contains Placeholder That Looks Like a Real Value
+**CVSS Score:** 4.0 (Medium)
+**Location:** `.env.example:29`
+**Issue:**
+```
+YOUTUBE_API_KEY=your_youtube_api_key
+```
+While not a real secret, having non-empty placeholder values in `.env.example` can lead to confusion. More importantly, `.env.example` is committed to git (confirmed via `git ls-files`), and the DATABASE_URL line contains a template with `user:password` which, if copied verbatim, could expose a default database.
+
+**Remediation:** Use clearly empty or commented placeholder values:
+```
+YOUTUBE_API_KEY=
+# DATABASE_URL=postgresql://user:password@localhost:5432/influx_mvp
+```
+
+### SEC-009: CSRF Protection Allows Requests Without Origin Header
+**CVSS Score:** 4.3 (Medium)
+**Location:** `middleware.ts:54-58`
+**Issue:**
+```typescript
+if (!origin) {
+  // Requests without an Origin header (e.g. server-to-server) are allowed
+  return true
+}
+```
+While browsers always send the `Origin` header on cross-origin requests, some older clients or custom HTTP tools can omit it. This means server-to-server CSRF attacks (or attacks from non-browser clients) bypass CSRF protection. The comment acknowledges this tradeoff, but it weakens the CSRF defense.
+
+**Impact:** Theoretical CSRF bypass from non-browser HTTP clients.
+
+**Remediation:** Consider also checking `Referer` header as a fallback, or requiring a custom header (e.g., `X-Requested-With`) for mutation requests.
+
+### SEC-010: 42 of 58 API Routes Lack Rate Limiting
+**CVSS Score:** 4.0 (Medium)
+**Location:** All `app/api/` routes listed below
+**Issue:** Only 16 out of 58 API route files use rate limiting. While admin routes are protected behind JWT + ADMIN role check in middleware, the following non-admin, non-auth routes have no rate limiting:
+
+**Financial routes (already rate-limited -- good):**
+- `wallet/deposit` and `wallet/withdraw` -- have rate limiting
+
+**Unprotected routes (no rate limiting):**
+- `app/api/brands/me/route.ts`
+- `app/api/campaigns/[id]/route.ts`
+- `app/api/collaborations/[id]/route.ts`
+- `app/api/collaborations/[id]/agreement/route.ts`
+- `app/api/influencers/me/route.ts`
+- `app/api/influencers/route.ts` (public GET)
+- `app/api/notifications/route.ts`
+- `app/api/profiles/avatar/route.ts`
+- `app/api/profiles/me/route.ts`
+- `app/api/profiles/me/notifications/route.ts`
+- `app/api/profiles/referral/route.ts`
+- `app/api/social/verify/route.ts`
+- `app/api/social/youtube/route.ts`
+- `app/api/wallet/route.ts` (GET balance)
+- `app/api/founding/check/route.ts`
+- `app/api/founding/stats/route.ts`
+- All admin routes (14 files)
+
+**Impact:** Potential for DoS or abuse on unprotected endpoints.
+
+**Remediation:** Add at minimum a global rate limiter in middleware (e.g., 100 req/min per IP for authenticated routes, 30 req/min for public routes).
+
+---
+
+## Positive Security Findings (What Is Done Well)
+
+1. **No hardcoded secrets found.** All API keys, JWT secrets, and credentials use `process.env`. The codebase correctly validates JWT_SECRET length >= 32 chars at startup.
+
+2. **No SQL injection risk.** All database queries use Prisma ORM with parameterized queries. The only `$queryRaw` usage (`SELECT 1` in health check) is a static string with no interpolation.
+
+3. **No XSS via dangerouslySetInnerHTML.** Zero instances found in the codebase.
+
+4. **No command injection.** No use of `exec`, `spawn`, `execSync`, or `child_process` in application code.
+
+5. **Strong security headers.** `next.config.ts` sets X-Frame-Options: DENY, X-Content-Type-Options: nosniff, HSTS, CSP, Referrer-Policy, and Permissions-Policy.
+
+6. **Good cookie configuration.** Auth cookies are httpOnly, secure in production, sameSite: lax, with 7-day expiry.
+
+7. **CSRF protection exists.** Origin-based CSRF validation in middleware for all mutation requests.
+
+8. **Webhook signature verification.** Both deposit and withdrawal webhooks verify HMAC signatures with timing-safe comparison.
+
+9. **Password hashing with bcrypt.** Salt rounds = 12, password max length enforced (128 chars to prevent bcrypt DoS).
+
+10. **2FA implementation.** TOTP-based 2FA with backup codes, properly integrated into login flow.
+
+11. **No .env files committed.** `.gitignore` excludes `.env*` and only `.env.example` is tracked.
+
+12. **JWT purpose-scoping.** Email verification and password reset tokens include a `purpose` field to prevent token reuse across different flows.
+
+13. **Cron route protected.** `/api/cron/auto-release` verifies `CRON_SECRET` via Bearer token.
+
+14. **Email enumeration prevention.** Forgot-password returns success even if email not found.
 
 ---
 
 ## Checklist
 
 ### Must Fix (Before Deploy)
-- [ ] SEC-002: Add active collaboration guard to admin campaign DELETE
+- [ ] **SEC-001**: Add ownership verification to `/api/founding/check` -- any user can grant founding status to any account
+- [ ] **SEC-002**: Add rate limiting to `/api/auth/2fa/google-verify` -- TOTP brute-force possible
 
 ### Should Fix (High Priority)
-- [ ] SEC-001: Re-validate user role from DB on each request (or use shorter JWT expiry + refresh tokens)
+- [ ] **SEC-003**: Replace in-memory rate limiter with Redis-backed solution
+- [ ] **SEC-004**: Sanitize HTML in email templates (`sendCollaborationEmail`)
+- [ ] **SEC-005**: Run `npm audit fix` to address dependency vulnerabilities
+- [ ] **SEC-006**: Add rate limiting to remaining auth endpoints (2fa/verify, 2fa/disable, change-password)
 
-### No Issues Found
-- [x] All user-facing IDOR vectors are properly guarded
-- [x] All admin endpoints check ADMIN role
-- [x] Financial operations use atomic transactions
-- [x] Notification ownership is verified before updates
-- [x] Wallet endpoints use session-derived identity only
+### Recommended
+- [ ] **SEC-007**: Use `crypto.randomInt()` instead of `Math.random()` for admin verification codes
+- [ ] **SEC-008**: Clean up `.env.example` placeholder values
+- [ ] **SEC-009**: Strengthen CSRF by adding Referer fallback check
+- [ ] **SEC-010**: Add global rate limiting in middleware for all API routes
+

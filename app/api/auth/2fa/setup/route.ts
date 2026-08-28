@@ -1,4 +1,5 @@
-import { NextResponse } from 'next/server'
+import { rateLimit } from '@/lib/rate-limit'
+import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
 import { getCurrentUser } from '@/lib/auth'
 import { generateSecret, generateURI } from 'otplib'
@@ -9,8 +10,11 @@ import QRCode from 'qrcode'
  * Generate TOTP secret and QR code for setup.
  * Does NOT enable 2FA yet — user must verify with a code first.
  */
-export async function POST() {
+export async function POST(request: NextRequest) {
   try {
+    const ip = request.headers.get('x-forwarded-for') || 'unknown'
+    const { success } = await rateLimit(`2fa-setup:${ip}`, 5, 60000)
+    if (!success) return NextResponse.json({ error: 'Too many attempts. Please wait a minute.' }, { status: 429 })
     const user = await getCurrentUser()
     if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 

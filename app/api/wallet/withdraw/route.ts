@@ -11,7 +11,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const { success } = rateLimit(`withdraw:${user.userId}`, 3, 60000)
+    const { success } = await rateLimit(`withdraw:${user.userId}`, 3, 60000)
     if (!success) {
       return NextResponse.json({ error: 'Too many withdrawal attempts. Please wait a minute.' }, { status: 429 })
     }

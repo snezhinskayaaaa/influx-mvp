@@ -13,7 +13,7 @@ export async function POST(request: NextRequest) {
     }
 
     const ip = request.headers.get('x-forwarded-for') || 'unknown'
-    const { success } = rateLimit(`resend-verification:${ip}`, 3, 60000)
+    const { success } = await rateLimit(`resend-verification:${ip}`, 3, 60000)
     if (!success) {
       return NextResponse.json({ error: 'Too many requests. Please wait a minute.' }, { status: 429 })
     }

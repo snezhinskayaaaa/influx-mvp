@@ -20,7 +20,7 @@ export async function POST(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const { success } = rateLimit(`collab-review:${user.userId}`, 5, 60000)
+    const { success } = await rateLimit(`collab-review:${user.userId}`, 5, 60000)
     if (!success) {
       return NextResponse.json({ error: 'Too many requests. Please wait a minute.' }, { status: 429 })
     }
