@@ -9,6 +9,7 @@ import {
   notifyInfluencerDisputeCreated,
 } from '@/lib/notifications'
 import { checkCampaignAutoComplete } from '@/lib/campaign-auto-complete'
+import { checkFoundingEligibility } from '@/lib/founding'
 
 export async function POST(
   request: NextRequest,
@@ -168,12 +169,8 @@ export async function POST(
           // Auto-complete campaign if all collabs done
           await checkCampaignAutoComplete(collaboration.campaignId)
 
-          // Fire-and-forget: check founding member eligibility for creator
-          fetch(new URL('/api/founding/check', request.url), {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ type: 'creator', influencerId: collaboration.influencer.id }),
-          }).catch(() => {})
+          // Check founding member eligibility for creator
+          checkFoundingEligibility('creator', collaboration.influencer.id)
 
           return NextResponse.json({ collaboration: result })
         } catch (txError) {

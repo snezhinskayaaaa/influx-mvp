@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
 import { getCurrentUser } from '@/lib/auth'
 import { notifyInfluencerApplicationAccepted, notifyInfluencerAgreedAndAdvance, notifyBrandPriceAccepted, notifyBrandPriceDeclined } from '@/lib/notifications'
+import { checkFoundingEligibility } from '@/lib/founding'
 
 export async function GET(
   request: NextRequest,
@@ -332,12 +333,8 @@ export async function PATCH(
         // Fire-and-forget notification: advance paid, collaboration in progress
         notifyInfluencerAgreedAndAdvance(collaboration.influencer.userId, collaboration.campaign.title, advance)
 
-        // Fire-and-forget: check founding member eligibility for brand
-        fetch(new URL('/api/founding/check', request.url), {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ type: 'brand', brandId: collaboration.campaign.brandId }),
-        }).catch(() => {})
+        // Check founding member eligibility for project
+        checkFoundingEligibility('brand', collaboration.campaign.brandId)
 
         return NextResponse.json({ collaboration: result })
       } catch (txError) {
