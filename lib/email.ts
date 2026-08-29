@@ -19,8 +19,8 @@ const LOGO_URL = `${APP_URL}/logo-email.png`
 const emailHeader = `
   <div style="text-align: left; margin-bottom: 32px; padding-bottom: 24px; border-bottom: 1px solid #E5E7EB;">
     <a href="${APP_URL}" style="text-decoration: none; display: inline-flex; align-items: center;">
-      <img src="${LOGO_URL}" alt="Influx" width="36" height="36" style="display: inline-block; vertical-align: middle;" />
-      <span style="font-size: 20px; font-weight: 700; color: #4F46E5; margin-left: 10px; vertical-align: middle;">Influx</span>
+      <img src="${LOGO_URL}" alt="Influx" width="36" height="36" style="display: block; float: left;" />
+      <span style="font-size: 20px; font-weight: 700; color: #2563EB; line-height: 36px; margin-left: 10px; display: block; overflow: hidden;">INFLUX</span>
     </a>
   </div>
 `
