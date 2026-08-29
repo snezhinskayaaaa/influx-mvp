@@ -225,6 +225,7 @@ export default function InfluencerDashboard() {
     displayName: string
     bio: string
     category: string
+    niches: string[]
     instagram: string
     instagramFollowers: string
     instagramAvgViews: string
@@ -253,6 +254,7 @@ export default function InfluencerDashboard() {
     displayName: '',
     bio: '',
     category: '',
+    niches: [] as string[],
     instagram: '',
     instagramFollowers: '',
     instagramAvgViews: '',
@@ -480,6 +482,7 @@ export default function InfluencerDashboard() {
                 displayName: inf.handle || '',
                 bio: inf.bio || '',
                 category: inf.niche?.[0] || '',
+                niches: Array.isArray(inf.niche) ? inf.niche as string[] : [],
                 instagram: inf.instagramHandle || '',
                 instagramFollowers: inf.instagramFollowers ? String(inf.instagramFollowers) : '',
                 instagramAvgViews: inf.instagramAvgViews ? String(inf.instagramAvgViews) : '',
@@ -2984,26 +2987,35 @@ export default function InfluencerDashboard() {
                   </div>
 
                   <div>
-                    <Label htmlFor="category" className="text-xs sm:text-sm font-medium mb-1 sm:mb-2 block">
-                      Primary Category
+                    <Label className="text-xs sm:text-sm font-medium mb-1 sm:mb-2 block">
+                      Content Focus
                     </Label>
-                    <Select value={profileData.category} onValueChange={(val) => setProfileData(p => ({...p, category: val}))}>
-                      <SelectTrigger className="h-10 sm:h-11 text-sm">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="DeFi">DeFi</SelectItem>
-                        <SelectItem value="NFT & Digital Art">NFT & Digital Art</SelectItem>
-                        <SelectItem value="GameFi">GameFi</SelectItem>
-                        <SelectItem value="Chains & Infrastructure">Chains & Infrastructure</SelectItem>
-                        <SelectItem value="Exchanges">Exchanges</SelectItem>
-                        <SelectItem value="Memecoins">Memecoins</SelectItem>
-                        <SelectItem value="DAOs & Governance">DAOs & Governance</SelectItem>
-                        <SelectItem value="AI x Crypto">AI x Crypto</SelectItem>
-                        <SelectItem value="Wallets & Security">Wallets & Security</SelectItem>
-                        <SelectItem value="Other">Other</SelectItem>
-                      </SelectContent>
-                    </Select>
+                    <div className="flex flex-wrap gap-2">
+                      {["DeFi", "Trading & Alpha", "Memecoins", "Airdrops & Testnets", "NFTs & Digital Art", "GameFi", "AI x Crypto", "Layer 1 / Layer 2", "RWA", "SocialFi", "Education", "Other"].map((niche) => (
+                        <button
+                          key={niche}
+                          type="button"
+                          onClick={() => {
+                            setProfileData(p => ({
+                              ...p,
+                              niches: p.niches.includes(niche)
+                                ? p.niches.filter(n => n !== niche)
+                                : [...p.niches, niche],
+                              category: p.niches.includes(niche)
+                                ? (p.niches.filter(n => n !== niche)[0] || '')
+                                : (p.niches.length === 0 ? niche : p.category),
+                            }));
+                          }}
+                          className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-colors ${
+                            profileData.niches.includes(niche)
+                              ? "bg-primary/10 text-primary border-primary/30"
+                              : "bg-muted/50 text-muted-foreground border-border hover:border-primary/30"
+                          }`}
+                        >
+                          {niche}
+                        </button>
+                      ))}
+                    </div>
                   </div>
 
                   <div className="space-y-2.5 sm:space-y-4">
@@ -3201,7 +3213,7 @@ export default function InfluencerDashboard() {
                             body: JSON.stringify({
                               handle: profileData.displayName,
                               bio: profileData.bio,
-                              niche: profileData.category ? [profileData.category] : [],
+                              niche: profileData.niches.length > 0 ? profileData.niches : (profileData.category ? [profileData.category] : []),
                               instagramHandle: profileData.instagram,
                               instagramFollowers: profileData.instagramFollowers ? parseInt(profileData.instagramFollowers) : 0,
                               instagramAvgViews: profileData.instagramAvgViews ? parseInt(profileData.instagramAvgViews) : 0,
