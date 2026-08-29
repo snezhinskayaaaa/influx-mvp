@@ -58,7 +58,7 @@ export default function InfluencerOnboardingStep2() {
             placeholder="e.g., AI Luna, VirtualVogue, etc."
             value={creatorName}
             onChange={(e) => setCreatorName(e.target.value)}
-            className="h-9 sm:h-12 text-sm"
+            className="h-10 sm:h-12 text-sm"
             required
           />
         </div>
@@ -76,7 +76,7 @@ export default function InfluencerOnboardingStep2() {
             className="resize-none text-sm sm:rows-4"
             required
           />
-          <p className="text-[10px] sm:text-xs text-muted-foreground mt-1">
+          <p className="text-xs text-muted-foreground mt-1">
             This will be shown on your profile. Make it engaging!
           </p>
         </div>
@@ -93,7 +93,7 @@ export default function InfluencerOnboardingStep2() {
                 placeholder="X (Twitter) username"
                 value={twitter}
                 onChange={(e) => setTwitter(e.target.value)}
-                className="pl-9 sm:pl-10 h-9 sm:h-11 text-sm"
+                className="pl-9 sm:pl-10 h-10 sm:h-11 text-sm"
               />
             </div>
             <div className="relative">
@@ -102,7 +102,7 @@ export default function InfluencerOnboardingStep2() {
                 placeholder="Telegram username"
                 value={telegram}
                 onChange={(e) => setTelegram(e.target.value)}
-                className="pl-9 sm:pl-10 h-9 sm:h-11 text-sm"
+                className="pl-9 sm:pl-10 h-10 sm:h-11 text-sm"
               />
             </div>
             <div className="relative">
@@ -111,7 +111,7 @@ export default function InfluencerOnboardingStep2() {
                 placeholder="Instagram username"
                 value={instagram}
                 onChange={(e) => setInstagram(e.target.value)}
-                className="pl-9 sm:pl-10 h-9 sm:h-11 text-sm"
+                className="pl-9 sm:pl-10 h-10 sm:h-11 text-sm"
               />
             </div>
             <div className="relative">
@@ -122,7 +122,7 @@ export default function InfluencerOnboardingStep2() {
                 placeholder="TikTok username"
                 value={tiktok}
                 onChange={(e) => setTiktok(e.target.value)}
-                className="pl-9 sm:pl-10 h-9 sm:h-11 text-sm"
+                className="pl-9 sm:pl-10 h-10 sm:h-11 text-sm"
               />
             </div>
             <div className="relative">
@@ -131,7 +131,7 @@ export default function InfluencerOnboardingStep2() {
                 placeholder="YouTube channel"
                 value={youtube}
                 onChange={(e) => setYoutube(e.target.value)}
-                className="pl-9 sm:pl-10 h-9 sm:h-11 text-sm"
+                className="pl-9 sm:pl-10 h-10 sm:h-11 text-sm"
               />
             </div>
           </div>

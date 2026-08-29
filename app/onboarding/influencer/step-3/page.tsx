@@ -113,7 +113,7 @@ export default function InfluencerOnboardingStep3() {
           <button
             key={niche}
             onClick={() => toggleNiche(niche)}
-            className={`relative p-2.5 sm:p-4 rounded-lg sm:rounded-xl border-2 text-left transition-all ${
+            className={`relative p-3 sm:p-4 rounded-lg sm:rounded-xl border-2 text-left transition-all ${
               selectedNiches.includes(niche)
                 ? "border-primary bg-primary/5"
                 : "border-border hover:border-primary/50 hover:bg-muted/50"
