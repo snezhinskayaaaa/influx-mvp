@@ -13,6 +13,7 @@ export const metadata: Metadata = {
   description: "The platform where Web3 projects run influencer campaigns and pay in crypto. Crypto KOLs, Web3 creators, and AI creators — with escrow protection built in.",
   icons: {
     icon: "/icon.svg",
+    apple: "/apple-icon.png",
   },
 };
 
