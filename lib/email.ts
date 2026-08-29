@@ -16,14 +16,7 @@ const FROM_EMAIL = process.env.FROM_EMAIL || 'Influx <noreply@aiinflux.io>'
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
 const LOGO_URL = `${APP_URL}/logo-email.png`
 
-const emailHeader = `
-  <div style="text-align: left; margin-bottom: 32px; padding-bottom: 24px; border-bottom: 1px solid #E5E7EB;">
-    <a href="${APP_URL}" style="text-decoration: none; display: inline-flex; align-items: center;">
-      <img src="${LOGO_URL}" alt="Influx" width="36" height="36" style="display: block; float: left;" />
-      <span style="font-size: 20px; font-weight: 700; color: #2563EB; line-height: 36px; margin-left: 10px; display: block; overflow: hidden;">INFLUX</span>
-    </a>
-  </div>
-`
+const emailHeader = `<table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom: 32px; padding-bottom: 24px; border-bottom: 1px solid #E5E7EB;"><tr><td><a href="${APP_URL}" style="text-decoration: none;"><table cellpadding="0" cellspacing="0" border="0"><tr><td style="vertical-align: middle;"><img src="${LOGO_URL}" alt="Influx" width="36" height="36" style="display: block;" /></td><td style="vertical-align: middle; padding-left: 10px;"><span style="font-size: 20px; font-weight: 700; color: #2563EB;">INFLUX</span></td></tr></table></a></td></tr></table>`
 
 const emailFooter = `
   <div style="margin-top: 40px; padding-top: 24px; border-top: 1px solid #E5E7EB; text-align: center;">
