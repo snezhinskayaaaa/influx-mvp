@@ -121,12 +121,12 @@ export default function Home() {
               </p>
               <div className="mt-5 sm:mt-10 flex flex-col sm:flex-row items-start gap-3 sm:gap-4">
                 <Button size="lg" asChild className="w-full sm:w-64 bg-primary/10 hover:bg-primary/15 backdrop-blur-sm border-2 border-primary/30 h-11 sm:h-14 text-sm sm:text-base transition-all">
-                  <Link href="/projects" className="flex items-center justify-center">
+                  <Link href="/signup?type=brand" className="flex items-center justify-center">
                     <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent font-medium">Launch a campaign</span>
                   </Link>
                 </Button>
                 <Button size="lg" variant="outline" asChild className="w-full sm:w-64 h-11 sm:h-14 text-sm sm:text-base border-muted-foreground/30 text-muted-foreground hover:bg-muted hover:text-foreground transition-all">
-                  <Link href="/influencers" className="flex items-center justify-center">
+                  <Link href="/signup?type=influencer" className="flex items-center justify-center">
                     Join as a creator
                   </Link>
                 </Button>
