@@ -46,7 +46,7 @@ export default function OnboardingStep1() {
           <button
             key={source.id}
             onClick={() => setSelectedSource(source.id)}
-            className={`relative p-2.5 sm:p-5 rounded-lg sm:rounded-xl border-2 text-left transition-all ${
+            className={`relative p-3 sm:p-5 rounded-lg sm:rounded-xl border-2 text-left transition-all ${
               selectedSource === source.id
                 ? "border-primary bg-primary/5"
                 : "border-border hover:border-primary/50 hover:bg-muted/50"
