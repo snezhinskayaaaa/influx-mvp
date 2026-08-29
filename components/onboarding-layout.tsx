@@ -70,7 +70,7 @@ export function OnboardingLayout({
               {title}
             </h1>
             {subtitle && (
-              <p className="text-xs sm:text-base lg:text-lg text-muted-foreground">
+              <p className="text-sm sm:text-base lg:text-lg text-muted-foreground">
                 {subtitle}
               </p>
             )}

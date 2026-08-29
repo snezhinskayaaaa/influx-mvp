@@ -90,7 +90,7 @@ export default function BusinessTypePage() {
             }`}
           >
             <div className="flex items-center justify-between">
-              <span className="text-xs sm:text-sm font-medium">{category}</span>
+              <span className="text-sm font-medium">{category}</span>
               {selectedType === category && (
                 <div className="w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-primary flex items-center justify-center shrink-0 ml-1">
                   <Check className="h-2.5 w-2.5 sm:h-3 sm:w-3 text-primary-foreground" />
