@@ -45,9 +45,6 @@ export async function sendVerificationEmail(email: string, token: string) {
         <p style="color: #999; font-size: 14px; margin-top: 24px;">
           If you didn't create an account, you can safely ignore this email.
         </p>
-        <p style="color: #999; font-size: 12px; margin-top: 32px;">
-          Or copy this link: ${verifyUrl}
-        </p>
       </div>
     `,
   })
@@ -72,9 +69,6 @@ export async function sendPasswordResetEmail(email: string, token: string) {
         </a>
         <p style="color: #999; font-size: 14px; margin-top: 24px;">
           This link expires in 1 hour. If you didn't request this, you can safely ignore this email.
-        </p>
-        <p style="color: #999; font-size: 12px; margin-top: 32px;">
-          Or copy this link: ${resetUrl}
         </p>
       </div>
     `,
