@@ -1126,7 +1126,7 @@ export default function BrandDashboard() {
             </div>
             <h3 className="text-xl font-bold text-center mb-2">Verify Your Email</h3>
             <p className="text-muted-foreground text-center text-sm mb-4">
-              Please check your inbox and verify your email address. This is required for financial operations like deposits, withdrawals, and campaign management.
+              Verify your email to create campaigns, manage payments, and collaborate with creators.
             </p>
             <div className="space-y-3">
               <Button
@@ -1141,7 +1141,7 @@ export default function BrandDashboard() {
                 }}
               >
                 <Mail className="h-4 w-4 mr-2" />
-                Resend Verification Email
+                Send Verification Email
               </Button>
               <Button
                 variant="ghost"
@@ -1152,7 +1152,7 @@ export default function BrandDashboard() {
               </Button>
             </div>
             <p className="text-xs text-muted-foreground text-center mt-4">
-              You can still browse the platform, but deposits and withdrawals require a verified email.
+              You can browse the platform, but campaigns and payments require a verified email.
             </p>
           </div>
         </div>
