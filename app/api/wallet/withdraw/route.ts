@@ -62,6 +62,19 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Wallet address is required' }, { status: 400 })
     }
 
+    // Validate wallet address format based on network
+    const trimmedAddress = address.trim()
+    const curr = (currency || 'USDT (TRC20)').toLowerCase()
+    if (curr.includes('trc20')) {
+      if (!/^T[a-zA-Z0-9]{33}$/.test(trimmedAddress)) {
+        return NextResponse.json({ error: 'Invalid TRC20 address. Must start with T and be 34 characters.' }, { status: 400 })
+      }
+    } else if (curr.includes('erc20') || curr.includes('bep20')) {
+      if (!/^0x[a-fA-F0-9]{40}$/.test(trimmedAddress)) {
+        return NextResponse.json({ error: 'Invalid address. Must start with 0x and be 42 characters.' }, { status: 400 })
+      }
+    }
+
     const amountCents = Math.round(amount * 100)
 
     const settings = await prisma.platformSettings.findUnique({ where: { id: 'default' } })
