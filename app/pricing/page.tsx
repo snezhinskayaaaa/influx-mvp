@@ -745,7 +745,7 @@ export default function PricingPage() {
                 className="overflow-hidden"
               >
                 <p className="pb-4 text-sm text-muted-foreground">
-                  Payments are split 50/50: creators receive 50% upfront when work begins, and the remaining 50% is released when you approve the delivered content. If a brand doesn&apos;t respond within 7 days, payment auto-releases. Up to 3 revision rounds and dispute resolution by our team are included.
+                  Payments are split 50/50: creators receive 50% upfront when work begins, and the remaining 50% is released when you approve the delivered content. If a project doesn&apos;t respond within 7 days, payment auto-releases. Up to 3 revision rounds and dispute resolution by our team are included.
                 </p>
               </motion.div>
             </div>
