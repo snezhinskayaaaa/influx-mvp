@@ -48,7 +48,7 @@ function SignupForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [error, setError] = useState("");
-  const [, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (typeParam === "brand" || typeParam === "influencer" || typeParam === "creator") {
@@ -335,10 +335,11 @@ function SignupForm() {
 
               <Button
                 type="submit"
+                disabled={loading}
                 className="w-full h-9 sm:h-10 bg-gradient-to-r from-primary to-secondary hover:opacity-90 transition-opacity text-sm"
               >
-                Create account
-                <ArrowRight className="ml-2 h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                {loading ? "Creating account..." : "Create account"}
+                {!loading && <ArrowRight className="ml-2 h-3.5 w-3.5 sm:h-4 sm:w-4" />}
               </Button>
 
               {error && (

@@ -35,7 +35,7 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
-  const [, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [needs2FA, setNeeds2FA] = useState(false);
   const [google2FA, setGoogle2FA] = useState(false);
   const [totpCode, setTotpCode] = useState("");
@@ -298,10 +298,11 @@ export default function LoginPage() {
 
               <Button
                 type="submit"
+                disabled={loading}
                 className="w-full h-9 sm:h-10 bg-gradient-to-r from-primary to-secondary hover:opacity-90 transition-opacity text-sm"
               >
-                {needs2FA ? 'Verify' : 'Log in'}
-                <ArrowRight className="ml-2 h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                {loading ? "Please wait..." : needs2FA ? 'Verify' : 'Log in'}
+                {!loading && <ArrowRight className="ml-2 h-3.5 w-3.5 sm:h-4 sm:w-4" />}
               </Button>
             </form>
             {error && (
