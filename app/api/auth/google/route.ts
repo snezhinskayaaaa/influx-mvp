@@ -41,7 +41,7 @@ export async function GET(request: NextRequest) {
   }
 
   // Verify OAuth CSRF nonce
-  let parsedState: { role?: string; nonce?: string } = {}
+  let parsedState: { role?: string; nonce?: string; ref?: string } = {}
   try {
     parsedState = state ? JSON.parse(state) : {}
   } catch {
@@ -138,13 +138,33 @@ export async function GET(request: NextRequest) {
           },
         })
       } else {
-        await prisma.influencer.create({
+        const newInfluencer = await prisma.influencer.create({
           data: {
             userId: profile.id,
             handle: cleanEmail.split('@')[0] + '_' + Math.random().toString(36).substring(2, 6),
             status: 'APPROVED',
           },
         })
+
+        // Create referral record if ref code provided
+        if (parsedState.ref && /^[a-f0-9]{10}$/.test(parsedState.ref)) {
+          try {
+            const referrer = await prisma.influencer.findUnique({
+              where: { referralCode: parsedState.ref },
+            })
+            if (referrer && referrer.id !== newInfluencer.id) {
+              await prisma.referral.create({
+                data: {
+                  referrerId: referrer.id,
+                  referredId: newInfluencer.id,
+                  status: 'pending',
+                },
+              })
+            }
+          } catch (refError) {
+            console.error('Failed to create referral (Google):', refError)
+          }
+        }
       }
     } catch (roleError) {
       await prisma.profile.delete({ where: { id: profile.id } })

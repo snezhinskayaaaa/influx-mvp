@@ -168,6 +168,18 @@ export async function PATCH(request: NextRequest) {
       data: updateData,
     })
 
+    // Activate pending referral when niche is set (onboarding step 3 = final step)
+    if ('niche' in body && Array.isArray(body.niche) && body.niche.length > 0) {
+      try {
+        await prisma.referral.updateMany({
+          where: { referredId: influencer.id, status: 'pending' },
+          data: { status: 'active' },
+        })
+      } catch (refError) {
+        console.error('Failed to activate referral:', refError)
+      }
+    }
+
     return NextResponse.json({ influencer }, { status: 200 })
   } catch (error) {
     console.error('PATCH /api/influencers/me error:', error)

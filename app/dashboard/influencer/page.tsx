@@ -46,6 +46,7 @@ import {
   Video,
   XCircle,
   Crown,
+  Users,
 } from "lucide-react";
 import {
   Select,
@@ -63,6 +64,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { ReferralsTab } from "./components/referrals-tab";
 
 /** Label maps for content format values */
 const FORMAT_LABELS: Record<string, string> = {
@@ -154,7 +156,7 @@ interface Campaign {
 
 
 export default function InfluencerDashboard() {
-  const [activeTab, setActiveTab] = useState<"discover" | "my-campaigns" | "wallet" | "profile" | "settings">("discover");
+  const [activeTab, setActiveTab] = useState<"discover" | "my-campaigns" | "wallet" | "profile" | "settings" | "referrals">("discover");
   const activeTabRef = useRef(activeTab);
   const emailVerifyShown = useRef(false);
   const cameFromDiscover = useRef(false);
@@ -1013,6 +1015,18 @@ export default function InfluencerDashboard() {
             </button>
 
             <button
+              onClick={() => setActiveTab("referrals")}
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all ${
+                activeTab === "referrals"
+                  ? "bg-primary/10 text-primary border-2 border-primary/30"
+                  : "text-muted-foreground hover:bg-muted hover:text-foreground"
+              }`}
+            >
+              <Users className="h-4 w-4" />
+              Referrals
+            </button>
+
+            <button
               onClick={() => setActiveTab("profile")}
               className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all ${
                 activeTab === "profile"
@@ -1043,7 +1057,7 @@ export default function InfluencerDashboard() {
           <div className="flex items-center justify-around px-1 py-2 pb-[env(safe-area-inset-bottom,6px)]">
             <button
               onClick={() => setActiveTab("discover")}
-              className={`flex flex-col items-center gap-0.5 px-2 py-1 rounded-lg transition-colors ${
+              className={`flex flex-col items-center gap-0.5 px-1 py-1 rounded-lg transition-colors ${
                 activeTab === "discover" ? "text-primary" : "text-muted-foreground"
               }`}
             >
@@ -1052,7 +1066,7 @@ export default function InfluencerDashboard() {
             </button>
             <button
               onClick={() => setActiveTab("my-campaigns")}
-              className={`flex flex-col items-center gap-0.5 px-2 py-1 rounded-lg transition-colors ${
+              className={`flex flex-col items-center gap-0.5 px-1 py-1 rounded-lg transition-colors ${
                 activeTab === "my-campaigns" ? "text-primary" : "text-muted-foreground"
               }`}
             >
@@ -1061,7 +1075,7 @@ export default function InfluencerDashboard() {
             </button>
             <button
               onClick={() => setActiveTab("wallet")}
-              className={`flex flex-col items-center gap-0.5 px-2 py-1 rounded-lg transition-colors ${
+              className={`flex flex-col items-center gap-0.5 px-1 py-1 rounded-lg transition-colors ${
                 activeTab === "wallet" ? "text-primary" : "text-muted-foreground"
               }`}
             >
@@ -1069,8 +1083,17 @@ export default function InfluencerDashboard() {
               <span className="text-[10px] font-medium">Wallet</span>
             </button>
             <button
+              onClick={() => setActiveTab("referrals")}
+              className={`flex flex-col items-center gap-0.5 px-1 py-1 rounded-lg transition-colors ${
+                activeTab === "referrals" ? "text-primary" : "text-muted-foreground"
+              }`}
+            >
+              <Users className="h-5 w-5" />
+              <span className="text-[10px] font-medium">Referrals</span>
+            </button>
+            <button
               onClick={() => setActiveTab("profile")}
-              className={`flex flex-col items-center gap-0.5 px-2 py-1 rounded-lg transition-colors ${
+              className={`flex flex-col items-center gap-0.5 px-1 py-1 rounded-lg transition-colors ${
                 activeTab === "profile" ? "text-primary" : "text-muted-foreground"
               }`}
             >
@@ -1079,7 +1102,7 @@ export default function InfluencerDashboard() {
             </button>
             <button
               onClick={() => setActiveTab("settings")}
-              className={`flex flex-col items-center gap-0.5 px-2 py-1 rounded-lg transition-colors ${
+              className={`flex flex-col items-center gap-0.5 px-1 py-1 rounded-lg transition-colors ${
                 activeTab === "settings" ? "text-primary" : "text-muted-foreground"
               }`}
             >
@@ -3252,6 +3275,19 @@ export default function InfluencerDashboard() {
                   </div>
                 </form>
               </Card>
+            </motion.div>
+          )}
+
+          {/* Referrals Tab */}
+          {activeTab === "referrals" && (
+            <motion.div
+              key="referrals"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.3 }}
+            >
+              <ReferralsTab />
             </motion.div>
           )}
 

@@ -36,6 +36,7 @@ function SignupForm() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const typeParam = searchParams.get("type");
+  const refCode = searchParams.get("ref");
 
   const [userType, setUserType] = useState<"creator" | "brand">(
     typeParam === "brand" ? "brand" : "creator"
@@ -73,6 +74,7 @@ function SignupForm() {
           fullName: name,
           role: userType === "brand" ? "BRAND" : "INFLUENCER",
           ...(userType === "brand" ? { companyName: name } : { handle: name.toLowerCase().replace(/\s+/g, '_') }),
+          ...(refCode ? { referralCode: refCode } : {}),
         }),
       });
       const data = await res.json();
@@ -102,7 +104,7 @@ function SignupForm() {
     const scope = "openid email profile";
     const nonce = crypto.randomUUID();
     const role = userType === "brand" ? "brand" : "creator";
-    const state = JSON.stringify({ role, nonce });
+    const state = JSON.stringify({ role, nonce, ...(refCode ? { ref: refCode } : {}) });
 
     // Store nonce in cookie for CSRF verification on callback
     const securePart = window.location.protocol === 'https:' ? '; Secure' : '';

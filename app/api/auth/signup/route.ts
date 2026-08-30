@@ -12,7 +12,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json()
-    const { email, password, fullName, role, ...roleData } = body
+    const { email, password, fullName, role, referralCode, ...roleData } = body
 
     // Validation
     if (!email || typeof email !== 'string') {
@@ -134,7 +134,7 @@ export async function POST(request: NextRequest) {
       }
 
       if (role === 'INFLUENCER') {
-        await prisma.influencer.create({
+        const newInfluencer = await prisma.influencer.create({
           data: {
             userId: profile.id,
             handle: roleData.handle,
@@ -146,6 +146,27 @@ export async function POST(request: NextRequest) {
             status: 'PENDING',
           },
         })
+
+        // Create referral record if referral code provided
+        if (referralCode && typeof referralCode === 'string' && /^[a-f0-9]{10}$/.test(referralCode)) {
+          try {
+            const referrer = await prisma.influencer.findUnique({
+              where: { referralCode },
+            })
+            if (referrer && referrer.id !== newInfluencer.id) {
+              await prisma.referral.create({
+                data: {
+                  referrerId: referrer.id,
+                  referredId: newInfluencer.id,
+                  status: 'pending',
+                },
+              })
+            }
+          } catch (refError) {
+            console.error('Failed to create referral:', refError)
+            // Don't fail signup if referral tracking fails
+          }
+        }
       }
     } catch (roleError) {
       // If role-specific creation fails, clean up the profile

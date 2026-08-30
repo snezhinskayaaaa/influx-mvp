@@ -178,11 +178,16 @@ model Influencer {
   foundingMember   Boolean   @default(false) @map("founding_member")
   foundingMemberAt DateTime? @map("founding_member_at") @db.Timestamptz
 
+  // Referral Program
+  referralCode String @unique @default(dbgenerated("substr(md5(random()::text), 1, 10)")) @map("referral_code")
+
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
   updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz
 
   profile        Profile         @relation(fields: [userId], references: [id], onDelete: Cascade)
   collaborations Collaboration[]
+  referralsMade    Referral[] @relation("referrer")
+  referralsReceived Referral[] @relation("referred")
 
   @@index([status], map: "idx_influencers_status")
   @@index([isVerified], map: "idx_influencers_verified")
@@ -409,4 +414,24 @@ model Waitlist {
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
 
   @@map("waitlist")
+}
+
+model Referral {
+  id         String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  referrerId String @map("referrer_id") @db.Uuid // KOL who shared the link
+  referredId String @map("referred_id") @db.Uuid // KOL who signed up
+
+  status        String   @default("pending") // pending (signed up) | active (completed onboarding)
+  totalEarnings Int      @default(0) @map("total_earnings") // cents earned from this referral
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz
+
+  referrer Influencer @relation("referrer", fields: [referrerId], references: [id], onDelete: Cascade)
+  referred Influencer @relation("referred", fields: [referredId], references: [id], onDelete: Cascade)
+
+  @@unique([referrerId, referredId])
+  @@index([referrerId])
+  @@index([referredId])
+  @@map("referrals")
 }
