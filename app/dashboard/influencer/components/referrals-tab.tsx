@@ -221,7 +221,7 @@ export function ReferralsTab() {
             onClick={() => {
               const rank = data.myRank || "—"
               const text = encodeURIComponent(
-                `#${rank} on the @InfluxPlatform referral leaderboard — ${data.stats.totalReferrals} creators onboarded.\n\nWeb3 projects pay creators in crypto, escrow-protected:\n${referralLink}`
+                `Ranked #${rank} on Influx referral leaderboard — join through my link and let's grow the community together.\n\n${referralLink}`
               )
               window.open(`https://twitter.com/intent/tweet?text=${text}`, "_blank")
             }}
