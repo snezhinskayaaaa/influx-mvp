@@ -60,6 +60,7 @@ export interface Influencer {
   rateLabel: string;
   verified: boolean;
   foundingMember: boolean;
+  referralCount: number;
   gender: string;
   ethnicity: string;
   age: string;

@@ -251,6 +251,7 @@ export default function BrandDashboard() {
                 rateLabel,
                 verified: (inf.isVerified as boolean) || false,
                 foundingMember: (inf.foundingMember as boolean) || false,
+                referralCount: ((inf as Record<string, unknown>)._count as { referralsMade?: number })?.referralsMade || 0,
                 gender: 'Unknown',
                 ethnicity: 'Unknown',
                 age: 'Unknown',

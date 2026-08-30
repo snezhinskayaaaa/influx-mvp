@@ -258,6 +258,13 @@ export function DiscoverTab({ influencers, onCollaborate }: DiscoverTabProps) {
                   {influencer.foundingMember && (
                     <span className="text-[8px] px-1 py-0.5 rounded bg-amber-500/10 text-amber-600 border border-amber-500/20 font-medium shrink-0">FM</span>
                   )}
+                  {influencer.referralCount >= 15 ? (
+                    <span className="text-[8px] px-1 py-0.5 rounded bg-amber-500/10 text-amber-600 border border-amber-500/20 font-medium shrink-0">Leader</span>
+                  ) : influencer.referralCount >= 5 ? (
+                    <span className="text-[8px] px-1 py-0.5 rounded bg-purple-500/10 text-purple-600 border border-purple-500/20 font-medium shrink-0">Builder</span>
+                  ) : influencer.referralCount >= 1 ? (
+                    <span className="text-[8px] px-1 py-0.5 rounded bg-blue-500/10 text-blue-600 border border-blue-500/20 font-medium shrink-0">Member</span>
+                  ) : null}
                 </div>
                 <div className="flex items-center gap-1.5 mt-0.5">
                   <span className="text-[11px] text-muted-foreground">{influencer.username}</span>

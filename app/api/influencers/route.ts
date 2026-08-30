@@ -85,6 +85,11 @@ export async function GET(request: NextRequest) {
           cpeRate: true,
           averagePostPrice: true,
           foundingMember: true,
+          _count: {
+            select: {
+              referralsMade: { where: { status: 'active' } },
+            },
+          },
           isVerified: true,
           isFeatured: true,
           instagramHandle: true,
