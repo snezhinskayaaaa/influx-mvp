@@ -11,18 +11,29 @@ export async function GET() {
 
     const influencer = await prisma.influencer.findUnique({
       where: { userId: auth.userId },
-      select: { id: true, referralCode: true },
+      select: {
+        id: true, referralCode: true, handle: true, niche: true,
+        twitterHandle: true, instagramHandle: true, tiktokHandle: true,
+        youtubeHandle: true, telegramHandle: true,
+      },
     })
 
     if (!influencer) {
       return NextResponse.json({ error: 'Not found' }, { status: 404 })
     }
 
-    // Activate any pending referrals for me (fallback if onboarding trigger was missed)
-    await prisma.referral.updateMany({
-      where: { referredId: influencer.id, status: 'pending' },
-      data: { status: 'active' },
-    }).catch(() => {})
+    // Activate pending referrals for me if profile is complete (fallback)
+    const myProfileComplete = !!(
+      influencer.handle?.trim() &&
+      influencer.niche.length > 0 &&
+      (influencer.twitterHandle || influencer.instagramHandle || influencer.tiktokHandle || influencer.youtubeHandle || influencer.telegramHandle)
+    )
+    if (myProfileComplete) {
+      await prisma.referral.updateMany({
+        where: { referredId: influencer.id, status: 'pending' },
+        data: { status: 'active' },
+      }).catch(() => {})
+    }
 
     // Get my referrals
     const referrals = await prisma.referral.findMany({

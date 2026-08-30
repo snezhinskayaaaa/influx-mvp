@@ -168,8 +168,13 @@ export async function PATCH(request: NextRequest) {
       data: updateData,
     })
 
-    // Activate pending referral when niche is set (onboarding step 3 = final step)
-    if ('niche' in body && Array.isArray(body.niche) && body.niche.length > 0) {
+    // Activate pending referral when profile is complete (name + niche + at least 1 social)
+    const profileComplete = !!(
+      influencer.handle?.trim() &&
+      influencer.niche.length > 0 &&
+      (influencer.twitterHandle || influencer.instagramHandle || influencer.tiktokHandle || influencer.youtubeHandle || influencer.telegramHandle)
+    )
+    if (profileComplete) {
       try {
         const activated = await prisma.referral.updateMany({
           where: { referredId: influencer.id, status: 'pending' },
