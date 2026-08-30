@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getCurrentUser, comparePassword } from '@/lib/auth'
 import prisma from '@/lib/prisma'
 import { verifySync } from 'otplib'
+import { decrypt } from '@/lib/crypto'
 
 export async function GET() {
   try {
@@ -66,7 +67,7 @@ export async function PATCH(request: NextRequest) {
     // Try TOTP first, then password
     let verified = false
     if (profile.totpEnabled && profile.totpSecret) {
-      verified = !!verifySync({ token: authCode, secret: profile.totpSecret })
+      verified = !!verifySync({ token: authCode, secret: decrypt(profile.totpSecret!) })
       if (!verified) verified = profile.totpBackupCodes.includes(authCode.toUpperCase())
     }
     if (!verified) {

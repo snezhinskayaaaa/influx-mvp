@@ -4,6 +4,7 @@ import prisma from '@/lib/prisma'
 import { getCurrentUser } from '@/lib/auth'
 import { generateSecret, generateURI } from 'otplib'
 import QRCode from 'qrcode'
+import { encrypt } from '@/lib/crypto'
 
 /**
  * POST /api/auth/2fa/setup
@@ -30,7 +31,7 @@ export async function POST(request: NextRequest) {
     // Save secret (not yet enabled)
     await prisma.profile.update({
       where: { id: user.userId },
-      data: { totpSecret: secret, totpEnabled: false },
+      data: { totpSecret: encrypt(secret), totpEnabled: false },
     })
 
     const otpauth = generateURI({ issuer: 'Influx', label: profile.email, secret })

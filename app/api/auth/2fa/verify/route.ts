@@ -4,6 +4,7 @@ import prisma from '@/lib/prisma'
 import { getCurrentUser } from '@/lib/auth'
 import { verifySync } from 'otplib'
 import crypto from 'crypto'
+import { decrypt } from '@/lib/crypto'
 
 /**
  * POST /api/auth/2fa/verify
@@ -33,7 +34,7 @@ export async function POST(request: NextRequest) {
     if (!profile.totpSecret) return NextResponse.json({ error: 'Run setup first' }, { status: 400 })
     if (profile.totpEnabled) return NextResponse.json({ error: '2FA is already enabled' }, { status: 400 })
 
-    const isValid = verifySync({ token: code, secret: profile.totpSecret })
+    const isValid = verifySync({ token: code, secret: decrypt(profile.totpSecret) })
     if (!isValid) {
       return NextResponse.json({ error: 'Invalid code. Try again.' }, { status: 400 })
     }

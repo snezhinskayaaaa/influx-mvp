@@ -53,7 +53,7 @@ export async function POST(request: NextRequest) {
 
     await prisma.profile.update({
       where: { id: payload.userId as string },
-      data: { passwordHash },
+      data: { passwordHash, tokenInvalidatedAt: new Date() },
     })
 
     return NextResponse.json({ success: true })

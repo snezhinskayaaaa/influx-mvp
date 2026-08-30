@@ -24,10 +24,10 @@ export async function createToken(payload: TokenPayload): Promise<string> {
 }
 
 // Verify a JWT token
-export async function verifyToken(token: string): Promise<TokenPayload | null> {
+export async function verifyToken(token: string): Promise<(TokenPayload & { iat?: number }) | null> {
   try {
     const { payload } = await jwtVerify(token, JWT_SECRET)
-    return payload as unknown as TokenPayload
+    return payload as unknown as TokenPayload & { iat?: number }
   } catch {
     return null
   }
@@ -80,9 +80,15 @@ export async function getCurrentUser(): Promise<TokenPayload | null> {
   const { default: prisma } = await import('@/lib/prisma')
   const profile = await prisma.profile.findUnique({
     where: { id: payload.userId },
-    select: { role: true },
+    select: { role: true, tokenInvalidatedAt: true },
   })
   if (!profile) return null
+
+  // Reject tokens issued before password change
+  if (profile.tokenInvalidatedAt && payload.iat) {
+    const invalidatedAtSec = Math.floor(profile.tokenInvalidatedAt.getTime() / 1000)
+    if (payload.iat < invalidatedAtSec) return null
+  }
 
   // Return with current DB role, not stale JWT role
   return { userId: payload.userId, role: profile.role as TokenPayload['role'] }

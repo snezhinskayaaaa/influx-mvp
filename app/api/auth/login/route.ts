@@ -3,6 +3,7 @@ import prisma from '@/lib/prisma'
 import { comparePassword, createToken, setAuthCookie } from '@/lib/auth'
 import { rateLimit } from '@/lib/rate-limit'
 import { verifySync } from 'otplib'
+import { decrypt } from '@/lib/crypto'
 
 export async function POST(request: NextRequest) {
   try {
@@ -70,7 +71,7 @@ export async function POST(request: NextRequest) {
         )
       }
       // Check TOTP code
-      const isValidTotp = verifySync({ token: totpCode, secret: profile.totpSecret })
+      const isValidTotp = verifySync({ token: totpCode, secret: decrypt(profile.totpSecret!) })
       // Check backup codes
       const isBackupCode = !isValidTotp && profile.totpBackupCodes.includes(totpCode.toUpperCase())
       if (!isValidTotp && !isBackupCode) {

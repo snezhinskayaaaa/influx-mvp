@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
 import { getCurrentUser, comparePassword } from '@/lib/auth'
 import { verifySync } from 'otplib'
+import { decrypt } from '@/lib/crypto'
 
 /**
  * POST /api/auth/2fa/disable
@@ -33,7 +34,7 @@ export async function POST(request: NextRequest) {
     const isPasswordValid = await comparePassword(code, profile.passwordHash)
 
     // Try TOTP code
-    const isTotpValid = profile.totpSecret ? verifySync({ token: code, secret: profile.totpSecret }) : false
+    const isTotpValid = profile.totpSecret ? verifySync({ token: code, secret: decrypt(profile.totpSecret) }) : false
 
     // Try backup code
     const isBackupCode = profile.totpBackupCodes.includes(code.toUpperCase())

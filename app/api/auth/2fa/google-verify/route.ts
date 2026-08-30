@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
 import { createToken, setAuthCookie } from '@/lib/auth'
 import { verifySync } from 'otplib'
+import { decrypt } from '@/lib/crypto'
 
 /**
  * POST /api/auth/2fa/google-verify
@@ -32,7 +33,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Invalid request' }, { status: 400 })
     }
 
-    const isValidTotp = verifySync({ token: totpCode, secret: profile.totpSecret })
+    const isValidTotp = verifySync({ token: totpCode, secret: decrypt(profile.totpSecret!) })
     const isBackupCode = !isValidTotp && profile.totpBackupCodes.includes(totpCode.toUpperCase())
 
     if (!isValidTotp && !isBackupCode) {

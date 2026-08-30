@@ -87,6 +87,9 @@ model Profile {
   totpEnabled   Boolean  @default(false) @map("totp_enabled")
   totpBackupCodes String[] @default([]) @map("totp_backup_codes")
 
+  // Token invalidation (JWT revocation on password change)
+  tokenInvalidatedAt DateTime? @map("token_invalidated_at") @db.Timestamptz
+
   // Analytics (admin-only, not exposed to user)
   referralSource String? @map("referral_source")
 
@@ -340,6 +343,9 @@ model Collaboration {
   @@index([campaignId])
   @@index([influencerId])
   @@index([status])
+  @@index([status, deliveredAt], map: "idx_collabs_status_delivered")
+  @@index([status, frozenAt], map: "idx_collabs_status_frozen")
+  @@index([status, disputedAt], map: "idx_collabs_status_disputed")
   @@map("collaborations")
 }
 
@@ -369,6 +375,7 @@ model Transaction {
   @@index([userId])
   @@index([type])
   @@index([externalId])
+  @@index([userId, createdAt], map: "idx_transactions_user_date")
   @@map("transactions")
 }
 
@@ -385,6 +392,7 @@ model Notification {
 
   @@index([userId])
   @@index([isRead])
+  @@index([userId, isRead], map: "idx_notifications_user_read")
   @@map("notifications")
 }
 
