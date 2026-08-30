@@ -1083,6 +1083,7 @@ export default function InfluencerDashboard() {
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
+                aria-label={label}
                 className={`flex-1 flex flex-col items-center gap-0.5 py-1 transition-colors ${
                   activeTab === tab ? "text-primary" : "text-muted-foreground"
                 }`}
@@ -1251,7 +1252,7 @@ export default function InfluencerDashboard() {
                         <div className="flex-shrink-0">
                           <div className="w-9 h-9 sm:w-16 sm:h-16 rounded-full bg-gradient-to-br from-primary/10 to-secondary/10 flex items-center justify-center text-sm sm:text-2xl overflow-hidden">
                             {campaign.brandAvatar.startsWith('data:') || campaign.brandAvatar.startsWith('http') ? (
-                              <img src={campaign.brandAvatar} alt="" className="w-full h-full object-cover" />
+                              <img src={campaign.brandAvatar} alt={campaign.brand || 'Project avatar'} className="w-full h-full object-cover" />
                             ) : (
                               <span>{campaign.brandAvatar}</span>
                             )}
@@ -2601,7 +2602,7 @@ export default function InfluencerDashboard() {
                         <div className="w-[320px] flex items-center gap-3">
                           <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center shrink-0 text-2xl overflow-hidden">
                             {campaign.brandAvatar.startsWith('data:') || campaign.brandAvatar.startsWith('http') ? (
-                              <img src={campaign.brandAvatar} alt="" className="w-full h-full object-cover" />
+                              <img src={campaign.brandAvatar} alt={campaign.brand || 'Project avatar'} className="w-full h-full object-cover" />
                             ) : campaign.brandAvatar}
                           </div>
                           <div className="min-w-0 flex-1">
@@ -2713,7 +2714,7 @@ export default function InfluencerDashboard() {
                         <div className="flex items-start gap-3 mb-3">
                           <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center shrink-0 text-xl overflow-hidden">
                             {campaign.brandAvatar.startsWith('data:') || campaign.brandAvatar.startsWith('http') ? (
-                              <img src={campaign.brandAvatar} alt="" className="w-full h-full object-cover" />
+                              <img src={campaign.brandAvatar} alt={campaign.brand || 'Project avatar'} className="w-full h-full object-cover" />
                             ) : campaign.brandAvatar}
                           </div>
                           <div className="flex-1 min-w-0">

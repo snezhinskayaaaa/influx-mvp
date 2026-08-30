@@ -300,6 +300,13 @@ export default function BrandDashboard() {
           const data = await brandRes.json();
           if (data.brand) {
             const b = data.brand;
+
+            // Redirect to onboarding if profile incomplete
+            if (!b.companyName?.trim() || !b.industry?.trim()) {
+              window.location.href = '/onboarding/brand';
+              return;
+            }
+
             if (b.companyName) setCompanyName(b.companyName);
             if (b.description) setCompanyBio(b.description);
             if (b.website) setWebsiteUrl(b.website);

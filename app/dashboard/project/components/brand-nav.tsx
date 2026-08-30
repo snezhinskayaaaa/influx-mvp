@@ -621,6 +621,7 @@ export function MobileNav({ activeTab, setActiveTab }: MobileNavProps) {
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
+            aria-label={label}
             className={`flex-1 flex flex-col items-center gap-0.5 py-1 transition-colors ${
               activeTab === tab ? "text-primary" : "text-muted-foreground"
             }`}
