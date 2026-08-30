@@ -72,8 +72,7 @@ export function ReferralsTab() {
   useEffect(() => { fetchData() }, [fetchData])
 
   const appUrl = typeof window !== "undefined" ? window.location.origin : ""
-  const referralLink = data ? `${appUrl}/signup?type=influencer&ref=${data.referralCode}` : ""
-  const cleanReferralLink = data ? `${appUrl}/signup?ref=${data.referralCode}` : ""
+  const referralLink = data ? `${appUrl}/ref/${data.referralCode}` : ""
 
   const handleCopy = async () => {
     await navigator.clipboard.writeText(referralLink)
@@ -83,7 +82,7 @@ export function ReferralsTab() {
 
   const handleShareTwitter = () => {
     const text = encodeURIComponent(
-      `Join me on Influx — where Web3 projects pay creators directly in crypto.\n\n${cleanReferralLink}`
+      `Join me on Influx — where Web3 projects pay creators directly in crypto.\n\n${referralLink}`
     )
     window.open(`https://twitter.com/intent/tweet?text=${text}`, "_blank")
   }
@@ -222,7 +221,7 @@ export function ReferralsTab() {
             onClick={() => {
               const rank = data.myRank || "—"
               const text = encodeURIComponent(
-                `#${rank} on the @InfluxPlatform referral leaderboard — ${data.stats.totalReferrals} creators onboarded.\n\nWeb3 projects pay creators in crypto, escrow-protected:\n${cleanReferralLink}`
+                `#${rank} on the @InfluxPlatform referral leaderboard — ${data.stats.totalReferrals} creators onboarded.\n\nWeb3 projects pay creators in crypto, escrow-protected:\n${referralLink}`
               )
               window.open(`https://twitter.com/intent/tweet?text=${text}`, "_blank")
             }}
