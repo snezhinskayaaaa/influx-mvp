@@ -269,9 +269,12 @@ export function DiscoverTab({ influencers, onCollaborate }: DiscoverTabProps) {
                 <div className="flex items-center gap-1.5 mt-0.5">
                   <span className="text-[11px] text-muted-foreground">{influencer.username}</span>
                   <span className="text-muted-foreground/30">·</span>
-                  {(influencer.niche && influencer.niche.length > 0 ? influencer.niche : [influencer.category]).slice(0, 1).map((tag) => (
+                  {(influencer.niche && influencer.niche.length > 0 ? influencer.niche : [influencer.category]).slice(0, 3).map((tag) => (
                     <span key={tag} className="text-[10px] text-secondary font-medium">{tag}</span>
                   ))}
+                  {influencer.niche && influencer.niche.length > 3 && (
+                    <span className="text-[10px] text-muted-foreground">+{influencer.niche.length - 3}</span>
+                  )}
                 </div>
                 {influencer.bio && (
                   <p className="text-[10px] text-muted-foreground mt-0.5 line-clamp-1">{influencer.bio}</p>
@@ -316,11 +319,21 @@ export function DiscoverTab({ influencers, onCollaborate }: DiscoverTabProps) {
             <DialogTitle className="flex items-center gap-3">
               {selectedInfluencer && renderAvatar(selectedInfluencer, "w-14 h-14", "text-2xl")}
               <div>
-                <div className="flex items-center gap-1.5">
+                <div className="flex items-center gap-1.5 flex-wrap">
                   <span className="text-lg font-bold">{selectedInfluencer?.name}</span>
                   {selectedInfluencer?.verified && (
                     <CheckCircle2 className="h-4 w-4 text-primary" />
                   )}
+                  {selectedInfluencer?.foundingMember && (
+                    <span className="text-[8px] px-1 py-0.5 rounded bg-amber-500/10 text-amber-600 border border-amber-500/20 font-medium">FM</span>
+                  )}
+                  {selectedInfluencer && selectedInfluencer.referralCount >= 15 ? (
+                    <span className="text-[8px] px-1 py-0.5 rounded bg-amber-500/10 text-amber-600 border border-amber-500/20 font-medium">Leader</span>
+                  ) : selectedInfluencer && selectedInfluencer.referralCount >= 5 ? (
+                    <span className="text-[8px] px-1 py-0.5 rounded bg-purple-500/10 text-purple-600 border border-purple-500/20 font-medium">Builder</span>
+                  ) : selectedInfluencer && selectedInfluencer.referralCount >= 1 ? (
+                    <span className="text-[8px] px-1 py-0.5 rounded bg-blue-500/10 text-blue-600 border border-blue-500/20 font-medium">Member</span>
+                  ) : null}
                 </div>
                 <div className="text-sm text-muted-foreground font-normal">{selectedInfluencer?.username}</div>
               </div>
