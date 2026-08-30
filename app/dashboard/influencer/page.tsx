@@ -1058,52 +1058,25 @@ export default function InfluencerDashboard() {
 
         {/* Mobile Navigation */}
         <nav className="lg:hidden fixed bottom-0 inset-x-0 bg-background/95 backdrop-blur-xl border-t border-border z-[100]">
-          <div className="flex items-center justify-around w-full px-1 py-2 pb-[env(safe-area-inset-bottom,6px)]">
-            <button
-              onClick={() => setActiveTab("discover")}
-              className={`flex flex-col items-center gap-0.5 px-2 py-1 rounded-lg transition-colors ${
-                activeTab === "discover" ? "text-primary" : "text-muted-foreground"
-              }`}
-            >
-              <Search className="h-5 w-5" />
-              <span className="text-[10px] font-medium">Discover</span>
-            </button>
-            <button
-              onClick={() => setActiveTab("my-campaigns")}
-              className={`flex flex-col items-center gap-0.5 px-2 py-1 rounded-lg transition-colors ${
-                activeTab === "my-campaigns" ? "text-primary" : "text-muted-foreground"
-              }`}
-            >
-              <BarChart3 className="h-5 w-5" />
-              <span className="text-[10px] font-medium">Campaigns</span>
-            </button>
-            <button
-              onClick={() => setActiveTab("wallet")}
-              className={`flex flex-col items-center gap-0.5 px-2 py-1 rounded-lg transition-colors ${
-                activeTab === "wallet" ? "text-primary" : "text-muted-foreground"
-              }`}
-            >
-              <Wallet className="h-5 w-5" />
-              <span className="text-[10px] font-medium">Wallet</span>
-            </button>
-            <button
-              onClick={() => setActiveTab("referrals")}
-              className={`flex flex-col items-center gap-0.5 px-2 py-1 rounded-lg transition-colors ${
-                activeTab === "referrals" ? "text-primary" : "text-muted-foreground"
-              }`}
-            >
-              <Users className="h-5 w-5" />
-              <span className="text-[10px] font-medium">Referrals</span>
-            </button>
-            <button
-              onClick={() => setActiveTab("profile")}
-              className={`flex flex-col items-center gap-0.5 px-2 py-1 rounded-lg transition-colors ${
-                activeTab === "profile" ? "text-primary" : "text-muted-foreground"
-              }`}
-            >
-              <User className="h-5 w-5" />
-              <span className="text-[10px] font-medium">Profile</span>
-            </button>
+          <div className="flex w-full py-2 pb-[env(safe-area-inset-bottom,6px)]">
+            {([
+              { tab: "discover" as const, icon: <Search className="h-5 w-5" />, label: "Discover" },
+              { tab: "my-campaigns" as const, icon: <BarChart3 className="h-5 w-5" />, label: "Campaigns" },
+              { tab: "wallet" as const, icon: <Wallet className="h-5 w-5" />, label: "Wallet" },
+              { tab: "referrals" as const, icon: <Users className="h-5 w-5" />, label: "Referrals" },
+              { tab: "profile" as const, icon: <User className="h-5 w-5" />, label: "Profile" },
+            ]).map(({ tab, icon, label }) => (
+              <button
+                key={tab}
+                onClick={() => setActiveTab(tab)}
+                className={`flex-1 flex flex-col items-center gap-0.5 py-1 transition-colors ${
+                  activeTab === tab ? "text-primary" : "text-muted-foreground"
+                }`}
+              >
+                {icon}
+                <span className="text-[10px] font-medium">{label}</span>
+              </button>
+            ))}
           </div>
         </nav>
 
