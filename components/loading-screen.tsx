@@ -23,7 +23,7 @@ export function LoadingScreen() {
   }, []);
 
   return (
-    <div className="fixed inset-0 z-[100] bg-background flex flex-col items-center justify-center">
+    <div className="fixed inset-0 z-[200] bg-background flex flex-col items-center justify-center">
       {/* Logo */}
       <div className="flex items-center gap-3 mb-8">
         <NetworkLogo className="w-10 h-10" />
