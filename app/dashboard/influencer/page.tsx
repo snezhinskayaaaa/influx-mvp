@@ -1057,8 +1057,8 @@ export default function InfluencerDashboard() {
         </aside>
 
         {/* Mobile Navigation */}
-        <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-background/95 backdrop-blur-xl border-t z-40">
-          <div className="flex items-center justify-around px-1 py-2 pb-[env(safe-area-inset-bottom,6px)]">
+        <nav className="lg:hidden fixed bottom-0 inset-x-0 bg-background/95 backdrop-blur-xl border-t border-border z-[100]">
+          <div className="flex items-center justify-around w-full px-1 py-2 pb-[env(safe-area-inset-bottom,6px)]">
             <button
               onClick={() => setActiveTab("discover")}
               className={`flex flex-col items-center gap-0.5 px-2 py-1 rounded-lg transition-colors ${
@@ -1105,7 +1105,7 @@ export default function InfluencerDashboard() {
               <span className="text-[10px] font-medium">Profile</span>
             </button>
           </div>
-        </div>
+        </nav>
 
         {/* Main Content */}
         <main className="flex-1 px-4 py-3 sm:p-6 lg:p-8 pb-20 lg:pb-8 overflow-auto">
