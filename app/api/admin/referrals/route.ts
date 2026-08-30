@@ -8,29 +8,72 @@ export async function GET() {
     if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     if (user.role !== 'ADMIN') return NextResponse.json({ error: 'Admin access required' }, { status: 403 })
 
-    const profiles = await prisma.profile.findMany({
-      where: { referralSource: { not: null } },
-      select: { referralSource: true, role: true, createdAt: true },
+    // Total stats
+    const [totalReferrals, activeReferrals, totalEarnings] = await Promise.all([
+      prisma.referral.count(),
+      prisma.referral.count({ where: { status: 'active' } }),
+      prisma.referral.aggregate({ _sum: { totalEarnings: true } }),
+    ])
+
+    // Top referrers
+    const topReferrers = await prisma.$queryRaw<Array<{
+      id: string
+      handle: string
+      referral_count: string
+      total_earnings: string
+    }>>`
+      SELECT i.id, i.handle,
+        COUNT(r.id)::text as referral_count,
+        COALESCE(SUM(r.total_earnings), 0)::text as total_earnings
+      FROM influencers i
+      INNER JOIN referrals r ON r.referrer_id = i.id AND r.status = 'active'
+      GROUP BY i.id, i.handle
+      ORDER BY COUNT(r.id) DESC
+      LIMIT 20
+    `
+
+    // Recent referrals
+    const recentReferrals = await prisma.referral.findMany({
+      take: 20,
+      orderBy: { createdAt: 'desc' },
+      include: {
+        referrer: { select: { handle: true } },
+        referred: { select: { handle: true } },
+      },
     })
 
-    // Count by source
-    const sourceCounts: Record<string, { total: number; brands: number; creators: number }> = {}
-    for (const p of profiles) {
-      const src = p.referralSource || 'unknown'
-      if (!sourceCounts[src]) sourceCounts[src] = { total: 0, brands: 0, creators: 0 }
-      sourceCounts[src].total++
-      if (p.role === 'BRAND') sourceCounts[src].brands++
-      else sourceCounts[src].creators++
-    }
+    // This week count
+    const weekAgo = new Date()
+    weekAgo.setDate(weekAgo.getDate() - 7)
+    const thisWeek = await prisma.referral.count({
+      where: { createdAt: { gte: weekAgo } },
+    })
 
-    // Sort by total descending
-    const sorted = Object.entries(sourceCounts)
-      .sort((a, b) => b[1].total - a[1].total)
-      .map(([source, counts]) => ({ source, ...counts }))
-
-    return NextResponse.json({ referrals: sorted, total: profiles.length })
+    return NextResponse.json({
+      stats: {
+        totalReferrals,
+        activeReferrals,
+        pendingReferrals: totalReferrals - activeReferrals,
+        totalEarnings: totalEarnings._sum.totalEarnings || 0,
+        thisWeek,
+        activeReferrers: topReferrers.length,
+      },
+      topReferrers: topReferrers.map((r, i) => ({
+        rank: i + 1,
+        handle: r.handle,
+        referralCount: parseInt(r.referral_count),
+        totalEarnings: parseInt(r.total_earnings),
+      })),
+      recentReferrals: recentReferrals.map(r => ({
+        referrerHandle: r.referrer.handle,
+        referredHandle: r.referred.handle,
+        status: r.status,
+        earnings: r.totalEarnings,
+        createdAt: r.createdAt,
+      })),
+    })
   } catch (error) {
-    console.error('Referrals error:', error)
+    console.error('Admin referrals error:', error)
     return NextResponse.json({ error: 'Failed' }, { status: 500 })
   }
 }

@@ -16,6 +16,7 @@ import {
   Database,
   Wallet,
   AlertCircle,
+  Share2,
 } from "lucide-react";
 import { useState } from "react";
 
@@ -25,6 +26,7 @@ const navLinks = [
   { href: "/admin/brands", label: "Projects", icon: Building2 },
   { href: "/admin/campaigns", label: "Campaigns", icon: Target },
   { href: "/admin/transactions", label: "Transactions", icon: Wallet },
+  { href: "/admin/referrals", label: "Referrals", icon: Share2 },
   { href: "/admin/disputes", label: "Disputes", icon: AlertCircle },
   { href: "/admin/database", label: "Database", icon: Database },
   { href: "/admin/settings", label: "Settings", icon: Settings },
