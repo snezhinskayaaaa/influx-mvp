@@ -311,7 +311,7 @@ export function DiscoverTab({ influencers, onCollaborate }: DiscoverTabProps) {
 
       {/* Influencer Detail Modal */}
       <Dialog open={showDetailModal} onOpenChange={setShowDetailModal}>
-        <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
+        <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto rounded-2xl">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-3">
               {selectedInfluencer && renderAvatar(selectedInfluencer, "w-14 h-14", "text-2xl")}
@@ -325,8 +325,8 @@ export function DiscoverTab({ influencers, onCollaborate }: DiscoverTabProps) {
                 <div className="text-sm text-muted-foreground font-normal">{selectedInfluencer?.username}</div>
               </div>
             </DialogTitle>
-            <DialogDescription>
-              Influencer profile and rates
+            <DialogDescription className="text-xs text-muted-foreground">
+              Creator profile and rates
             </DialogDescription>
           </DialogHeader>
 
