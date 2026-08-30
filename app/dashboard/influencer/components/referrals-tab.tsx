@@ -73,6 +73,7 @@ export function ReferralsTab() {
 
   const appUrl = typeof window !== "undefined" ? window.location.origin : ""
   const referralLink = data ? `${appUrl}/signup?type=influencer&ref=${data.referralCode}` : ""
+  const cleanReferralLink = data ? `${appUrl}/signup?ref=${data.referralCode}` : ""
 
   const handleCopy = async () => {
     await navigator.clipboard.writeText(referralLink)
@@ -82,13 +83,13 @@ export function ReferralsTab() {
 
   const handleShareTwitter = () => {
     const text = encodeURIComponent(
-      `Join me on Influx — the crypto-native KOL platform. Earn from Web3 campaigns and get paid in crypto.\n\n${referralLink}`
+      `Found a platform where Web3 projects pay creators directly in crypto. No middlemen, escrow-protected deals.\n\nSign up through my link:\n${cleanReferralLink}`
     )
     window.open(`https://twitter.com/intent/tweet?text=${text}`, "_blank")
   }
 
   const handleShareTelegram = () => {
-    const text = encodeURIComponent("Join me on Influx — crypto-native KOL platform")
+    const text = encodeURIComponent("Found a platform where Web3 projects pay creators directly in crypto. Escrow-protected, no middlemen.")
     const url = encodeURIComponent(referralLink)
     window.open(`https://t.me/share/url?url=${url}&text=${text}`, "_blank")
   }
@@ -221,7 +222,7 @@ export function ReferralsTab() {
             onClick={() => {
               const rank = data.myRank || "—"
               const text = encodeURIComponent(
-                `I'm #${rank} on the @InfluxPlatform referral leaderboard! ${data.stats.totalReferrals} creators invited.\n\nJoin through my link: ${referralLink}`
+                `#${rank} on the @InfluxPlatform referral leaderboard — ${data.stats.totalReferrals} creators onboarded.\n\nWeb3 projects pay creators in crypto, escrow-protected:\n${cleanReferralLink}`
               )
               window.open(`https://twitter.com/intent/tweet?text=${text}`, "_blank")
             }}
