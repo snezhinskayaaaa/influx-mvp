@@ -33,7 +33,10 @@ import {
   Check,
   Flame,
   ArrowDownCircle,
-  CheckSquare
+  CheckSquare,
+  Users,
+  Share2,
+  Trophy,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -1063,6 +1066,62 @@ export default function InfluencersPage() {
               </div>
             </div>
           </Card>
+        </div>
+      </motion.section>
+
+      {/* Referral Program */}
+      <motion.section
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: "-100px" }}
+        variants={fadeInUp}
+        className="py-16 md:py-24 bg-gradient-to-br from-primary/5 via-background to-secondary/5"
+      >
+        <div className="container px-6 lg:px-8">
+          <div className="text-center mb-10">
+            <Badge className="mb-4 bg-primary/10 text-primary border-primary/20 hover:bg-primary/10">
+              <Users className="h-3 w-3 mr-1" />
+              Referral Program
+            </Badge>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4">
+              Earn by Growing the Community
+            </h2>
+            <p className="text-base md:text-sm sm:text-lg text-muted-foreground max-w-2xl mx-auto">
+              Invite fellow creators and earn 10% of platform fees from their campaigns. Forever.
+            </p>
+          </div>
+
+          <div className="grid sm:grid-cols-3 gap-6 max-w-3xl mx-auto mb-10">
+            <Card className="p-6 text-center border-2 border-transparent hover:border-primary/20 transition-all">
+              <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mx-auto mb-4">
+                <Share2 className="h-6 w-6 text-primary" />
+              </div>
+              <h3 className="font-semibold mb-2">Share</h3>
+              <p className="text-sm text-muted-foreground">Get your unique referral link and share it with creators</p>
+            </Card>
+            <Card className="p-6 text-center border-2 border-transparent hover:border-primary/20 transition-all">
+              <div className="w-12 h-12 rounded-xl bg-green-500/10 flex items-center justify-center mx-auto mb-4">
+                <DollarSign className="h-6 w-6 text-green-500" />
+              </div>
+              <h3 className="font-semibold mb-2">Earn</h3>
+              <p className="text-sm text-muted-foreground">Get 10% of platform fees from every campaign they complete</p>
+            </Card>
+            <Card className="p-6 text-center border-2 border-transparent hover:border-primary/20 transition-all">
+              <div className="w-12 h-12 rounded-xl bg-amber-500/10 flex items-center justify-center mx-auto mb-4">
+                <Trophy className="h-6 w-6 text-amber-500" />
+              </div>
+              <h3 className="font-semibold mb-2">Grow</h3>
+              <p className="text-sm text-muted-foreground">Climb the leaderboard and earn Community badges</p>
+            </Card>
+          </div>
+
+          <div className="text-center">
+            <Link href="/signup?type=influencer">
+              <Button size="lg" className="bg-gradient-to-r from-primary to-secondary hover:opacity-90 text-white px-8 h-12 text-base">
+                Sign Up to Get Your Link
+              </Button>
+            </Link>
+          </div>
         </div>
       </motion.section>
 
