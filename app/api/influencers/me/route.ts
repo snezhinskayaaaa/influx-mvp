@@ -205,7 +205,7 @@ export async function PATCH(request: NextRequest) {
                 'Someone joined through your link!',
                 `@${influencer.handle} signed up on Influx using your referral link and completed onboarding. You'll earn 10% of platform fees from their campaigns.`,
                 'View Referrals',
-                `${process.env.NEXT_PUBLIC_APP_URL || 'https://aiinflux.io'}/dashboard/influencer`,
+                `${process.env.NEXT_PUBLIC_APP_URL || 'https://aiinflux.io'}/dashboard/influencer?tab=referrals`,
               )
             } catch (emailErr) {
               console.error('Failed to send referral notification email:', emailErr)
@@ -232,7 +232,7 @@ export async function PATCH(request: NextRequest) {
                   `You've reached ${newTier.name}!`,
                   `Congratulations! With ${activeCount} referral${activeCount !== 1 ? 's' : ''}, you've earned the ${newTier.name} badge. Keep inviting creators to climb the leaderboard.`,
                   'View Your Badge',
-                  `${process.env.NEXT_PUBLIC_APP_URL || 'https://aiinflux.io'}/dashboard/influencer`,
+                  `${process.env.NEXT_PUBLIC_APP_URL || 'https://aiinflux.io'}/dashboard/influencer?tab=referrals`,
                 )
               } catch (emailErr) {
                 console.error('Failed to send tier notification email:', emailErr)

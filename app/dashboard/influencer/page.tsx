@@ -156,7 +156,12 @@ interface Campaign {
 
 
 export default function InfluencerDashboard() {
-  const [activeTab, setActiveTab] = useState<"discover" | "my-campaigns" | "wallet" | "profile" | "settings" | "referrals">("discover");
+  const validTabs = ["discover", "my-campaigns", "wallet", "profile", "settings", "referrals"] as const;
+  type TabType = typeof validTabs[number];
+  const urlTab = typeof window !== "undefined" ? new URLSearchParams(window.location.search).get("tab") : null;
+  const initialTab: TabType = urlTab && validTabs.includes(urlTab as TabType) ? urlTab as TabType : "discover";
+
+  const [activeTab, setActiveTab] = useState<TabType>(initialTab);
   const activeTabRef = useRef(activeTab);
   const emailVerifyShown = useRef(false);
   const cameFromDiscover = useRef(false);
