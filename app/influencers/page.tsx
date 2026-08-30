@@ -668,7 +668,11 @@ export default function InfluencersPage() {
                 </div>
                 <div className="flex items-start gap-2 lg:gap-3">
                   <ArrowDownCircle className="h-4 w-4 lg:h-5 lg:w-5 text-success shrink-0 mt-0.5 lg:mt-1" />
-                  <p className="text-xs lg:text-base text-muted-foreground">Full transaction transparency</p>
+                  <p className="text-xs lg:text-base text-muted-foreground">Content review with up to 3 revision rounds</p>
+                </div>
+                <div className="flex items-start gap-2 lg:gap-3">
+                  <ArrowDownCircle className="h-4 w-4 lg:h-5 lg:w-5 text-success shrink-0 mt-0.5 lg:mt-1" />
+                  <p className="text-xs lg:text-base text-muted-foreground">Dispute resolution by platform team</p>
                 </div>
               </div>
             </Card>
@@ -781,6 +785,62 @@ export default function InfluencersPage() {
         </div>
       </motion.section>
 
+      {/* Referral Program */}
+      <motion.section
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: "-100px" }}
+        variants={fadeInUp}
+        className="py-16 md:py-24 bg-gradient-to-br from-primary/5 via-background to-secondary/5"
+      >
+        <div className="container px-6 lg:px-8">
+          <div className="text-center mb-10">
+            <Badge className="mb-4 bg-primary/10 text-primary border-primary/20 hover:bg-primary/10">
+              <Users className="h-3 w-3 mr-1" />
+              Referral Program
+            </Badge>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4">
+              Earn by Growing the Community
+            </h2>
+            <p className="text-base md:text-sm sm:text-lg text-muted-foreground max-w-2xl mx-auto">
+              Invite fellow creators and earn 10% of platform fees from their campaigns. Forever.
+            </p>
+          </div>
+
+          <div className="grid sm:grid-cols-3 gap-6 max-w-3xl mx-auto mb-10">
+            <Card className="p-6 text-center border-2 border-transparent hover:border-primary/20 transition-all">
+              <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mx-auto mb-4">
+                <Share2 className="h-6 w-6 text-primary" />
+              </div>
+              <h3 className="font-semibold mb-2">Share</h3>
+              <p className="text-sm text-muted-foreground">Get your unique referral link and share it with creators</p>
+            </Card>
+            <Card className="p-6 text-center border-2 border-transparent hover:border-primary/20 transition-all">
+              <div className="w-12 h-12 rounded-xl bg-green-500/10 flex items-center justify-center mx-auto mb-4">
+                <DollarSign className="h-6 w-6 text-green-500" />
+              </div>
+              <h3 className="font-semibold mb-2">Earn</h3>
+              <p className="text-sm text-muted-foreground">Get 10% of platform fees from every campaign they complete</p>
+            </Card>
+            <Card className="p-6 text-center border-2 border-transparent hover:border-primary/20 transition-all">
+              <div className="w-12 h-12 rounded-xl bg-amber-500/10 flex items-center justify-center mx-auto mb-4">
+                <Trophy className="h-6 w-6 text-amber-500" />
+              </div>
+              <h3 className="font-semibold mb-2">Grow</h3>
+              <p className="text-sm text-muted-foreground">Climb the leaderboard and earn Community badges</p>
+            </Card>
+          </div>
+
+          <div className="text-center">
+            <Link href="/signup?type=influencer">
+              <Button size="lg" className="bg-gradient-to-r from-primary to-secondary hover:opacity-90 text-white px-8 h-12 text-base">
+                Sign Up to Get Your Link
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </motion.section>
+
       {/* Pricing Plans */}
       <motion.section
         initial="hidden"
@@ -870,99 +930,6 @@ export default function InfluencersPage() {
             <Link href="/pricing" className="text-xs lg:text-sm text-secondary hover:underline">
               View detailed pricing comparison →
             </Link>
-          </div>
-        </div>
-      </motion.section>
-
-      {/* Protected Payments */}
-      <motion.section
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, margin: "-100px" }}
-        variants={fadeInUp}
-        className="py-20 px-4"
-      >
-        <div className="container max-w-6xl mx-auto">
-          <div className="text-center mb-16">
-            <Badge className="mb-4 bg-primary/10 text-primary border-primary/20">
-              Secure & Reliable
-            </Badge>
-            <h2 className="text-xl sm:text-4xl lg:text-5xl font-bold mb-3 sm:mb-4">
-              Your Money is Protected
-            </h2>
-            <p className="text-sm sm:text-lg text-muted-foreground max-w-2xl mx-auto">
-              Every payment uses our 50/50 split with auto-release protection
-            </p>
-          </div>
-
-          <div className="flex overflow-x-auto gap-4 pb-4 md:grid md:grid-cols-2 md:gap-8 md:overflow-visible snap-x snap-mandatory md:snap-none mb-8 lg:mb-12">
-            {/* 50/50 Payment Protection */}
-            <Card className="p-5 lg:p-8 bg-gradient-to-br from-primary/5 to-transparent border-primary/20 min-w-[300px] md:min-w-0 snap-center">
-              <div className="flex items-center gap-2 lg:gap-3 mb-4 lg:mb-6">
-                <div className="w-10 h-10 lg:w-12 lg:h-12 rounded-xl bg-primary/10 flex items-center justify-center">
-                  <Shield className="h-5 w-5 lg:h-6 lg:w-6 text-primary" />
-                </div>
-                <h3 className="text-lg lg:text-2xl font-bold">50/50 Payment Protection</h3>
-              </div>
-
-              <div className="space-y-2 lg:space-y-4">
-                <div className="flex items-start gap-2 lg:gap-3">
-                  <CheckCircle2 className="h-4 w-4 lg:h-5 lg:w-5 text-primary shrink-0 mt-0.5 lg:mt-1" />
-                  <p className="text-xs lg:text-base text-muted-foreground">50% advance when you start — never work for free</p>
-                </div>
-                <div className="flex items-start gap-2 lg:gap-3">
-                  <CheckCircle2 className="h-4 w-4 lg:h-5 lg:w-5 text-primary shrink-0 mt-0.5 lg:mt-1" />
-                  <p className="text-xs lg:text-base text-muted-foreground">Remaining 50% auto-releases 7 days after delivery</p>
-                </div>
-                <div className="flex items-start gap-2 lg:gap-3">
-                  <CheckCircle2 className="h-4 w-4 lg:h-5 lg:w-5 text-primary shrink-0 mt-0.5 lg:mt-1" />
-                  <p className="text-xs lg:text-base text-muted-foreground">Dispute resolution by platform team</p>
-                </div>
-                <div className="flex items-start gap-2 lg:gap-3">
-                  <CheckCircle2 className="h-4 w-4 lg:h-5 lg:w-5 text-primary shrink-0 mt-0.5 lg:mt-1" />
-                  <p className="text-xs lg:text-base text-muted-foreground">Full payment transparency</p>
-                </div>
-              </div>
-            </Card>
-
-            {/* Built-in Review Process */}
-            <Card className="p-5 lg:p-8 bg-gradient-to-br from-secondary/5 to-transparent border-secondary/20 min-w-[300px] md:min-w-0 snap-center">
-              <div className="flex items-center gap-2 lg:gap-3 mb-4 lg:mb-6">
-                <div className="w-10 h-10 lg:w-12 lg:h-12 rounded-xl bg-secondary/10 flex items-center justify-center">
-                  <Wallet className="h-5 w-5 lg:h-6 lg:w-6 text-secondary" />
-                </div>
-                <h3 className="text-lg lg:text-2xl font-bold">Built-in Review Process</h3>
-              </div>
-
-              <div className="space-y-2 lg:space-y-4">
-                <div className="flex items-start gap-2 lg:gap-3">
-                  <CheckCircle2 className="h-4 w-4 lg:h-5 lg:w-5 text-secondary shrink-0 mt-0.5 lg:mt-1" />
-                  <p className="text-xs lg:text-base text-muted-foreground">Content review before publishing</p>
-                </div>
-                <div className="flex items-start gap-2 lg:gap-3">
-                  <CheckCircle2 className="h-4 w-4 lg:h-5 lg:w-5 text-secondary shrink-0 mt-0.5 lg:mt-1" />
-                  <p className="text-xs lg:text-base text-muted-foreground">Up to 3 revision rounds included</p>
-                </div>
-                <div className="flex items-start gap-2 lg:gap-3">
-                  <CheckCircle2 className="h-4 w-4 lg:h-5 lg:w-5 text-secondary shrink-0 mt-0.5 lg:mt-1" />
-                  <p className="text-xs lg:text-base text-muted-foreground">Clear deliverables and expectations</p>
-                </div>
-                <div className="flex items-start gap-2 lg:gap-3">
-                  <CheckCircle2 className="h-4 w-4 lg:h-5 lg:w-5 text-secondary shrink-0 mt-0.5 lg:mt-1" />
-                  <p className="text-xs lg:text-base text-muted-foreground">Faster payout for Pro members</p>
-                </div>
-              </div>
-            </Card>
-          </div>
-
-          {/* CTA */}
-          <div className="text-center">
-            <Button asChild size="lg" className="w-full sm:w-64 bg-secondary/10 hover:bg-secondary/15 backdrop-blur-sm border-2 border-secondary/30 h-11 sm:h-14 text-sm sm:text-base transition-all rounded-xl px-8">
-              <Link href="/signup?type=influencer" className="flex items-center justify-center">
-                <span className="bg-gradient-to-r from-secondary to-primary bg-clip-text text-transparent font-medium">Join Now</span>
-                <ArrowRight className="ml-2 h-5 w-5 text-secondary" />
-              </Link>
-            </Button>
           </div>
         </div>
       </motion.section>
@@ -1066,62 +1033,6 @@ export default function InfluencersPage() {
               </div>
             </div>
           </Card>
-        </div>
-      </motion.section>
-
-      {/* Referral Program */}
-      <motion.section
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, margin: "-100px" }}
-        variants={fadeInUp}
-        className="py-16 md:py-24 bg-gradient-to-br from-primary/5 via-background to-secondary/5"
-      >
-        <div className="container px-6 lg:px-8">
-          <div className="text-center mb-10">
-            <Badge className="mb-4 bg-primary/10 text-primary border-primary/20 hover:bg-primary/10">
-              <Users className="h-3 w-3 mr-1" />
-              Referral Program
-            </Badge>
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4">
-              Earn by Growing the Community
-            </h2>
-            <p className="text-base md:text-sm sm:text-lg text-muted-foreground max-w-2xl mx-auto">
-              Invite fellow creators and earn 10% of platform fees from their campaigns. Forever.
-            </p>
-          </div>
-
-          <div className="grid sm:grid-cols-3 gap-6 max-w-3xl mx-auto mb-10">
-            <Card className="p-6 text-center border-2 border-transparent hover:border-primary/20 transition-all">
-              <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mx-auto mb-4">
-                <Share2 className="h-6 w-6 text-primary" />
-              </div>
-              <h3 className="font-semibold mb-2">Share</h3>
-              <p className="text-sm text-muted-foreground">Get your unique referral link and share it with creators</p>
-            </Card>
-            <Card className="p-6 text-center border-2 border-transparent hover:border-primary/20 transition-all">
-              <div className="w-12 h-12 rounded-xl bg-green-500/10 flex items-center justify-center mx-auto mb-4">
-                <DollarSign className="h-6 w-6 text-green-500" />
-              </div>
-              <h3 className="font-semibold mb-2">Earn</h3>
-              <p className="text-sm text-muted-foreground">Get 10% of platform fees from every campaign they complete</p>
-            </Card>
-            <Card className="p-6 text-center border-2 border-transparent hover:border-primary/20 transition-all">
-              <div className="w-12 h-12 rounded-xl bg-amber-500/10 flex items-center justify-center mx-auto mb-4">
-                <Trophy className="h-6 w-6 text-amber-500" />
-              </div>
-              <h3 className="font-semibold mb-2">Grow</h3>
-              <p className="text-sm text-muted-foreground">Climb the leaderboard and earn Community badges</p>
-            </Card>
-          </div>
-
-          <div className="text-center">
-            <Link href="/signup?type=influencer">
-              <Button size="lg" className="bg-gradient-to-r from-primary to-secondary hover:opacity-90 text-white px-8 h-12 text-base">
-                Sign Up to Get Your Link
-              </Button>
-            </Link>
-          </div>
         </div>
       </motion.section>
 
