@@ -83,13 +83,13 @@ export function ReferralsTab() {
 
   const handleShareTwitter = () => {
     const text = encodeURIComponent(
-      `Found a platform where Web3 projects pay creators directly in crypto. No middlemen, escrow-protected deals.\n\nSign up through my link:\n${cleanReferralLink}`
+      `Join me on Influx — where Web3 projects pay creators directly in crypto.\n\n${cleanReferralLink}`
     )
     window.open(`https://twitter.com/intent/tweet?text=${text}`, "_blank")
   }
 
   const handleShareTelegram = () => {
-    const text = encodeURIComponent("Found a platform where Web3 projects pay creators directly in crypto. Escrow-protected, no middlemen.")
+    const text = encodeURIComponent("Join me on Influx — where Web3 projects pay creators directly in crypto.")
     const url = encodeURIComponent(referralLink)
     window.open(`https://t.me/share/url?url=${url}&text=${text}`, "_blank")
   }
