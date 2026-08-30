@@ -30,8 +30,8 @@ export async function createPayment(params: CreatePaymentParams): Promise<Create
     MerchantId: MERCHANT_ID,
     BillingID: params.billingId,
     ReturnUrl: 'true',
-    SuccessUrl: `${APP_URL}/dashboard/brand?deposit=success`,
-    CancelUrl: `${APP_URL}/dashboard/brand?deposit=cancelled`,
+    SuccessUrl: `${APP_URL}/dashboard/project?deposit=success`,
+    CancelUrl: `${APP_URL}/dashboard/project?deposit=cancelled`,
     AutoReturn: 'true',
     ...(isTestMode && { Test: 'true' }),
   })

@@ -106,7 +106,7 @@ export async function GET(request: NextRequest) {
       const token = await createToken({ userId: profile.id, role: profile.role })
 
       const redirectPath = profile.role === 'ADMIN' ? '/admin'
-        : profile.role === 'BRAND' ? '/dashboard/brand'
+        : profile.role === 'BRAND' ? '/dashboard/project'
         : '/dashboard/influencer'
 
       return redirectWithCookie(`${baseUrl}${redirectPath}`, token, isProduction)

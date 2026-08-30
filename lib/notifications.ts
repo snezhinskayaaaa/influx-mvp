@@ -25,7 +25,7 @@ async function shouldNotify(userId: string): Promise<{ email: string; notify: bo
 // --- Brand notifications ---
 
 export async function notifyBrandNewApplication(brandUserId: string, influencerName: string, campaignTitle: string) {
-  await createInAppNotification(brandUserId, 'New Application', `${influencerName} applied to "${campaignTitle}"`, '/dashboard/brand')
+  await createInAppNotification(brandUserId, 'New Application', `${influencerName} applied to "${campaignTitle}"`, '/dashboard/project')
   const { email, notify } = await shouldNotify(brandUserId)
   if (!notify) return
   await sendCollaborationEmail(
@@ -34,12 +34,12 @@ export async function notifyBrandNewApplication(brandUserId: string, influencerN
     'New Creator Application',
     `${influencerName} has applied to your campaign "${campaignTitle}". Review their profile and respond.`,
     'View Application',
-    `${APP_URL}/dashboard/brand`,
+    `${APP_URL}/dashboard/project`,
   ).catch(err => console.error('Notification email failed:', err))
 }
 
 export async function notifyBrandContentSubmitted(brandUserId: string, influencerName: string, campaignTitle: string) {
-  await createInAppNotification(brandUserId, 'Content Submitted', `${influencerName} submitted content for "${campaignTitle}"`, '/dashboard/brand')
+  await createInAppNotification(brandUserId, 'Content Submitted', `${influencerName} submitted content for "${campaignTitle}"`, '/dashboard/project')
   const { email, notify } = await shouldNotify(brandUserId)
   if (!notify) return
   await sendCollaborationEmail(
@@ -48,12 +48,12 @@ export async function notifyBrandContentSubmitted(brandUserId: string, influence
     'Content Submitted for Review',
     `${influencerName} has submitted content for "${campaignTitle}". Please review and approve, request revisions, or dispute.`,
     'Review Content',
-    `${APP_URL}/dashboard/brand`,
+    `${APP_URL}/dashboard/project`,
   ).catch(err => console.error('Notification email failed:', err))
 }
 
 export async function notifyBrandContentDelivered(brandUserId: string, influencerName: string, campaignTitle: string) {
-  await createInAppNotification(brandUserId, 'Content Published', `${influencerName} published content for "${campaignTitle}"`, '/dashboard/brand')
+  await createInAppNotification(brandUserId, 'Content Published', `${influencerName} published content for "${campaignTitle}"`, '/dashboard/project')
   const { email, notify } = await shouldNotify(brandUserId)
   if (!notify) return
   await sendCollaborationEmail(
@@ -62,12 +62,12 @@ export async function notifyBrandContentDelivered(brandUserId: string, influence
     'Content Published',
     `${influencerName} has published the content for "${campaignTitle}". Approve to release the remaining 50% payment. Auto-release in 7 days if no action.`,
     'Review & Approve',
-    `${APP_URL}/dashboard/brand`,
+    `${APP_URL}/dashboard/project`,
   ).catch(err => console.error('Notification email failed:', err))
 }
 
 export async function notifyBrandAutoRelease(brandUserId: string, campaignTitle: string, amount: number) {
-  await createInAppNotification(brandUserId, 'Payment Auto-Released', `$${(amount / 100).toFixed(2)} released for "${campaignTitle}"`, '/dashboard/brand')
+  await createInAppNotification(brandUserId, 'Payment Auto-Released', `$${(amount / 100).toFixed(2)} released for "${campaignTitle}"`, '/dashboard/project')
   const { email, notify } = await shouldNotify(brandUserId)
   if (!notify) return
   await sendCollaborationEmail(
@@ -165,7 +165,7 @@ export async function notifyInfluencerPaymentReceived(influencerUserId: string, 
 }
 
 export async function notifyBrandPriceAccepted(brandUserId: string, influencerName: string, campaignTitle: string, price: number) {
-  await createInAppNotification(brandUserId, 'Price Accepted', `${influencerName} accepted your offer of $${price} for "${campaignTitle}"`, '/dashboard/brand')
+  await createInAppNotification(brandUserId, 'Price Accepted', `${influencerName} accepted your offer of $${price} for "${campaignTitle}"`, '/dashboard/project')
   const { email, notify } = await shouldNotify(brandUserId)
   if (!notify) return
   await sendCollaborationEmail(
@@ -177,7 +177,7 @@ export async function notifyBrandPriceAccepted(brandUserId: string, influencerNa
 }
 
 export async function notifyBrandPriceDeclined(brandUserId: string, influencerName: string, campaignTitle: string, price: number) {
-  await createInAppNotification(brandUserId, 'Price Declined', `${influencerName} declined your offer of $${price} for "${campaignTitle}"`, '/dashboard/brand')
+  await createInAppNotification(brandUserId, 'Price Declined', `${influencerName} declined your offer of $${price} for "${campaignTitle}"`, '/dashboard/project')
   const { email, notify } = await shouldNotify(brandUserId)
   if (!notify) return
   await sendCollaborationEmail(
@@ -209,7 +209,7 @@ export async function notifyDisputeResolved(influencerUserId: string, brandUserI
     ).catch(err => console.error('Notification email failed:', err))
   }
 
-  await createInAppNotification(brandUserId, 'Dispute Resolved', `Dispute for "${campaignTitle}" resolved: ${result}`, '/dashboard/brand')
+  await createInAppNotification(brandUserId, 'Dispute Resolved', `Dispute for "${campaignTitle}" resolved: ${result}`, '/dashboard/project')
   const brandNotify = await shouldNotify(brandUserId)
   if (brandNotify.notify) {
     sendCollaborationEmail(brandNotify.email, `Dispute resolved — "${campaignTitle}"`, 'Dispute Resolved',

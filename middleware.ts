@@ -7,7 +7,7 @@ const protectedRoutes = ['/dashboard', '/admin', '/onboarding']
 
 // Routes that require specific roles
 const adminRoutes = ['/admin']
-const brandRoutes = ['/dashboard/brand']
+const brandRoutes = ['/dashboard/project']
 const influencerRoutes = ['/dashboard/influencer']
 
 // Routes that should redirect to dashboard if already logged in
@@ -122,7 +122,7 @@ export async function middleware(request: NextRequest) {
     const dashboardUrl = user.role === 'ADMIN'
       ? '/admin'
       : user.role === 'BRAND'
-        ? '/dashboard/brand'
+        ? '/dashboard/project'
         : '/dashboard/influencer'
     return NextResponse.redirect(new URL(dashboardUrl, request.url))
   }

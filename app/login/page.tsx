@@ -59,7 +59,7 @@ export default function LoginPage() {
           return;
         }
         if (data.user.role === "ADMIN") router.push("/admin");
-        else if (data.user.role === "BRAND") router.push("/dashboard/brand");
+        else if (data.user.role === "BRAND") router.push("/dashboard/project");
         else router.push("/dashboard/influencer");
         return;
       }
@@ -81,7 +81,7 @@ export default function LoginPage() {
         return;
       }
       if (data.user.role === "ADMIN") router.push("/admin");
-      else if (data.user.role === "BRAND") router.push("/dashboard/brand");
+      else if (data.user.role === "BRAND") router.push("/dashboard/project");
       else router.push("/dashboard/influencer");
     } catch {
       setError("Something went wrong. Please try again.");
