@@ -16,9 +16,10 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Avatar data is required' }, { status: 400 })
     }
 
-    // Validate it's a data URL (base64 image)
-    if (!avatar.startsWith('data:image/')) {
-      return NextResponse.json({ error: 'Invalid image format' }, { status: 400 })
+    // Validate it's a safe image format (no SVG — can contain scripts)
+    const allowedPrefixes = ['data:image/png;', 'data:image/jpeg;', 'data:image/jpg;', 'data:image/webp;']
+    if (!allowedPrefixes.some(p => avatar.startsWith(p))) {
+      return NextResponse.json({ error: 'Only PNG, JPEG, and WebP images are allowed' }, { status: 400 })
     }
 
     // Check size — base64 is ~33% larger than binary, so 2MB file = ~2.7MB base64
