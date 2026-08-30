@@ -120,24 +120,22 @@ export function ReferralsTab() {
 
       <div className="space-y-6">
         {/* Stats */}
-        <div className="grid grid-cols-3 gap-3 sm:gap-4">
-          <div className="rounded-xl border border-border p-4 sm:p-6 text-center">
-            <Users className="h-5 w-5 mx-auto mb-1.5 text-primary" />
-            <p className="text-xl sm:text-3xl font-bold">{data.stats.totalReferrals}</p>
-            <p className="text-xs text-muted-foreground">Referrals</p>
+        <div className="grid grid-cols-3 gap-2 sm:gap-4">
+          <div className="rounded-xl border border-border p-3 sm:p-6">
+            <p className="text-xs text-muted-foreground mb-1 sm:mb-2">Referrals</p>
+            <p className="text-xl sm:text-3xl font-bold text-primary">{data.stats.totalReferrals}</p>
             {data.stats.pendingReferrals > 0 && (
-              <p className="text-xs text-amber-600 mt-1">+{data.stats.pendingReferrals} pending</p>
+              <p className="text-[10px] sm:text-xs text-amber-600 mt-1">+{data.stats.pendingReferrals} pending</p>
             )}
           </div>
-          <div className="rounded-xl border border-border p-4 sm:p-6 text-center">
-            <DollarSign className="h-5 w-5 mx-auto mb-1.5 text-green-500" />
+          <div className="rounded-xl border border-border p-3 sm:p-6">
+            <p className="text-xs text-muted-foreground mb-1 sm:mb-2">Earned</p>
             <p className="text-xl sm:text-3xl font-bold">${(data.stats.totalEarnings / 100).toFixed(2)}</p>
-            <p className="text-xs text-muted-foreground">Earned</p>
           </div>
-          <div className="rounded-xl border border-border p-4 sm:p-6 text-center">
-            <Award className={`h-5 w-5 mx-auto mb-1.5 ${badge.color}`} />
-            <p className={`text-sm font-semibold ${badge.color}`}>{badge.label}</p>
-            <p className="text-xs text-muted-foreground mt-1">
+          <div className="rounded-xl border border-border p-3 sm:p-6">
+            <p className="text-xs text-muted-foreground mb-1 sm:mb-2">Badge</p>
+            <p className={`text-xs sm:text-sm font-semibold ${badge.color}`}>{badge.label}</p>
+            <p className="text-[10px] sm:text-xs text-muted-foreground mt-1">
               {data.stats.badgeTier !== "leader" && data.stats.remainingToNextTier > 0
                 ? `${data.stats.remainingToNextTier} more to next`
                 : badge.next}
