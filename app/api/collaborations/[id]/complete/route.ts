@@ -61,32 +61,35 @@ export async function POST(
           throw new Error('INVALID_STATUS')
         }
 
+        // Calculate remaining 50% (advance already paid when moving to IN_PROGRESS)
+        const remainingPayout = Math.round(collaboration.agreedPrice! / 2)
+
         // Guard against frozenBalance underflow
         const brand = await tx.brand.findUniqueOrThrow({
           where: { id: collaboration.campaign.brand.id },
           select: { frozenBalance: true },
         })
-        if (brand.frozenBalance < collaboration.agreedPrice!) {
+        if (brand.frozenBalance < remainingPayout) {
           throw new Error('INSUFFICIENT_FROZEN_BALANCE')
         }
 
-        // Transfer funds
+        // Transfer remaining 50%
         await tx.brand.update({
           where: { id: collaboration.campaign.brand.id },
-          data: { frozenBalance: { decrement: collaboration.agreedPrice! } },
+          data: { frozenBalance: { decrement: remainingPayout } },
         })
 
         await tx.influencer.update({
           where: { id: collaboration.influencer.id },
-          data: { balance: { increment: collaboration.agreedPrice! } },
+          data: { balance: { increment: remainingPayout } },
         })
 
         await tx.transaction.create({
           data: {
             userId: collaboration.campaign.brand.userId,
             type: 'CAMPAIGN_PAYOUT',
-            amount: collaboration.agreedPrice!,
-            description: 'Payment to influencer for collaboration',
+            amount: remainingPayout,
+            description: 'Final 50% payment for collaboration',
             referenceId: id,
           },
         })
@@ -95,8 +98,8 @@ export async function POST(
           data: {
             userId: collaboration.influencer.userId,
             type: 'CAMPAIGN_PAYOUT',
-            amount: collaboration.agreedPrice!,
-            description: 'Earnings from collaboration',
+            amount: remainingPayout,
+            description: 'Final 50% earnings from collaboration',
             referenceId: id,
           },
         })

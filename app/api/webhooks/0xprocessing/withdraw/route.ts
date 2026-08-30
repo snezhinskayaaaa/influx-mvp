@@ -63,15 +63,24 @@ export async function POST(request: NextRequest) {
     }
 
     if (body.Status === 'Canceled') {
-      // Refund the influencer balance
+      // Refund balance — check both influencer and brand
       const influencer = await prisma.influencer.findUnique({
         where: { userId: transaction.userId },
       })
+      const brand = await prisma.brand.findUnique({
+        where: { userId: transaction.userId },
+      })
 
-      if (influencer) {
+      const refundEntity = influencer
+        ? { model: prisma.influencer, id: influencer.id }
+        : brand
+        ? { model: prisma.brand, id: brand.id }
+        : null
+
+      if (refundEntity) {
         await prisma.$transaction([
-          prisma.influencer.update({
-            where: { id: influencer.id },
+          (refundEntity.model as typeof prisma.influencer).update({
+            where: { id: refundEntity.id },
             data: { balance: { increment: transaction.amount } },
           }),
           prisma.transaction.update({
@@ -83,7 +92,6 @@ export async function POST(request: NextRequest) {
           }),
         ])
       } else {
-        // No influencer found, just mark as failed
         await prisma.transaction.update({
           where: { id: transaction.id },
           data: {
@@ -91,7 +99,7 @@ export async function POST(request: NextRequest) {
             externalStatus: 'Canceled',
           },
         })
-        console.error('Influencer not found for withdrawal refund', { userId: transaction.userId })
+        console.error('User not found for withdrawal refund', { userId: transaction.userId })
       }
 
       return NextResponse.json({ ok: true })
