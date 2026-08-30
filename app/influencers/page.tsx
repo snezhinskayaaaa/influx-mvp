@@ -807,27 +807,27 @@ export default function InfluencersPage() {
             </p>
           </div>
 
-          <div className="grid sm:grid-cols-3 gap-6 max-w-3xl mx-auto mb-10">
-            <Card className="p-6 text-center border-2 border-transparent hover:border-primary/20 transition-all">
-              <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mx-auto mb-4">
-                <Share2 className="h-6 w-6 text-primary" />
+          <div className="grid grid-cols-3 gap-3 sm:gap-6 max-w-3xl mx-auto mb-10">
+            <Card className="p-3 sm:p-6 text-center border-2 border-transparent hover:border-primary/20 transition-all">
+              <div className="w-9 h-9 sm:w-12 sm:h-12 rounded-xl bg-primary/10 flex items-center justify-center mx-auto mb-2 sm:mb-4">
+                <Share2 className="h-4 w-4 sm:h-6 sm:w-6 text-primary" />
               </div>
-              <h3 className="font-semibold mb-2">Share</h3>
-              <p className="text-sm text-muted-foreground">Get your unique referral link and share it with creators</p>
+              <h3 className="text-xs sm:text-base font-semibold mb-1 sm:mb-2">Share</h3>
+              <p className="text-[10px] sm:text-sm text-muted-foreground">Get your unique referral link and share it with creators</p>
             </Card>
-            <Card className="p-6 text-center border-2 border-transparent hover:border-primary/20 transition-all">
-              <div className="w-12 h-12 rounded-xl bg-green-500/10 flex items-center justify-center mx-auto mb-4">
-                <DollarSign className="h-6 w-6 text-green-500" />
+            <Card className="p-3 sm:p-6 text-center border-2 border-transparent hover:border-primary/20 transition-all">
+              <div className="w-9 h-9 sm:w-12 sm:h-12 rounded-xl bg-green-500/10 flex items-center justify-center mx-auto mb-2 sm:mb-4">
+                <DollarSign className="h-4 w-4 sm:h-6 sm:w-6 text-green-500" />
               </div>
-              <h3 className="font-semibold mb-2">Earn</h3>
-              <p className="text-sm text-muted-foreground">Get 10% of platform fees from every campaign they complete</p>
+              <h3 className="text-xs sm:text-base font-semibold mb-1 sm:mb-2">Earn</h3>
+              <p className="text-[10px] sm:text-sm text-muted-foreground">Get 10% of platform fees from every campaign they complete</p>
             </Card>
-            <Card className="p-6 text-center border-2 border-transparent hover:border-primary/20 transition-all">
-              <div className="w-12 h-12 rounded-xl bg-amber-500/10 flex items-center justify-center mx-auto mb-4">
-                <Trophy className="h-6 w-6 text-amber-500" />
+            <Card className="p-3 sm:p-6 text-center border-2 border-transparent hover:border-primary/20 transition-all">
+              <div className="w-9 h-9 sm:w-12 sm:h-12 rounded-xl bg-amber-500/10 flex items-center justify-center mx-auto mb-2 sm:mb-4">
+                <Trophy className="h-4 w-4 sm:h-6 sm:w-6 text-amber-500" />
               </div>
-              <h3 className="font-semibold mb-2">Grow</h3>
-              <p className="text-sm text-muted-foreground">Climb the leaderboard and earn Community badges</p>
+              <h3 className="text-xs sm:text-base font-semibold mb-1 sm:mb-2">Grow</h3>
+              <p className="text-[10px] sm:text-sm text-muted-foreground">Climb the leaderboard and earn Community badges</p>
             </Card>
           </div>
 
