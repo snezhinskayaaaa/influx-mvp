@@ -64,6 +64,7 @@ enum TransactionType {
   CAMPAIGN_PAYOUT_AUTO @map("campaign_payout_auto")
   DISPUTE_PAYOUT       @map("dispute_payout")
   DISPUTE_REFUND       @map("dispute_refund")
+  REFERRAL_PAYOUT      @map("referral_payout")
 
   @@map("transaction_type")
 }

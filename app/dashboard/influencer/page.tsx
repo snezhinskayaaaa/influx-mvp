@@ -2826,8 +2826,9 @@ export default function InfluencerDashboard() {
                           campaign_payout_auto: 'Auto-release Payment', campaign_freeze: 'Funds Frozen',
                           campaign_unfreeze: 'Funds Released', advance_refund: 'Advance Refund',
                           dispute_payout: 'Dispute Payout', dispute_refund: 'Dispute Refund',
+                          referral_payout: 'Referral Reward',
                         };
-                        const incomingTypes = ['deposit', 'campaign_advance', 'campaign_payout', 'campaign_payout_auto', 'advance_refund', 'dispute_payout'];
+                        const incomingTypes = ['deposit', 'campaign_advance', 'campaign_payout', 'campaign_payout_auto', 'advance_refund', 'dispute_payout', 'referral_payout'];
                         const isIncoming = incomingTypes.includes(t);
                         const description = tx.projectName
                           ? `From: ${tx.projectName}`

@@ -137,6 +137,57 @@ export async function POST(request: NextRequest) {
         },
       })
 
+      // Referral revenue share: 10% of platform fee to referrer
+      if (user.role === 'INFLUENCER' && fee > 0) {
+        try {
+          // Find active referral where THIS influencer is the referred one
+          const referral = await prisma.referral.findFirst({
+            where: {
+              referredId: entityId,
+              status: 'active',
+            },
+            select: {
+              id: true,
+              referrerId: true,
+              referrer: { select: { userId: true } },
+            },
+          })
+
+          if (referral) {
+            const revenueShare = Math.floor(fee * 0.1) // 10% of platform fee, rounded down
+            if (revenueShare > 0) {
+              await prisma.$transaction([
+                // Credit referrer's balance
+                prisma.influencer.update({
+                  where: { id: referral.referrerId },
+                  data: { balance: { increment: revenueShare } },
+                }),
+                // Track earnings on referral record
+                prisma.referral.update({
+                  where: { id: referral.id },
+                  data: { totalEarnings: { increment: revenueShare } },
+                }),
+                // Create transaction record for referrer
+                prisma.transaction.create({
+                  data: {
+                    userId: referral.referrer.userId,
+                    type: 'REFERRAL_PAYOUT',
+                    amount: revenueShare,
+                    fee: 0,
+                    status: 'confirmed',
+                    description: `Referral revenue share (10% of $${(fee / 100).toFixed(2)} fee)`,
+                    confirmedAt: new Date(),
+                  },
+                }),
+              ])
+            }
+          }
+        } catch (refError) {
+          // Don't block withdrawal if referral payout fails
+          console.error('Referral revenue share failed:', refError)
+        }
+      }
+
       return NextResponse.json({
         transactionId: transaction.id,
         status: 'pending',
