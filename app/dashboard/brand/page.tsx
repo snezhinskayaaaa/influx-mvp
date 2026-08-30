@@ -369,7 +369,7 @@ export default function BrandDashboard() {
     <div className="min-h-screen bg-background">
       {/* Loading overlay */}
       {isLoading && <LoadingScreen />}
-      <BrandNav />
+      <BrandNav onSettings={() => setActiveTab("settings")} />
 
       <div className="flex">
         <BrandSidebar

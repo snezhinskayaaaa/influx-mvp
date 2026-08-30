@@ -43,7 +43,7 @@ import {
 } from "lucide-react";
 import type { Tab } from "./types";
 
-export function BrandNav() {
+export function BrandNav({ onSettings }: { onSettings?: () => void }) {
   return (
     <>
       {/* Header */}
@@ -60,6 +60,12 @@ export function BrandNav() {
 
             <div className="flex items-center gap-1.5 sm:gap-3">
               <NotificationBell />
+
+              {onSettings && (
+                <Button variant="ghost" size="sm" className="lg:hidden text-muted-foreground hover:bg-muted/50 hover:text-foreground h-8 w-8 p-0" onClick={onSettings}>
+                  <Settings className="h-4 w-4" />
+                </Button>
+              )}
 
               <Button variant="ghost" size="sm" className="text-sm font-medium text-muted-foreground hover:bg-muted/50 hover:text-foreground h-8 w-8 p-0" onClick={async () => { await fetch('/api/auth/logout', { method: 'POST' }); window.location.href = '/login'; }}>
                 <LogOut className="h-4 w-4" />
@@ -649,15 +655,6 @@ export function MobileNav({ activeTab, setActiveTab }: MobileNavProps) {
         >
           <Building2 className="h-5 w-5" />
           <span className="text-[10px] font-medium">Profile</span>
-        </button>
-        <button
-          onClick={() => setActiveTab("settings")}
-          className={`flex flex-col items-center gap-0.5 px-2 py-1 rounded-lg transition-colors ${
-            activeTab === "settings" ? "text-primary" : "text-muted-foreground"
-          }`}
-        >
-          <Settings className="h-5 w-5" />
-          <span className="text-[10px] font-medium">Settings</span>
         </button>
       </div>
     </nav>

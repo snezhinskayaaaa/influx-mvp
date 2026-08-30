@@ -928,6 +928,10 @@ export default function InfluencerDashboard() {
             <div className="flex items-center gap-1.5 sm:gap-3">
               <NotificationBell />
 
+              <Button variant="ghost" size="sm" className="lg:hidden text-muted-foreground hover:bg-muted/50 hover:text-foreground h-8 w-8 p-0" onClick={() => setActiveTab("settings")}>
+                <Settings className="h-4 w-4" />
+              </Button>
+
               <Button variant="ghost" size="sm" className="text-sm font-medium text-muted-foreground hover:bg-muted/50 hover:text-foreground h-8 w-8 p-0" onClick={async () => { await fetch('/api/auth/logout', { method: 'POST' }); window.location.href = '/login'; }}>
                 <LogOut className="h-4 w-4" />
               </Button>
@@ -1057,7 +1061,7 @@ export default function InfluencerDashboard() {
           <div className="flex items-center justify-around px-1 py-2 pb-[env(safe-area-inset-bottom,6px)]">
             <button
               onClick={() => setActiveTab("discover")}
-              className={`flex flex-col items-center gap-0.5 px-1 py-1 rounded-lg transition-colors ${
+              className={`flex flex-col items-center gap-0.5 px-2 py-1 rounded-lg transition-colors ${
                 activeTab === "discover" ? "text-primary" : "text-muted-foreground"
               }`}
             >
@@ -1066,7 +1070,7 @@ export default function InfluencerDashboard() {
             </button>
             <button
               onClick={() => setActiveTab("my-campaigns")}
-              className={`flex flex-col items-center gap-0.5 px-1 py-1 rounded-lg transition-colors ${
+              className={`flex flex-col items-center gap-0.5 px-2 py-1 rounded-lg transition-colors ${
                 activeTab === "my-campaigns" ? "text-primary" : "text-muted-foreground"
               }`}
             >
@@ -1075,7 +1079,7 @@ export default function InfluencerDashboard() {
             </button>
             <button
               onClick={() => setActiveTab("wallet")}
-              className={`flex flex-col items-center gap-0.5 px-1 py-1 rounded-lg transition-colors ${
+              className={`flex flex-col items-center gap-0.5 px-2 py-1 rounded-lg transition-colors ${
                 activeTab === "wallet" ? "text-primary" : "text-muted-foreground"
               }`}
             >
@@ -1084,7 +1088,7 @@ export default function InfluencerDashboard() {
             </button>
             <button
               onClick={() => setActiveTab("referrals")}
-              className={`flex flex-col items-center gap-0.5 px-1 py-1 rounded-lg transition-colors ${
+              className={`flex flex-col items-center gap-0.5 px-2 py-1 rounded-lg transition-colors ${
                 activeTab === "referrals" ? "text-primary" : "text-muted-foreground"
               }`}
             >
@@ -1093,21 +1097,12 @@ export default function InfluencerDashboard() {
             </button>
             <button
               onClick={() => setActiveTab("profile")}
-              className={`flex flex-col items-center gap-0.5 px-1 py-1 rounded-lg transition-colors ${
+              className={`flex flex-col items-center gap-0.5 px-2 py-1 rounded-lg transition-colors ${
                 activeTab === "profile" ? "text-primary" : "text-muted-foreground"
               }`}
             >
               <User className="h-5 w-5" />
               <span className="text-[10px] font-medium">Profile</span>
-            </button>
-            <button
-              onClick={() => setActiveTab("settings")}
-              className={`flex flex-col items-center gap-0.5 px-1 py-1 rounded-lg transition-colors ${
-                activeTab === "settings" ? "text-primary" : "text-muted-foreground"
-              }`}
-            >
-              <Settings className="h-5 w-5" />
-              <span className="text-[10px] font-medium">Settings</span>
             </button>
           </div>
         </div>
