@@ -171,10 +171,70 @@ export async function PATCH(request: NextRequest) {
     // Activate pending referral when niche is set (onboarding step 3 = final step)
     if ('niche' in body && Array.isArray(body.niche) && body.niche.length > 0) {
       try {
-        await prisma.referral.updateMany({
+        const activated = await prisma.referral.updateMany({
           where: { referredId: influencer.id, status: 'pending' },
           data: { status: 'active' },
         })
+
+        if (activated.count > 0) {
+          // Notify referrer
+          const referral = await prisma.referral.findFirst({
+            where: { referredId: influencer.id, status: 'active' },
+            include: {
+              referrer: {
+                select: {
+                  handle: true,
+                  userId: true,
+                  profile: { select: { email: true, emailNotifications: true } },
+                },
+              },
+            },
+          })
+
+          if (referral?.referrer.profile?.emailNotifications) {
+            try {
+              const { sendCollaborationEmail } = await import('@/lib/email')
+              await sendCollaborationEmail(
+                referral.referrer.profile.email,
+                'New Referral',
+                'Someone joined through your link!',
+                `@${influencer.handle} signed up on Influx using your referral link and completed onboarding. You'll earn 10% of platform fees from their campaigns.`,
+                'View Referrals',
+                `${process.env.NEXT_PUBLIC_APP_URL || 'https://aiinflux.io'}/dashboard/influencer`,
+              )
+            } catch (emailErr) {
+              console.error('Failed to send referral notification email:', emailErr)
+            }
+
+            // Check tier upgrade
+            const activeCount = await prisma.referral.count({
+              where: { referrerId: referral.referrerId, status: 'active' },
+            })
+
+            const tierThresholds = [
+              { count: 15, name: 'Community Leader' },
+              { count: 5, name: 'Community Builder' },
+              { count: 1, name: 'Community Member' },
+            ]
+            const newTier = tierThresholds.find(t => activeCount === t.count)
+
+            if (newTier) {
+              try {
+                const { sendCollaborationEmail } = await import('@/lib/email')
+                await sendCollaborationEmail(
+                  referral.referrer.profile.email,
+                  `You're now a ${newTier.name}!`,
+                  `You've reached ${newTier.name}!`,
+                  `Congratulations! With ${activeCount} referral${activeCount !== 1 ? 's' : ''}, you've earned the ${newTier.name} badge. Keep inviting creators to climb the leaderboard.`,
+                  'View Your Badge',
+                  `${process.env.NEXT_PUBLIC_APP_URL || 'https://aiinflux.io'}/dashboard/influencer`,
+                )
+              } catch (emailErr) {
+                console.error('Failed to send tier notification email:', emailErr)
+              }
+            }
+          }
+        }
       } catch (refError) {
         console.error('Failed to activate referral:', refError)
       }
