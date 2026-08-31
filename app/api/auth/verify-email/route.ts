@@ -32,12 +32,25 @@ export async function POST(request: NextRequest) {
       data: { emailVerified: true },
     })
 
-    // Auto-approve influencer when email is verified
+    // Auto-approve influencer when email verified + profile complete
     if (profile.role === 'INFLUENCER') {
-      await prisma.influencer.updateMany({
-        where: { userId: profile.id, status: 'PENDING' },
-        data: { status: 'APPROVED' },
+      const influencer = await prisma.influencer.findUnique({
+        where: { userId: profile.id },
+        select: { status: true, handle: true, niche: true, twitterHandle: true, instagramHandle: true, tiktokHandle: true, youtubeHandle: true, telegramHandle: true },
       })
+      if (influencer && influencer.status === 'PENDING') {
+        const profileComplete = !!(
+          influencer.handle?.trim() &&
+          influencer.niche.length > 0 &&
+          (influencer.twitterHandle || influencer.instagramHandle || influencer.tiktokHandle || influencer.youtubeHandle || influencer.telegramHandle)
+        )
+        if (profileComplete) {
+          await prisma.influencer.update({
+            where: { userId: profile.id },
+            data: { status: 'APPROVED' },
+          })
+        }
+      }
     }
 
     return NextResponse.json({ success: true })

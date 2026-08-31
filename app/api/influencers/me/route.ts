@@ -168,12 +168,28 @@ export async function PATCH(request: NextRequest) {
       data: updateData,
     })
 
-    // Activate pending referral when profile is complete (name + niche + at least 1 social)
+    // Check if profile is complete (name + niche + at least 1 social)
     const profileComplete = !!(
       influencer.handle?.trim() &&
       influencer.niche.length > 0 &&
       (influencer.twitterHandle || influencer.instagramHandle || influencer.tiktokHandle || influencer.youtubeHandle || influencer.telegramHandle)
     )
+
+    // Auto-approve when profile is complete + email verified (makes KOL visible in discover)
+    if (profileComplete && influencer.status === 'PENDING') {
+      const userProfile = await prisma.profile.findUnique({
+        where: { id: user.userId },
+        select: { emailVerified: true },
+      })
+      if (userProfile?.emailVerified) {
+        await prisma.influencer.update({
+          where: { id: influencer.id },
+          data: { status: 'APPROVED' },
+        })
+      }
+    }
+
+    // Activate pending referral when profile is complete
     if (profileComplete) {
       try {
         const activated = await prisma.referral.updateMany({
