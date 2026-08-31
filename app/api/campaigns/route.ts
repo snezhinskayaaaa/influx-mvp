@@ -196,6 +196,7 @@ export async function POST(request: NextRequest) {
         brandTag: body.brandTag || null,
         hashtags: body.hashtags || null,
         creatorScript: body.creatorScript || null,
+        startDate: body.startDate ? new Date(body.startDate) : null,
         endDate: body.endDate ? new Date(body.endDate) : null,
       },
     })

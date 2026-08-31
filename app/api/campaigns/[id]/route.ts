@@ -130,6 +130,9 @@ export async function PATCH(
       updateData.budgetMax = Math.round(body.budgetMax * 100)
     }
 
+    if (body.startDate !== undefined) {
+      updateData.startDate = body.startDate ? new Date(body.startDate) : null
+    }
     if (body.endDate !== undefined) {
       updateData.endDate = body.endDate ? new Date(body.endDate) : null
     }
