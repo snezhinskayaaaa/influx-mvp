@@ -417,7 +417,7 @@ export default function InfluencerDashboard() {
                 requirements: (collab.deliverables as string[]) || [],
                 platforms: Array.isArray(campaign?.platforms) ? campaign.platforms as string[] : [],
                 deadline: (campaign?.deadline as string) || new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-                startDate: (collab.advancePaidAt as string) || undefined,
+                startDate: (campaign?.createdAt as string) || (collab.advancePaidAt as string) || undefined,
                 endDate: (campaign?.endDate as string) || undefined,
                 status: statusMap[(collab.status as string)] || 'applied',
                 goal: (campaign?.goal as string) || '',
