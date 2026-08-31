@@ -3869,7 +3869,7 @@ export default function InfluencerDashboard() {
       )}
 
       {toast && (
-        <div className={`fixed bottom-6 right-6 z-50 px-5 py-3 rounded-xl shadow-lg border backdrop-blur-sm ${
+        <div className={`fixed bottom-24 sm:bottom-6 left-4 right-4 sm:left-auto sm:right-6 z-[150] px-5 py-3 rounded-xl shadow-lg border backdrop-blur-sm ${
           toast.variant === 'success'
             ? 'bg-green-50 border-green-200 text-green-800'
             : 'bg-red-50 border-red-200 text-red-800'
