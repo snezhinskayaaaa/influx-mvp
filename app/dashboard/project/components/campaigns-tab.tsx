@@ -2690,8 +2690,8 @@ export function CampaignsTab({
                 })()}
               </div>
 
-              {/* Actions Column */}
-              <div className="w-[140px] flex items-center justify-end gap-2" onClick={(e) => e.stopPropagation()}>
+              {/* Actions Column — desktop: right side, mobile: bottom of card */}
+              <div className="hidden sm:flex w-[140px] items-center justify-end gap-2" onClick={(e) => e.stopPropagation()}>
                 <button
                   title="Edit campaign"
                   disabled={actionLoading}
@@ -2860,6 +2860,50 @@ export function CampaignsTab({
                           </div>
                         );
                       })()}
+                    </div>
+
+                    {/* Mobile Actions */}
+                    <div className="flex items-center justify-end gap-1 pt-2 border-t border-border/50 mt-1" onClick={(e) => e.stopPropagation()}>
+                      <button
+                        title="Edit"
+                        disabled={actionLoading}
+                        className="p-1.5 rounded-lg hover:bg-muted transition-colors"
+                        onClick={() => handleEditCampaign(campaign)}
+                      >
+                        <Pencil className="h-3.5 w-3.5 text-muted-foreground" />
+                      </button>
+                      {campaign.status === "draft" && (
+                        <button
+                          title="Launch"
+                          disabled={actionLoading}
+                          className="p-1.5 rounded-lg hover:bg-muted transition-colors"
+                          onClick={() => handleTogglePause(campaign, 'ACTIVE')}
+                        >
+                          <Rocket className="h-3.5 w-3.5 text-primary" />
+                        </button>
+                      )}
+                      {(campaign.status === "active" || campaign.status === "paused") && (
+                        <button
+                          title={campaign.status === "paused" ? "Resume" : "Pause"}
+                          disabled={actionLoading}
+                          className="p-1.5 rounded-lg hover:bg-muted transition-colors"
+                          onClick={() => handleTogglePause(campaign)}
+                        >
+                          {campaign.status === "paused" ? (
+                            <Play className="h-3.5 w-3.5 text-muted-foreground" />
+                          ) : (
+                            <Pause className="h-3.5 w-3.5 text-muted-foreground" />
+                          )}
+                        </button>
+                      )}
+                      <button
+                        title="Delete"
+                        disabled={actionLoading}
+                        className="p-1.5 rounded-lg hover:bg-muted transition-colors"
+                        onClick={() => { setDeletingCampaign(campaign); setDeleteConfirmText(""); }}
+                      >
+                        <Trash2 className="h-3.5 w-3.5 text-muted-foreground hover:text-red-600" />
+                      </button>
                     </div>
                   </div>
                 </Card>
