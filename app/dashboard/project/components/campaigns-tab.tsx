@@ -1256,7 +1256,7 @@ export function CampaignsTab({
                           onClick={() => setViewingProfile(application as unknown as Record<string, unknown>)}
                           className="w-12 h-12 rounded-full bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center text-2xl shrink-0 overflow-hidden hover:ring-2 hover:ring-primary/50 transition-all cursor-pointer"
                         >
-                          {application.influencerAvatar && application.influencerAvatar.startsWith('data:') ? (
+                          {application.influencerAvatar && (application.influencerAvatar.startsWith('data:') || application.influencerAvatar.startsWith('http')) ? (
                             <img src={application.influencerAvatar} alt={application.influencerName} className="w-full h-full object-cover" />
                           ) : (
                             application.influencerAvatar || '👤'
@@ -1427,7 +1427,7 @@ export function CampaignsTab({
                               >
                                 <div className="flex items-center gap-2">
                                   <div className="w-6 h-6 rounded-full bg-gradient-to-r from-primary to-secondary flex items-center justify-center text-xs shrink-0 overflow-hidden">
-                                    {influencer.influencerAvatar?.startsWith('data:') ? (
+                                    {influencer.influencerAvatar?.startsWith('data:') || influencer.influencerAvatar?.startsWith('http') ? (
                                       <img src={influencer.influencerAvatar} alt="Creator avatar" className="w-full h-full object-cover" />
                                     ) : (
                                       <span className="text-white text-[10px]">{influencer.influencerName?.charAt(0) || '?'}</span>
@@ -1507,7 +1507,7 @@ export function CampaignsTab({
                                 <div key={app.id} className="rounded-lg border border-violet-500/20 bg-violet-500/5 p-4">
                                   <div className="flex items-center gap-3">
                                     <div className="w-8 h-8 rounded-full bg-gradient-to-r from-primary to-secondary flex items-center justify-center text-xs shrink-0 overflow-hidden">
-                                      {app.influencerAvatar?.startsWith('data:') ? (
+                                      {app.influencerAvatar?.startsWith('data:') || app.influencerAvatar?.startsWith('http') ? (
                                         <img src={app.influencerAvatar} alt="Creator avatar" className="w-full h-full object-cover" />
                                       ) : (
                                         <span className="text-white text-xs">{app.influencerName?.charAt(0) || '?'}</span>
@@ -1538,7 +1538,7 @@ export function CampaignsTab({
                               >
                                 <div className="flex items-center gap-3 mb-2">
                                   <div className="w-8 h-8 rounded-full bg-gradient-to-r from-primary to-secondary flex items-center justify-center text-xs shrink-0 overflow-hidden">
-                                    {app.influencerAvatar?.startsWith('data:') ? (
+                                    {app.influencerAvatar?.startsWith('data:') || app.influencerAvatar?.startsWith('http') ? (
                                       <img src={app.influencerAvatar} alt="Creator avatar" className="w-full h-full object-cover" />
                                     ) : (
                                       <span className="text-white text-[10px]">{app.influencerName?.charAt(0) || '?'}</span>
@@ -1581,7 +1581,7 @@ export function CampaignsTab({
                                 >
                                   <div className="flex items-center gap-3 mb-3">
                                     <div className="w-8 h-8 rounded-full bg-gradient-to-r from-primary to-secondary flex items-center justify-center text-xs shrink-0 overflow-hidden">
-                                      {app.influencerAvatar?.startsWith('data:') ? (
+                                      {app.influencerAvatar?.startsWith('data:') || app.influencerAvatar?.startsWith('http') ? (
                                         <img src={app.influencerAvatar} alt="Creator avatar" className="w-full h-full object-cover" />
                                       ) : (
                                         <span className="text-white text-[10px]">{app.influencerName?.charAt(0) || '?'}</span>
@@ -1699,7 +1699,7 @@ export function CampaignsTab({
                         {/* Influencer Info */}
                         <div className="flex items-center gap-3 pb-3 border-b">
                           <div className="w-10 h-10 rounded-full bg-gradient-to-r from-primary to-secondary flex items-center justify-center text-sm shrink-0">
-                            {selectedInfluencerForPipeline.influencerAvatar?.startsWith('data:') ? (
+                            {selectedInfluencerForPipeline.influencerAvatar?.startsWith('data:') || selectedInfluencerForPipeline.influencerAvatar?.startsWith('http') ? (
                               <img src={selectedInfluencerForPipeline.influencerAvatar} alt="Creator avatar" className="w-full h-full object-cover rounded-full" />
                             ) : (
                               <span className="text-white text-xs">{selectedInfluencerForPipeline.influencerName?.charAt(0) || '?'}</span>
@@ -2058,7 +2058,7 @@ export function CampaignsTab({
                       <div className="space-y-4">
                         <div className="flex items-center gap-3 pb-3 border-b">
                           <div className="w-10 h-10 rounded-full bg-gradient-to-r from-primary to-secondary flex items-center justify-center text-sm shrink-0">
-                            {selectedInfluencerForPipeline.influencerAvatar?.startsWith('data:') ? (
+                            {selectedInfluencerForPipeline.influencerAvatar?.startsWith('data:') || selectedInfluencerForPipeline.influencerAvatar?.startsWith('http') ? (
                               <img src={selectedInfluencerForPipeline.influencerAvatar} alt="Creator avatar" className="w-full h-full object-cover rounded-full" />
                             ) : (
                               <span className="text-white text-xs">{selectedInfluencerForPipeline.influencerName?.charAt(0) || '?'}</span>
@@ -2284,7 +2284,7 @@ export function CampaignsTab({
                       <div className="space-y-4">
                         <div className="flex items-center gap-3 pb-3 border-b">
                           <div className="w-10 h-10 rounded-full bg-gradient-to-r from-primary to-secondary flex items-center justify-center text-sm shrink-0">
-                            {selectedInfluencerForPipeline.influencerAvatar?.startsWith('data:') ? (
+                            {selectedInfluencerForPipeline.influencerAvatar?.startsWith('data:') || selectedInfluencerForPipeline.influencerAvatar?.startsWith('http') ? (
                               <img src={selectedInfluencerForPipeline.influencerAvatar} alt="Creator avatar" className="w-full h-full object-cover rounded-full" />
                             ) : (
                               <span className="text-white text-xs">{selectedInfluencerForPipeline.influencerName?.charAt(0) || '?'}</span>
