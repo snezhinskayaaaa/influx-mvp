@@ -23,6 +23,26 @@ export async function GET() {
       )
     }
 
+    // Auto-approve fallback: if profile complete + email verified but still PENDING
+    if (influencer.status === 'PENDING') {
+      const profile = await prisma.profile.findUnique({
+        where: { id: user.userId },
+        select: { emailVerified: true },
+      })
+      const profileComplete = !!(
+        influencer.handle?.trim() &&
+        influencer.niche.length > 0 &&
+        (influencer.twitterHandle || influencer.instagramHandle || influencer.tiktokHandle || influencer.youtubeHandle || influencer.telegramHandle)
+      )
+      if (profile?.emailVerified && profileComplete) {
+        await prisma.influencer.update({
+          where: { id: influencer.id },
+          data: { status: 'APPROVED' },
+        })
+        influencer.status = 'APPROVED'
+      }
+    }
+
     return NextResponse.json({ influencer }, { status: 200 })
   } catch (error) {
     console.error('GET /api/influencers/me error:', error)
