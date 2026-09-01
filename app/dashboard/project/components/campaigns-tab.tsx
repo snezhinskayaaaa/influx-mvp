@@ -1880,42 +1880,39 @@ export function CampaignsTab({
                                 >
                                   Propose New Price
                                 </Button>
-                              </div>
-                            )}
-
-                            {/* Cancel Negotiation */}
-                            {selectedInfluencerForPipeline.collaborationId && (
-                              <div className="pt-1">
-                                <Button
-                                  size="sm"
-                                  variant="outline"
-                                  className="w-full text-red-600 border-red-200 hover:bg-red-50"
-                                  disabled={actionLoading}
-                                  onClick={async () => {
-                                    setActionLoading(true);
-                                    try {
-                                      const res = await fetch(`/api/collaborations/${selectedInfluencerForPipeline.collaborationId}`, {
-                                        method: 'PATCH',
-                                        headers: { 'Content-Type': 'application/json' },
-                                        body: JSON.stringify({ status: 'CANCELLED' }),
-                                      });
-                                      if (res.ok) {
-                                        const updatedApplications = selectedCampaignDetails.applicationsList?.filter(app =>
-                                          app.id !== selectedInfluencerForPipeline.id
-                                        );
-                                        setSelectedCampaignDetails({ ...selectedCampaignDetails, applicationsList: updatedApplications, applications: (updatedApplications?.length || 0) });
-                                        setSelectedInfluencerForPipeline(null);
-                                        showToast('Negotiation ended', 'success');
-                                      } else {
-                                        const data = await res.json();
-                                        showToast(data.error || 'Failed to cancel', 'error');
-                                      }
-                                    } catch { showToast('Failed to cancel negotiation', 'error'); }
-                                    finally { setActionLoading(false); }
-                                  }}
-                                >
-                                  Cancel Negotiation
-                                </Button>
+                                {/* Cancel Negotiation */}
+                                {selectedInfluencerForPipeline.collaborationId && (
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    className="w-full text-red-600 border-red-200 hover:bg-red-50"
+                                    disabled={actionLoading}
+                                    onClick={async () => {
+                                      setActionLoading(true);
+                                      try {
+                                        const res = await fetch(`/api/collaborations/${selectedInfluencerForPipeline.collaborationId}`, {
+                                          method: 'PATCH',
+                                          headers: { 'Content-Type': 'application/json' },
+                                          body: JSON.stringify({ status: 'CANCELLED' }),
+                                        });
+                                        if (res.ok) {
+                                          const updatedApplications = selectedCampaignDetails.applicationsList?.filter(app =>
+                                            app.id !== selectedInfluencerForPipeline.id
+                                          );
+                                          setSelectedCampaignDetails({ ...selectedCampaignDetails, applicationsList: updatedApplications, applications: (updatedApplications?.length || 0) });
+                                          setSelectedInfluencerForPipeline(null);
+                                          showToast('Negotiation ended', 'success');
+                                        } else {
+                                          const data = await res.json();
+                                          showToast(data.error || 'Failed to cancel', 'error');
+                                        }
+                                      } catch { showToast('Failed to cancel negotiation', 'error'); }
+                                      finally { setActionLoading(false); }
+                                    }}
+                                  >
+                                    Cancel Negotiation
+                                  </Button>
+                                )}
                               </div>
                             )}
                           </>
