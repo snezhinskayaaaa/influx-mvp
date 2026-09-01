@@ -1960,34 +1960,36 @@ export default function InfluencerDashboard() {
                                       Decline Price
                                     </Button>
                                   </div>
-                                  <Button
-                                    size="sm"
-                                    variant="outline"
-                                    className="w-full mt-1 text-red-600 border-red-200 hover:bg-red-50"
-                                    disabled={actionLoading}
-                                    onClick={async () => {
-                                      setActionLoading(true);
-                                      try {
-                                        const res = await fetch(`/api/collaborations/${selectedCampaignDetails.collaborationId}`, {
-                                          method: 'PATCH',
-                                          headers: { 'Content-Type': 'application/json' },
-                                          body: JSON.stringify({ status: 'CANCELLED' }),
-                                        });
-                                        if (res.ok) {
-                                          showToast('Collaboration cancelled.', 'success');
-                                          await refreshCollaborations();
-                                          setSelectedCampaignDetails(null);
-                                        } else {
-                                          const data = await res.json();
-                                          showToast(data.error || 'Failed to cancel', 'error');
-                                        }
-                                      } catch { showToast('Failed to cancel collaboration', 'error'); }
-                                      finally { setActionLoading(false); }
-                                    }}
-                                  >
-                                    <XCircle className="h-4 w-4 mr-1" />
-                                    Cancel Collaboration
-                                  </Button>
+                                  <div>
+                                    <Button
+                                      size="sm"
+                                      variant="outline"
+                                      className="w-full text-red-600 border-red-200 hover:bg-red-50"
+                                      disabled={actionLoading}
+                                      onClick={async () => {
+                                        setActionLoading(true);
+                                        try {
+                                          const res = await fetch(`/api/collaborations/${selectedCampaignDetails.collaborationId}`, {
+                                            method: 'PATCH',
+                                            headers: { 'Content-Type': 'application/json' },
+                                            body: JSON.stringify({ status: 'CANCELLED' }),
+                                          });
+                                          if (res.ok) {
+                                            showToast('Collaboration cancelled.', 'success');
+                                            await refreshCollaborations();
+                                            setSelectedCampaignDetails(null);
+                                          } else {
+                                            const data = await res.json();
+                                            showToast(data.error || 'Failed to cancel', 'error');
+                                          }
+                                        } catch { showToast('Failed to cancel collaboration', 'error'); }
+                                        finally { setActionLoading(false); }
+                                      }}
+                                    >
+                                      <XCircle className="h-4 w-4 mr-1" />
+                                      Cancel Collaboration
+                                    </Button>
+                                  </div>
                                 </div>
                               )}
                             </div>
