@@ -1246,7 +1246,10 @@ export default function InfluencerDashboard() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.3 }}
                   >
-                    <Card className="p-3 sm:p-6 hover:shadow-lg transition-shadow cursor-pointer" onClick={() => setApplyingCampaign(campaign)}>
+                    <Card className="p-3 sm:p-6 hover:shadow-lg transition-shadow cursor-pointer" onClick={() => {
+                      const existing = myCampaigns.find(mc => mc.campaignId === String(campaign.id));
+                      if (existing) { setActiveTab("my-campaigns"); } else { setApplyingCampaign(campaign); }
+                    }}>
                       <div className="flex gap-2.5 sm:gap-4">
                         {/* Brand Avatar */}
                         <div className="flex-shrink-0">
