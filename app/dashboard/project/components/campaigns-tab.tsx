@@ -2916,7 +2916,7 @@ export function CampaignsTab({
       )}
       {/* Price Offer Modal */}
       {priceModalData && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+        <div className="fixed inset-0 z-[150] flex items-center justify-center bg-black/50 backdrop-blur-sm">
           <div className="bg-background border border-border rounded-2xl p-6 w-full max-w-sm mx-4 shadow-2xl">
             <h3 className="text-lg font-bold mb-1">
               {priceModalData.isNewOffer ? 'Propose New Price' : 'Approve & Set Price'}
@@ -2998,7 +2998,7 @@ export function CampaignsTab({
 
       {/* Creator Profile Modal */}
       {viewingProfile && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+        <div className="fixed inset-0 z-[150] flex items-center justify-center bg-black/50 backdrop-blur-sm">
           <div className="bg-background border border-border rounded-2xl p-6 w-full max-w-md mx-4 shadow-2xl">
             <div className="flex items-start gap-4 mb-4">
               <div className="w-16 h-16 rounded-full bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center text-3xl shrink-0 overflow-hidden">
@@ -3102,7 +3102,7 @@ export function CampaignsTab({
 
       {/* Delete Campaign Modal */}
       {deletingCampaign && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+        <div className="fixed inset-0 z-[150] flex items-center justify-center bg-black/50 backdrop-blur-sm">
           <div className="bg-background border border-border rounded-2xl p-6 w-full max-w-md mx-4 shadow-2xl">
             <h3 className="text-lg font-bold mb-1 text-destructive">Delete Campaign</h3>
             <p className="text-sm text-muted-foreground mb-4">

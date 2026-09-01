@@ -3468,7 +3468,7 @@ export default function InfluencerDashboard() {
 
       {/* Apply Modal */}
       {applyingCampaign && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+        <div className="fixed inset-0 z-[150] flex items-center justify-center bg-black/50 backdrop-blur-sm">
           <div className="bg-background border border-border rounded-2xl p-4 sm:p-6 w-full max-w-md mx-4 shadow-2xl max-h-[90vh] overflow-y-auto">
             <h3 className="text-sm sm:text-lg font-bold mb-0.5 sm:mb-1">Apply to Campaign</h3>
             <p className="text-xs sm:text-sm text-muted-foreground mb-2 sm:mb-3">{applyingCampaign.title}</p>
@@ -3578,7 +3578,7 @@ export default function InfluencerDashboard() {
 
       {/* Withdraw Application Modal */}
       {withdrawingApplication && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+        <div className="fixed inset-0 z-[150] flex items-center justify-center bg-black/50 backdrop-blur-sm">
           <div className="bg-background border border-border rounded-2xl p-6 w-full max-w-md mx-4 shadow-2xl">
             <h3 className="text-lg font-bold mb-1">Withdraw Application</h3>
             <p className="text-sm text-muted-foreground mb-4">
@@ -3769,7 +3769,7 @@ export default function InfluencerDashboard() {
 
       {/* Email Verification Popup */}
       {showVerifyPopup && !emailVerified && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+        <div className="fixed inset-0 z-[150] flex items-center justify-center bg-black/50 backdrop-blur-sm">
           <div className="bg-background border border-border rounded-2xl p-6 sm:p-8 w-full max-w-md mx-4 shadow-2xl">
             <div className="flex justify-center mb-4">
               <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
@@ -3812,7 +3812,7 @@ export default function InfluencerDashboard() {
 
       {/* Delete Account Modal */}
       {showDeleteModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+        <div className="fixed inset-0 z-[150] flex items-center justify-center bg-black/50 backdrop-blur-sm">
           <div className="bg-background border border-border rounded-2xl p-6 w-full max-w-md mx-4 shadow-2xl">
             <h3 className="text-lg font-bold mb-2 text-destructive">Delete Account</h3>
             <p className="text-sm text-muted-foreground mb-4">

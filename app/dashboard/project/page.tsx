@@ -565,7 +565,7 @@ export default function BrandDashboard() {
 
                 {/* Withdraw Modal */}
                 {showWithdrawModal && (
-                  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+                  <div className="fixed inset-0 z-[150] flex items-center justify-center bg-black/50 backdrop-blur-sm">
                     <div className="bg-background border border-border rounded-2xl p-6 w-full max-w-md mx-4 shadow-2xl">
                       <div className="flex items-center justify-between mb-4">
                         <div>
@@ -1125,7 +1125,7 @@ export default function BrandDashboard() {
 
       {/* Email Verification Popup */}
       {showVerifyPopup && !emailVerified && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+        <div className="fixed inset-0 z-[150] flex items-center justify-center bg-black/50 backdrop-blur-sm">
           <div className="bg-background border border-border rounded-2xl p-6 sm:p-8 w-full max-w-md mx-4 shadow-2xl">
             <div className="flex justify-center mb-4">
               <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
