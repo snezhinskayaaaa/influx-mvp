@@ -101,7 +101,7 @@ export default function BrandDashboard() {
               budgetMax: String(((c.budgetMax as number) || 0) / 100),
               applications: (c._count as Record<string, number>)?.collaborations || 0,
               applicationsList: undefined,
-              startDate: c.createdAt ? new Date(c.createdAt as string).toISOString().split('T')[0] : '',
+              startDate: c.startDate ? new Date(c.startDate as string).toISOString().split('T')[0] : c.createdAt ? new Date(c.createdAt as string).toISOString().split('T')[0] : '',
               endDate: c.endDate ? new Date(c.endDate as string).toLocaleDateString() : '',
               influencerCount: String((c.desiredInfluencerCount as number) || 1),
               description: (c.description as string) || '',
