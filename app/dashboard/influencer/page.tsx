@@ -2284,6 +2284,9 @@ export default function InfluencerDashboard() {
                                         onChange={(e) => setPublishedLinks(prev => ({ ...prev, [format]: e.target.value }))}
                                         className="pl-10 h-11"
                                       />
+                                      {publishedLinks[format] && !isValidUrl(publishedLinks[format]) && (
+                                        <p className="text-xs text-destructive mt-1">Please enter a valid URL (https://...)</p>
+                                      )}
                                     </div>
                                   </div>
                                 ))}
