@@ -194,6 +194,8 @@ export default function InfluencerDashboard() {
   const [applyingCampaign, setApplyingCampaign] = useState<Campaign | null>(null);
   const [viewingBrand, setViewingBrand] = useState<Campaign | null>(null);
   const [proposedPrice, setProposedPrice] = useState("");
+  const [myCampaignSearch, setMyCampaignSearch] = useState("");
+  const [myCampaignStatusFilter, setMyCampaignStatusFilter] = useState("all");
   const [applicationMessage, setApplicationMessage] = useState("");
   const [applyLoading, setApplyLoading] = useState(false);
   const [applyError, setApplyError] = useState("");
@@ -2580,10 +2582,12 @@ export default function InfluencerDashboard() {
                       <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                       <Input
                         placeholder="Search"
+                        value={myCampaignSearch}
+                        onChange={(e) => setMyCampaignSearch(e.target.value)}
                         className="pl-9 h-11 bg-card"
                       />
                     </div>
-                    <Select defaultValue="all">
+                    <Select value={myCampaignStatusFilter} onValueChange={setMyCampaignStatusFilter}>
                       <SelectTrigger className="w-[180px] h-11 bg-card">
                         <SelectValue placeholder="Status" />
                       </SelectTrigger>
@@ -2615,7 +2619,11 @@ export default function InfluencerDashboard() {
                     </div>
 
                     {/* Table Rows */}
-                    {myCampaigns.map((campaign, index) => (
+                    {myCampaigns.filter(c => {
+                      const matchesSearch = !myCampaignSearch || c.title.toLowerCase().includes(myCampaignSearch.toLowerCase()) || c.brand.toLowerCase().includes(myCampaignSearch.toLowerCase());
+                      const matchesStatus = myCampaignStatusFilter === "all" || c.status === myCampaignStatusFilter;
+                      return matchesSearch && matchesStatus;
+                    }).map((campaign, index) => (
                       <div
                         key={campaign.id}
                         onClick={() => setSelectedCampaignDetails(campaign)}
@@ -2730,7 +2738,11 @@ export default function InfluencerDashboard() {
 
                   {/* Mobile Card View */}
                   <div className="lg:hidden space-y-3">
-                    {myCampaigns.map((campaign) => (
+                    {myCampaigns.filter(c => {
+                      const matchesSearch = !myCampaignSearch || c.title.toLowerCase().includes(myCampaignSearch.toLowerCase()) || c.brand.toLowerCase().includes(myCampaignSearch.toLowerCase());
+                      const matchesStatus = myCampaignStatusFilter === "all" || c.status === myCampaignStatusFilter;
+                      return matchesSearch && matchesStatus;
+                    }).map((campaign) => (
                       <Card
                         key={campaign.id}
                         onClick={() => setSelectedCampaignDetails(campaign)}
