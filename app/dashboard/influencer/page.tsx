@@ -190,6 +190,7 @@ export default function InfluencerDashboard() {
   const [isCampaignDetailsExpanded, setIsCampaignDetailsExpanded] = useState(false);
   const [contentLinkInput, setContentLinkInput] = useState("");
   const [publishedLinks, setPublishedLinks] = useState<Record<string, string>>({});
+  const isValidUrl = (url: string) => /^https?:\/\/.+\..+/.test(url.trim());
   const [applyingCampaign, setApplyingCampaign] = useState<Campaign | null>(null);
   const [viewingBrand, setViewingBrand] = useState<Campaign | null>(null);
   const [proposedPrice, setProposedPrice] = useState("");
@@ -2101,10 +2102,13 @@ export default function InfluencerDashboard() {
                                       onChange={(e) => setContentLinkInput(e.target.value)}
                                       className="pl-10 h-11"
                                     />
+                                    {contentLinkInput && !isValidUrl(contentLinkInput) && (
+                                      <p className="text-xs text-destructive mt-1">Please enter a valid URL (https://...)</p>
+                                    )}
                                   </div>
                                   <Button
                                     className="w-full h-11 bg-gradient-to-r from-primary to-secondary hover:opacity-90 text-white"
-                                    disabled={submitLoading || !contentLinkInput.trim()}
+                                    disabled={submitLoading || !isValidUrl(contentLinkInput)}
                                     onClick={() => handleSubmitContent(selectedCampaignDetails.id, { contentUrl: contentLinkInput.trim() })}
                                   >
                                     <Upload className="h-4 w-4 mr-2" />
@@ -2148,7 +2152,7 @@ export default function InfluencerDashboard() {
                                     />
                                     <Button
                                       size="sm"
-                                      disabled={submitLoading || !contentLinkInput.trim()}
+                                      disabled={submitLoading || !isValidUrl(contentLinkInput)}
                                       onClick={() => handleSubmitContent(selectedCampaignDetails.collaborationId || selectedCampaignDetails.id, { contentUrl: contentLinkInput.trim() })}
                                     >
                                       {submitLoading ? "..." : "Update"}
@@ -2185,7 +2189,7 @@ export default function InfluencerDashboard() {
                                   </div>
                                   <Button
                                     className="w-full h-11 bg-gradient-to-r from-primary to-secondary hover:opacity-90 text-white"
-                                    disabled={submitLoading || !contentLinkInput.trim()}
+                                    disabled={submitLoading || !isValidUrl(contentLinkInput)}
                                     onClick={() => handleSubmitContent(selectedCampaignDetails.id, { contentUrl: contentLinkInput.trim() })}
                                   >
                                     <Upload className="h-4 w-4 mr-2" />
@@ -2281,8 +2285,8 @@ export default function InfluencerDashboard() {
                                   disabled={
                                     submitLoading ||
                                     (selectedCampaignDetails.contentFormats.length > 0
-                                      ? selectedCampaignDetails.contentFormats.some(f => !publishedLinks[f]?.trim())
-                                      : !publishedLinks["post"]?.trim())
+                                      ? selectedCampaignDetails.contentFormats.some(f => !isValidUrl(publishedLinks[f] || ''))
+                                      : !isValidUrl(publishedLinks["post"] || ''))
                                   }
                                   onClick={() => {
                                     const urls = Object.values(publishedLinks).map(u => u.trim()).filter(u => u.length > 0);

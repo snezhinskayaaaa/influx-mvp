@@ -50,6 +50,9 @@ export async function POST(
       if (!contentUrl || typeof contentUrl !== 'string' || contentUrl.trim().length === 0) {
         return NextResponse.json({ error: 'contentUrl is required' }, { status: 400 })
       }
+      if (!/^https?:\/\/.+\..+/.test(contentUrl.trim())) {
+        return NextResponse.json({ error: 'Please submit a valid URL (https://...)' }, { status: 400 })
+      }
 
       const updated = await prisma.collaboration.update({
         where: { id },
@@ -76,6 +79,10 @@ export async function POST(
 
       if (urls.length === 0) {
         return NextResponse.json({ error: 'At least one published URL is required' }, { status: 400 })
+      }
+      const invalidUrl = urls.find(u => !/^https?:\/\/.+\..+/.test(u))
+      if (invalidUrl) {
+        return NextResponse.json({ error: 'All links must be valid URLs (https://...)' }, { status: 400 })
       }
 
       const updated = await prisma.collaboration.update({
