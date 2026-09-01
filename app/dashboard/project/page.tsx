@@ -640,7 +640,9 @@ export default function BrandDashboard() {
             <div>
               <Label className="text-sm font-medium mb-3 block">Select Campaign</Label>
               <div className="space-y-2 max-h-[300px] overflow-y-auto">
-                {campaigns.map((campaign) => (
+                {campaigns.filter(c => c.status === "active" || c.status === "draft" || c.status === "paused").length === 0 ? (
+                  <p className="text-sm text-muted-foreground text-center py-6">No active campaigns. Create one first.</p>
+                ) : campaigns.filter(c => c.status === "active" || c.status === "draft" || c.status === "paused").map((campaign) => (
                   <button
                     key={campaign.id}
                     onClick={() => setSelectedCampaignId(campaign.id)}
@@ -656,12 +658,12 @@ export default function BrandDashboard() {
                         className={`ml-2 ${
                           campaign.status === "active"
                             ? "bg-primary/10 text-primary border-primary/30"
-                            : campaign.status === "draft"
-                            ? "bg-secondary/10 text-secondary border-secondary/30"
-                            : "bg-muted text-muted-foreground"
+                            : campaign.status === "paused"
+                            ? "bg-amber-500/10 text-amber-600 border-amber-500/30"
+                            : "bg-secondary/10 text-secondary border-secondary/30"
                         }`}
                       >
-                        {campaign.status === "active" ? "Active" : "Draft"}
+                        {campaign.status === "active" ? "Active" : campaign.status === "paused" ? "Paused" : "Draft"}
                       </Badge>
                     </div>
                     <div className="flex items-center gap-4 text-xs text-muted-foreground">
