@@ -608,6 +608,20 @@ interface MobileNavProps {
 }
 
 export function MobileNav({ activeTab, setActiveTab }: MobileNavProps) {
+  const [keyboardOpen, setKeyboardOpen] = useState(false);
+
+  useEffect(() => {
+    const vv = window.visualViewport;
+    if (!vv) return;
+    const onResize = () => {
+      setKeyboardOpen(vv.height < window.innerHeight * 0.75);
+    };
+    vv.addEventListener('resize', onResize);
+    return () => vv.removeEventListener('resize', onResize);
+  }, []);
+
+  if (keyboardOpen) return null;
+
   return (
     <nav className="lg:hidden fixed bottom-0 inset-x-0 bg-background/95 backdrop-blur-xl border-t border-border z-[100]">
       <div className="flex w-full py-2 pb-[env(safe-area-inset-bottom,6px)]">

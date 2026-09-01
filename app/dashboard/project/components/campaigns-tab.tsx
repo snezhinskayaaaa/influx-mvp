@@ -1366,8 +1366,8 @@ export function CampaignsTab({
           )}
 
           {/* Pipeline */}
-          <Card className="p-6">
-            <div className="flex items-center justify-between mb-6">
+          <Card className="p-4 sm:p-6">
+            <div className="flex items-center justify-between mb-4">
               <h2 className="text-base sm:text-xl font-bold">Campaign Pipeline</h2>
 
               {/* Approved Influencers Selector */}

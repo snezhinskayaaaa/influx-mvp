@@ -165,6 +165,15 @@ export default function InfluencerDashboard() {
   const activeTabRef = useRef(activeTab);
   const emailVerifyShown = useRef(false);
   const cameFromDiscover = useRef(false);
+  const [keyboardOpen, setKeyboardOpen] = useState(false);
+
+  useEffect(() => {
+    const vv = window.visualViewport;
+    if (!vv) return;
+    const onResize = () => setKeyboardOpen(vv.height < window.innerHeight * 0.75);
+    vv.addEventListener('resize', onResize);
+    return () => vv.removeEventListener('resize', onResize);
+  }, []);
   useEffect(() => { activeTabRef.current = activeTab; }, [activeTab]);
   const [toast, setToast] = useState<{ message: string; variant: 'success' | 'error' } | null>(null);
 
@@ -1073,7 +1082,7 @@ export default function InfluencerDashboard() {
         </aside>
 
         {/* Mobile Navigation */}
-        <nav className="lg:hidden fixed bottom-0 inset-x-0 bg-background/95 backdrop-blur-xl border-t border-border z-[100]">
+        {!keyboardOpen && <nav className="lg:hidden fixed bottom-0 inset-x-0 bg-background/95 backdrop-blur-xl border-t border-border z-[100]">
           <div className="flex w-full py-2 pb-[env(safe-area-inset-bottom,6px)]">
             {([
               { tab: "discover" as const, icon: <Search className="h-5 w-5" />, label: "Discover" },
@@ -1095,7 +1104,7 @@ export default function InfluencerDashboard() {
               </button>
             ))}
           </div>
-        </nav>
+        </nav>}
 
         {/* Main Content */}
         <main className="flex-1 px-4 py-3 sm:p-6 lg:p-8 pb-20 lg:pb-8 overflow-auto">
