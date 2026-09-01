@@ -1219,7 +1219,7 @@ export function CampaignsTab({
             <Card ref={applicationsRef} className="p-4 sm:p-6 mb-4 sm:mb-6">
               <div className="flex items-center justify-between mb-4">
                 <div>
-                  <h2 className="text-xl font-bold">Applications</h2>
+                  <h2 className="text-base sm:text-xl font-bold">Applications</h2>
                   <p className="text-sm text-muted-foreground mt-1">
                     {selectedCampaignDetails.applicationsList.filter(a => a.status === "pending").length} pending,{" "}
                     {selectedCampaignDetails.applicationsList.filter(a => a.status === "approved").length} approved
@@ -1368,7 +1368,7 @@ export function CampaignsTab({
           {/* Pipeline */}
           <Card className="p-6">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-bold">Campaign Pipeline</h2>
+              <h2 className="text-base sm:text-xl font-bold">Campaign Pipeline</h2>
 
               {/* Approved Influencers Selector */}
               {selectedCampaignDetails.applicationsList &&
@@ -1466,7 +1466,7 @@ export function CampaignsTab({
                       <>
                         <div className="flex items-center justify-between">
                           <div>
-                            <h3 className="font-semibold text-lg">Campaign Progress</h3>
+                            <h3 className="font-semibold text-sm sm:text-lg">Campaign Progress</h3>
                             <p className="text-sm text-muted-foreground">
                               {completed} of {needed || approvedApps.length} completed
                             </p>
