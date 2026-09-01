@@ -1359,7 +1359,7 @@ export default function InfluencerDashboard() {
                               }
                               if (myCollab.status === 'applied') {
                                 return (
-                                  <Button size="default" className="bg-amber-500/15 text-amber-600 border border-amber-500/30 hover:bg-amber-500/25">
+                                  <Button size="default" className="bg-amber-500/15 text-amber-600 border border-amber-500/30 hover:bg-amber-500/25" onClick={(e) => { e.stopPropagation(); setActiveTab("my-campaigns"); }}>
                                     <Clock className="h-4 w-4 mr-2" />
                                     Applied
                                   </Button>
@@ -1367,7 +1367,7 @@ export default function InfluencerDashboard() {
                               }
                               if (myCollab.status === 'completed' || myCollab.status === 'resolved') {
                                 return (
-                                  <Button size="default" className="bg-success/15 text-success border border-success/30 hover:bg-success/25">
+                                  <Button size="default" className="bg-success/15 text-success border border-success/30 hover:bg-success/25" onClick={(e) => { e.stopPropagation(); setActiveTab("my-campaigns"); }}>
                                     <CheckCircle2 className="h-4 w-4 mr-2" />
                                     Completed
                                   </Button>
