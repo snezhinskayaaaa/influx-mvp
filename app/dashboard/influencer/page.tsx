@@ -2142,21 +2142,26 @@ export default function InfluencerDashboard() {
                                     {selectedCampaignDetails.contentUrl}
                                     <ExternalLink className="h-3 w-3" />
                                   </a>
-                                  <div className="flex gap-2">
-                                    <input
-                                      type="text"
-                                      value={contentLinkInput}
-                                      onChange={(e) => setContentLinkInput(e.target.value)}
-                                      placeholder="Update content link..."
-                                      className="flex-1 px-3 py-1.5 rounded-lg border border-border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary"
-                                    />
-                                    <Button
-                                      size="sm"
-                                      disabled={submitLoading || !isValidUrl(contentLinkInput)}
-                                      onClick={() => handleSubmitContent(selectedCampaignDetails.collaborationId || selectedCampaignDetails.id, { contentUrl: contentLinkInput.trim() })}
-                                    >
-                                      {submitLoading ? "..." : "Update"}
-                                    </Button>
+                                  <div>
+                                    <div className="flex gap-2">
+                                      <input
+                                        type="text"
+                                        value={contentLinkInput}
+                                        onChange={(e) => setContentLinkInput(e.target.value)}
+                                        placeholder="Update content link..."
+                                        className="flex-1 px-3 py-1.5 rounded-lg border border-border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                                      />
+                                      <Button
+                                        size="sm"
+                                        disabled={submitLoading || !isValidUrl(contentLinkInput)}
+                                        onClick={() => handleSubmitContent(selectedCampaignDetails.collaborationId || selectedCampaignDetails.id, { contentUrl: contentLinkInput.trim() })}
+                                      >
+                                        {submitLoading ? "..." : "Update"}
+                                      </Button>
+                                    </div>
+                                    {contentLinkInput && !isValidUrl(contentLinkInput) && (
+                                      <p className="text-xs text-destructive mt-1">Please enter a valid URL (https://...)</p>
+                                    )}
                                   </div>
                                 </div>
                               )}
