@@ -90,6 +90,9 @@ model Profile {
   // Token invalidation (JWT revocation on password change)
   tokenInvalidatedAt DateTime? @map("token_invalidated_at") @db.Timestamptz
 
+  // Legal
+  termsAcceptedAt DateTime? @map("terms_accepted_at") @db.Timestamptz
+
   // Analytics (admin-only, not exposed to user)
   referralSource String? @map("referral_source")
 

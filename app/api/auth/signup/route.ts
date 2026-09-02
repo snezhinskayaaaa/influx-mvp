@@ -114,6 +114,7 @@ export async function POST(request: NextRequest) {
         passwordHash,
         fullName: fullName || null,
         role,
+        termsAcceptedAt: new Date(),
       },
     })
 

@@ -126,6 +126,7 @@ export async function GET(request: NextRequest) {
         role: role as 'BRAND' | 'INFLUENCER',
         emailVerified: true,
         avatarUrl: googleUser.picture || null,
+        termsAcceptedAt: new Date(),
       },
     })
 
