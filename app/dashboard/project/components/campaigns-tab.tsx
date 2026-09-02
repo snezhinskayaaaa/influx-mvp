@@ -584,6 +584,51 @@ export function CampaignsTab({
                         if (editedCampaignData.endDate !== selectedCampaignDetails.endDate) {
                           patchBody.endDate = editedCampaignData.endDate || null;
                         }
+                        if (editedCampaignData.startDate !== selectedCampaignDetails.startDate) {
+                          patchBody.startDate = editedCampaignData.startDate || null;
+                        }
+                        if (editedCampaignData.goal !== selectedCampaignDetails.goal) {
+                          patchBody.goal = editedCampaignData.goal || null;
+                        }
+                        if (JSON.stringify(editedCampaignData.platforms) !== JSON.stringify(selectedCampaignDetails.platforms)) {
+                          patchBody.platforms = editedCampaignData.platforms;
+                        }
+                        if (JSON.stringify(editedCampaignData.contentFormats) !== JSON.stringify(selectedCampaignDetails.contentFormats)) {
+                          patchBody.contentFormats = editedCampaignData.contentFormats;
+                        }
+                        if (JSON.stringify(editedCampaignData.pricingModels) !== JSON.stringify(selectedCampaignDetails.pricingModels)) {
+                          patchBody.pricingModels = editedCampaignData.pricingModels;
+                        }
+                        if (editedCampaignData.targetViews !== selectedCampaignDetails.targetViews) {
+                          patchBody.targetViews = editedCampaignData.targetViews || null;
+                        }
+                        if (editedCampaignData.targetClicks !== selectedCampaignDetails.targetClicks) {
+                          patchBody.targetClicks = editedCampaignData.targetClicks || null;
+                        }
+                        if (editedCampaignData.targetEngagements !== selectedCampaignDetails.targetEngagements) {
+                          patchBody.targetEngagements = editedCampaignData.targetEngagements || null;
+                        }
+                        if (editedCampaignData.productName !== selectedCampaignDetails.productName) {
+                          patchBody.productName = editedCampaignData.productName || null;
+                        }
+                        if (editedCampaignData.productPrice !== selectedCampaignDetails.productPrice) {
+                          patchBody.productPrice = editedCampaignData.productPrice || null;
+                        }
+                        if (editedCampaignData.productLink !== selectedCampaignDetails.productLink) {
+                          patchBody.productLink = editedCampaignData.productLink || null;
+                        }
+                        if (editedCampaignData.productDescription !== selectedCampaignDetails.productDescription) {
+                          patchBody.productDescription = editedCampaignData.productDescription || null;
+                        }
+                        if (editedCampaignData.brandTag !== selectedCampaignDetails.brandTag) {
+                          patchBody.brandTag = editedCampaignData.brandTag || null;
+                        }
+                        if (editedCampaignData.hashtags !== selectedCampaignDetails.hashtags) {
+                          patchBody.hashtags = editedCampaignData.hashtags || null;
+                        }
+                        if (editedCampaignData.creatorScript !== selectedCampaignDetails.creatorScript) {
+                          patchBody.creatorScript = editedCampaignData.creatorScript || null;
+                        }
 
                         if (Object.keys(patchBody).length > 0) {
                           const res = await fetch(`/api/campaigns/${selectedCampaignDetails.id}`, {
