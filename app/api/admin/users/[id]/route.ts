@@ -78,6 +78,36 @@ export async function DELETE(
       }
     }
 
+    // Check financial obligations before deletion
+    if (targetProfile.role === 'BRAND') {
+      const brand = await prisma.brand.findUnique({ where: { userId: id }, select: { id: true, balance: true, frozenBalance: true } })
+      if (brand && (brand.balance > 0 || brand.frozenBalance > 0)) {
+        return NextResponse.json({ error: `Cannot delete: project has $${((brand.balance + brand.frozenBalance) / 100).toFixed(2)} in balance/frozen funds` }, { status: 400 })
+      }
+      if (brand) {
+        const activeCollabs = await prisma.collaboration.count({
+          where: { campaign: { brandId: brand.id }, status: { in: ['AGREED', 'IN_PROGRESS', 'CONTENT_REVIEW', 'REVISION', 'PUBLISHING', 'DELIVERED', 'DISPUTED'] } },
+        })
+        if (activeCollabs > 0) {
+          return NextResponse.json({ error: `Cannot delete: project has ${activeCollabs} active collaboration(s)` }, { status: 400 })
+        }
+      }
+    }
+    if (targetProfile.role === 'INFLUENCER') {
+      const influencer = await prisma.influencer.findUnique({ where: { userId: id }, select: { id: true, balance: true } })
+      if (influencer && influencer.balance > 0) {
+        return NextResponse.json({ error: `Cannot delete: creator has $${(influencer.balance / 100).toFixed(2)} in balance` }, { status: 400 })
+      }
+      if (influencer) {
+        const activeCollabs = await prisma.collaboration.count({
+          where: { influencerId: influencer.id, status: { in: ['AGREED', 'IN_PROGRESS', 'CONTENT_REVIEW', 'REVISION', 'PUBLISHING', 'DELIVERED', 'DISPUTED'] } },
+        })
+        if (activeCollabs > 0) {
+          return NextResponse.json({ error: `Cannot delete: creator has ${activeCollabs} active collaboration(s)` }, { status: 400 })
+        }
+      }
+    }
+
     await prisma.profile.delete({ where: { id } })
 
     return NextResponse.json({ success: true })

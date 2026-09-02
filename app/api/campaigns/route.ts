@@ -129,6 +129,9 @@ export async function POST(request: NextRequest) {
     if (!brand) {
       return NextResponse.json({ error: 'Brand profile not found' }, { status: 404 })
     }
+    if (brand.isBanned) {
+      return NextResponse.json({ error: 'Your account has been suspended. Please contact support.' }, { status: 403 })
+    }
 
     const body = await request.json()
     const { title, description, budgetMin, budgetMax, desiredInfluencerCount, deliverables, status: requestedStatus } = body

@@ -33,7 +33,7 @@ export async function POST(
       where: { id },
       include: {
         campaign: {
-          include: { brand: { select: { id: true, userId: true, balance: true, frozenBalance: true } } },
+          include: { brand: { select: { id: true, userId: true, balance: true, frozenBalance: true, isBanned: true } } },
         },
         influencer: { select: { id: true, userId: true } },
       },
@@ -48,6 +48,10 @@ export async function POST(
     const isInfluencer = collaboration.influencer.userId === user.userId
     if (!isBrandOwner && !isInfluencer && user.role !== 'ADMIN') {
       return NextResponse.json({ error: 'Access denied' }, { status: 403 })
+    }
+
+    if (collaboration.campaign.brand.isBanned) {
+      return NextResponse.json({ error: 'This project has been suspended' }, { status: 403 })
     }
 
     if (collaboration.status !== 'NEGOTIATING') {
