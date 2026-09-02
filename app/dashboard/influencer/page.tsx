@@ -187,6 +187,8 @@ export default function InfluencerDashboard() {
   const [selectedBudget, setSelectedBudget] = useState("all");
   const [showFilters, setShowFilters] = useState(false);
   const [selectedCampaignDetails, setSelectedCampaignDetails] = useState<Campaign | null>(null);
+  const selectedCampaignRef = useRef<Campaign | null>(null);
+  useEffect(() => { selectedCampaignRef.current = selectedCampaignDetails; }, [selectedCampaignDetails]);
   const [isCampaignDetailsExpanded, setIsCampaignDetailsExpanded] = useState(false);
   const [contentLinkInput, setContentLinkInput] = useState("");
   const [publishedLinks, setPublishedLinks] = useState<Record<string, string>>({});
@@ -793,8 +795,9 @@ export default function InfluencerDashboard() {
           });
           setMyCampaigns(mapped);
           // Update the selected campaign details if one is selected
-          if (selectedCampaignDetails) {
-            const updated = mapped.find(c => c.id === selectedCampaignDetails.id);
+          const current = selectedCampaignRef.current;
+          if (current) {
+            const updated = mapped.find(c => c.id === current.id);
             if (updated) {
               setSelectedCampaignDetails(updated);
             }
@@ -1045,7 +1048,7 @@ export default function InfluencerDashboard() {
             </button>
 
             <button
-              onClick={() => setActiveTab("my-campaigns")}
+              onClick={() => { setActiveTab("my-campaigns"); setSelectedCampaignDetails(null); }}
               className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all ${
                 activeTab === "my-campaigns"
                   ? "bg-primary/10 text-primary border-2 border-primary/30"
@@ -1118,7 +1121,7 @@ export default function InfluencerDashboard() {
             ]).map(({ tab, icon, label }) => (
               <button
                 key={tab}
-                onClick={() => setActiveTab(tab)}
+                onClick={() => { setActiveTab(tab); if (tab === "my-campaigns") setSelectedCampaignDetails(null); }}
                 aria-label={label}
                 className={`flex-1 flex flex-col items-center gap-0.5 py-1 transition-colors ${
                   activeTab === tab ? "text-primary" : "text-muted-foreground"
