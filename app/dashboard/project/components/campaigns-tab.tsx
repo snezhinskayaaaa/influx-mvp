@@ -202,10 +202,13 @@ export function CampaignsTab({
   const [deleteConfirmText, setDeleteConfirmText] = useState("");
 
   // Auto-refresh applications when campaign is open (every 15s)
+  const selectedCampaignRef = useRef<Campaign | null>(null);
+  useEffect(() => { selectedCampaignRef.current = selectedCampaignDetails; }, [selectedCampaignDetails]);
   useEffect(() => {
     if (!selectedCampaignDetails) return;
     const interval = setInterval(() => {
-      handleOpenCampaign(selectedCampaignDetails, true);
+      const current = selectedCampaignRef.current;
+      if (current) handleOpenCampaign(current, true);
     }, 15000);
     return () => clearInterval(interval);
   // eslint-disable-next-line react-hooks/exhaustive-deps
