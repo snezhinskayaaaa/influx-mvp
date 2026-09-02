@@ -57,7 +57,7 @@ export default function BusinessTypePage() {
         ];
         keys.forEach((key) => localStorage.removeItem(key));
 
-        router.push("/dashboard/project");
+        router.replace("/dashboard/project");
       } catch (err) {
         setIsSubmitting(false);
         const message = err instanceof Error ? err.message : "Something went wrong";

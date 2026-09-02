@@ -30,7 +30,7 @@ export default function OnboardingStep1() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ source: selectedSource }),
       }).catch(() => {});
-      router.push("/onboarding/brand/step-2");
+      router.replace("/onboarding/brand/step-2");
     }
   };
 

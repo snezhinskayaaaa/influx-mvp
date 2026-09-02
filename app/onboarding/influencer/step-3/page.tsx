@@ -81,7 +81,7 @@ export default function InfluencerOnboardingStep3() {
         ];
         keys.forEach((key) => localStorage.removeItem(key));
 
-        router.push("/dashboard/influencer");
+        router.replace("/dashboard/influencer");
       } catch (err) {
         setIsSubmitting(false);
         const message = err instanceof Error ? err.message : 'Something went wrong';

@@ -86,9 +86,9 @@ function SignupForm() {
         return;
       }
       if (userType === "brand") {
-        router.push("/onboarding/brand");
+        router.replace("/onboarding/brand");
       } else {
-        router.push("/onboarding/influencer");
+        router.replace("/onboarding/influencer");
       }
     } catch {
       setError("Something went wrong. Please try again.");

@@ -21,7 +21,7 @@ export default function OnboardingStep2() {
       localStorage.setItem("brand_onboarding_name", brandName);
       localStorage.setItem("brand_onboarding_description", aboutProject);
       localStorage.setItem("brand_onboarding_special", "");
-      router.push("/onboarding/brand/business-type");
+      router.replace("/onboarding/brand/business-type");
     }
   };
 

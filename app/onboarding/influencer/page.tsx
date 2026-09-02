@@ -31,7 +31,7 @@ export default function InfluencerOnboardingStep1() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ source: selectedSource }),
       }).catch(() => {});
-      router.push("/onboarding/influencer/step-2");
+      router.replace("/onboarding/influencer/step-2");
     }
   };
 

@@ -52,7 +52,7 @@ export default function InfluencerOnboardingStep2() {
         localStorage.setItem("influencer_onboarding_youtube", youtube);
         localStorage.setItem("influencer_onboarding_twitter", twitter);
         localStorage.setItem("influencer_onboarding_telegram", telegram);
-        router.push("/onboarding/influencer/step-3");
+        router.replace("/onboarding/influencer/step-3");
       } catch (err) {
         setSaving(false);
         const message = err instanceof Error ? err.message : "Something went wrong";
