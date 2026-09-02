@@ -145,6 +145,25 @@ export async function PATCH(
       }
     }
 
+    // Project details & creator instructions
+    if (body.productName !== undefined) updateData.productName = body.productName || null
+    if (body.productPrice !== undefined) updateData.productPrice = body.productPrice || null
+    if (body.productPhoto !== undefined) updateData.productPhoto = body.productPhoto || null
+    if (body.productLink !== undefined) updateData.productLink = body.productLink || null
+    if (body.productDescription !== undefined) updateData.productDescription = body.productDescription || null
+    if (body.brandTag !== undefined) updateData.brandTag = body.brandTag || null
+    if (body.hashtags !== undefined) updateData.hashtags = body.hashtags || null
+    if (body.creatorScript !== undefined) updateData.creatorScript = body.creatorScript || null
+    if (body.goal !== undefined) updateData.goal = body.goal || null
+    if (body.platforms !== undefined) updateData.platforms = Array.isArray(body.platforms) ? body.platforms : []
+    if (body.contentFormats !== undefined) updateData.contentFormats = Array.isArray(body.contentFormats) ? body.contentFormats : []
+    if (body.contentType !== undefined) updateData.contentType = body.contentType || null
+    if (body.influencerNiches !== undefined) updateData.influencerNiches = Array.isArray(body.influencerNiches) ? body.influencerNiches : []
+    if (body.pricingModels !== undefined) updateData.pricingModels = Array.isArray(body.pricingModels) ? body.pricingModels : []
+    if (body.targetViews !== undefined) updateData.targetViews = body.targetViews || null
+    if (body.targetClicks !== undefined) updateData.targetClicks = body.targetClicks || null
+    if (body.targetEngagements !== undefined) updateData.targetEngagements = body.targetEngagements || null
+
     if (Object.keys(updateData).length === 0) {
       return NextResponse.json({ error: 'No fields to update' }, { status: 400 })
     }
