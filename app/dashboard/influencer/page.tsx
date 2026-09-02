@@ -126,6 +126,7 @@ interface Campaign {
   brandTag?: string;
   hashtags?: string;
   creatorScript?: string;
+  contentType?: string;
   detailedRequirements?: string;
   influencerTerms?: string;
   brandTerms?: string;
@@ -364,6 +365,7 @@ export default function InfluencerDashboard() {
               pricingModel: (Array.isArray(c.pricingModels) && (c.pricingModels as string[]).length > 0) ? (c.pricingModels as string[])[0].toUpperCase() : '',
               pricingModels: Array.isArray(c.pricingModels) ? c.pricingModels as string[] : [],
               contentFormats: Array.isArray(c.contentFormats) ? c.contentFormats as string[] : [],
+              contentType: (c.contentType as string) || undefined,
               description: (c.description as string) || '',
               requirements: (c.deliverables as string[]) || [],
               platforms: Array.isArray(c.platforms) ? c.platforms as string[] : [],
@@ -427,6 +429,7 @@ export default function InfluencerDashboard() {
                 pricingModel: (Array.isArray(campaign?.pricingModels) && (campaign.pricingModels as string[]).length > 0) ? (campaign.pricingModels as string[])[0].toUpperCase() : '',
                 pricingModels: Array.isArray(campaign?.pricingModels) ? campaign.pricingModels as string[] : [],
                 contentFormats: Array.isArray(campaign?.contentFormats) ? campaign.contentFormats as string[] : [],
+                contentType: (campaign?.contentType as string) || undefined,
                 description: (campaign?.description as string) || '',
                 requirements: (collab.deliverables as string[]) || [],
                 platforms: Array.isArray(campaign?.platforms) ? campaign.platforms as string[] : [],
@@ -1611,10 +1614,25 @@ export default function InfluencerDashboard() {
                             )}
                           </div>
 
+                          {/* Content Type */}
+                          {selectedCampaignDetails.contentType && (
+                            <div>
+                              <Label className="text-sm font-semibold mb-2 block">Content Type</Label>
+                              <div className="text-sm">
+                                <p className="font-medium">{
+                                  { "up-to-creator": "Up to the Creator", "testimonial": "Testimonial", "tutorial": "Tutorial / Walkthrough", "how-to": "Deep Dive / Review" }[selectedCampaignDetails.contentType] || selectedCampaignDetails.contentType.replace(/-/g, " ").replace(/\b\w/g, c => c.toUpperCase())
+                                }</p>
+                                <p className="text-xs text-muted-foreground">{
+                                  { "up-to-creator": "Creator's most creative take", "testimonial": "Honest statement from a user's perspective", "tutorial": "Step-by-step guide for your protocol", "how-to": "Deep dive into tech, tokenomics, or roadmap" }[selectedCampaignDetails.contentType] || ""
+                                }</p>
+                              </div>
+                            </div>
+                          )}
+
                           {/* Content Formats */}
                           {selectedCampaignDetails.contentFormats && selectedCampaignDetails.contentFormats.length > 0 && (
                             <div>
-                              <Label className="text-sm font-semibold mb-2 block">Content Type</Label>
+                              <Label className="text-sm font-semibold mb-2 block">Content Formats</Label>
                               <div className="flex flex-wrap gap-2">
                                 {selectedCampaignDetails.contentFormats.map((format) => (
                                   <Badge key={format} variant="outline" className="capitalize">

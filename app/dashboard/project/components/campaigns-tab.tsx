@@ -1075,18 +1075,21 @@ export function CampaignsTab({
                           <SelectValue placeholder="Select content type" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="protocol-review">Protocol Review</SelectItem>
-                          <SelectItem value="tutorial">Tutorial / Walkthrough</SelectItem>
-                          <SelectItem value="deep-dive">Deep Dive</SelectItem>
-                          <SelectItem value="alpha-thread">Alpha Thread</SelectItem>
+                          <SelectItem value="up-to-creator">Up to the Creator</SelectItem>
                           <SelectItem value="testimonial">Testimonial</SelectItem>
-                          <SelectItem value="project-overview">Project Overview</SelectItem>
+                          <SelectItem value="tutorial">Tutorial / Walkthrough</SelectItem>
+                          <SelectItem value="how-to">Deep Dive / Review</SelectItem>
                         </SelectContent>
                       </Select>
                     ) : selectedCampaignDetails.contentType ? (
-                      <Badge variant="outline" className="capitalize">
-                        {selectedCampaignDetails.contentType.replace("-", " ")}
-                      </Badge>
+                      <div className="text-sm">
+                        <p className="font-medium">{
+                          { "up-to-creator": "Up to the Creator", "testimonial": "Testimonial", "tutorial": "Tutorial / Walkthrough", "how-to": "Deep Dive / Review" }[selectedCampaignDetails.contentType] || selectedCampaignDetails.contentType.replace(/-/g, " ").replace(/\b\w/g, c => c.toUpperCase())
+                        }</p>
+                        <p className="text-xs text-muted-foreground">{
+                          { "up-to-creator": "Creators will send their most creative takes", "testimonial": "Honest statement from a user's perspective", "tutorial": "Step-by-step guide showing how to use your protocol", "how-to": "Explain your project's tech, tokenomics, or roadmap" }[selectedCampaignDetails.contentType] || ""
+                        }</p>
+                      </div>
                     ) : (
                       <p className="text-sm text-muted-foreground">Not set</p>
                     )}
