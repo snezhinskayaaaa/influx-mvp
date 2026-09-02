@@ -131,7 +131,8 @@ export async function PATCH(
     if (body.status === 'CANCELLED') {
       try {
         const wasAgreed = collaboration.status === 'AGREED' && collaboration.agreedPrice
-        const wasInProgress = collaboration.status === 'IN_PROGRESS' && collaboration.agreedPrice
+        const advancePaidStatuses = ['IN_PROGRESS', 'CONTENT_REVIEW', 'REVISION', 'PUBLISHING']
+        const wasInProgress = advancePaidStatuses.includes(collaboration.status) && collaboration.agreedPrice
 
         await prisma.$transaction(async (tx) => {
           // Atomic status check + cancel

@@ -49,7 +49,7 @@ export async function POST(
         const collabUpdate = await tx.collaboration.updateMany({
           where: {
             id,
-            status: { in: ['AGREED', 'IN_PROGRESS'] },
+            status: 'IN_PROGRESS',
           },
           data: {
             status: 'COMPLETED',

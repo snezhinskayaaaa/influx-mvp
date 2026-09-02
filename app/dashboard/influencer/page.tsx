@@ -1697,7 +1697,7 @@ export default function InfluencerDashboard() {
                               <div className="space-y-3">
                                 {selectedCampaignDetails.brandTag && (
                                   <div>
-                                    <Label className="text-xs text-muted-foreground mb-1 block">Brand Tag</Label>
+                                    <Label className="text-xs text-muted-foreground mb-1 block">Project Tag</Label>
                                     <p className="text-sm">{selectedCampaignDetails.brandTag}</p>
                                   </div>
                                 )}
@@ -2172,7 +2172,7 @@ export default function InfluencerDashboard() {
                             <div className="space-y-4">
                               {selectedCampaignDetails.revisionNote && (
                                 <div className="rounded-lg p-4 border border-orange-500/20 bg-orange-500/5">
-                                  <p className="text-xs font-semibold text-orange-700 uppercase tracking-wide mb-1">Brand&apos;s feedback:</p>
+                                  <p className="text-xs font-semibold text-orange-700 uppercase tracking-wide mb-1">Project&apos;s feedback:</p>
                                   <p className="text-sm text-foreground whitespace-pre-wrap">{selectedCampaignDetails.revisionNote}</p>
                                 </div>
                               )}

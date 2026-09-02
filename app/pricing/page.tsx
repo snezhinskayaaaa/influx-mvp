@@ -351,7 +351,7 @@ export default function PricingPage() {
                   </div>
 
                   <Button asChild variant="outline" className="w-full text-sm h-10">
-                    <Link href="/signup?type=brand&plan=free">
+                    <Link href="/signup?type=influencer">
                       Get Started Free
                       <ArrowRight className="ml-2 h-4 w-4" />
                     </Link>
@@ -490,7 +490,7 @@ export default function PricingPage() {
                       <span className="text-sm md:text-base text-muted-foreground">/month</span>
                     </div>
                     <Badge className="bg-secondary/20 text-secondary border-secondary/30 mb-3 md:mb-4 text-xs">
-                      14 days free trial
+                      Coming Soon
                     </Badge>
                     <p className="text-sm text-muted-foreground">
                       Maximize your campaign ROI
@@ -672,7 +672,7 @@ export default function PricingPage() {
                 onClick={() => setOpenFaq(openFaq === 4 ? null : 4)}
                 className="w-full py-4 text-left flex items-center justify-between hover:bg-muted/30 transition-colors"
               >
-                <h3 className="font-semibold text-base">How do trial periods work?</h3>
+                <h3 className="font-semibold text-base">Will there be Pro plans?</h3>
                 <ChevronDown
                   className={`h-5 w-5 text-muted-foreground transition-transform shrink-0 ml-4 ${
                     openFaq === 4 ? "rotate-180" : ""
@@ -689,7 +689,7 @@ export default function PricingPage() {
                 className="overflow-hidden"
               >
                 <p className="pb-4 text-sm text-muted-foreground">
-                  Projects get a 14-day free trial of Project Pro. Creators can try Pro for $1 for the first month. No credit card required for project trials.
+                  Pro plans for both projects and creators are coming soon. Founding members will get early access and special pricing. All current features are available for free.
                 </p>
               </motion.div>
             </div>

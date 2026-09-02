@@ -28,6 +28,31 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 })
     }
 
+    // Check for active financial obligations
+    if (profile.role === 'BRAND') {
+      const brand = await prisma.brand.findUnique({ where: { userId: user.userId }, select: { id: true, frozenBalance: true } })
+      if (brand && brand.frozenBalance > 0) {
+        return NextResponse.json({ error: 'Cannot delete account with frozen funds. Complete or cancel active collaborations first.' }, { status: 400 })
+      }
+      const activeCollabs = await prisma.collaboration.count({
+        where: { campaign: { brandId: brand?.id }, status: { in: ['AGREED', 'IN_PROGRESS', 'CONTENT_REVIEW', 'REVISION', 'PUBLISHING', 'DELIVERED'] } },
+      })
+      if (activeCollabs > 0) {
+        return NextResponse.json({ error: 'Cannot delete account with active collaborations. Complete or cancel them first.' }, { status: 400 })
+      }
+    }
+    if (profile.role === 'INFLUENCER') {
+      const influencer = await prisma.influencer.findUnique({ where: { userId: user.userId }, select: { id: true } })
+      if (influencer) {
+        const activeCollabs = await prisma.collaboration.count({
+          where: { influencerId: influencer.id, status: { in: ['AGREED', 'IN_PROGRESS', 'CONTENT_REVIEW', 'REVISION', 'PUBLISHING', 'DELIVERED'] } },
+        })
+        if (activeCollabs > 0) {
+          return NextResponse.json({ error: 'Cannot delete account with active collaborations. Complete or cancel them first.' }, { status: 400 })
+        }
+      }
+    }
+
     // Delete the profile - Prisma cascade will handle related records
     await prisma.profile.delete({ where: { id: user.userId } })
 

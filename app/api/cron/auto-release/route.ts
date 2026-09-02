@@ -6,7 +6,6 @@ import { checkCampaignAutoComplete, checkAllCampaignsAutoComplete } from '@/lib/
 const CRON_SECRET = process.env.CRON_SECRET
 
 export async function POST(request: NextRequest) {
-  // Verify cron secret to prevent unauthorized calls
   const authHeader = request.headers.get('authorization')
   if (!CRON_SECRET || authHeader !== `Bearer ${CRON_SECRET}`) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
@@ -35,23 +34,25 @@ export async function POST(request: NextRequest) {
     for (const collab of staleDelivered) {
       try {
         if (!collab.agreedPrice) continue
-
         const remaining = Math.round(collab.agreedPrice / 2)
 
-        await prisma.$transaction([
-          prisma.collaboration.update({
-            where: { id: collab.id },
+        const result = await prisma.$transaction(async (tx) => {
+          // Atomic status guard — only process if still DELIVERED
+          const updated = await tx.collaboration.updateMany({
+            where: { id: collab.id, status: 'DELIVERED' },
             data: { status: 'COMPLETED', completedAt: now },
-          }),
-          prisma.brand.update({
+          })
+          if (updated.count === 0) return false
+
+          await tx.brand.update({
             where: { id: collab.campaign.brand.id },
             data: { frozenBalance: { decrement: remaining } },
-          }),
-          prisma.influencer.update({
+          })
+          await tx.influencer.update({
             where: { id: collab.influencer.id },
             data: { balance: { increment: remaining } },
-          }),
-          prisma.transaction.create({
+          })
+          await tx.transaction.create({
             data: {
               userId: collab.campaign.brand.userId,
               type: 'CAMPAIGN_PAYOUT_AUTO',
@@ -59,8 +60,8 @@ export async function POST(request: NextRequest) {
               description: 'Auto-released: project did not respond within 7 days',
               referenceId: collab.id,
             },
-          }),
-          prisma.transaction.create({
+          })
+          await tx.transaction.create({
             data: {
               userId: collab.influencer.userId,
               type: 'CAMPAIGN_PAYOUT_AUTO',
@@ -68,17 +69,16 @@ export async function POST(request: NextRequest) {
               description: 'Auto-released: payment received after 7-day window',
               referenceId: collab.id,
             },
-          }),
-        ])
+          })
+          return true
+        })
 
-        // Fire-and-forget notifications: auto-release completed
-        notifyBrandAutoRelease(collab.campaign.brand.userId, collab.campaign.title, remaining)
-        notifyInfluencerPaymentReceived(collab.influencer.userId, collab.campaign.title, remaining)
-
-        // Fire-and-forget: auto-complete campaign if all collabs done
-        checkCampaignAutoComplete(collab.campaignId)
-
-        results.autoReleased++
+        if (result) {
+          notifyBrandAutoRelease(collab.campaign.brand.userId, collab.campaign.title, remaining)
+          notifyInfluencerPaymentReceived(collab.influencer.userId, collab.campaign.title, remaining)
+          checkCampaignAutoComplete(collab.campaignId)
+          results.autoReleased++
+        }
       } catch (err) {
         results.errors.push(`Auto-release failed for collab ${collab.id}: ${err instanceof Error ? err.message : 'unknown'}`)
       }
@@ -107,30 +107,33 @@ export async function POST(request: NextRequest) {
       try {
         if (!collab.agreedPrice) continue
 
-        await prisma.$transaction([
-          prisma.collaboration.update({
-            where: { id: collab.id },
+        const result = await prisma.$transaction(async (tx) => {
+          const updated = await tx.collaboration.updateMany({
+            where: { id: collab.id, status: 'AGREED' },
             data: { status: 'CANCELLED' },
-          }),
-          prisma.brand.update({
+          })
+          if (updated.count === 0) return false
+
+          await tx.brand.update({
             where: { id: collab.campaign.brand.id },
             data: {
-              frozenBalance: { decrement: collab.agreedPrice },
-              balance: { increment: collab.agreedPrice },
+              frozenBalance: { decrement: collab.agreedPrice! },
+              balance: { increment: collab.agreedPrice! },
             },
-          }),
-          prisma.transaction.create({
+          })
+          await tx.transaction.create({
             data: {
               userId: collab.campaign.brand.userId,
               type: 'CAMPAIGN_UNFREEZE',
-              amount: collab.agreedPrice,
+              amount: collab.agreedPrice!,
               description: 'Auto-cancelled: no activity for 14 days',
               referenceId: collab.id,
             },
-          }),
-        ])
+          })
+          return true
+        })
 
-        results.autoExpired++
+        if (result) results.autoExpired++
       } catch (err) {
         results.errors.push(`Auto-expire failed for collab ${collab.id}: ${err instanceof Error ? err.message : 'unknown'}`)
       }
@@ -159,27 +162,28 @@ export async function POST(request: NextRequest) {
     for (const collab of staleDisputed) {
       try {
         if (!collab.agreedPrice) continue
-
         const remaining = Math.round(collab.agreedPrice / 2)
 
-        await prisma.$transaction([
-          prisma.collaboration.update({
-            where: { id: collab.id },
+        const result = await prisma.$transaction(async (tx) => {
+          const updated = await tx.collaboration.updateMany({
+            where: { id: collab.id, status: 'DISPUTED' },
             data: {
               status: 'RESOLVED',
               resolvedAt: now,
               disputeResult: 'Auto-resolved in favor of creator: admin did not respond within 14 days',
             },
-          }),
-          prisma.brand.update({
+          })
+          if (updated.count === 0) return false
+
+          await tx.brand.update({
             where: { id: collab.campaign.brand.id },
             data: { frozenBalance: { decrement: remaining } },
-          }),
-          prisma.influencer.update({
+          })
+          await tx.influencer.update({
             where: { id: collab.influencer.id },
             data: { balance: { increment: remaining } },
-          }),
-          prisma.transaction.create({
+          })
+          await tx.transaction.create({
             data: {
               userId: collab.influencer.userId,
               type: 'DISPUTE_PAYOUT',
@@ -187,10 +191,11 @@ export async function POST(request: NextRequest) {
               description: 'Auto-resolved: dispute decided in favor of creator after 14 days',
               referenceId: collab.id,
             },
-          }),
-        ])
+          })
+          return true
+        })
 
-        results.autoReleased++
+        if (result) results.autoReleased++
       } catch (err) {
         results.errors.push(`Auto-resolve failed for collab ${collab.id}: ${err instanceof Error ? err.message : 'unknown'}`)
       }
@@ -199,7 +204,6 @@ export async function POST(request: NextRequest) {
     results.errors.push(`Auto-resolve query failed: ${err instanceof Error ? err.message : 'unknown'}`)
   }
 
-  // Check all active campaigns for auto-completion
   const campaignsChecked = await checkAllCampaignsAutoComplete()
 
   console.log(`[cron/auto-release] Released: ${results.autoReleased}, Expired: ${results.autoExpired}, Campaigns checked: ${campaignsChecked}, Errors: ${results.errors.length}`)

@@ -55,7 +55,7 @@ export default function InfluencerOnboardingStep2() {
           </Label>
           <Input
             id="creator-name"
-            placeholder="e.g., AI Luna, VirtualVogue, etc."
+            placeholder="e.g., CryptoSarah, DeFi_Mike, etc."
             value={creatorName}
             onChange={(e) => setCreatorName(e.target.value)}
             className="h-10 sm:h-12 text-sm"
