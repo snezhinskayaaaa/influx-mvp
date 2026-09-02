@@ -203,12 +203,14 @@ export function CampaignsTab({
 
   // Auto-refresh applications when campaign is open (every 15s)
   const selectedCampaignRef = useRef<Campaign | null>(null);
+  const handleOpenCampaignRef = useRef<typeof handleOpenCampaign | null>(null);
   useEffect(() => { selectedCampaignRef.current = selectedCampaignDetails; }, [selectedCampaignDetails]);
+  useEffect(() => { handleOpenCampaignRef.current = handleOpenCampaign; });
   useEffect(() => {
     if (!selectedCampaignDetails) return;
     const interval = setInterval(() => {
       const current = selectedCampaignRef.current;
-      if (current) handleOpenCampaign(current, true);
+      if (current && handleOpenCampaignRef.current) handleOpenCampaignRef.current(current, true);
     }, 15000);
     return () => clearInterval(interval);
   // eslint-disable-next-line react-hooks/exhaustive-deps
