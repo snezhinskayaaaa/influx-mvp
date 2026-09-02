@@ -20,16 +20,44 @@ export default function InfluencerOnboardingStep2() {
   const [twitter, setTwitter] = useState("");
   const [telegram, setTelegram] = useState("");
 
-  const handleNext = () => {
-    if (creatorName && bio) {
-      localStorage.setItem("influencer_onboarding_handle", creatorName);
-      localStorage.setItem("influencer_onboarding_bio", bio);
-      localStorage.setItem("influencer_onboarding_instagram", instagram);
-      localStorage.setItem("influencer_onboarding_tiktok", tiktok);
-      localStorage.setItem("influencer_onboarding_youtube", youtube);
-      localStorage.setItem("influencer_onboarding_twitter", twitter);
-      localStorage.setItem("influencer_onboarding_telegram", telegram);
-      router.push("/onboarding/influencer/step-3");
+  const [saving, setSaving] = useState(false);
+
+  const handleNext = async () => {
+    if (creatorName && bio && hasAnySocial) {
+      setSaving(true);
+      try {
+        // Save to DB immediately
+        const res = await fetch("/api/influencers/me", {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            handle: creatorName,
+            bio,
+            ...(instagram ? { instagramHandle: instagram } : {}),
+            ...(tiktok ? { tiktokHandle: tiktok } : {}),
+            ...(youtube ? { youtubeHandle: youtube } : {}),
+            ...(twitter ? { twitterHandle: twitter } : {}),
+            ...(telegram ? { telegramHandle: telegram } : {}),
+          }),
+        });
+        if (!res.ok) {
+          const data = await res.json();
+          throw new Error(data.error || "Failed to save");
+        }
+        // Also save to localStorage for step 3 fallback
+        localStorage.setItem("influencer_onboarding_handle", creatorName);
+        localStorage.setItem("influencer_onboarding_bio", bio);
+        localStorage.setItem("influencer_onboarding_instagram", instagram);
+        localStorage.setItem("influencer_onboarding_tiktok", tiktok);
+        localStorage.setItem("influencer_onboarding_youtube", youtube);
+        localStorage.setItem("influencer_onboarding_twitter", twitter);
+        localStorage.setItem("influencer_onboarding_telegram", telegram);
+        router.push("/onboarding/influencer/step-3");
+      } catch (err) {
+        setSaving(false);
+        const message = err instanceof Error ? err.message : "Something went wrong";
+        alert(message);
+      }
     }
   };
 
@@ -140,10 +168,10 @@ export default function InfluencerOnboardingStep2() {
 
       <Button
         onClick={handleNext}
-        disabled={!isValid}
+        disabled={!isValid || saving}
         className="w-full h-10 sm:h-14 bg-gradient-to-r from-primary to-secondary hover:opacity-90 text-sm sm:text-lg"
       >
-        Next
+        {saving ? "Saving..." : "Next"}
       </Button>
     </OnboardingLayout>
   );
