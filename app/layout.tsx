@@ -12,7 +12,10 @@ export const metadata: Metadata = {
   title: "Influx — Crypto-Native Influencer Marketing for Web3",
   description: "The platform where Web3 projects run influencer campaigns and pay in crypto. Crypto KOLs, Web3 creators, and AI creators — with escrow protection built in.",
   icons: {
-    icon: "/icon.svg",
+    icon: [
+      { url: "/favicon.ico", sizes: "32x32" },
+      { url: "/icon.svg", type: "image/svg+xml" },
+    ],
     apple: "/apple-icon.png",
   },
 };
