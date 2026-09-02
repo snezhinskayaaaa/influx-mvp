@@ -13,6 +13,13 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { AnimatePresence, motion } from "framer-motion";
 import { Card } from "@/components/ui/card";
 import {
@@ -66,6 +73,9 @@ export default function BrandDashboard() {
     currency?: string; network?: string; projectName?: string | null;
   }>>([]);
   const [showWithdrawModal, setShowWithdrawModal] = useState(false);
+  const [withdrawAmount, setWithdrawAmount] = useState('');
+  const [withdrawCurrency, setWithdrawCurrency] = useState('USDT (TRC20)');
+  const [walletAddress, setWalletAddress] = useState('');
 
   const [showCollaborateModal, setShowCollaborateModal] = useState(false);
   const [selectedInfluencer, setSelectedInfluencer] = useState<Influencer | null>(null);
@@ -570,55 +580,82 @@ export default function BrandDashboard() {
                 </div>
 
                 {/* Withdraw Modal */}
-                {showWithdrawModal && (
-                  <div className="fixed inset-0 z-[150] flex items-center justify-center bg-black/50 backdrop-blur-sm">
-                    <div className="bg-background border border-border rounded-2xl p-6 w-full max-w-md mx-4 shadow-2xl">
-                      <div className="flex items-center justify-between mb-4">
-                        <div>
-                          <h3 className="text-lg font-bold">Withdraw Funds</h3>
-                          <p className="text-xs text-muted-foreground">Send funds to your crypto wallet</p>
-                        </div>
-                        <button onClick={() => setShowWithdrawModal(false)} className="text-muted-foreground hover:text-foreground">&times;</button>
+                <Dialog open={showWithdrawModal} onOpenChange={setShowWithdrawModal}>
+                  <DialogContent className="sm:max-w-md">
+                    <DialogHeader>
+                      <DialogTitle>Withdraw Funds</DialogTitle>
+                      <DialogDescription>Send funds to your crypto wallet</DialogDescription>
+                    </DialogHeader>
+                    <div className="space-y-4 py-4">
+                      <div>
+                        <Label className="text-sm font-medium mb-2 block">Amount (USD)</Label>
+                        <Input
+                          type="number"
+                          placeholder="0.00"
+                          min="10"
+                          step="0.01"
+                          value={withdrawAmount}
+                          onChange={(e) => setWithdrawAmount(e.target.value)}
+                          className="h-11"
+                        />
                       </div>
-                      <form onSubmit={async (e) => {
-                        e.preventDefault();
-                        const form = e.currentTarget;
-                        const amount = parseFloat((form.elements.namedItem('wAmount') as HTMLInputElement).value);
-                        const address = (form.elements.namedItem('wAddress') as HTMLInputElement).value;
-                        const currency = (form.elements.namedItem('wCurrency') as HTMLSelectElement).value;
-                        if (amount < 10) { showToast('Minimum withdrawal is $10', 'error'); return; }
-                        if (amount > balance) { showToast('Insufficient balance', 'error'); return; }
-                        try {
-                          const res = await fetch('/api/wallet/withdraw', {
-                            method: 'POST', headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ amount, address, currency }),
-                          });
-                          const data = await res.json();
-                          if (res.ok) { showToast('Withdrawal submitted', 'success'); setShowWithdrawModal(false); }
-                          else showToast(data.error || 'Failed to withdraw', 'error');
-                        } catch { showToast('Failed to withdraw', 'error'); }
-                      }} className="space-y-4">
-                        <div>
-                          <label className="text-sm font-medium mb-1 block">Amount (USD)</label>
-                          <input name="wAmount" type="number" min="10" step="0.01" required className="w-full px-3 py-2 rounded-lg border border-border bg-background text-sm" />
-                        </div>
-                        <div>
-                          <label className="text-sm font-medium mb-1 block">Currency</label>
-                          <select name="wCurrency" className="w-full px-3 py-2 rounded-lg border border-border bg-background text-sm">
-                            <option>USDT (TRC20)</option>
-                            <option>USDC (TRC20)</option>
-                            <option>USDT (ERC20)</option>
-                          </select>
-                        </div>
-                        <div>
-                          <label className="text-sm font-medium mb-1 block">Wallet Address</label>
-                          <input name="wAddress" type="text" required className="w-full px-3 py-2 rounded-lg border border-border bg-background text-sm" placeholder="Your crypto wallet address" />
-                        </div>
-                        <Button type="submit" className="w-full">Submit Withdrawal</Button>
-                      </form>
+                      <div>
+                        <Label className="text-sm font-medium mb-2 block">Currency</Label>
+                        <Select value={withdrawCurrency} onValueChange={setWithdrawCurrency}>
+                          <SelectTrigger className="h-11">
+                            <SelectValue placeholder="Select currency" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="USDT (TRC20)">USDT — Tron (TRC20)</SelectItem>
+                            <SelectItem value="USDT (ERC20)">USDT — Ethereum (ERC20)</SelectItem>
+                            <SelectItem value="USDT (BEP20)">USDT — BSC (BEP20)</SelectItem>
+                            <SelectItem value="USDC (ERC20)">USDC — Ethereum (ERC20)</SelectItem>
+                            <SelectItem value="USDC (TRC20)">USDC — Tron (TRC20)</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div>
+                        <Label className="text-sm font-medium mb-2 block">Wallet Address</Label>
+                        <Input
+                          type="text"
+                          placeholder="Enter your wallet address"
+                          value={walletAddress}
+                          onChange={(e) => setWalletAddress(e.target.value)}
+                          className="h-11"
+                        />
+                        <p className="text-xs text-muted-foreground mt-1.5">
+                          Make sure the address matches the selected network.
+                        </p>
+                      </div>
+                      <div className="rounded-lg bg-muted/50 p-3 text-xs text-muted-foreground space-y-1">
+                        <p>Minimum withdrawal: <span className="font-medium text-foreground">$10.00</span></p>
+                        <p>Withdrawal fee: <span className="font-medium text-foreground">{isFoundingMember ? '3%' : '6%'}</span></p>
+                        {withdrawAmount && parseFloat(withdrawAmount) >= 10 && (
+                          <p>You will receive: <span className="font-medium text-foreground">${(parseFloat(withdrawAmount) * (isFoundingMember ? 0.97 : 0.94)).toFixed(2)}</span></p>
+                        )}
+                      </div>
+                      <Button
+                        className="w-full h-11 bg-gradient-to-r from-primary to-secondary"
+                        disabled={!withdrawAmount || !walletAddress.trim() || !withdrawCurrency || parseFloat(withdrawAmount || '0') < 10}
+                        onClick={async () => {
+                          const amount = parseFloat(withdrawAmount);
+                          if (amount > balance) { showToast('Insufficient balance', 'error'); return; }
+                          try {
+                            const res = await fetch('/api/wallet/withdraw', {
+                              method: 'POST', headers: { 'Content-Type': 'application/json' },
+                              body: JSON.stringify({ amount, address: walletAddress.trim(), currency: withdrawCurrency }),
+                            });
+                            const data = await res.json();
+                            if (res.ok) { showToast('Withdrawal submitted', 'success'); setShowWithdrawModal(false); setWithdrawAmount(''); setWalletAddress(''); }
+                            else showToast(data.error || 'Failed to withdraw', 'error');
+                          } catch { showToast('Failed to withdraw', 'error'); }
+                        }}
+                      >
+                        Submit Withdrawal
+                      </Button>
                     </div>
-                  </div>
-                )}
+                  </DialogContent>
+                </Dialog>
               </motion.div>
             )}
 
