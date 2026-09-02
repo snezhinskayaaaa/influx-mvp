@@ -361,6 +361,16 @@ export default function TermsPage() {
               </div>
             </motion.div>
 
+            {/* 12.1 Indemnification */}
+            <motion.div variants={fadeInUp}>
+              <h2 className="text-2xl font-bold mb-4 text-foreground">12.1 Indemnification</h2>
+              <div className="space-y-4 text-muted-foreground leading-relaxed">
+                <p>
+                  You agree to indemnify, defend, and hold harmless INFLUXconnect, its officers, directors, employees, and agents from and against any claims, liabilities, damages, losses, costs, and expenses (including reasonable legal fees) arising from or related to: (a) your use of the Platform; (b) your violation of these Terms; (c) your content, campaigns, or interactions with other users; (d) your violation of any third-party rights, including intellectual property rights; or (e) your violation of any applicable laws or regulations.
+                </p>
+              </div>
+            </motion.div>
+
             {/* 13. Termination */}
             <motion.div variants={fadeInUp}>
               <h2 className="text-2xl font-bold mb-4 text-foreground">13. Termination</h2>
