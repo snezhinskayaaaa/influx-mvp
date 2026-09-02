@@ -59,6 +59,50 @@ export async function POST(request: NextRequest) {
         },
       })
 
+      // Referral revenue share: 10% of platform fee to referrer (only on confirmed withdrawal)
+      if (transaction.type === 'WITHDRAWAL' && transaction.fee > 0) {
+        try {
+          const influencer = await prisma.influencer.findUnique({
+            where: { userId: transaction.userId },
+            select: { id: true },
+          })
+          if (influencer) {
+            const referral = await prisma.referral.findFirst({
+              where: { referredId: influencer.id, status: 'active' },
+              select: { id: true, referrerId: true, referrer: { select: { userId: true } } },
+            })
+            if (referral) {
+              const revenueShare = Math.floor(transaction.fee * 0.1)
+              if (revenueShare > 0) {
+                await prisma.$transaction([
+                  prisma.influencer.update({
+                    where: { id: referral.referrerId },
+                    data: { balance: { increment: revenueShare } },
+                  }),
+                  prisma.referral.update({
+                    where: { id: referral.id },
+                    data: { totalEarnings: { increment: revenueShare } },
+                  }),
+                  prisma.transaction.create({
+                    data: {
+                      userId: referral.referrer.userId,
+                      type: 'REFERRAL_PAYOUT',
+                      amount: revenueShare,
+                      fee: 0,
+                      status: 'confirmed',
+                      description: `Referral revenue share (10% of $${(transaction.fee / 100).toFixed(2)} fee)`,
+                      confirmedAt: new Date(),
+                    },
+                  }),
+                ])
+              }
+            }
+          }
+        } catch (refError) {
+          console.error('Referral revenue share failed:', refError)
+        }
+      }
+
       return NextResponse.json({ ok: true })
     }
 

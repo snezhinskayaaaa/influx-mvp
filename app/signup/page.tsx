@@ -50,6 +50,7 @@ function SignupForm() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [termsAccepted, setTermsAccepted] = useState(false);
+  const [termsHighlight, setTermsHighlight] = useState(false);
 
   useEffect(() => {
     if (typeParam === "brand" || typeParam === "influencer" || typeParam === "creator") {
@@ -96,6 +97,11 @@ function SignupForm() {
   };
 
   const handleGoogleSignup = () => {
+    if (!termsAccepted) {
+      setTermsHighlight(true);
+      setTimeout(() => setTermsHighlight(false), 3000);
+      return;
+    }
     const clientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
     if (!clientId) {
       setError("Google authentication is not configured yet.");
@@ -334,11 +340,11 @@ function SignupForm() {
                 </div>
               </div>
 
-              <label className="flex items-start gap-2 cursor-pointer">
+              <label className={`flex items-start gap-2 cursor-pointer p-2 rounded-lg border transition-all ${termsHighlight ? 'border-destructive bg-destructive/5 animate-pulse' : 'border-transparent'}`}>
                 <input
                   type="checkbox"
                   checked={termsAccepted}
-                  onChange={(e) => setTermsAccepted(e.target.checked)}
+                  onChange={(e) => { setTermsAccepted(e.target.checked); setTermsHighlight(false); }}
                   className="mt-0.5 rounded"
                 />
                 <span className="text-[10px] sm:text-xs text-muted-foreground">

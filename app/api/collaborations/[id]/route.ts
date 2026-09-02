@@ -139,11 +139,17 @@ export async function PATCH(
     // Either party can cancel — fully atomic with unfreeze / advance handling
     if (body.status === 'CANCELLED') {
       try {
-        const wasAgreed = collaboration.status === 'AGREED' && collaboration.agreedPrice
-        const advancePaidStatuses = ['IN_PROGRESS', 'CONTENT_REVIEW', 'REVISION', 'PUBLISHING']
-        const wasInProgress = advancePaidStatuses.includes(collaboration.status) && collaboration.agreedPrice
-
         await prisma.$transaction(async (tx) => {
+          // Re-read collaboration inside transaction for accurate status
+          const freshCollab = await tx.collaboration.findUniqueOrThrow({
+            where: { id },
+            select: { status: true, agreedPrice: true },
+          })
+
+          const advancePaidStatuses = ['IN_PROGRESS', 'CONTENT_REVIEW', 'REVISION', 'PUBLISHING']
+          const wasAgreed = freshCollab.status === 'AGREED' && freshCollab.agreedPrice
+          const wasInProgress = advancePaidStatuses.includes(freshCollab.status) && freshCollab.agreedPrice
+
           // Atomic status check + cancel
           const cancelResult = await tx.collaboration.updateMany({
             where: {
@@ -166,15 +172,15 @@ export async function PATCH(
             await tx.brand.update({
               where: { id: campaign.brand.id },
               data: {
-                frozenBalance: { decrement: collaboration.agreedPrice! },
-                balance: { increment: collaboration.agreedPrice! },
+                frozenBalance: { decrement: freshCollab.agreedPrice! },
+                balance: { increment: freshCollab.agreedPrice! },
               },
             })
             await tx.transaction.create({
               data: {
                 userId: campaign.brand.userId,
                 type: 'CAMPAIGN_UNFREEZE',
-                amount: collaboration.agreedPrice!,
+                amount: freshCollab.agreedPrice!,
                 description: 'Funds unfrozen due to collaboration cancellation',
                 referenceId: collaboration.id,
               },
@@ -184,8 +190,8 @@ export async function PATCH(
               where: { id: collaboration.campaignId },
               include: { brand: true },
             })
-            const advance = Math.round(collaboration.agreedPrice! / 2)
-            const frozenRemainder = collaboration.agreedPrice! - advance
+            const advance = Math.round(freshCollab.agreedPrice! / 2)
+            const frozenRemainder = freshCollab.agreedPrice! - advance
 
             if (isInfluencer) {
               // Influencer cancels: try to refund advance from influencer balance
