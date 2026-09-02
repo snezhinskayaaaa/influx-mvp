@@ -34,7 +34,7 @@ export async function POST(request: NextRequest) {
     for (const collab of staleDelivered) {
       try {
         if (!collab.agreedPrice) continue
-        const remaining = Math.round(collab.agreedPrice / 2)
+        const remaining = collab.agreedPrice - Math.round(collab.agreedPrice / 2)
 
         const result = await prisma.$transaction(async (tx) => {
           // Atomic status guard — only process if still DELIVERED
@@ -162,7 +162,7 @@ export async function POST(request: NextRequest) {
     for (const collab of staleDisputed) {
       try {
         if (!collab.agreedPrice) continue
-        const remaining = Math.round(collab.agreedPrice / 2)
+        const remaining = collab.agreedPrice - Math.round(collab.agreedPrice / 2)
 
         const result = await prisma.$transaction(async (tx) => {
           const updated = await tx.collaboration.updateMany({

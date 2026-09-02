@@ -71,7 +71,8 @@ export async function POST(
       return NextResponse.json({ error: 'No agreed price set' }, { status: 400 })
     }
 
-    const remaining = Math.round(collaboration.agreedPrice / 2)
+    const advancePaid = Math.round(collaboration.agreedPrice / 2)
+    const remaining = collaboration.agreedPrice - advancePaid
 
     try {
       const result = await prisma.$transaction(async (tx) => {

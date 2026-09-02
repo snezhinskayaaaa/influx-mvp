@@ -77,6 +77,7 @@ function SignupForm() {
           role: userType === "brand" ? "BRAND" : "INFLUENCER",
           ...(userType === "brand" ? { companyName: name } : { handle: name.toLowerCase().replace(/\s+/g, '_') }),
           ...(refCode ? { referralCode: refCode } : {}),
+          termsAccepted: true,
         }),
       });
       const data = await res.json();

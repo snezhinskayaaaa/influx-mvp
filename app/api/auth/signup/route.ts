@@ -12,7 +12,11 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json()
-    const { email, password, fullName, role, referralCode, ...roleData } = body
+    const { email, password, fullName, role, referralCode, termsAccepted, ...roleData } = body
+
+    if (!termsAccepted) {
+      return NextResponse.json({ success: false, error: 'You must accept the Terms of Service and Privacy Policy' }, { status: 400 })
+    }
 
     // Validation
     if (!email || typeof email !== 'string') {

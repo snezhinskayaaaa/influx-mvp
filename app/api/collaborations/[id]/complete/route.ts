@@ -62,7 +62,8 @@ export async function POST(
         }
 
         // Calculate remaining 50% (advance already paid when moving to IN_PROGRESS)
-        const remainingPayout = Math.round(collaboration.agreedPrice! / 2)
+        const advance = Math.round(collaboration.agreedPrice! / 2)
+        const remainingPayout = collaboration.agreedPrice! - advance
 
         // Guard against frozenBalance underflow
         const brand = await tx.brand.findUniqueOrThrow({

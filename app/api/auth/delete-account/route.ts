@@ -30,7 +30,10 @@ export async function POST(request: NextRequest) {
 
     // Check for active financial obligations
     if (profile.role === 'BRAND') {
-      const brand = await prisma.brand.findUnique({ where: { userId: user.userId }, select: { id: true, frozenBalance: true } })
+      const brand = await prisma.brand.findUnique({ where: { userId: user.userId }, select: { id: true, balance: true, frozenBalance: true } })
+      if (brand && brand.balance > 0) {
+        return NextResponse.json({ error: 'Cannot delete account with remaining balance. Please withdraw your funds first.' }, { status: 400 })
+      }
       if (brand && brand.frozenBalance > 0) {
         return NextResponse.json({ error: 'Cannot delete account with frozen funds. Complete or cancel active collaborations first.' }, { status: 400 })
       }
@@ -42,7 +45,10 @@ export async function POST(request: NextRequest) {
       }
     }
     if (profile.role === 'INFLUENCER') {
-      const influencer = await prisma.influencer.findUnique({ where: { userId: user.userId }, select: { id: true } })
+      const influencer = await prisma.influencer.findUnique({ where: { userId: user.userId }, select: { id: true, balance: true } })
+      if (influencer && influencer.balance > 0) {
+        return NextResponse.json({ error: 'Cannot delete account with remaining balance. Please withdraw your funds first.' }, { status: 400 })
+      }
       if (influencer) {
         const activeCollabs = await prisma.collaboration.count({
           where: { influencerId: influencer.id, status: { in: ['AGREED', 'IN_PROGRESS', 'CONTENT_REVIEW', 'REVISION', 'PUBLISHING', 'DELIVERED'] } },
