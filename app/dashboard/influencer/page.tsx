@@ -222,6 +222,8 @@ export default function InfluencerDashboard() {
   const [withdrawAmount, setWithdrawAmount] = useState("");
   const [walletAddress, setWalletAddress] = useState("");
   const [withdrawCurrency, setWithdrawCurrency] = useState("USDT (TRC20)");
+  const [withdrawCoin, setWithdrawCoin] = useState("");
+  const [withdrawNetwork, setWithdrawNetwork] = useState("");
   const [withdrawingApplication, setWithdrawingApplication] = useState<Campaign | null>(null);
   const [withdrawAppConfirmText, setWithdrawAppConfirmText] = useState("");
   const [withdrawAppLoading, setWithdrawAppLoading] = useState(false);
@@ -3730,68 +3732,101 @@ export default function InfluencerDashboard() {
           </DialogHeader>
 
           <div className="space-y-4 py-4">
+            {/* Step 1: Amount */}
             <div>
-              <Label htmlFor="withdraw-amount" className="text-sm font-medium mb-2 block">
-                Amount (USD)
-              </Label>
+              <Label className="text-sm font-medium mb-2 block">Amount (USD)</Label>
               <Input
-                id="withdraw-amount"
                 type="number"
                 placeholder="0.00"
                 value={withdrawAmount}
                 onChange={(e) => setWithdrawAmount(e.target.value)}
                 className="h-11"
-                min="0"
+                min="10"
               />
             </div>
 
+            {/* Step 2: Select Coin */}
             <div>
-              <Label htmlFor="withdraw-currency" className="text-sm font-medium mb-2 block">
-                Currency
-              </Label>
-              <Select value={withdrawCurrency} onValueChange={setWithdrawCurrency}>
+              <Label className="text-sm font-medium mb-2 block">Select Cryptocurrency</Label>
+              <Select value={withdrawCoin} onValueChange={(v) => { setWithdrawCoin(v); setWithdrawNetwork(""); setWithdrawCurrency(""); }}>
                 <SelectTrigger className="h-11">
-                  <SelectValue placeholder="Select currency" />
+                  <SelectValue placeholder="Choose cryptocurrency" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="USDT (TRC20)">USDT — Tron (TRC20)</SelectItem>
-                  <SelectItem value="USDT (ERC20)">USDT — Ethereum (ERC20)</SelectItem>
-                  <SelectItem value="USDT (BEP20)">USDT — BSC (BEP20)</SelectItem>
-                  <SelectItem value="USDC (ERC20)">USDC — Ethereum (ERC20)</SelectItem>
-                  <SelectItem value="USDC (TRC20)">USDC — Tron (TRC20)</SelectItem>
-                  <SelectItem value="BTC">Bitcoin (BTC)</SelectItem>
-                  <SelectItem value="ETH">Ethereum (ETH)</SelectItem>
-                  <SelectItem value="SOL">Solana (SOL)</SelectItem>
-                  <SelectItem value="TRX">Tron (TRX)</SelectItem>
-                  <SelectItem value="BNB">BNB (BSC)</SelectItem>
+                  <SelectItem value="usdt">USDT (Tether)</SelectItem>
+                  <SelectItem value="usdc">USDC (USD Coin)</SelectItem>
+                  <SelectItem value="btc">Bitcoin (BTC)</SelectItem>
+                  <SelectItem value="eth">Ethereum (ETH)</SelectItem>
+                  <SelectItem value="trx">Tron (TRX)</SelectItem>
+                  <SelectItem value="bnb">BNB</SelectItem>
+                  <SelectItem value="sol">Solana (SOL)</SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
-            <div>
-              <Label htmlFor="wallet-address" className="text-sm font-medium mb-2 block">
-                Wallet Address
-              </Label>
-              <Input
-                id="wallet-address"
-                type="text"
-                placeholder="Enter your wallet address"
-                value={walletAddress}
-                onChange={(e) => setWalletAddress(e.target.value)}
-                className="h-11"
-              />
-              <p className="text-xs text-muted-foreground mt-1.5">
-                Make sure the address matches the selected network. Sending to the wrong network may result in permanent loss.
-              </p>
-            </div>
+            {/* Step 3: Select Network */}
+            {withdrawCoin && (
+              <div>
+                <Label className="text-sm font-medium mb-2 block">Select Network</Label>
+                <Select value={withdrawNetwork} onValueChange={(v) => {
+                  setWithdrawNetwork(v);
+                  const networkMap: Record<string, string> = {
+                    "usdt-trc20": "USDT (TRC20)", "usdt-erc20": "USDT (ERC20)", "usdt-bep20": "USDT (BEP20)",
+                    "usdc-trc20": "USDC (TRC20)", "usdc-erc20": "USDC (ERC20)",
+                    "btc-btc": "BTC", "eth-erc20": "ETH", "trx-trc20": "TRX", "bnb-bep20": "BNB", "sol-sol": "SOL",
+                  };
+                  setWithdrawCurrency(networkMap[`${withdrawCoin}-${v}`] || "");
+                }}>
+                  <SelectTrigger className="h-11">
+                    <SelectValue placeholder="Choose network" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {withdrawCoin === "usdt" && (<>
+                      <SelectItem value="trc20">Tron (TRC20)</SelectItem>
+                      <SelectItem value="erc20">Ethereum (ERC20)</SelectItem>
+                      <SelectItem value="bep20">BNB Smart Chain (BEP20)</SelectItem>
+                    </>)}
+                    {withdrawCoin === "usdc" && (<>
+                      <SelectItem value="erc20">Ethereum (ERC20)</SelectItem>
+                      <SelectItem value="trc20">Tron (TRC20)</SelectItem>
+                    </>)}
+                    {withdrawCoin === "btc" && <SelectItem value="btc">Bitcoin</SelectItem>}
+                    {withdrawCoin === "eth" && <SelectItem value="erc20">Ethereum (ERC20)</SelectItem>}
+                    {withdrawCoin === "trx" && <SelectItem value="trc20">Tron (TRC20)</SelectItem>}
+                    {withdrawCoin === "bnb" && <SelectItem value="bep20">BNB Smart Chain (BEP20)</SelectItem>}
+                    {withdrawCoin === "sol" && <SelectItem value="sol">Solana</SelectItem>}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
 
-            <div className="rounded-lg bg-muted/50 p-3 text-xs text-muted-foreground space-y-1">
-              <p>Minimum withdrawal: <span className="font-medium text-foreground">$10.00</span></p>
-              <p>Withdrawal fee: <span className="font-medium text-foreground">3%</span></p>
-              {withdrawAmount && parseFloat(withdrawAmount) >= 10 && (
-                <p>You will receive: <span className="font-medium text-foreground">${(parseFloat(withdrawAmount) * 0.97).toFixed(2)}</span></p>
-              )}
-            </div>
+            {/* Step 4: Address */}
+            {withdrawNetwork && (
+              <div>
+                <Label className="text-sm font-medium mb-2 block">Wallet Address</Label>
+                <Input
+                  type="text"
+                  placeholder="Enter your wallet address"
+                  value={walletAddress}
+                  onChange={(e) => setWalletAddress(e.target.value)}
+                  className="h-11"
+                />
+                <div className="mt-2 p-2.5 rounded-lg bg-amber-500/10 border border-amber-500/20">
+                  <p className="text-xs text-amber-700">
+                    ⚠️ Only send to a {withdrawCoin.toUpperCase()} address on the selected network. Using the wrong network may result in permanent loss.
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {/* Fee preview */}
+            {withdrawAmount && parseFloat(withdrawAmount) >= 10 && withdrawCurrency && (
+              <div className="rounded-lg bg-muted/50 p-3 text-xs text-muted-foreground space-y-1">
+                <p>Minimum withdrawal: <span className="font-medium text-foreground">$10.00</span></p>
+                <p>Withdrawal fee: <span className="font-medium text-foreground">{isFoundingMember ? '3%' : '6%'}</span></p>
+                <p>You will receive: <span className="font-medium text-foreground">${(parseFloat(withdrawAmount) * (isFoundingMember ? 0.97 : 0.94)).toFixed(2)}</span> in {withdrawCoin.toUpperCase()}</p>
+              </div>
+            )}
 
             <Button
               onClick={async () => {
@@ -3835,13 +3870,15 @@ export default function InfluencerDashboard() {
                   setShowWithdrawModal(false);
                   setWithdrawAmount("");
                   setWalletAddress("");
-                  setWithdrawCurrency("USDT (TRC20)");
+                  setWithdrawCoin("");
+                  setWithdrawNetwork("");
+                  setWithdrawCurrency("");
                 } catch (error) {
                   console.error('Failed to withdraw:', error);
                   showToast('Failed to withdraw. Please try again.', 'error');
                 }
               }}
-              disabled={!withdrawAmount || !walletAddress.trim() || !withdrawCurrency}
+              disabled={!withdrawAmount || parseFloat(withdrawAmount || '0') < 10 || !walletAddress.trim() || !withdrawCurrency}
               className="w-full h-11 bg-gradient-to-r from-primary to-secondary hover:opacity-90"
             >
               Submit Withdrawal
