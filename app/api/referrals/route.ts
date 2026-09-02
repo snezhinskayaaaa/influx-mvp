@@ -22,17 +22,23 @@ export async function GET() {
       return NextResponse.json({ error: 'Not found' }, { status: 404 })
     }
 
-    // Activate pending referrals for me if profile is complete (fallback)
+    // Activate pending referrals for me if profile complete + email verified (fallback)
     const myProfileComplete = !!(
       influencer.handle?.trim() &&
       influencer.niche.length > 0 &&
       (influencer.twitterHandle || influencer.instagramHandle || influencer.tiktokHandle || influencer.youtubeHandle || influencer.telegramHandle)
     )
     if (myProfileComplete) {
-      await prisma.referral.updateMany({
-        where: { referredId: influencer.id, status: 'pending' },
-        data: { status: 'active' },
-      }).catch(() => {})
+      const myProfile = await prisma.profile.findUnique({
+        where: { id: auth.userId },
+        select: { emailVerified: true },
+      })
+      if (myProfile?.emailVerified) {
+        await prisma.referral.updateMany({
+          where: { referredId: influencer.id, status: 'pending' },
+          data: { status: 'active' },
+        }).catch(() => {})
+      }
     }
 
     // Get my referrals

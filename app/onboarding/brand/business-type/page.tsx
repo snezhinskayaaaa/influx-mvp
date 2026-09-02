@@ -24,6 +24,7 @@ export default function BusinessTypePage() {
   const router = useRouter();
   const [selectedType, setSelectedType] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState("");
 
   const handleComplete = async () => {
     if (selectedType) {
@@ -60,7 +61,7 @@ export default function BusinessTypePage() {
       } catch (err) {
         setIsSubmitting(false);
         const message = err instanceof Error ? err.message : "Something went wrong";
-        alert(message);
+        setError(message);
         console.error("Brand onboarding error:", err);
       }
     }
@@ -100,6 +101,10 @@ export default function BusinessTypePage() {
           </button>
         ))}
       </div>
+
+      {error && (
+        <p className="text-sm text-destructive text-center mb-2">{error}</p>
+      )}
 
       <Button
         onClick={handleComplete}

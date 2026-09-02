@@ -83,6 +83,9 @@ export async function PATCH(
     // Brand can set agreedPrice and brandAgreed, and accept application (NEGOTIATING)
     if (isBrandOwner || isAdmin) {
       if (body.agreedPrice !== undefined) {
+        if (collaboration.status !== 'NEGOTIATING') {
+          return NextResponse.json({ error: 'Price can only be changed during negotiation' }, { status: 400 })
+        }
         if (typeof body.agreedPrice !== 'number' || body.agreedPrice <= 0 || body.agreedPrice > 1000000) {
           return NextResponse.json({ error: 'Agreed price must be a positive number up to 1,000,000' }, { status: 400 })
         }
@@ -91,6 +94,9 @@ export async function PATCH(
         updateData.influencerAgreed = null
       }
       if (body.brandAgreed !== undefined) {
+        if (!['NEGOTIATING', 'APPLIED'].includes(collaboration.status)) {
+          return NextResponse.json({ error: 'Agreement can only be changed during negotiation' }, { status: 400 })
+        }
         updateData.brandAgreed = body.brandAgreed
       }
       if (body.status === 'NEGOTIATING' && collaboration.status === 'APPLIED') {
@@ -104,6 +110,9 @@ export async function PATCH(
     // Influencer can set influencerAgreed and influencerTerms
     if (isInfluencer || isAdmin) {
       if (body.influencerAgreed !== undefined) {
+        if (collaboration.status !== 'NEGOTIATING') {
+          return NextResponse.json({ error: 'Can only accept/decline during negotiation' }, { status: 400 })
+        }
         updateData.influencerAgreed = body.influencerAgreed
         // Notify brand about price accept/decline
         if (body.influencerAgreed === true) {

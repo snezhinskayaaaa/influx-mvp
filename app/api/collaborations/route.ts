@@ -151,10 +151,13 @@ export async function POST(request: NextRequest) {
 
     const campaign = await prisma.campaign.findUnique({
       where: { id: campaignId },
-      include: { brand: { select: { userId: true, id: true } } },
+      include: { brand: { select: { userId: true, id: true, isBanned: true } } },
     })
     if (!campaign || campaign.status !== 'ACTIVE') {
       return NextResponse.json({ error: 'Campaign not found or not active' }, { status: 400 })
+    }
+    if (campaign.brand.isBanned) {
+      return NextResponse.json({ error: 'This project has been suspended' }, { status: 403 })
     }
 
     let targetInfluencerId: string

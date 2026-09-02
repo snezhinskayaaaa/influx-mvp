@@ -179,7 +179,7 @@ export async function DELETE(
         collaborations: {
           where: {
             status: {
-              in: ['AGREED', 'IN_PROGRESS', 'CONTENT_REVIEW', 'REVISION', 'PUBLISHING', 'DELIVERED'],
+              in: ['APPLIED', 'INVITED', 'NEGOTIATING', 'AGREED', 'IN_PROGRESS', 'CONTENT_REVIEW', 'REVISION', 'PUBLISHING', 'DELIVERED', 'DISPUTED'],
             },
           },
         },

@@ -25,6 +25,7 @@ export default function InfluencerOnboardingStep3() {
   const router = useRouter();
   const [selectedNiches, setSelectedNiches] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState("");
 
   const toggleNiche = (niche: string) => {
     setSelectedNiches((prev) =>
@@ -84,7 +85,7 @@ export default function InfluencerOnboardingStep3() {
       } catch (err) {
         setIsSubmitting(false);
         const message = err instanceof Error ? err.message : 'Something went wrong';
-        alert(message);
+        setError(message);
         console.error("Influencer onboarding error:", err);
       }
     }
@@ -130,6 +131,10 @@ export default function InfluencerOnboardingStep3() {
           </button>
         ))}
       </div>
+
+      {error && (
+        <p className="text-sm text-destructive text-center mb-2">{error}</p>
+      )}
 
       <Button
         onClick={handleComplete}
