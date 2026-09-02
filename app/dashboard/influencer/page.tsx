@@ -493,11 +493,9 @@ export default function InfluencerDashboard() {
             const data = await influencerRes.json()
             const inf = data.influencer
             if (inf) {
-              // Redirect to onboarding if profile incomplete
-              const hasName = !!(inf.handle && inf.handle.trim())
+              // Redirect to onboarding if profile incomplete (niche is the key indicator)
               const hasNiche = Array.isArray(inf.niche) && inf.niche.length > 0
-              const hasSocial = !!(inf.twitterHandle || inf.instagramHandle || inf.tiktokHandle || inf.youtubeHandle || inf.telegramHandle)
-              if (!hasName || !hasNiche || !hasSocial) {
+              if (!hasNiche) {
                 window.location.href = '/onboarding/influencer'
                 return
               }
