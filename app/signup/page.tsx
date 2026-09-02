@@ -49,6 +49,7 @@ function SignupForm() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [termsAccepted, setTermsAccepted] = useState(false);
 
   useEffect(() => {
     if (typeParam === "brand" || typeParam === "influencer" || typeParam === "creator") {
@@ -333,9 +334,28 @@ function SignupForm() {
                 </div>
               </div>
 
+              <label className="flex items-start gap-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={termsAccepted}
+                  onChange={(e) => setTermsAccepted(e.target.checked)}
+                  className="mt-0.5 rounded"
+                />
+                <span className="text-[10px] sm:text-xs text-muted-foreground">
+                  I agree to the{" "}
+                  <Link href="/terms" target="_blank" className="text-primary hover:underline">
+                    Terms of Service
+                  </Link>{" "}
+                  and{" "}
+                  <Link href="/privacy" target="_blank" className="text-primary hover:underline">
+                    Privacy Policy
+                  </Link>
+                </span>
+              </label>
+
               <Button
                 type="submit"
-                disabled={loading}
+                disabled={loading || !termsAccepted}
                 className="w-full h-9 sm:h-10 bg-gradient-to-r from-primary to-secondary hover:opacity-90 transition-opacity text-sm"
               >
                 {loading ? "Creating account..." : "Create account"}
@@ -345,16 +365,6 @@ function SignupForm() {
               {error && (
                 <p className="text-sm text-red-500 text-center mt-2">{error}</p>
               )}
-              <p className="text-[10px] sm:text-xs text-center text-muted-foreground pt-1">
-                By signing up, you agree to our{" "}
-                <Link href="/terms" className="text-primary hover:underline">
-                  Terms
-                </Link>{" "}
-                and{" "}
-                <Link href="/privacy" className="text-primary hover:underline">
-                  Privacy
-                </Link>
-              </p>
             </form>
           </Card>
 

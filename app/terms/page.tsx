@@ -224,7 +224,12 @@ export default function TermsPage() {
 
                 <h3 className="text-lg font-semibold text-foreground mt-6">7.3 Campaign Content</h3>
                 <p>
-                  Unless otherwise specified in the campaign agreement, content produced for a campaign is licensed to the project for the duration and scope outlined in the campaign brief. Creators retain the underlying intellectual property rights to their personas, AI-generated assets, and creative works.
+                  Unless otherwise specified in the campaign agreement, content produced for a campaign is licensed to the project for the duration and scope outlined in the campaign brief. Creators retain the underlying intellectual property rights to their personas and creative works.
+                </p>
+
+                <h3 className="text-lg font-semibold text-foreground mt-6">7.4 Public Information</h3>
+                <p>
+                  Your display name, profile information, content focus categories, and social media handles are visible to other Platform users. Your referral statistics and community badges (such as Community Member, Community Builder, Community Leader) may be displayed publicly on platform leaderboards, in your profile, and in promotional materials. By using the Platform, you consent to this public display of your activity data.
                 </p>
               </div>
             </motion.div>
