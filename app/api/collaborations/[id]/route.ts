@@ -83,7 +83,7 @@ export async function PATCH(
     // Brand can set agreedPrice and brandAgreed, and accept application (NEGOTIATING)
     if (isBrandOwner || isAdmin) {
       if (body.agreedPrice !== undefined) {
-        if (collaboration.status !== 'NEGOTIATING') {
+        if (!['APPLIED', 'NEGOTIATING'].includes(collaboration.status)) {
           return NextResponse.json({ error: 'Price can only be changed during negotiation' }, { status: 400 })
         }
         if (typeof body.agreedPrice !== 'number' || body.agreedPrice <= 0 || body.agreedPrice > 1000000) {
