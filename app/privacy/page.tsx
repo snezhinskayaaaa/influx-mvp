@@ -290,6 +290,9 @@ export default function PrivacyPage() {
                   <li><strong className="text-foreground">PostgreSQL:</strong> Our database management system, used to store structured application data securely.</li>
                   <li><strong className="text-foreground">Payment Processors:</strong> 0xProcessing and other cryptocurrency payment providers handle stablecoin deposits and withdrawals.</li>
                   <li><strong className="text-foreground">Blockchain Networks:</strong> Public blockchain networks (Ethereum, Tron, Arbitrum, etc.) process on-chain transactions.</li>
+                  <li><strong className="text-foreground">Google:</strong> Google OAuth is used for authentication. When you sign in with Google, we receive your email address, name, and profile picture from Google.</li>
+                  <li><strong className="text-foreground">Resend:</strong> Our email delivery provider. Processes email addresses to send verification emails, password resets, and platform notifications.</li>
+                  <li><strong className="text-foreground">Upstash:</strong> Our Redis provider for rate limiting. Processes IP-based identifiers to prevent abuse. No personal data is stored.</li>
                   <li><strong className="text-foreground">Analytics Providers:</strong> We use analytics services to understand Platform usage and improve our offerings.</li>
                 </ul>
                 <p>

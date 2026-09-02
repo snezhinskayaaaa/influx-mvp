@@ -208,6 +208,22 @@ export default function TermsPage() {
               </div>
             </motion.div>
 
+            {/* 6.1 Referral Program */}
+            <motion.div variants={fadeInUp}>
+              <h2 className="text-2xl font-bold mb-4 text-foreground">6.1 Referral Program</h2>
+              <div className="space-y-4 text-muted-foreground leading-relaxed">
+                <p>
+                  Eligible creators may invite other creators to the Platform using a unique referral link. When a referred creator completes their profile and begins earning on the Platform, the referrer receives 10% of the platform fees generated from the referred creator&apos;s withdrawals. This revenue share is credited to the referrer&apos;s Platform wallet balance.
+                </p>
+                <p>
+                  Referral payouts are processed only upon confirmed withdrawals by the referred creator. Self-referral, fake accounts, or any form of referral abuse will result in immediate disqualification from the program and forfeiture of referral earnings.
+                </p>
+                <p>
+                  INFLUXconnect reserves the right to modify, suspend, or terminate the Referral Program at any time with 30 days&apos; prior notice. Changes will not affect referral earnings already credited to your wallet.
+                </p>
+              </div>
+            </motion.div>
+
             {/* 7. Intellectual Property */}
             <motion.div variants={fadeInUp}>
               <h2 className="text-2xl font-bold mb-4 text-foreground">7. Intellectual Property</h2>
@@ -370,6 +386,9 @@ export default function TermsPage() {
                 </p>
                 <p>
                   Users acknowledge that cryptocurrency regulations vary by jurisdiction and are subject to change. Users are solely responsible for compliance with all applicable laws, regulations, and tax obligations in their respective jurisdictions, including but not limited to those related to cryptocurrency, digital assets, and financial services.
+                </p>
+                <p>
+                  <strong className="text-foreground">Tax Responsibility:</strong> You are solely responsible for determining, reporting, and paying all applicable taxes on income earned through the Platform, including but not limited to income tax, capital gains tax, VAT, and any other taxes required by your jurisdiction. INFLUXconnect does not provide tax advice and is not responsible for your tax obligations. The Platform may issue tax reporting forms where required by applicable law. You are encouraged to consult a qualified tax professional regarding your specific tax situation.
                 </p>
                 <p>
                   For users located in the European Union, nothing in these Terms affects your rights under mandatory consumer protection laws of your country of residence.
