@@ -127,7 +127,7 @@ function SignupForm() {
       access_type: "offline",
       prompt: "consent",
     });
-    window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?${params.toString()}`;
+    window.location.replace(`https://accounts.google.com/o/oauth2/v2/auth?${params.toString()}`);
   };
 
   return (
