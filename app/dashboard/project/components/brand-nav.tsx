@@ -90,6 +90,7 @@ interface BrandSidebarProps {
   externalShowTopUp?: boolean;
   setExternalShowTopUp?: (show: boolean) => void;
   isFoundingMember?: boolean;
+  onResetCampaigns?: () => void;
 }
 
 export function BrandSidebar({
@@ -100,6 +101,7 @@ export function BrandSidebar({
   externalShowTopUp,
   setExternalShowTopUp,
   isFoundingMember = false,
+  onResetCampaigns,
 }: BrandSidebarProps) {
   const [toast, setToast] = useState<{ message: string; variant: 'success' | 'error' } | null>(null);
 
@@ -522,7 +524,7 @@ export function BrandSidebar({
           </button>
 
           <button
-            onClick={() => setActiveTab("campaigns")}
+            onClick={() => { setActiveTab("campaigns"); if (onResetCampaigns) onResetCampaigns(); }}
             className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all ${
               activeTab === "campaigns"
                 ? "bg-primary/10 text-primary border-2 border-primary/30"

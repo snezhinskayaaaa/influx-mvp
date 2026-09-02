@@ -35,6 +35,7 @@ import { COLLABORATION_STATUS_CONFIG } from "./components/types";
 
 export default function BrandDashboard() {
   const [activeTab, setActiveTab] = useState<Tab>("discover");
+  const [campaignResetKey, setCampaignResetKey] = useState(false);
   const [toast, setToast] = useState<{ message: string; variant: 'success' | 'error' } | null>(null);
 
   const showToast = (message: string, variant: 'success' | 'error' = 'success') => {
@@ -97,8 +98,8 @@ export default function BrandDashboard() {
               id: c.id,
               title: (c.title as string) || '',
               status: ((c.status as string) || 'draft').toLowerCase() as 'active' | 'draft' | 'paused' | 'completed',
-              budgetMin: String(((c.budgetMin as number) || 0) / 100),
-              budgetMax: String(((c.budgetMax as number) || 0) / 100),
+              budgetMin: String(Math.round(((c.budgetMin as number) || 0) / 100)),
+              budgetMax: String(Math.round(((c.budgetMax as number) || 0) / 100)),
               applications: (c._count as Record<string, number>)?.collaborations || 0,
               applicationsList: undefined,
               startDate: c.startDate ? new Date(c.startDate as string).toISOString().split('T')[0] : c.createdAt ? new Date(c.createdAt as string).toISOString().split('T')[0] : '',
@@ -389,6 +390,7 @@ export default function BrandDashboard() {
           externalShowTopUp={showTopUpModal}
           setExternalShowTopUp={setShowTopUpModal}
           isFoundingMember={isFoundingMember}
+          onResetCampaigns={() => setCampaignResetKey(prev => !prev)}
         />
 
         {/* Main Content */}
@@ -425,6 +427,7 @@ export default function BrandDashboard() {
                 setActiveTab={setActiveTab}
                 balance={balance}
                 setShowInsufficientFundsDialog={setShowInsufficientFundsDialog}
+                resetView={campaignResetKey}
               />
             )}
 

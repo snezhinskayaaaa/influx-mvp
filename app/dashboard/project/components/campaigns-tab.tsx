@@ -53,6 +53,7 @@ interface CampaignsTabProps {
   setActiveTab: (tab: Tab) => void;
   balance: number;
   setShowInsufficientFundsDialog: (show: boolean) => void;
+  resetView?: boolean;
 }
 
 /** Label maps for values saved by the create form */
@@ -166,6 +167,7 @@ export function CampaignsTab({
   setCampaigns,
   setActiveTab,
   setShowInsufficientFundsDialog,
+  resetView,
 }: CampaignsTabProps) {
   const [toast, setToast] = useState<{ message: string; variant: 'success' | 'error' } | null>(null);
 
@@ -175,6 +177,7 @@ export function CampaignsTab({
   };
 
   const [selectedCampaignDetails, setSelectedCampaignDetails] = useState<Campaign | null>(null);
+  useEffect(() => { if (resetView) setSelectedCampaignDetails(null); }, [resetView]);
   const [campaignSearchQuery, setCampaignSearchQuery] = useState("");
   const [campaignStatusFilter, setCampaignStatusFilter] = useState<"all" | "active" | "draft" | "paused" | "completed">("all");
   const [isCampaignDetailsExpanded, setIsCampaignDetailsExpanded] = useState(false);
