@@ -2643,7 +2643,7 @@ export default function InfluencerDashboard() {
                           </div>
                           <div className="min-w-0 flex-1">
                             <div className="flex items-center gap-1.5 mb-1.5">
-                              <h3 className="text-sm font-semibold truncate">{campaign.title}</h3>
+                              <h3 className="text-sm font-semibold truncate text-primary hover:underline">{campaign.title}</h3>
                               {["approved", "active", "revision", "publishing"].includes(campaign.status) && (
                                 <span className="inline-flex w-2.5 h-2.5 rounded-full bg-amber-500 shrink-0" />
                               )}
@@ -2716,8 +2716,8 @@ export default function InfluencerDashboard() {
 
                         {/* Actions Column */}
                         <div className="w-[140px] flex items-center justify-end gap-2">
-                          <Button size="sm" variant="ghost" className="h-8 w-8 p-0" onClick={() => setSelectedCampaignDetails(campaign)}>
-                            <Eye className="h-4 w-4" />
+                          <Button size="sm" variant="outline" className="h-8 px-3 text-xs" onClick={() => setSelectedCampaignDetails(campaign)}>
+                            View
                           </Button>
                           {(campaign.status === "applied" || campaign.status === "approved") && campaign.collaborationId && (
                             <Button
