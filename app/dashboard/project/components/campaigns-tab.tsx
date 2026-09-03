@@ -2153,7 +2153,7 @@ export function CampaignsTab({
                         </div>
 
                         {/* Content review - show different UI based on collaboration status */}
-                        {["PUBLISHING", "DELIVERED", "COMPLETED", "RESOLVED"].includes(selectedInfluencerForPipeline.collaborationStatus ?? "") ? (
+                        {(["PUBLISHING", "DELIVERED", "COMPLETED", "RESOLVED"].includes(selectedInfluencerForPipeline.collaborationStatus ?? "") || (selectedInfluencerForPipeline.collaborationStatus === "DISPUTED" && (() => { try { return JSON.parse(selectedInfluencerForPipeline.disputeReason || '{}').fromStatus !== 'CONTENT_REVIEW' } catch { return true } })())) ? (
                           /* Content already approved - show completed state */
                           <div className="space-y-3">
                             <div className="flex items-center gap-2 px-4 py-3 rounded-lg bg-success/10 border border-success/20">
