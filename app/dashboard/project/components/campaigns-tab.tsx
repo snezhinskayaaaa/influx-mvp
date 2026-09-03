@@ -2391,7 +2391,7 @@ export function CampaignsTab({
                               Cancel Collaboration
                             </Button>
                             <p className="text-[10px] text-muted-foreground text-center">
-                              The advance payment will stay with the creator
+                              Frozen funds will be returned. Advance refund depends on creator&apos;s balance.
                             </p>
                           </div>
                         )}
