@@ -2315,14 +2315,33 @@ export default function InfluencerDashboard() {
                               <p className="text-xs text-muted-foreground">Remaining payment is held until resolved.</p>
                             </div>
                           ) : ["publishing", "delivered", "completed", "resolved", "disputed"].includes(selectedCampaignDetails.status) ? (
-                            <div className="flex items-center gap-2 px-4 py-3 rounded-lg bg-success/10 border border-success/20">
-                              <CheckCircle2 className="h-5 w-5 text-success" />
-                              <div className="flex-1">
-                                <p className="text-sm font-medium text-success">Content Approved</p>
-                                <p className="text-xs text-muted-foreground">
-                                  Project has approved your content
-                                </p>
+                            <div className="space-y-3">
+                              <div className="flex items-center gap-2 px-4 py-3 rounded-lg bg-success/10 border border-success/20">
+                                <CheckCircle2 className="h-5 w-5 text-success" />
+                                <div className="flex-1">
+                                  <p className="text-sm font-medium text-success">Content Approved</p>
+                                  <p className="text-xs text-muted-foreground">
+                                    Project has approved your content
+                                  </p>
+                                </div>
                               </div>
+                              {selectedCampaignDetails.contentUrl && (
+                                <div className="bg-background rounded-lg p-4 border border-border">
+                                  <div className="flex items-center gap-2 mb-2">
+                                    <LinkIcon className="h-4 w-4 text-primary" />
+                                    <span className="text-sm font-medium">Submitted Content</span>
+                                  </div>
+                                  <a
+                                    href={selectedCampaignDetails.contentUrl}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="text-sm text-primary hover:underline break-all flex items-center gap-1"
+                                  >
+                                    {selectedCampaignDetails.contentUrl}
+                                    <ExternalLink className="h-3 w-3" />
+                                  </a>
+                                </div>
+                              )}
                             </div>
                           ) : null}
                         </div>
