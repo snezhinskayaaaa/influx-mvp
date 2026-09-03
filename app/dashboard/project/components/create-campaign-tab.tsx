@@ -195,6 +195,15 @@ export function CreateCampaignTab({ campaigns, setCampaigns, setActiveTab }: Cre
         <form className="space-y-6" onSubmit={async (e) => {
           e.preventDefault();
 
+          if (parseFloat(campaignBudgetMin) < 20) {
+            showToast('Minimum budget is $20', 'error');
+            return;
+          }
+          if (parseFloat(campaignBudgetMax) < parseFloat(campaignBudgetMin)) {
+            showToast('Maximum budget must be ≥ minimum', 'error');
+            return;
+          }
+
           const newCampaign = buildCampaignFromForm("active");
 
           // Try to create campaign via API
@@ -851,13 +860,15 @@ export function CreateCampaignTab({ campaigns, setCampaigns, setActiveTab }: Cre
                   <Input
                     id="budget-min"
                     type="number"
-                    min="20"
                     placeholder="1000"
                     value={campaignBudgetMin}
                     onChange={(e) => setCampaignBudgetMin(e.target.value)}
                     className="pl-10 h-11"
                     required
                   />
+                  {campaignBudgetMin && parseFloat(campaignBudgetMin) < 20 && (
+                    <p className="text-xs text-destructive mt-1">Minimum budget is $20</p>
+                  )}
                 </div>
               </div>
               <div>
@@ -869,13 +880,15 @@ export function CreateCampaignTab({ campaigns, setCampaigns, setActiveTab }: Cre
                   <Input
                     id="budget-max"
                     type="number"
-                    min={campaignBudgetMin || "100"}
                     placeholder="5000"
                     value={campaignBudgetMax}
                     onChange={(e) => setCampaignBudgetMax(e.target.value)}
                     className="pl-10 h-11"
                     required
                   />
+                  {campaignBudgetMax && campaignBudgetMin && parseFloat(campaignBudgetMax) < parseFloat(campaignBudgetMin) && (
+                    <p className="text-xs text-destructive mt-1">Maximum must be ≥ minimum</p>
+                  )}
                 </div>
               </div>
             </div>
