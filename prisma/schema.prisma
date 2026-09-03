@@ -331,6 +331,7 @@ model Collaboration {
   disputeResult  String?   @map("dispute_result")
 
   // Timestamps
+  contentSubmittedAt DateTime? @map("content_submitted_at") @db.Timestamptz
   frozenAt       DateTime? @map("frozen_at") @db.Timestamptz
   completedAt    DateTime? @map("completed_at") @db.Timestamptz
   advancePaidAt  DateTime? @map("advance_paid_at") @db.Timestamptz

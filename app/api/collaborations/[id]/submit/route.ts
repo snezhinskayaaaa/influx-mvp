@@ -59,6 +59,7 @@ export async function POST(
         data: {
           contentUrl: contentUrl.trim(),
           status: 'CONTENT_REVIEW',
+          contentSubmittedAt: new Date(),
         },
       })
 
