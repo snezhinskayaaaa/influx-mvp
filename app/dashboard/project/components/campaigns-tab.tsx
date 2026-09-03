@@ -2554,14 +2554,31 @@ export function CampaignsTab({
                                       <p className="text-sm font-medium text-red-600">Dispute filed — under review</p>
                                     </div>
                                     {selectedInfluencerForPipeline.disputeReason && (() => {
-                                      const match = (selectedInfluencerForPipeline.disputeReason ?? '').match(/^\[(.+?)\]\s*([\s\S]*)/);
-                                      const category = match ? match[1].replace(/-/g, ' ').replace(/\b\w/g, (c: string) => c.toUpperCase()) : null;
-                                      const comment = match ? match[2] : selectedInfluencerForPipeline.disputeReason;
+                                      let category: string | null = null;
+                                      let comment: string | null = null;
+                                      let filedBy: string | null = null;
+                                      try {
+                                        const parsed = JSON.parse(selectedInfluencerForPipeline.disputeReason);
+                                        category = (parsed.category || '').replace(/_/g, ' ').replace(/\b\w/g, (c: string) => c.toUpperCase());
+                                        comment = parsed.comment || null;
+                                        filedBy = parsed.filedBy || null;
+                                      } catch {
+                                        const match = (selectedInfluencerForPipeline.disputeReason ?? '').match(/^\[(.+?)\]\s*([\s\S]*)/);
+                                        category = match ? match[1].replace(/-/g, ' ').replace(/\b\w/g, (c: string) => c.toUpperCase()) : null;
+                                        comment = match ? match[2] : selectedInfluencerForPipeline.disputeReason;
+                                      }
                                       return (
                                         <div className="px-4 py-3 space-y-2">
-                                          {category && (
-                                            <span className="inline-block text-xs font-medium px-2 py-0.5 rounded-full bg-red-500/10 text-red-600 border border-red-500/20">{category}</span>
-                                          )}
+                                          <div className="flex flex-wrap gap-1">
+                                            {filedBy && (
+                                              <span className={`text-[10px] px-1.5 py-0.5 rounded-full border ${filedBy === 'project' ? 'bg-blue-500/10 text-blue-600 border-blue-500/20' : 'bg-purple-500/10 text-purple-600 border-purple-500/20'}`}>
+                                                Filed by {filedBy === 'project' ? 'Project' : 'Creator'}
+                                              </span>
+                                            )}
+                                            {category && (
+                                              <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-red-500/10 text-red-600 border border-red-500/20">{category}</span>
+                                            )}
+                                          </div>
                                           {comment && <p className="text-sm text-muted-foreground">{comment}</p>}
                                           <p className="text-xs text-muted-foreground">Platform team will investigate and resolve.</p>
                                         </div>
