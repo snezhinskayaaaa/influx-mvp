@@ -2360,16 +2360,15 @@ export function CampaignsTab({
                           </div>
                         )}
 
-                        {/* Cancel collaboration on step 2 */}
-                        {["IN_PROGRESS", "CONTENT_REVIEW", "REVISION", "PUBLISHING"].includes(selectedInfluencerForPipeline.collaborationStatus ?? "") && (
-                          <div className="pt-3 border-t mt-3">
+                        {/* Cancel collaboration — only when waiting for content (IN_PROGRESS) */}
+                        {selectedInfluencerForPipeline.collaborationStatus === "IN_PROGRESS" && (
+                          <div className="pt-3 border-t mt-3 space-y-2">
                             <Button
                               size="sm"
                               variant="outline"
                               className="w-full text-red-600 border-red-200 hover:bg-red-50"
                               disabled={actionLoading}
                               onClick={async () => {
-                                if (!confirm('Are you sure you want to cancel this collaboration? The advance payment will stay with the creator.')) return;
                                 setActionLoading(true);
                                 try {
                                   const res = await fetch(`/api/collaborations/${selectedInfluencerForPipeline.collaborationId}`, {
@@ -2391,6 +2390,9 @@ export function CampaignsTab({
                               <XCircle className="h-4 w-4 mr-1" />
                               Cancel Collaboration
                             </Button>
+                            <p className="text-[10px] text-muted-foreground text-center">
+                              The advance payment will stay with the creator
+                            </p>
                           </div>
                         )}
                       </div>
