@@ -871,10 +871,10 @@ export function CreateCampaignTab({ campaigns, setCampaigns, setActiveTab }: Cre
                     className="pl-10 h-11"
                     required
                   />
-                  {campaignBudgetMin && parseFloat(campaignBudgetMin) < 20 && (
-                    <p className="text-xs text-destructive mt-1">Minimum $20 per influencer</p>
-                  )}
                 </div>
+                {campaignBudgetMin && parseFloat(campaignBudgetMin) < 20 && (
+                  <p className="text-xs text-destructive mt-1">Minimum $20 per influencer</p>
+                )}
               </div>
               <div>
                 <Label htmlFor="budget-max" className="text-xs text-muted-foreground mb-1.5 block">
@@ -891,10 +891,10 @@ export function CreateCampaignTab({ campaigns, setCampaigns, setActiveTab }: Cre
                     className="pl-10 h-11"
                     required
                   />
-                  {campaignBudgetMax && campaignBudgetMin && parseFloat(campaignBudgetMax) < parseFloat(campaignBudgetMin) && (
-                    <p className="text-xs text-destructive mt-1">Maximum must be ≥ minimum</p>
-                  )}
                 </div>
+                {campaignBudgetMax && campaignBudgetMin && parseFloat(campaignBudgetMax) < parseFloat(campaignBudgetMin) && (
+                  <p className="text-xs text-destructive mt-1">Maximum must be ≥ minimum</p>
+                )}
               </div>
             </div>
             <p className="text-xs text-muted-foreground mt-2">
