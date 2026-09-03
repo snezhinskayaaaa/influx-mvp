@@ -2074,15 +2074,13 @@ export function CampaignsTab({
                           </div>
                         )}
 
-                        {/* COMPLETED or RESOLVED: Payment summary */}
-                        {(selectedInfluencerForPipeline.collaborationStatus === "COMPLETED" || selectedInfluencerForPipeline.collaborationStatus === "RESOLVED") && (
+                        {/* COMPLETED: Payment summary */}
+                        {selectedInfluencerForPipeline.collaborationStatus === "COMPLETED" && (
                           <div className="space-y-3 pt-3 border-t">
                             <div className="flex items-center gap-2 px-4 py-3 rounded-lg bg-success/10 border border-success/20">
                               <CheckCircle2 className="h-5 w-5 text-success" />
                               <div>
-                                <p className="text-sm font-medium text-success">
-                                  {selectedInfluencerForPipeline.collaborationStatus === "COMPLETED" ? "Completed" : "Resolved"}
-                                </p>
+                                <p className="text-sm font-medium text-success">Completed</p>
                                 <p className="text-xs text-muted-foreground">All payments processed.</p>
                               </div>
                             </div>
