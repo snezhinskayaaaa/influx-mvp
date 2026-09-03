@@ -65,6 +65,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { ReferralsTab } from "./components/referrals-tab";
+import { DisputeDialog } from "@/components/dispute-dialog";
 
 /** Label maps for content format values */
 const FORMAT_LABELS: Record<string, string> = {
@@ -197,6 +198,7 @@ export default function InfluencerDashboard() {
   const [applyingCampaign, setApplyingCampaign] = useState<Campaign | null>(null);
   const [viewingBrand, setViewingBrand] = useState<Campaign | null>(null);
   const [proposedPrice, setProposedPrice] = useState("");
+  const [showDisputeDialog, setShowDisputeDialog] = useState(false);
   const [myCampaignSearch, setMyCampaignSearch] = useState("");
   const [myCampaignStatusFilter, setMyCampaignStatusFilter] = useState("all");
   const [applicationMessage, setApplicationMessage] = useState("");
@@ -2232,26 +2234,7 @@ export default function InfluencerDashboard() {
                                       size="sm"
                                       className="w-full text-red-600 border-red-200 hover:bg-red-50"
                                       disabled={!canDispute || submitLoading}
-                                      onClick={async () => {
-                                        const reason = prompt('Describe why you are filing a dispute:');
-                                        if (!reason) return;
-                                        setSubmitLoading(true);
-                                        try {
-                                          const res = await fetch(`/api/collaborations/${selectedCampaignDetails.collaborationId || selectedCampaignDetails.id}/review`, {
-                                            method: 'POST',
-                                            headers: { 'Content-Type': 'application/json' },
-                                            body: JSON.stringify({ action: 'dispute', note: JSON.stringify({ category: 'project_unresponsive', comment: reason }) }),
-                                          });
-                                          if (res.ok) {
-                                            showToast('Dispute filed. Admin will review.', 'success');
-                                            await refreshCollaborations();
-                                          } else {
-                                            const data = await res.json();
-                                            showToast(data.error || 'Failed to file dispute', 'error');
-                                          }
-                                        } catch { showToast('Failed to file dispute', 'error'); }
-                                        finally { setSubmitLoading(false); }
-                                      }}
+                                      onClick={() => setShowDisputeDialog(true)}
                                     >
                                       <AlertCircle className="h-4 w-4 mr-1" />
                                       {canDispute ? 'Open Dispute' : `Open Dispute — available in ${daysUntilAvailable} day${daysUntilAvailable !== 1 ? 's' : ''}`}
@@ -4039,6 +4022,39 @@ export default function InfluencerDashboard() {
           </div>
         </div>
       )}
+
+      {/* KOL Dispute Dialog */}
+      <DisputeDialog
+        open={showDisputeDialog}
+        onOpenChange={setShowDisputeDialog}
+        categories={[
+          { value: 'project_unresponsive', label: 'Project Not Responding' },
+          { value: 'terms_violation', label: 'Terms Violation' },
+          { value: 'other', label: 'Other' },
+        ]}
+        onSubmit={async ({ category, comment }) => {
+          const collabId = selectedCampaignDetails?.collaborationId || selectedCampaignDetails?.id;
+          if (!collabId) return;
+          const disputeReason = JSON.stringify({
+            category,
+            comment,
+            filedBy: 'creator',
+            fromStatus: selectedCampaignDetails?.status === 'content_review' ? 'CONTENT_REVIEW' : 'UNKNOWN',
+          });
+          const res = await fetch(`/api/collaborations/${collabId}/review`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'dispute', note: disputeReason }),
+          });
+          if (res.ok) {
+            showToast('Dispute filed. Admin will review.', 'success');
+            await refreshCollaborations();
+          } else {
+            const data = await res.json();
+            showToast(data.error || 'Failed to file dispute', 'error');
+          }
+        }}
+      />
 
       {toast && (
         <div className={`fixed bottom-24 sm:bottom-6 left-4 right-4 sm:left-auto sm:right-6 z-[150] px-5 py-3 rounded-xl shadow-lg border backdrop-blur-sm ${

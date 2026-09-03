@@ -47,6 +47,7 @@ import {
 } from "lucide-react";
 import type { Tab, Campaign, CampaignApplication, CollaborationStatus } from "./types";
 import { COLLABORATION_STATUS_CONFIG } from "./types";
+import { DisputeDialog } from "@/components/dispute-dialog";
 
 interface CampaignsTabProps {
   campaigns: Campaign[];
@@ -197,6 +198,8 @@ export function CampaignsTab({
   const [disputeCategory, setDisputeCategory] = useState("");
   const [showRevisionInput, setShowRevisionInput] = useState(false);
   const [showDisputeInput, setShowDisputeInput] = useState(false);
+  const [showDisputeDialog, setShowDisputeDialog] = useState(false);
+  const [disputeDialogContext, setDisputeDialogContext] = useState<{ collaborationId: string; fromStatus: string; filedBy: string } | null>(null);
   const [actionLoading, setActionLoading] = useState(false);
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [termsHighlight, setTermsHighlight] = useState(false);
@@ -2224,25 +2227,13 @@ export function CampaignsTab({
                                     variant="outline"
                                     className="w-full text-red-600 border-red-200 hover:bg-red-50"
                                     disabled={actionLoading}
-                                    onClick={async () => {
-                                      const reason = prompt('Describe the issue with the content:');
-                                      if (!reason) return;
-                                      setActionLoading(true);
-                                      try {
-                                        const res = await fetch(`/api/collaborations/${selectedInfluencerForPipeline.collaborationId}`, {
-                                          method: 'PATCH',
-                                          headers: { 'Content-Type': 'application/json' },
-                                          body: JSON.stringify({ status: 'DISPUTED', disputeReason: JSON.stringify({ category: 'content_quality', comment: reason }) }),
-                                        });
-                                        if (res.ok) {
-                                          showToast('Dispute filed. Admin will review.', 'success');
-                                          if (selectedCampaignDetails) await handleOpenCampaign(selectedCampaignDetails, true);
-                                        } else {
-                                          const data = await res.json();
-                                          showToast(data.error || 'Failed to file dispute', 'error');
-                                        }
-                                      } catch { showToast('Failed to file dispute', 'error'); }
-                                      finally { setActionLoading(false); }
+                                    onClick={() => {
+                                      setDisputeDialogContext({
+                                        collaborationId: selectedInfluencerForPipeline.collaborationId!,
+                                        fromStatus: selectedInfluencerForPipeline.collaborationStatus ?? 'CONTENT_REVIEW',
+                                        filedBy: 'project',
+                                      });
+                                      setShowDisputeDialog(true);
                                     }}
                                   >
                                     <AlertCircle className="h-4 w-4 mr-1" />
@@ -2517,8 +2508,7 @@ export function CampaignsTab({
                                         })()}
                                       </p>
                                     </div>
-                                    {!showDisputeInput ? (
-                                      <div className="flex gap-2">
+                                    <div className="flex gap-2">
                                         <Button
                                           className="flex-1 bg-gradient-to-r from-secondary to-primary"
                                           disabled={actionLoading}
@@ -2531,50 +2521,19 @@ export function CampaignsTab({
                                           variant="outline"
                                           className="border-red-500/30 text-red-600 hover:bg-red-500/10"
                                           disabled={actionLoading}
-                                          onClick={() => setShowDisputeInput(true)}
+                                          onClick={() => {
+                                            setDisputeDialogContext({
+                                              collaborationId: selectedInfluencerForPipeline.collaborationId!,
+                                              fromStatus: 'DELIVERED',
+                                              filedBy: 'project',
+                                            });
+                                            setShowDisputeDialog(true);
+                                          }}
                                         >
                                           <AlertCircle className="h-4 w-4 mr-2" />
                                           Dispute
                                         </Button>
                                       </div>
-                                    ) : (
-                                      <div className="space-y-3">
-                                        <Select value={disputeCategory} onValueChange={setDisputeCategory}>
-                                          <SelectTrigger className="h-10">
-                                            <SelectValue placeholder="Select dispute reason..." />
-                                          </SelectTrigger>
-                                          <SelectContent>
-                                            <SelectItem value="not-matching-brief">Content doesn&apos;t match brief</SelectItem>
-                                            <SelectItem value="low-quality">Low quality content</SelectItem>
-                                            <SelectItem value="not-published">Not published as agreed</SelectItem>
-                                            <SelectItem value="wrong-platform">Published on wrong platform</SelectItem>
-                                            <SelectItem value="other">Other</SelectItem>
-                                          </SelectContent>
-                                        </Select>
-                                        <Textarea
-                                          placeholder="Describe the issue in detail..."
-                                          value={disputeReasonText}
-                                          onChange={(e) => setDisputeReasonText(e.target.value)}
-                                          className="min-h-[80px]"
-                                        />
-                                        <div className="flex gap-2">
-                                          <Button
-                                            variant="outline"
-                                            className="border-red-500/30 text-red-600 hover:bg-red-500/10"
-                                            disabled={actionLoading || !disputeReasonText.trim() || !disputeCategory}
-                                            onClick={() => handleDispute(selectedInfluencerForPipeline.collaborationId!, `[${disputeCategory}] ${disputeReasonText.trim()}`)}
-                                          >
-                                            {actionLoading ? "Filing..." : "File Dispute"}
-                                          </Button>
-                                          <Button
-                                            variant="ghost"
-                                            onClick={() => { setShowDisputeInput(false); setDisputeReasonText(""); setDisputeCategory(""); }}
-                                          >
-                                            Cancel
-                                          </Button>
-                                        </div>
-                                      </div>
-                                    )}
                                   </div>
                                 )}
 
@@ -3272,6 +3231,56 @@ export function CampaignsTab({
           </div>
         </div>
       )}
+
+      {/* Unified Dispute Dialog */}
+      <DisputeDialog
+        open={showDisputeDialog}
+        onOpenChange={setShowDisputeDialog}
+        categories={
+          disputeDialogContext?.fromStatus === 'DELIVERED'
+            ? [
+                { value: 'content_quality', label: 'Content Quality' },
+                { value: 'terms_violation', label: 'Terms Violation' },
+                { value: 'published_mismatch', label: 'Published Content Mismatch' },
+                { value: 'other', label: 'Other' },
+              ]
+            : [
+                { value: 'content_quality', label: 'Content Quality' },
+                { value: 'terms_violation', label: 'Terms Violation' },
+                { value: 'other', label: 'Other' },
+              ]
+        }
+        onSubmit={async ({ category, comment }) => {
+          if (!disputeDialogContext) return;
+          const disputeReason = JSON.stringify({
+            category,
+            comment,
+            filedBy: disputeDialogContext.filedBy,
+            fromStatus: disputeDialogContext.fromStatus,
+          });
+          // Use review endpoint for DELIVERED/CONTENT_REVIEW, PATCH for others
+          const endpoint = ['DELIVERED', 'CONTENT_REVIEW'].includes(disputeDialogContext.fromStatus)
+            ? `/api/collaborations/${disputeDialogContext.collaborationId}/review`
+            : `/api/collaborations/${disputeDialogContext.collaborationId}`;
+          const method = ['DELIVERED', 'CONTENT_REVIEW'].includes(disputeDialogContext.fromStatus) ? 'POST' : 'PATCH';
+          const body = ['DELIVERED', 'CONTENT_REVIEW'].includes(disputeDialogContext.fromStatus)
+            ? { action: 'dispute', note: disputeReason }
+            : { status: 'DISPUTED', disputeReason };
+
+          const res = await fetch(endpoint, {
+            method,
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(body),
+          });
+          if (res.ok) {
+            showToast('Dispute filed. Admin will review.', 'success');
+            if (selectedCampaignDetails) await handleOpenCampaign(selectedCampaignDetails, true);
+          } else {
+            const data = await res.json();
+            showToast(data.error || 'Failed to file dispute', 'error');
+          }
+        }}
+      />
 
       {toast && (
         <div className={`fixed bottom-24 sm:bottom-6 left-4 right-4 sm:left-auto sm:right-6 z-[150] px-5 py-3 rounded-xl shadow-lg border backdrop-blur-sm ${
