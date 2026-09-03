@@ -1837,15 +1837,17 @@ export function CampaignsTab({
                         ) : (
                           /* NEGOTIATING: full editable negotiation UI */
                           <>
-                            {/* Current Price */}
-                            <div className="bg-muted/50 rounded-lg p-4">
-                              <h4 className="text-sm font-semibold mb-2">
-                                {selectedInfluencerForPipeline.agreedPrice ? 'Agreed Price' : 'Proposed Price'}
-                              </h4>
-                              <div className="text-lg font-bold text-primary">
-                                ${selectedInfluencerForPipeline.agreedPrice ?? selectedInfluencerForPipeline.proposedPriceCPM ?? '0'}
+                            {/* Current Price — hide when waiting for creator response (price shown in amber banner) */}
+                            {!(selectedInfluencerForPipeline.brandAgreed === true && selectedInfluencerForPipeline.influencerAgreed == null) && (
+                              <div className="bg-muted/50 rounded-lg p-4">
+                                <h4 className="text-sm font-semibold mb-2">
+                                  {selectedInfluencerForPipeline.influencerAgreed === true ? 'Agreed Price' : 'Proposed Price'}
+                                </h4>
+                                <div className="text-lg font-bold text-primary">
+                                  ${selectedInfluencerForPipeline.agreedPrice ?? selectedInfluencerForPipeline.proposedPriceCPM ?? '0'}
+                                </div>
                               </div>
-                            </div>
+                            )}
 
                             {/* Project Terms */}
                             <div className="space-y-2">
@@ -1893,18 +1895,20 @@ export function CampaignsTab({
                               <p className="text-xs text-muted-foreground">Creator can add their terms when reviewing</p>
                             </div>
 
-                            {/* Terms agreement checkbox */}
-                            <label className={`flex items-start gap-2 cursor-pointer p-3 rounded-lg border transition-all ${termsHighlight ? 'border-destructive bg-destructive/5 animate-pulse' : 'border-border'}`}>
-                              <input
-                                type="checkbox"
-                                checked={termsAccepted}
-                                onChange={(e) => { setTermsAccepted(e.target.checked); setTermsHighlight(false); }}
-                                className="mt-0.5 rounded"
-                              />
-                              <span className="text-xs text-muted-foreground">
-                                I agree to the campaign terms, agreed price, and any additional terms from both parties
-                              </span>
-                            </label>
+                            {/* Terms agreement checkbox — hide when waiting for creator response */}
+                            {!(selectedInfluencerForPipeline.brandAgreed === true && selectedInfluencerForPipeline.influencerAgreed == null) && (
+                              <label className={`flex items-start gap-2 cursor-pointer p-3 rounded-lg border transition-all ${termsHighlight ? 'border-destructive bg-destructive/5 animate-pulse' : 'border-border'}`}>
+                                <input
+                                  type="checkbox"
+                                  checked={termsAccepted}
+                                  onChange={(e) => { setTermsAccepted(e.target.checked); setTermsHighlight(false); }}
+                                  className="mt-0.5 rounded"
+                                />
+                                <span className="text-xs text-muted-foreground">
+                                  I agree to the campaign terms, agreed price, and any additional terms from both parties
+                                </span>
+                              </label>
+                            )}
 
                             {/* Funds Verification Status */}
                             {selectedInfluencerForPipeline.brandApprovedTerms && selectedInfluencerForPipeline.influencerApprovedTerms && (
