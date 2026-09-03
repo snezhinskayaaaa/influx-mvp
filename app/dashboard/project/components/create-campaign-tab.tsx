@@ -196,11 +196,16 @@ export function CreateCampaignTab({ campaigns, setCampaigns, setActiveTab }: Cre
           e.preventDefault();
 
           if (parseFloat(campaignBudgetMin) < 20) {
-            showToast('Minimum budget is $20', 'error');
+            showToast('Minimum budget per influencer is $20', 'error');
             return;
           }
           if (parseFloat(campaignBudgetMax) < parseFloat(campaignBudgetMin)) {
             showToast('Maximum budget must be ≥ minimum', 'error');
+            return;
+          }
+          const count = parseInt(campaignInfluencerCount) || 1;
+          if (parseFloat(campaignBudgetMin) * count < 100) {
+            showToast(`Minimum total campaign budget is $100 (currently $${(parseFloat(campaignBudgetMin) * count).toFixed(0)} for ${count} influencer${count > 1 ? 's' : ''})`, 'error');
             return;
           }
 
@@ -867,7 +872,7 @@ export function CreateCampaignTab({ campaigns, setCampaigns, setActiveTab }: Cre
                     required
                   />
                   {campaignBudgetMin && parseFloat(campaignBudgetMin) < 20 && (
-                    <p className="text-xs text-destructive mt-1">Minimum budget is $20</p>
+                    <p className="text-xs text-destructive mt-1">Minimum $20 per influencer</p>
                   )}
                 </div>
               </div>
