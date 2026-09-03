@@ -449,7 +449,7 @@ export function CampaignsTab({
             })
             .map((c: Record<string, unknown>) => {
               const inf = c.influencer as Record<string, unknown>;
-              const followers = (inf?.instagramFollowers as number) || 0;
+              const followers = ((inf?.instagramFollowers as number) || 0) + ((inf?.tiktokFollowers as number) || 0) + ((inf?.youtubeSubscribers as number) || 0) + ((inf?.twitterFollowers as number) || 0) + ((inf?.telegramFollowers as number) || 0);
               const proposedPrice = (c.proposedPrice as number) || 0;
               return {
                 id: inf?.id || '',
