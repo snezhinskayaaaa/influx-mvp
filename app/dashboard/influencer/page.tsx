@@ -2212,6 +2212,58 @@ export default function InfluencerDashboard() {
                                   </div>
                                 </div>
                               )}
+                              {/* Dispute button — available after 7 days or 1 day before deadline */}
+                              {(() => {
+                                const now = new Date();
+                                const endDate = selectedCampaignDetails.endDate ? new Date(selectedCampaignDetails.endDate) : null;
+                                const daysTillDeadline = endDate ? Math.ceil((endDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)) : null;
+                                // Enable if: deadline is within 1 day, OR 7+ days have passed (approximate — content_review for a while)
+                                const deadlineClose = daysTillDeadline !== null && daysTillDeadline <= 1;
+                                // We don't have exact content submission date, so use createdAt as proxy
+                                const collabAge = selectedCampaignDetails.startDate ? Math.floor((now.getTime() - new Date(selectedCampaignDetails.startDate).getTime()) / (1000 * 60 * 60 * 24)) : 0;
+                                const waitedLong = collabAge >= 7;
+                                const canDispute = deadlineClose || waitedLong;
+                                const daysUntilAvailable = Math.max(0, 7 - collabAge);
+
+                                return (
+                                  <div className="pt-3 border-t mt-2">
+                                    <Button
+                                      variant="outline"
+                                      size="sm"
+                                      className="w-full text-red-600 border-red-200 hover:bg-red-50"
+                                      disabled={!canDispute || submitLoading}
+                                      onClick={async () => {
+                                        const reason = prompt('Describe why you are filing a dispute:');
+                                        if (!reason) return;
+                                        setSubmitLoading(true);
+                                        try {
+                                          const res = await fetch(`/api/collaborations/${selectedCampaignDetails.collaborationId || selectedCampaignDetails.id}/review`, {
+                                            method: 'POST',
+                                            headers: { 'Content-Type': 'application/json' },
+                                            body: JSON.stringify({ action: 'dispute', note: JSON.stringify({ category: 'project_unresponsive', comment: reason }) }),
+                                          });
+                                          if (res.ok) {
+                                            showToast('Dispute filed. Admin will review.', 'success');
+                                            await refreshCollaborations();
+                                          } else {
+                                            const data = await res.json();
+                                            showToast(data.error || 'Failed to file dispute', 'error');
+                                          }
+                                        } catch { showToast('Failed to file dispute', 'error'); }
+                                        finally { setSubmitLoading(false); }
+                                      }}
+                                    >
+                                      <AlertCircle className="h-4 w-4 mr-1" />
+                                      {canDispute ? 'Open Dispute' : `Open Dispute — available in ${daysUntilAvailable} day${daysUntilAvailable !== 1 ? 's' : ''}`}
+                                    </Button>
+                                    {!canDispute && (
+                                      <p className="text-[10px] text-muted-foreground text-center mt-1">
+                                        If the project doesn&apos;t respond, you can file a dispute for admin review
+                                      </p>
+                                    )}
+                                  </div>
+                                );
+                              })()}
                             </div>
                           ) : selectedCampaignDetails.status === "revision" ? (
                             <div className="space-y-4">

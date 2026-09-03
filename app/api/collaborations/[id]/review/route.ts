@@ -218,9 +218,9 @@ export async function POST(
 
     // --- DISPUTE ---
     if (action === 'dispute') {
-      if (collaboration.status !== 'DELIVERED') {
+      if (!['DELIVERED', 'CONTENT_REVIEW'].includes(collaboration.status)) {
         return NextResponse.json(
-          { error: 'Can only dispute from DELIVERED status' },
+          { error: 'Can only dispute from DELIVERED or CONTENT_REVIEW status' },
           { status: 400 }
         )
       }

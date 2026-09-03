@@ -43,6 +43,7 @@ import {
   ExternalLink,
   FileText,
   Send,
+  XCircle,
 } from "lucide-react";
 import type { Tab, Campaign, CampaignApplication, CollaborationStatus } from "./types";
 import { COLLABORATION_STATUS_CONFIG } from "./types";
@@ -2218,6 +2219,36 @@ export function CampaignsTab({
                                     Request Revision
                                   </Button>
                                 </div>
+                                {(selectedInfluencerForPipeline.revisionCount ?? 0) >= 3 && (
+                                  <Button
+                                    variant="outline"
+                                    className="w-full text-red-600 border-red-200 hover:bg-red-50"
+                                    disabled={actionLoading}
+                                    onClick={async () => {
+                                      const reason = prompt('Describe the issue with the content:');
+                                      if (!reason) return;
+                                      setActionLoading(true);
+                                      try {
+                                        const res = await fetch(`/api/collaborations/${selectedInfluencerForPipeline.collaborationId}`, {
+                                          method: 'PATCH',
+                                          headers: { 'Content-Type': 'application/json' },
+                                          body: JSON.stringify({ status: 'DISPUTED', disputeReason: JSON.stringify({ category: 'content_quality', comment: reason }) }),
+                                        });
+                                        if (res.ok) {
+                                          showToast('Dispute filed. Admin will review.', 'success');
+                                          if (selectedCampaignDetails) await handleOpenCampaign(selectedCampaignDetails, true);
+                                        } else {
+                                          const data = await res.json();
+                                          showToast(data.error || 'Failed to file dispute', 'error');
+                                        }
+                                      } catch { showToast('Failed to file dispute', 'error'); }
+                                      finally { setActionLoading(false); }
+                                    }}
+                                  >
+                                    <AlertCircle className="h-4 w-4 mr-1" />
+                                    Open Dispute
+                                  </Button>
+                                )}
                                 {showRevisionInput && (
                                   <div className="space-y-2">
                                     <textarea
@@ -2326,6 +2357,40 @@ export function CampaignsTab({
                             <p className="text-xs text-muted-foreground">
                               Influencer will provide a link to their content (Google Drive, Dropbox, etc.)
                             </p>
+                          </div>
+                        )}
+
+                        {/* Cancel collaboration on step 2 */}
+                        {["IN_PROGRESS", "CONTENT_REVIEW", "REVISION", "PUBLISHING"].includes(selectedInfluencerForPipeline.collaborationStatus ?? "") && (
+                          <div className="pt-3 border-t mt-3">
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              className="w-full text-red-600 border-red-200 hover:bg-red-50"
+                              disabled={actionLoading}
+                              onClick={async () => {
+                                if (!confirm('Are you sure you want to cancel this collaboration? The advance payment will stay with the creator.')) return;
+                                setActionLoading(true);
+                                try {
+                                  const res = await fetch(`/api/collaborations/${selectedInfluencerForPipeline.collaborationId}`, {
+                                    method: 'PATCH',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({ status: 'CANCELLED' }),
+                                  });
+                                  if (res.ok) {
+                                    showToast('Collaboration cancelled', 'success');
+                                    if (selectedCampaignDetails) await handleOpenCampaign(selectedCampaignDetails, true);
+                                  } else {
+                                    const data = await res.json();
+                                    showToast(data.error || 'Failed to cancel', 'error');
+                                  }
+                                } catch { showToast('Failed to cancel', 'error'); }
+                                finally { setActionLoading(false); }
+                              }}
+                            >
+                              <XCircle className="h-4 w-4 mr-1" />
+                              Cancel Collaboration
+                            </Button>
                           </div>
                         )}
                       </div>
