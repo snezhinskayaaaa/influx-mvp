@@ -1400,7 +1400,7 @@ export default function InfluencerDashboard() {
                                 return (
                                   <Button
                                     size="sm"
-                                    className="bg-primary/10 text-primary hover:bg-primary/20 border border-primary/30 h-8 sm:h-9 text-xs sm:text-sm px-3 sm:px-4"
+                                    className="bg-primary/10 text-primary hover:bg-primary/20 border border-primary/30 text-xs sm:text-sm"
                                     onClick={(e) => { e.stopPropagation(); setApplyingCampaign(campaign); }}
                                   >
                                     Apply Now
@@ -1409,16 +1409,16 @@ export default function InfluencerDashboard() {
                               }
                               if (myCollab.status === 'applied') {
                                 return (
-                                  <Button size="default" className="bg-amber-500/15 text-amber-600 border border-amber-500/30 hover:bg-amber-500/25" onClick={(e) => { e.stopPropagation(); setActiveTab("my-campaigns"); }}>
-                                    <Clock className="h-4 w-4 mr-2" />
+                                  <Button size="sm" className="bg-amber-500/15 text-amber-600 border border-amber-500/30 hover:bg-amber-500/25 text-xs sm:text-sm" onClick={(e) => { e.stopPropagation(); setActiveTab("my-campaigns"); }}>
+                                    <Clock className="h-3.5 w-3.5 mr-1.5" />
                                     Applied
                                   </Button>
                                 );
                               }
                               if (myCollab.status === 'completed' || myCollab.status === 'resolved') {
                                 return (
-                                  <Button size="default" className="bg-success/15 text-success border border-success/30 hover:bg-success/25" onClick={(e) => { e.stopPropagation(); setActiveTab("my-campaigns"); }}>
-                                    <CheckCircle2 className="h-4 w-4 mr-2" />
+                                  <Button size="sm" className="bg-success/15 text-success border border-success/30 hover:bg-success/25 text-xs sm:text-sm" onClick={(e) => { e.stopPropagation(); setActiveTab("my-campaigns"); }}>
+                                    <CheckCircle2 className="h-3.5 w-3.5 mr-1.5" />
                                     Completed
                                   </Button>
                                 );
@@ -1426,8 +1426,8 @@ export default function InfluencerDashboard() {
                               // Active collaboration — negotiating, in progress, etc.
                               return (
                                 <Button
-                                  size="default"
-                                  className="bg-primary/15 text-primary border border-primary/30 hover:bg-primary/25"
+                                  size="sm"
+                                  className="bg-primary/15 text-primary border border-primary/30 hover:bg-primary/25 text-xs sm:text-sm"
                                   onClick={(e) => { e.stopPropagation(); setActiveTab("my-campaigns"); }}
                                 >
                                   View Campaign
