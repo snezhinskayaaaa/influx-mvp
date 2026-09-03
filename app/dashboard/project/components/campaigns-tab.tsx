@@ -1429,8 +1429,13 @@ export function CampaignsTab({
               <h2 className="text-base sm:text-xl font-bold">Campaign Pipeline</h2>
 
               {/* Approved Influencers Selector */}
+              {selectedInfluencerForPipeline && (
+                <Button variant="outline" size="sm" onClick={() => setSelectedInfluencerForPipeline(null)} className="mr-2">
+                  ← Back
+                </Button>
+              )}
               {selectedCampaignDetails.applicationsList &&
-                selectedCampaignDetails.applicationsList.filter(app => app.status === "approved").length > 0 && (
+                selectedCampaignDetails.applicationsList.filter(app => app.status === "approved" || app.status === "cancelled").length > 0 && (
                 <div className="relative">
                   <button
                     onClick={() => setShowInfluencerSelector(!showInfluencerSelector)}
@@ -1467,7 +1472,7 @@ export function CampaignsTab({
                             General Pipeline
                           </button>
                           {selectedCampaignDetails.applicationsList
-                            ?.filter(app => app.status === "approved")
+                            ?.filter(app => app.status === "approved" || app.status === "cancelled")
                             .map((influencer) => (
                               <button
                                 key={influencer.id}
@@ -1492,8 +1497,8 @@ export function CampaignsTab({
                                     )}
                                   </div>
                                   <div className="flex-1 min-w-0">
-                                    <p className="text-sm font-medium truncate">{influencer.influencerName}</p>
-                                    <p className="text-xs text-muted-foreground truncate">{influencer.influencerUsername}</p>
+                                    <p className={`text-sm font-medium truncate ${influencer.status === "cancelled" ? "text-muted-foreground line-through" : ""}`}>{influencer.influencerName}</p>
+                                    <p className="text-xs text-muted-foreground truncate">{influencer.status === "cancelled" ? "Cancelled" : influencer.influencerUsername}</p>
                                   </div>
                                 </div>
                               </button>
@@ -2103,7 +2108,7 @@ export function CampaignsTab({
               )}
 
               {/* Stage 2: Content Review & Approval */}
-              {selectedInfluencerForPipeline && (
+              {selectedInfluencerForPipeline && selectedInfluencerForPipeline.collaborationStatus !== "CANCELLED" && (
               <div className="flex gap-4">
                 <div className="flex flex-col items-center">
                   <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold ${
@@ -2330,7 +2335,7 @@ export function CampaignsTab({
               )}
 
               {/* Stage 3: Publication & Delivery */}
-              {selectedInfluencerForPipeline && (
+              {selectedInfluencerForPipeline && selectedInfluencerForPipeline.collaborationStatus !== "CANCELLED" && (
               <div className="flex gap-4">
                 <div className="flex flex-col items-center">
                   <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold ${
