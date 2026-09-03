@@ -2074,36 +2074,6 @@ export function CampaignsTab({
                           </div>
                         )}
 
-                        {/* COMPLETED: Payment summary */}
-                        {selectedInfluencerForPipeline.collaborationStatus === "COMPLETED" && (
-                          <div className="space-y-3 pt-3 border-t">
-                            <div className="flex items-center gap-2 px-4 py-3 rounded-lg bg-success/10 border border-success/20">
-                              <CheckCircle2 className="h-5 w-5 text-success" />
-                              <div>
-                                <p className="text-sm font-medium text-success">Completed</p>
-                                <p className="text-xs text-muted-foreground">All payments processed.</p>
-                              </div>
-                            </div>
-                            {selectedInfluencerForPipeline.agreedPrice && (
-                              <div className="p-3 rounded-lg bg-muted/50 border border-border">
-                                <div className="grid grid-cols-2 gap-2 text-sm">
-                                  <div className="flex items-center justify-between p-2 rounded bg-background/50">
-                                    <span className="text-muted-foreground">50% Advance</span>
-                                    <span className="font-medium">${(selectedInfluencerForPipeline.agreedPrice / 2).toFixed(2)}</span>
-                                  </div>
-                                  <div className="flex items-center justify-between p-2 rounded bg-background/50">
-                                    <span className="text-muted-foreground">50% Final</span>
-                                    <span className="font-medium">${(selectedInfluencerForPipeline.agreedPrice / 2).toFixed(2)}</span>
-                                  </div>
-                                  <div className="col-span-2 flex items-center justify-between p-2 rounded bg-primary/5 border border-primary/20">
-                                    <span className="text-muted-foreground font-medium">Total Paid</span>
-                                    <span className="font-bold text-primary">${selectedInfluencerForPipeline.agreedPrice.toFixed(2)}</span>
-                                  </div>
-                                </div>
-                              </div>
-                            )}
-                          </div>
-                        )}
                       </div>
                     </>
                 </div>
