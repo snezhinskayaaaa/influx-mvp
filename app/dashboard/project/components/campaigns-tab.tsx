@@ -2202,7 +2202,15 @@ export function CampaignsTab({
                                       <p className="text-xs text-muted-foreground mt-2">Your note: &quot;{selectedInfluencerForPipeline.revisionNote}&quot;</p>
                                     )}
                                   </div>
-                                ) : ["DISPUTED", "RESOLVED", "COMPLETED", "DELIVERED", "PUBLISHING"].includes(selectedInfluencerForPipeline.collaborationStatus ?? "") ? null : (<>
+                                ) : selectedInfluencerForPipeline.collaborationStatus === "DISPUTED" ? (
+                                  <div className="flex items-center gap-2 px-4 py-3 rounded-lg bg-red-500/10 border border-red-500/20">
+                                    <AlertCircle className="h-5 w-5 text-red-600" />
+                                    <div>
+                                      <p className="text-sm font-medium text-red-600">Dispute filed — under admin review</p>
+                                      <p className="text-xs text-muted-foreground">An admin will review the dispute and make a decision.</p>
+                                    </div>
+                                  </div>
+                                ) : ["RESOLVED", "COMPLETED", "DELIVERED", "PUBLISHING"].includes(selectedInfluencerForPipeline.collaborationStatus ?? "") ? null : (<>
                                 <div className="flex gap-2">
                                   <Button
                                     onClick={() => handleApproveContent(selectedInfluencerForPipeline.collaborationId!)}

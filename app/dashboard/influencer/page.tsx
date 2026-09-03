@@ -2292,6 +2292,28 @@ export default function InfluencerDashboard() {
                                 Collaboration was cancelled
                               </p>
                             </div>
+                          ) : selectedCampaignDetails.status === "disputed" && (() => {
+                            try { return JSON.parse(selectedCampaignDetails.disputeReason || '{}').fromStatus === 'CONTENT_REVIEW'; } catch { return false; }
+                          })() ? (
+                            <div className="space-y-3">
+                              <div className="flex items-center gap-2 px-4 py-3 rounded-lg bg-red-500/10 border border-red-500/20">
+                                <AlertCircle className="h-5 w-5 text-red-600" />
+                                <div>
+                                  <p className="text-sm font-medium text-red-600">Dispute filed — under admin review</p>
+                                  <p className="text-xs text-muted-foreground">
+                                    {(() => {
+                                      try {
+                                        const parsed = JSON.parse(selectedCampaignDetails.disputeReason || '{}');
+                                        const cat = (parsed.category || '').replace(/_/g, ' ').replace(/\b\w/g, (c: string) => c.toUpperCase());
+                                        const by = parsed.filedBy === 'project' ? 'Project' : 'Creator';
+                                        return `Filed by ${by}${cat ? ` — ${cat}` : ''}`;
+                                      } catch { return 'Under review'; }
+                                    })()}
+                                  </p>
+                                </div>
+                              </div>
+                              <p className="text-xs text-muted-foreground">Remaining payment is held until resolved.</p>
+                            </div>
                           ) : ["publishing", "delivered", "completed", "resolved", "disputed"].includes(selectedCampaignDetails.status) ? (
                             <div className="flex items-center gap-2 px-4 py-3 rounded-lg bg-success/10 border border-success/20">
                               <CheckCircle2 className="h-5 w-5 text-success" />
@@ -2306,7 +2328,10 @@ export default function InfluencerDashboard() {
                         </div>
                       </div>
 
-                      {/* Stage 3: Publication & Completion */}
+                      {/* Stage 3: Publication & Completion — hide if dispute from CONTENT_REVIEW */}
+                      {!(selectedCampaignDetails.status === "disputed" && (() => {
+                        try { return JSON.parse(selectedCampaignDetails.disputeReason || '{}').fromStatus === 'CONTENT_REVIEW'; } catch { return false; }
+                      })()) && (
                       <div className="flex gap-4">
                         <div className="flex flex-col items-center">
                           <div
@@ -2493,14 +2518,31 @@ export default function InfluencerDashboard() {
                                   <p className="text-sm font-medium text-red-600">Dispute filed — under review</p>
                                 </div>
                                 {selectedCampaignDetails.disputeReason && (() => {
-                                  const match = selectedCampaignDetails.disputeReason.match(/^\[(.+?)\]\s*([\s\S]*)/);
-                                  const category = match ? match[1].replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase()) : null;
-                                  const comment = match ? match[2] : selectedCampaignDetails.disputeReason;
+                                  let category: string | null = null;
+                                  let comment: string | null = null;
+                                  let filedBy: string | null = null;
+                                  try {
+                                    const parsed = JSON.parse(selectedCampaignDetails.disputeReason);
+                                    category = (parsed.category || '').replace(/_/g, ' ').replace(/\b\w/g, (c: string) => c.toUpperCase());
+                                    comment = parsed.comment || null;
+                                    filedBy = parsed.filedBy || null;
+                                  } catch {
+                                    const match = selectedCampaignDetails.disputeReason.match(/^\[(.+?)\]\s*([\s\S]*)/);
+                                    category = match ? match[1].replace(/-/g, ' ').replace(/\b\w/g, (c: string) => c.toUpperCase()) : null;
+                                    comment = match ? match[2] : selectedCampaignDetails.disputeReason;
+                                  }
                                   return (
                                     <div className="px-4 py-3 space-y-2">
-                                      {category && (
-                                        <span className="inline-block text-xs font-medium px-2 py-0.5 rounded-full bg-red-500/10 text-red-600 border border-red-500/20">{category}</span>
-                                      )}
+                                      <div className="flex flex-wrap gap-1">
+                                        {filedBy && (
+                                          <span className={`text-[10px] px-1.5 py-0.5 rounded-full border ${filedBy === 'project' ? 'bg-blue-500/10 text-blue-600 border-blue-500/20' : 'bg-purple-500/10 text-purple-600 border-purple-500/20'}`}>
+                                            Filed by {filedBy === 'project' ? 'Project' : 'Creator'}
+                                          </span>
+                                        )}
+                                        {category && (
+                                          <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-red-500/10 text-red-600 border border-red-500/20">{category}</span>
+                                        )}
+                                      </div>
                                       {comment && <p className="text-sm text-muted-foreground">{comment}</p>}
                                       <p className="text-xs text-muted-foreground">Remaining payment is held until resolved.</p>
                                     </div>
@@ -2635,6 +2677,7 @@ export default function InfluencerDashboard() {
                           )}
                         </div>
                       </div>
+                      )}
                     </div>
                   </Card>
                 </>

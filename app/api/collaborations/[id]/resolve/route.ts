@@ -71,12 +71,39 @@ export async function POST(
       return NextResponse.json({ error: 'No agreed price set' }, { status: 400 })
     }
 
+    // Determine where the dispute came from
+    let fromStatus = 'DELIVERED'
+    try {
+      const parsed = JSON.parse(collaboration.disputeReason || '{}')
+      if (parsed.fromStatus) fromStatus = parsed.fromStatus
+    } catch {}
+
+    const isFromContentReview = fromStatus === 'CONTENT_REVIEW'
     const advancePaid = Math.round(collaboration.agreedPrice / 2)
     const remaining = collaboration.agreedPrice - advancePaid
 
     try {
       const result = await prisma.$transaction(async (tx) => {
-        // Guard frozen balance
+        let disputeResultText: string
+
+        if (isFromContentReview && decision === 'influencer') {
+          // Dispute from CONTENT_REVIEW, in favor of KOL → unlock flow to PUBLISHING
+          // No money moves — frozen stays, KOL proceeds to publish
+          disputeResultText = 'Resolved in favor of creator: content approved, proceed to publication'
+
+          return await tx.collaboration.update({
+            where: { id },
+            data: {
+              status: 'PUBLISHING',
+              disputeResult: disputeResultText,
+              resolvedAt: new Date(),
+            },
+          })
+        }
+
+        // For all other cases: distribute the frozen remainder
+        // Advance ALWAYS stays with KOL (work was done)
+
         const brand = await tx.brand.findUniqueOrThrow({
           where: { id: collaboration.campaign.brand.id },
           select: { frozenBalance: true },
@@ -85,33 +112,29 @@ export async function POST(
           throw new Error('INSUFFICIENT_FROZEN_BALANCE')
         }
 
-        let disputeResultText: string
-
         if (decision === 'influencer') {
-          // All remaining goes to influencer
+          // From DELIVERED: all remaining goes to KOL
           await tx.brand.update({
             where: { id: collaboration.campaign.brand.id },
             data: { frozenBalance: { decrement: remaining } },
           })
-
           await tx.influencer.update({
             where: { id: collaboration.influencer.id },
             data: { balance: { increment: remaining } },
           })
-
           await tx.transaction.create({
             data: {
               userId: collaboration.influencer.userId,
               type: 'DISPUTE_PAYOUT',
               amount: remaining,
-              description: 'Dispute resolved in favor of influencer',
+              description: 'Dispute resolved in favor of creator: full remaining payment released',
               referenceId: collaboration.id,
             },
           })
+          disputeResultText = 'Resolved in favor of creator: full remaining payment released'
 
-          disputeResultText = 'Resolved in favor of influencer: full remaining payment released'
         } else if (decision === 'brand') {
-          // All remaining goes back to brand
+          // Frozen remainder → project. Advance stays with KOL.
           await tx.brand.update({
             where: { id: collaboration.campaign.brand.id },
             data: {
@@ -119,20 +142,19 @@ export async function POST(
               balance: { increment: remaining },
             },
           })
-
           await tx.transaction.create({
             data: {
               userId: collaboration.campaign.brand.userId,
               type: 'DISPUTE_REFUND',
               amount: remaining,
-              description: 'Dispute resolved in favor of brand',
+              description: 'Dispute resolved in favor of project: frozen remainder returned (advance kept by creator)',
               referenceId: collaboration.id,
             },
           })
+          disputeResultText = 'Resolved in favor of project: frozen remainder returned, advance kept by creator'
 
-          disputeResultText = 'Resolved in favor of brand: frozen funds returned'
         } else {
-          // Split: splitPercent% to influencer, rest to brand
+          // Split: splitPercent% of frozen to KOL, rest to project
           const influencerShare = Math.round(remaining * (splitPercent! / 100))
           const brandShare = remaining - influencerShare
 
@@ -149,13 +171,12 @@ export async function POST(
               where: { id: collaboration.influencer.id },
               data: { balance: { increment: influencerShare } },
             })
-
             await tx.transaction.create({
               data: {
                 userId: collaboration.influencer.userId,
                 type: 'DISPUTE_PAYOUT',
                 amount: influencerShare,
-                description: `Dispute resolved: ${splitPercent}% of remaining to influencer`,
+                description: `Dispute split: ${splitPercent}% of frozen remainder to creator`,
                 referenceId: collaboration.id,
               },
             })
@@ -167,26 +188,25 @@ export async function POST(
                 userId: collaboration.campaign.brand.userId,
                 type: 'DISPUTE_REFUND',
                 amount: brandShare,
-                description: `Dispute resolved: ${100 - splitPercent!}% of remaining to brand`,
+                description: `Dispute split: ${100 - splitPercent!}% of frozen remainder to project`,
                 referenceId: collaboration.id,
               },
             })
           }
 
-          disputeResultText = `Split resolution: ${splitPercent}% to influencer, ${100 - splitPercent!}% to brand`
+          disputeResultText = `Split: ${splitPercent}% of frozen to creator, ${100 - splitPercent!}% to project. Advance kept by creator.`
         }
 
         return await tx.collaboration.update({
           where: { id },
           data: {
-            status: 'RESOLVED',
+            status: isFromContentReview ? 'CANCELLED' : 'RESOLVED',
             disputeResult: disputeResultText,
             resolvedAt: new Date(),
           },
         })
       })
 
-      // Fire-and-forget: notify both parties
       notifyDisputeResolved(
         collaboration.influencer.userId,
         collaboration.campaign.brand.userId,
@@ -194,8 +214,9 @@ export async function POST(
         result.disputeResult || 'Resolved'
       )
 
-      // Fire-and-forget: auto-complete campaign if all collabs done
-      await checkCampaignAutoComplete(collaboration.campaignId)
+      if (!isFromContentReview || decision !== 'influencer') {
+        await checkCampaignAutoComplete(collaboration.campaignId)
+      }
 
       return NextResponse.json({ collaboration: result })
     } catch (txError) {
