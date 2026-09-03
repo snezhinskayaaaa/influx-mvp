@@ -150,6 +150,7 @@ interface Campaign {
   revisionCount?: number;
   contentUrl?: string;
   disputeReason?: string;
+  disputeResult?: string;
   deliveredAt?: string;
   /** Collaboration message (may contain invitation text) */
   collaborationMessage?: string;
@@ -461,6 +462,7 @@ export default function InfluencerDashboard() {
                 publishedUrl: (collab.publishedUrl as string) || undefined,
                 publishedUrls: Array.isArray(collab.publishedUrls) ? collab.publishedUrls as string[] : [],
                 disputeReason: (collab.disputeReason as string) || undefined,
+                disputeResult: (collab.disputeResult as string) || undefined,
                 deliveredAt: (collab.deliveredAt as string) || undefined,
                 collaborationMessage: (collab.message as string) || undefined,
                 brandTerms: (collab.brandTerms as string) || undefined,
@@ -2674,17 +2676,27 @@ export default function InfluencerDashboard() {
                                 </div>
                               )}
 
-                              <div className="flex items-center gap-2 px-4 py-3 rounded-lg bg-success/10 border border-success/20">
-                                <CheckCircle2 className="h-5 w-5 text-success" />
-                                <div>
-                                  <p className="text-sm font-medium text-success">
-                                    {selectedCampaignDetails.status === "completed" ? "Completed" : "Resolved"}
-                                  </p>
-                                  <p className="text-xs text-muted-foreground">
-                                    Total earned: ${selectedCampaignDetails.budget.toLocaleString()}
-                                  </p>
+                              {selectedCampaignDetails.status === "resolved" ? (
+                                <div className="rounded-lg border border-blue-500/20 overflow-hidden">
+                                  <div className="flex items-center gap-2 px-4 py-3 bg-blue-500/10">
+                                    <CheckCircle2 className="h-4 w-4 text-blue-600" />
+                                    <p className="text-sm font-medium text-blue-600">Dispute Resolved</p>
+                                  </div>
+                                  {selectedCampaignDetails.disputeResult && (
+                                    <p className="px-4 py-3 text-sm text-muted-foreground">{selectedCampaignDetails.disputeResult}</p>
+                                  )}
                                 </div>
-                              </div>
+                              ) : (
+                                <div className="flex items-center gap-2 px-4 py-3 rounded-lg bg-success/10 border border-success/20">
+                                  <CheckCircle2 className="h-5 w-5 text-success" />
+                                  <div>
+                                    <p className="text-sm font-medium text-success">Completed</p>
+                                    <p className="text-xs text-muted-foreground">
+                                      Total earned: ${selectedCampaignDetails.budget.toLocaleString()}
+                                    </p>
+                                  </div>
+                                </div>
+                              )}
                             </div>
                           ) : (
                             <div className="text-center py-8 bg-muted/30 rounded-lg border border-dashed border-border">

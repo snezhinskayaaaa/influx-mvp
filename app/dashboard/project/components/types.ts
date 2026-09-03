@@ -168,6 +168,7 @@ export interface CampaignApplication {
 
   // Dispute
   disputeReason?: string;
+  disputeResult?: string;
   deliveredAt?: string;
 }
 
@@ -268,6 +269,7 @@ export interface CampaignInfluencer {
 
   // Dispute
   disputeReason?: string;
+  disputeResult?: string;
 }
 
 // Minimum market rates for pricing models

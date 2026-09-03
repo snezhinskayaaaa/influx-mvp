@@ -476,6 +476,7 @@ export function CampaignsTab({
                 brandTerms: (c.brandTerms as string) || undefined,
                 influencerTerms: (c.influencerTerms as string) || undefined,
                 disputeReason: (c.disputeReason as string) || undefined,
+                disputeResult: (c.disputeResult as string) || undefined,
                 deliveredAt: (c.deliveredAt as string) || undefined,
                 // Profile details for popup
                 influencerBio: (inf?.bio as string) || '',
@@ -2588,6 +2589,19 @@ export function CampaignsTab({
                                         </div>
                                       );
                                     })()}
+                                  </div>
+                                )}
+
+                                {/* Resolved status */}
+                                {selectedInfluencerForPipeline.collaborationStatus === "RESOLVED" && (
+                                  <div className="rounded-lg border border-blue-500/20 overflow-hidden">
+                                    <div className="flex items-center gap-2 px-4 py-3 bg-blue-500/10">
+                                      <CheckCircle2 className="h-4 w-4 text-blue-600" />
+                                      <p className="text-sm font-medium text-blue-600">Dispute Resolved</p>
+                                    </div>
+                                    {selectedInfluencerForPipeline.disputeResult && (
+                                      <p className="px-4 py-3 text-sm text-muted-foreground">{selectedInfluencerForPipeline.disputeResult}</p>
+                                    )}
                                   </div>
                                 )}
 
