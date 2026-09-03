@@ -2218,17 +2218,25 @@ export default function InfluencerDashboard() {
                                   </div>
                                 </div>
                               )}
-                              {/* Dispute button — available 7 days after content submitted or 1 day before deadline */}
+                              {/* Dispute: 7 days after content submitted, or 1 day before deadline if deadline < 7 days away */}
                               {(() => {
                                 const now = new Date();
-                                const endDate = selectedCampaignDetails.endDate ? new Date(selectedCampaignDetails.endDate) : null;
-                                const daysTillDeadline = endDate ? Math.ceil((endDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)) : null;
-                                const deadlineClose = daysTillDeadline !== null && daysTillDeadline <= 1;
                                 const submitDate = selectedCampaignDetails.contentSubmittedAt ? new Date(selectedCampaignDetails.contentSubmittedAt) : null;
+                                const endDate = selectedCampaignDetails.endDate ? new Date(selectedCampaignDetails.endDate) : null;
                                 const daysSinceSubmit = submitDate ? Math.floor((now.getTime() - submitDate.getTime()) / (1000 * 60 * 60 * 24)) : 0;
-                                const waitedLong = daysSinceSubmit >= 7;
-                                const canDispute = deadlineClose || waitedLong;
-                                const daysUntilAvailable = deadlineClose ? 0 : Math.max(0, 7 - daysSinceSubmit);
+                                const daysTillDeadline = endDate ? Math.ceil((endDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)) : null;
+
+                                // Default: 7 days after submit. If deadline < 7 days from submit, unlock 1 day before deadline instead.
+                                let waitDays = 7;
+                                if (submitDate && endDate) {
+                                  const daysFromSubmitToDeadline = Math.ceil((endDate.getTime() - submitDate.getTime()) / (1000 * 60 * 60 * 24));
+                                  if (daysFromSubmitToDeadline < 7) {
+                                    waitDays = Math.max(0, daysFromSubmitToDeadline - 1);
+                                  }
+                                }
+
+                                const canDispute = daysSinceSubmit >= waitDays;
+                                const daysUntilAvailable = Math.max(0, waitDays - daysSinceSubmit);
 
                                 return (
                                   <div className="pt-3 border-t mt-2">
