@@ -2202,7 +2202,9 @@ export function CampaignsTab({
                                       <p className="text-xs text-muted-foreground mt-2">Your note: &quot;{selectedInfluencerForPipeline.revisionNote}&quot;</p>
                                     )}
                                   </div>
-                                ) : selectedInfluencerForPipeline.collaborationStatus === "DISPUTED" ? (
+                                ) : selectedInfluencerForPipeline.collaborationStatus === "DISPUTED" && (() => {
+                                  try { return JSON.parse(selectedInfluencerForPipeline.disputeReason || '{}').fromStatus === 'CONTENT_REVIEW' } catch { return false }
+                                })() ? (
                                   <div className="flex items-center gap-2 px-4 py-3 rounded-lg bg-red-500/10 border border-red-500/20">
                                     <AlertCircle className="h-5 w-5 text-red-600" />
                                     <div>
@@ -2546,8 +2548,10 @@ export function CampaignsTab({
                                 )}
 
 
-                                {/* Disputed status */}
-                                {selectedInfluencerForPipeline.collaborationStatus === "DISPUTED" && (
+                                {/* Disputed status — only from DELIVERED */}
+                                {selectedInfluencerForPipeline.collaborationStatus === "DISPUTED" && (() => {
+                                  try { return JSON.parse(selectedInfluencerForPipeline.disputeReason || '{}').fromStatus !== 'CONTENT_REVIEW' } catch { return true }
+                                })() && (
                                   <div className="rounded-lg border border-red-500/20 overflow-hidden">
                                     <div className="flex items-center gap-2 px-4 py-3 bg-red-500/10">
                                       <AlertCircle className="h-4 w-4 text-red-600" />
