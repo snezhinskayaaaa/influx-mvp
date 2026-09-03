@@ -2008,6 +2008,19 @@ export function CampaignsTab({
                           </a>
                         )}
 
+                        {/* Offer sent — waiting for creator */}
+                        {selectedInfluencerForPipeline.collaborationStatus === "NEGOTIATING" && selectedInfluencerForPipeline.brandAgreed === true && selectedInfluencerForPipeline.influencerAgreed !== true && (
+                          <div className="flex items-center gap-2 px-4 py-3 rounded-lg bg-violet-500/10 border border-violet-500/20">
+                            <Clock className="h-5 w-5 text-violet-600" />
+                            <div>
+                              <p className="text-sm font-medium text-violet-600">Price offer sent — waiting for creator</p>
+                              <p className="text-xs text-muted-foreground">
+                                Offered ${selectedInfluencerForPipeline.agreedPrice ?? 0}. Creator will accept, decline, or counter.
+                              </p>
+                            </div>
+                          </div>
+                        )}
+
                         {/* Creator accepted price — Start Campaign (freeze + advance) */}
                         {selectedInfluencerForPipeline.collaborationStatus === "NEGOTIATING" && selectedInfluencerForPipeline.influencerAgreed === true && selectedInfluencerForPipeline.collaborationId && (
                           <div className="space-y-3 pt-3 border-t">
