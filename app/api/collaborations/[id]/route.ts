@@ -243,24 +243,77 @@ export async function PATCH(
                 },
               })
             } else {
-              // Brand cancels: advance stays with influencer, only frozen remainder returns
-              await tx.brand.update({
-                where: { id: campaign.brand.id },
-                data: {
-                  frozenBalance: { decrement: frozenRemainder },
-                  balance: { increment: frozenRemainder },
-                },
-              })
+              // Brand cancels
+              const contentSubmitted = ['CONTENT_REVIEW', 'REVISION', 'PUBLISHING'].includes(freshCollab.status)
 
-              await tx.transaction.create({
-                data: {
-                  userId: campaign.brand.userId,
-                  type: 'CAMPAIGN_UNFREEZE',
-                  amount: frozenRemainder,
-                  description: 'Frozen remainder returned due to project cancellation (advance kept by influencer)',
-                  referenceId: collaboration.id,
-                },
-              })
+              if (contentSubmitted) {
+                // Content was submitted — advance stays with KOL (work was done)
+                await tx.brand.update({
+                  where: { id: campaign.brand.id },
+                  data: {
+                    frozenBalance: { decrement: frozenRemainder },
+                    balance: { increment: frozenRemainder },
+                  },
+                })
+                await tx.transaction.create({
+                  data: {
+                    userId: campaign.brand.userId,
+                    type: 'CAMPAIGN_UNFREEZE',
+                    amount: frozenRemainder,
+                    description: 'Frozen remainder returned due to project cancellation (advance kept by creator — content was submitted)',
+                    referenceId: collaboration.id,
+                  },
+                })
+              } else {
+                // No content submitted (IN_PROGRESS) — try to refund advance to brand
+                const influencer = await tx.influencer.findUniqueOrThrow({
+                  where: { id: collaboration.influencerId },
+                  select: { id: true, balance: true },
+                })
+                const refundable = Math.min(influencer.balance, advance)
+
+                if (refundable > 0) {
+                  await tx.influencer.update({
+                    where: { id: influencer.id },
+                    data: { balance: { decrement: refundable } },
+                  })
+                }
+
+                const totalBrandReturn = refundable + frozenRemainder
+                await tx.brand.update({
+                  where: { id: campaign.brand.id },
+                  data: {
+                    frozenBalance: { decrement: frozenRemainder },
+                    balance: { increment: totalBrandReturn },
+                  },
+                })
+
+                if (refundable > 0) {
+                  await tx.transaction.create({
+                    data: {
+                      userId: collaboration.influencer.userId,
+                      type: 'ADVANCE_REFUND',
+                      amount: refundable,
+                      description: refundable < advance
+                        ? `Partial advance refund (${refundable} of ${advance} cents) — no content submitted`
+                        : 'Full advance refund — no content was submitted',
+                      referenceId: collaboration.id,
+                    },
+                  })
+                }
+
+                await tx.transaction.create({
+                  data: {
+                    userId: campaign.brand.userId,
+                    type: 'CAMPAIGN_UNFREEZE',
+                    amount: totalBrandReturn,
+                    description: refundable > 0
+                      ? 'Funds returned: advance refunded + frozen remainder (no content submitted)'
+                      : 'Frozen remainder returned (advance refund failed — creator has insufficient balance)',
+                    referenceId: collaboration.id,
+                  },
+                })
+              }
             }
           }
         })
