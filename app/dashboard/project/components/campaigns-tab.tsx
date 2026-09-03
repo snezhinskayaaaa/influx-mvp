@@ -145,6 +145,8 @@ function getActionInfo(app: CampaignApplication): { type: "action" | "waiting" |
       return { type: "done", text: "Completed — all payments processed" };
     case "DISPUTED":
       return { type: "waiting", text: "Dispute filed — under admin review" };
+    case "CANCELLED":
+      return { type: "done", text: "Collaboration cancelled" };
     default:
       return { type: "waiting", text: "Pending" };
   }
@@ -454,7 +456,7 @@ export function CampaignsTab({
                 influencerAvatar: (inf?.profile as Record<string, unknown>)?.avatarUrl as string || '👤',
                 influencerFollowers: followers > 0 ? followers.toLocaleString() : '0',
                 source: 'applied' as const,
-                status: c.status === 'INVITED' ? 'invited' as const : c.status === 'APPLIED' ? 'pending' as const : 'approved' as const,
+                status: c.status === 'INVITED' ? 'invited' as const : c.status === 'APPLIED' ? 'pending' as const : c.status === 'CANCELLED' ? 'cancelled' as const : 'approved' as const,
                 collaborationStatus: c.status as string,
                 proposedPriceCPM: `${(proposedPrice / 100).toFixed(0)}`,
                 agreedPrice: c.agreedPrice ? (c.agreedPrice as number) / 100 : undefined,
@@ -1774,7 +1776,15 @@ export function CampaignsTab({
                         </div>
 
                         {/* Stage 1 content: status-aware rendering */}
-                        {["IN_PROGRESS", "CONTENT_REVIEW", "REVISION", "PUBLISHING", "DELIVERED", "COMPLETED", "RESOLVED", "DISPUTED"].includes(selectedInfluencerForPipeline.collaborationStatus ?? "") ? (
+                        {selectedInfluencerForPipeline.collaborationStatus === "CANCELLED" ? (
+                          <div className="flex items-center gap-2 px-4 py-3 rounded-lg bg-destructive/10 border border-destructive/20">
+                            <AlertCircle className="h-5 w-5 text-destructive" />
+                            <div>
+                              <p className="text-sm font-medium text-destructive">Collaboration Cancelled</p>
+                              <p className="text-xs text-muted-foreground">This collaboration has been cancelled</p>
+                            </div>
+                          </div>
+                        ) : ["IN_PROGRESS", "CONTENT_REVIEW", "REVISION", "PUBLISHING", "DELIVERED", "COMPLETED", "RESOLVED", "DISPUTED"].includes(selectedInfluencerForPipeline.collaborationStatus ?? "") ? (
                           /* Completed Stage 1: read-only summary with badges */
                           <div className="space-y-3">
                             <div className="flex items-center gap-2 px-4 py-3 rounded-lg bg-success/10 border border-success/20">

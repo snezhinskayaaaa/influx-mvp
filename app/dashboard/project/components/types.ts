@@ -115,7 +115,7 @@ export interface CampaignApplication {
   influencerAvatar: string;
   influencerFollowers: string;
   source: "applied" | "invited";
-  status: "invited" | "pending" | "approved" | "rejected";
+  status: "invited" | "pending" | "approved" | "rejected" | "cancelled";
   /** Collaboration lifecycle status from the backend */
   collaborationStatus?: CollaborationStatus;
   proposedPriceCPM?: string;
