@@ -36,16 +36,39 @@ interface Dispute {
   };
 }
 
-function parseDisputeReason(reason: string | null) {
-  if (!reason) return { category: null, comment: null };
+function parseDisputeReason(reason: string | null): {
+  category: string | null;
+  comment: string | null;
+  filedBy: string | null;
+  fromStatus: string | null;
+} {
+  if (!reason) return { category: null, comment: null, filedBy: null, fromStatus: null };
+
+  // Try JSON format (new)
+  try {
+    const parsed = JSON.parse(reason);
+    if (parsed && typeof parsed === 'object' && parsed.category) {
+      return {
+        category: (parsed.category as string).replace(/_/g, " ").replace(/\b\w/g, (c: string) => c.toUpperCase()),
+        comment: parsed.comment || null,
+        filedBy: parsed.filedBy || null,
+        fromStatus: parsed.fromStatus || null,
+      };
+    }
+  } catch {}
+
+  // Try old format: [category] comment
   const match = reason.match(/^\[(.+?)\]\s*([\s\S]*)/);
   if (match) {
     return {
       category: match[1].replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()),
       comment: match[2] || null,
+      filedBy: null,
+      fromStatus: null,
     };
   }
-  return { category: null, comment: reason };
+
+  return { category: null, comment: reason, filedBy: null, fromStatus: null };
 }
 
 export default function AdminDisputesPage() {
@@ -163,7 +186,7 @@ export default function AdminDisputesPage() {
               </Card>
             )}
             {displayDisputes.map((dispute) => {
-              const { category } = parseDisputeReason(dispute.disputeReason);
+              const { category, filedBy, fromStatus } = parseDisputeReason(dispute.disputeReason);
               return (
                 <Card
                   key={dispute.id}
@@ -176,12 +199,24 @@ export default function AdminDisputesPage() {
                       {dispute.status === "DISPUTED" ? "Active" : "Resolved"}
                     </Badge>
                   </div>
-                  <p className="text-xs text-muted-foreground mb-2">
+                  <p className="text-xs text-muted-foreground mb-1">
                     {dispute.campaign.brand.companyName} vs @{dispute.influencer.handle}
                   </p>
-                  {category && (
-                    <span className="inline-block text-xs font-medium px-2 py-0.5 rounded-full bg-red-500/10 text-red-600 border border-red-500/20 mb-2">{category}</span>
-                  )}
+                  <div className="flex flex-wrap gap-1 mb-2">
+                    {filedBy && (
+                      <span className={`text-[10px] px-1.5 py-0.5 rounded-full border ${filedBy === 'project' ? 'bg-blue-500/10 text-blue-600 border-blue-500/20' : 'bg-purple-500/10 text-purple-600 border-purple-500/20'}`}>
+                        by {filedBy === 'project' ? 'Project' : 'Creator'}
+                      </span>
+                    )}
+                    {fromStatus && (
+                      <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-muted text-muted-foreground border border-border">
+                        {fromStatus.replace(/_/g, ' ')}
+                      </span>
+                    )}
+                    {category && (
+                      <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-red-500/10 text-red-600 border border-red-500/20">{category}</span>
+                    )}
+                  </div>
                   <div className="flex items-center gap-3 text-xs text-muted-foreground">
                     <span>${dispute.agreedPrice ? (dispute.agreedPrice / 100).toFixed(0) : "N/A"}</span>
                     <span>{dispute.disputedAt ? new Date(dispute.disputedAt).toLocaleDateString() : ""}</span>
@@ -226,12 +261,26 @@ export default function AdminDisputesPage() {
 
                 {/* Dispute reason */}
                 {(() => {
-                  const { category, comment } = parseDisputeReason(selectedDispute.disputeReason);
+                  const { category, comment, filedBy, fromStatus } = parseDisputeReason(selectedDispute.disputeReason);
                   return (
                     <div className="rounded-lg border border-red-500/20 overflow-hidden mb-4">
-                      <div className="px-4 py-2.5 bg-red-500/10 flex items-center gap-2">
-                        <AlertCircle className="h-4 w-4 text-red-600" />
-                        <span className="text-sm font-medium text-red-600">Dispute Reason</span>
+                      <div className="px-4 py-2.5 bg-red-500/10 flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <AlertCircle className="h-4 w-4 text-red-600" />
+                          <span className="text-sm font-medium text-red-600">Dispute Reason</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          {filedBy && (
+                            <span className={`text-[10px] font-medium px-2 py-0.5 rounded-full border ${filedBy === 'project' ? 'bg-blue-500/10 text-blue-600 border-blue-500/20' : 'bg-purple-500/10 text-purple-600 border-purple-500/20'}`}>
+                              Filed by {filedBy === 'project' ? 'Project' : 'Creator'}
+                            </span>
+                          )}
+                          {fromStatus && (
+                            <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-muted text-muted-foreground border border-border">
+                              From: {fromStatus.replace(/_/g, ' ')}
+                            </span>
+                          )}
+                        </div>
                       </div>
                       <div className="px-4 py-3 space-y-2">
                         {category && (
