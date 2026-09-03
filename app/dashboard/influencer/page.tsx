@@ -2121,7 +2121,7 @@ export default function InfluencerDashboard() {
                             Create content and submit links for project review
                           </p>
 
-                          {selectedCampaignDetails.status === "applied" || selectedCampaignDetails.status === "approved" ? (
+                          {["invited", "applied", "approved", "negotiating"].includes(selectedCampaignDetails.status) ? (
                             <div className="text-center py-8 bg-muted/30 rounded-lg border border-dashed border-border">
                               <Clock className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
                               <p className="text-sm text-muted-foreground">
