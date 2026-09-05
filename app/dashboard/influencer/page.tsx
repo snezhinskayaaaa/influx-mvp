@@ -2155,10 +2155,10 @@ export default function InfluencerDashboard() {
                                       onChange={(e) => setContentLinkInput(e.target.value)}
                                       className="pl-10 h-11"
                                     />
-                                    {contentLinkInput && !isValidUrl(contentLinkInput) && (
-                                      <p className="text-xs text-destructive mt-1">Please enter a valid URL (https://...)</p>
-                                    )}
                                   </div>
+                                  {contentLinkInput && !isValidUrl(contentLinkInput) && (
+                                    <p className="text-xs text-destructive mt-1">Please enter a valid URL (https://...)</p>
+                                  )}
                                   <Button
                                     className="w-full h-11 bg-gradient-to-r from-primary to-secondary hover:opacity-90 text-white"
                                     disabled={submitLoading || !isValidUrl(contentLinkInput)}
