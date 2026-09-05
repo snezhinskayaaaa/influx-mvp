@@ -302,14 +302,8 @@ export function BrandSidebar({
                           <SelectValue placeholder="Choose cryptocurrency" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="btc">Bitcoin (BTC)</SelectItem>
-                          <SelectItem value="eth">Ethereum (ETH)</SelectItem>
-                          <SelectItem value="usdt">Tether (USDT)</SelectItem>
-                          <SelectItem value="usdc">USD Coin (USDC)</SelectItem>
-                          <SelectItem value="bnb">Binance Coin (BNB)</SelectItem>
-                          <SelectItem value="sol">Solana (SOL)</SelectItem>
-                          <SelectItem value="matic">Polygon (MATIC)</SelectItem>
-                          <SelectItem value="trx">Tron (TRX)</SelectItem>
+                          <SelectItem value="usdt">USDT (Tether)</SelectItem>
+                          <SelectItem value="usdc">USDC (USD Coin)</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
@@ -328,59 +322,24 @@ export function BrandSidebar({
                             <SelectValue placeholder="Choose network" />
                           </SelectTrigger>
                           <SelectContent>
-                            {selectedCrypto === "btc" && (
-                              <>
-                                <SelectItem value="btc">Bitcoin (BTC)</SelectItem>
-                                <SelectItem value="lightning">Lightning Network</SelectItem>
-                              </>
-                            )}
-                            {selectedCrypto === "eth" && (
-                              <>
-                                <SelectItem value="erc20">Ethereum (ERC20)</SelectItem>
-                                <SelectItem value="arbitrum">Arbitrum One</SelectItem>
-                                <SelectItem value="optimism">Optimism</SelectItem>
-                              </>
-                            )}
-                            {selectedCrypto === "usdt" && (
-                              <>
-                                <SelectItem value="erc20">Ethereum (ERC20)</SelectItem>
-                                <SelectItem value="trc20">Tron (TRC20)</SelectItem>
-                                <SelectItem value="bep20">BNB Smart Chain (BEP20)</SelectItem>
-                                <SelectItem value="polygon">Polygon</SelectItem>
-                                <SelectItem value="arbitrum">Arbitrum One</SelectItem>
-                                <SelectItem value="optimism">Optimism</SelectItem>
-                                <SelectItem value="solana">Solana</SelectItem>
-                              </>
-                            )}
-                            {selectedCrypto === "usdc" && (
-                              <>
-                                <SelectItem value="erc20">Ethereum (ERC20)</SelectItem>
-                                <SelectItem value="bep20">BNB Smart Chain (BEP20)</SelectItem>
-                                <SelectItem value="polygon">Polygon</SelectItem>
-                                <SelectItem value="arbitrum">Arbitrum One</SelectItem>
-                                <SelectItem value="optimism">Optimism</SelectItem>
-                                <SelectItem value="solana">Solana</SelectItem>
-                                <SelectItem value="avalanche">Avalanche C-Chain</SelectItem>
-                              </>
-                            )}
-                            {selectedCrypto === "bnb" && (
-                              <>
-                                <SelectItem value="bep20">BNB Smart Chain (BEP20)</SelectItem>
-                                <SelectItem value="bep2">BNB Beacon Chain (BEP2)</SelectItem>
-                              </>
-                            )}
-                            {selectedCrypto === "sol" && (
-                              <SelectItem value="solana">Solana</SelectItem>
-                            )}
-                            {selectedCrypto === "matic" && (
-                              <>
-                                <SelectItem value="polygon">Polygon</SelectItem>
-                                <SelectItem value="erc20">Ethereum (ERC20)</SelectItem>
-                              </>
-                            )}
-                            {selectedCrypto === "trx" && (
+                            {selectedCrypto === "usdt" && (<>
                               <SelectItem value="trc20">Tron (TRC20)</SelectItem>
-                            )}
+                              <SelectItem value="erc20">Ethereum (ERC20)</SelectItem>
+                              <SelectItem value="bep20">BNB Smart Chain (BEP20)</SelectItem>
+                              <SelectItem value="polygon">Polygon</SelectItem>
+                              <SelectItem value="arbitrum">Arbitrum</SelectItem>
+                              <SelectItem value="optimism">Optimism</SelectItem>
+                              <SelectItem value="ton">TON</SelectItem>
+                              <SelectItem value="solana">Solana</SelectItem>
+                            </>)}
+                            {selectedCrypto === "usdc" && (<>
+                              <SelectItem value="erc20">Ethereum (ERC20)</SelectItem>
+                              <SelectItem value="polygon">Polygon</SelectItem>
+                              <SelectItem value="arbitrum">Arbitrum</SelectItem>
+                              <SelectItem value="optimism">Optimism</SelectItem>
+                              <SelectItem value="solana">Solana</SelectItem>
+                              <SelectItem value="base">Base</SelectItem>
+                            </>)}
                           </SelectContent>
                         </Select>
                       </motion.div>
@@ -454,14 +413,8 @@ export function BrandSidebar({
                       const amount = parseFloat(topUpAmount);
                       // Map to 0xProcessing currency format
                       const currencyMap: Record<string, Record<string, string>> = {
-                        btc: { btc: 'BTC', lightning: 'BTC' },
-                        eth: { erc20: 'ETH', arbitrum: 'ETH (Arbitrum)', optimism: 'ETH (Optimism)' },
-                        usdt: { erc20: 'USDT (ERC20)', trc20: 'USDT (TRC20)', bep20: 'USDT (BEP20)', polygon: 'USDT (Polygon)', arbitrum: 'USDT (Arbitrum)', optimism: 'USDT (Optimism)', solana: 'USDT (Solana)' },
-                        usdc: { erc20: 'USDC (ERC20)', bep20: 'USDC (BEP20)', polygon: 'USDC (Polygon)', arbitrum: 'USDC (Arbitrum)', optimism: 'USDC (Optimism)', solana: 'USDC (Solana)', avalanche: 'USDC (AVAXC)' },
-                        bnb: { bep20: 'BNB', bep2: 'BNB' },
-                        sol: { solana: 'SOL' },
-                        matic: { polygon: 'POL', erc20: 'POL' },
-                        trx: { trc20: 'TRX' },
+                        usdt: { trc20: 'USDT (TRC20)', erc20: 'USDT (ERC20)', bep20: 'USDT (BEP20)', polygon: 'USDT (Polygon)', arbitrum: 'USDT (ARB1)', optimism: 'USDT (Optimism)', ton: 'USDT (TON)', solana: 'USDT (SOL)' },
+                        usdc: { erc20: 'USDC (ERC20)', polygon: 'USDC (Polygon)', arbitrum: 'USDC (ARB1)', optimism: 'USDC (Optimism)', solana: 'USDC (SOL)', base: 'USDC (Base)' },
                       };
                       const currency = currencyMap[selectedCrypto]?.[selectedNetwork] || 'USDT (TRC20)';
                       try {

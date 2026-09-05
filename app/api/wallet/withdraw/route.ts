@@ -69,7 +69,15 @@ export async function POST(request: NextRequest) {
       if (!/^T[a-zA-Z0-9]{33}$/.test(trimmedAddress)) {
         return NextResponse.json({ error: 'Invalid TRC20 address. Must start with T and be 34 characters.' }, { status: 400 })
       }
-    } else if (curr.includes('erc20') || curr.includes('bep20')) {
+    } else if (curr.includes('ton')) {
+      if (!/^(UQ|EQ|0:)[a-zA-Z0-9_-]{46,48}$/.test(trimmedAddress) && !/^[a-zA-Z0-9_-]{48}$/.test(trimmedAddress)) {
+        return NextResponse.json({ error: 'Invalid TON address.' }, { status: 400 })
+      }
+    } else if (curr.includes('sol')) {
+      if (!/^[1-9A-HJ-NP-Za-km-z]{32,44}$/.test(trimmedAddress)) {
+        return NextResponse.json({ error: 'Invalid Solana address.' }, { status: 400 })
+      }
+    } else if (curr.includes('erc20') || curr.includes('bep20') || curr.includes('polygon') || curr.includes('arb1') || curr.includes('optimism') || curr.includes('base')) {
       if (!/^0x[a-fA-F0-9]{40}$/.test(trimmedAddress)) {
         return NextResponse.json({ error: 'Invalid address. Must start with 0x and be 42 characters.' }, { status: 400 })
       }

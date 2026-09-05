@@ -601,11 +601,6 @@ export default function BrandDashboard() {
                           <SelectContent>
                             <SelectItem value="usdt">USDT (Tether)</SelectItem>
                             <SelectItem value="usdc">USDC (USD Coin)</SelectItem>
-                            <SelectItem value="btc">Bitcoin (BTC)</SelectItem>
-                            <SelectItem value="eth">Ethereum (ETH)</SelectItem>
-                            <SelectItem value="trx">Tron (TRX)</SelectItem>
-                            <SelectItem value="bnb">BNB</SelectItem>
-                            <SelectItem value="sol">Solana (SOL)</SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
@@ -616,20 +611,34 @@ export default function BrandDashboard() {
                             setWithdrawNetwork(v);
                             const networkMap: Record<string, string> = {
                               "usdt-trc20": "USDT (TRC20)", "usdt-erc20": "USDT (ERC20)", "usdt-bep20": "USDT (BEP20)",
-                              "usdc-trc20": "USDC (TRC20)", "usdc-erc20": "USDC (ERC20)",
-                              "btc-btc": "BTC", "eth-erc20": "ETH", "trx-trc20": "TRX", "bnb-bep20": "BNB", "sol-sol": "SOL",
+                              "usdt-polygon": "USDT (Polygon)", "usdt-arb1": "USDT (ARB1)", "usdt-optimism": "USDT (Optimism)",
+                              "usdt-ton": "USDT (TON)", "usdt-sol": "USDT (SOL)",
+                              "usdc-erc20": "USDC (ERC20)", "usdc-polygon": "USDC (Polygon)",
+                              "usdc-arb1": "USDC (ARB1)", "usdc-optimism": "USDC (Optimism)",
+                              "usdc-sol": "USDC (SOL)", "usdc-base": "USDC (Base)",
                             };
                             setWithdrawCurrency(networkMap[`${withdrawCoin}-${v}`] || "");
                           }}>
                             <SelectTrigger className="h-11"><SelectValue placeholder="Choose network" /></SelectTrigger>
                             <SelectContent>
-                              {withdrawCoin === "usdt" && (<><SelectItem value="trc20">Tron (TRC20)</SelectItem><SelectItem value="erc20">Ethereum (ERC20)</SelectItem><SelectItem value="bep20">BNB Smart Chain (BEP20)</SelectItem></>)}
-                              {withdrawCoin === "usdc" && (<><SelectItem value="erc20">Ethereum (ERC20)</SelectItem><SelectItem value="trc20">Tron (TRC20)</SelectItem></>)}
-                              {withdrawCoin === "btc" && <SelectItem value="btc">Bitcoin</SelectItem>}
-                              {withdrawCoin === "eth" && <SelectItem value="erc20">Ethereum (ERC20)</SelectItem>}
-                              {withdrawCoin === "trx" && <SelectItem value="trc20">Tron (TRC20)</SelectItem>}
-                              {withdrawCoin === "bnb" && <SelectItem value="bep20">BNB Smart Chain (BEP20)</SelectItem>}
-                              {withdrawCoin === "sol" && <SelectItem value="sol">Solana</SelectItem>}
+                              {withdrawCoin === "usdt" && (<>
+                                <SelectItem value="trc20">Tron (TRC20)</SelectItem>
+                                <SelectItem value="erc20">Ethereum (ERC20)</SelectItem>
+                                <SelectItem value="bep20">BNB Smart Chain (BEP20)</SelectItem>
+                                <SelectItem value="polygon">Polygon</SelectItem>
+                                <SelectItem value="arb1">Arbitrum</SelectItem>
+                                <SelectItem value="optimism">Optimism</SelectItem>
+                                <SelectItem value="ton">TON</SelectItem>
+                                <SelectItem value="sol">Solana</SelectItem>
+                              </>)}
+                              {withdrawCoin === "usdc" && (<>
+                                <SelectItem value="erc20">Ethereum (ERC20)</SelectItem>
+                                <SelectItem value="polygon">Polygon</SelectItem>
+                                <SelectItem value="arb1">Arbitrum</SelectItem>
+                                <SelectItem value="optimism">Optimism</SelectItem>
+                                <SelectItem value="sol">Solana</SelectItem>
+                                <SelectItem value="base">Base</SelectItem>
+                              </>)}
                             </SelectContent>
                           </Select>
                         </div>
