@@ -93,7 +93,7 @@ export async function POST(request: NextRequest) {
     })
   } catch (error) {
     console.error('POST /api/wallet/deposit error:', error)
-    const message = error instanceof Error ? error.message : 'Unknown error'
-    return NextResponse.json({ error: `Deposit failed: ${message}` }, { status: 500 })
+    console.error('Deposit error details:', error instanceof Error ? error.message : error)
+    return NextResponse.json({ error: 'Deposit failed. Please try again.' }, { status: 500 })
   }
 }

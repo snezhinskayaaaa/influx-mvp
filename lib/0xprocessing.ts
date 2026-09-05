@@ -69,12 +69,15 @@ export interface CreateWithdrawalResponse {
 }
 
 export async function createWithdrawal(params: CreateWithdrawalParams): Promise<CreateWithdrawalResponse> {
+  const isTestMode = process.env.OX_TEST_MODE === 'true'
+
   const body: Record<string, string> = {
     Currency: params.currency,
     Amount: params.amount.toString(),
     Address: params.address,
     ClientId: params.clientId,
     ExternalId: params.externalId,
+    ...(isTestMode && { Test: 'true' }),
   }
   if (params.destinationTag) {
     body.DestinationTag = params.destinationTag
