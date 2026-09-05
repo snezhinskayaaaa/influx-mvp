@@ -49,6 +49,12 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ ok: true })
     }
 
+    // Only process deposit transactions on this endpoint
+    if (transaction.type !== 'DEPOSIT') {
+      console.error('Deposit webhook received non-deposit transaction', { transactionId, type: transaction.type })
+      return NextResponse.json({ ok: true })
+    }
+
     if (body.Status === 'Success') {
       // Validate that the webhook-reported amount matches the stored transaction amount
       const reportedAmount = parseFloat(body.AmountUSD || body.Amount || '0')
