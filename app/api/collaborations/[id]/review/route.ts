@@ -155,13 +155,19 @@ export async function POST(
               },
             })
 
-            return await tx.collaboration.update({
-              where: { id },
+            // Atomic status guard — only complete if still DELIVERED
+            const statusGuard = await tx.collaboration.updateMany({
+              where: { id, status: 'DELIVERED' },
               data: {
                 status: 'COMPLETED',
                 completedAt: new Date(),
               },
             })
+            if (statusGuard.count === 0) {
+              throw new Error('STATUS_CHANGED')
+            }
+
+            return await tx.collaboration.findUniqueOrThrow({ where: { id } })
           })
 
           // Fire-and-forget notification: final payment received
@@ -175,8 +181,13 @@ export async function POST(
 
           return NextResponse.json({ collaboration: result })
         } catch (txError) {
-          if (txError instanceof Error && txError.message === 'INSUFFICIENT_FROZEN_BALANCE') {
-            return NextResponse.json({ error: 'Insufficient frozen balance for payout' }, { status: 400 })
+          if (txError instanceof Error) {
+            if (txError.message === 'INSUFFICIENT_FROZEN_BALANCE') {
+              return NextResponse.json({ error: 'Insufficient frozen balance for payout' }, { status: 400 })
+            }
+            if (txError.message === 'STATUS_CHANGED') {
+              return NextResponse.json({ error: 'Collaboration status has already changed' }, { status: 409 })
+            }
           }
           throw txError
         }
@@ -225,14 +236,19 @@ export async function POST(
         )
       }
 
-      const updated = await prisma.collaboration.update({
-        where: { id },
+      // Atomic status guard — only dispute if still in expected status
+      const guard = await prisma.collaboration.updateMany({
+        where: { id, status: { in: ['DELIVERED', 'CONTENT_REVIEW'] } },
         data: {
           status: 'DISPUTED',
           disputeReason: note ?? null,
           disputedAt: new Date(),
         },
       })
+      if (guard.count === 0) {
+        return NextResponse.json({ error: 'Collaboration status has already changed' }, { status: 409 })
+      }
+      const updated = await prisma.collaboration.findUniqueOrThrow({ where: { id } })
 
       // Fire-and-forget notification: dispute created
       notifyInfluencerDisputeCreated(collaboration.influencer.userId, collaboration.campaign.title, note ?? '')
