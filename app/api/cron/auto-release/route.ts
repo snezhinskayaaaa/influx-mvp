@@ -44,6 +44,15 @@ export async function POST(request: NextRequest) {
           })
           if (updated.count === 0) return false
 
+          // Guard frozen balance before decrement
+          const brand = await tx.brand.findUniqueOrThrow({
+            where: { id: collab.campaign.brand.id },
+            select: { frozenBalance: true },
+          })
+          if (brand.frozenBalance < remaining) {
+            throw new Error('INSUFFICIENT_FROZEN_BALANCE')
+          }
+
           await tx.brand.update({
             where: { id: collab.campaign.brand.id },
             data: { frozenBalance: { decrement: remaining } },
@@ -114,6 +123,15 @@ export async function POST(request: NextRequest) {
           })
           if (updated.count === 0) return false
 
+          // Guard frozen balance before unfreeze
+          const brandExpire = await tx.brand.findUniqueOrThrow({
+            where: { id: collab.campaign.brand.id },
+            select: { frozenBalance: true },
+          })
+          if (brandExpire.frozenBalance < collab.agreedPrice!) {
+            throw new Error('INSUFFICIENT_FROZEN_BALANCE')
+          }
+
           await tx.brand.update({
             where: { id: collab.campaign.brand.id },
             data: {
@@ -174,6 +192,15 @@ export async function POST(request: NextRequest) {
             },
           })
           if (updated.count === 0) return false
+
+          // Guard frozen balance before payout
+          const brandResolve = await tx.brand.findUniqueOrThrow({
+            where: { id: collab.campaign.brand.id },
+            select: { frozenBalance: true },
+          })
+          if (brandResolve.frozenBalance < remaining) {
+            throw new Error('INSUFFICIENT_FROZEN_BALANCE')
+          }
 
           await tx.brand.update({
             where: { id: collab.campaign.brand.id },
