@@ -327,8 +327,6 @@ export function BrandSidebar({
                               <SelectItem value="erc20">Ethereum (ERC20)</SelectItem>
                               <SelectItem value="bep20">BNB Smart Chain (BEP20)</SelectItem>
                               <SelectItem value="polygon">Polygon</SelectItem>
-                              <SelectItem value="arbitrum">Arbitrum</SelectItem>
-                              <SelectItem value="optimism">Optimism</SelectItem>
                               <SelectItem value="ton">TON</SelectItem>
                               <SelectItem value="solana">Solana</SelectItem>
                             </>)}
@@ -413,7 +411,7 @@ export function BrandSidebar({
                       const amount = parseFloat(topUpAmount);
                       // Map to 0xProcessing currency format
                       const currencyMap: Record<string, Record<string, string>> = {
-                        usdt: { trc20: 'USDT (TRC20)', erc20: 'USDT (ERC20)', bep20: 'USDT (BEP20)', polygon: 'USDT (Polygon)', arbitrum: 'USDT (ARB1)', optimism: 'USDT (Optimism)', ton: 'USDT (TON)', solana: 'USDT (SOL)' },
+                        usdt: { trc20: 'USDT (TRC20)', erc20: 'USDT (ERC20)', bep20: 'USDT (BEP20)', polygon: 'USDT (Polygon)', ton: 'USDT (TON)', solana: 'USDT (SOL)' },
                         usdc: { erc20: 'USDC (ERC20)', polygon: 'USDC (Polygon)', arbitrum: 'USDC (ARB1)', optimism: 'USDC (Optimism)', solana: 'USDC (SOL)', base: 'USDC (Base)' },
                       };
                       const currency = currencyMap[selectedCrypto]?.[selectedNetwork] || 'USDT (TRC20)';

@@ -3890,8 +3890,7 @@ export default function InfluencerDashboard() {
                   setWithdrawNetwork(v);
                   const networkMap: Record<string, string> = {
                     "usdt-trc20": "USDT (TRC20)", "usdt-erc20": "USDT (ERC20)", "usdt-bep20": "USDT (BEP20)",
-                    "usdt-polygon": "USDT (Polygon)", "usdt-arb1": "USDT (ARB1)", "usdt-optimism": "USDT (Optimism)",
-                    "usdt-ton": "USDT (TON)", "usdt-sol": "USDT (SOL)",
+                    "usdt-polygon": "USDT (Polygon)", "usdt-ton": "USDT (TON)", "usdt-sol": "USDT (SOL)",
                     "usdc-erc20": "USDC (ERC20)", "usdc-polygon": "USDC (Polygon)",
                     "usdc-arb1": "USDC (ARB1)", "usdc-optimism": "USDC (Optimism)",
                     "usdc-sol": "USDC (SOL)", "usdc-base": "USDC (Base)",
@@ -3907,8 +3906,6 @@ export default function InfluencerDashboard() {
                       <SelectItem value="erc20">Ethereum (ERC20)</SelectItem>
                       <SelectItem value="bep20">BNB Smart Chain (BEP20)</SelectItem>
                       <SelectItem value="polygon">Polygon</SelectItem>
-                      <SelectItem value="arb1">Arbitrum</SelectItem>
-                      <SelectItem value="optimism">Optimism</SelectItem>
                       <SelectItem value="ton">TON</SelectItem>
                       <SelectItem value="sol">Solana</SelectItem>
                     </>)}
