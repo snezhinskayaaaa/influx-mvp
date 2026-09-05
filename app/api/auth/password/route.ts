@@ -79,7 +79,7 @@ export async function PATCH(request: NextRequest) {
 
     await prisma.profile.update({
       where: { id: user.userId },
-      data: { passwordHash: newPasswordHash },
+      data: { passwordHash: newPasswordHash, tokenInvalidatedAt: new Date() },
     })
 
     return NextResponse.json(
