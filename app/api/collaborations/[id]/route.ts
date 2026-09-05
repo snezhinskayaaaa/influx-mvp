@@ -324,8 +324,9 @@ export async function PATCH(
         throw cancelError
       }
 
-      // Remove status from updateData since we already handled it
-      delete updateData.status
+      // Cancellation handled — return immediately, do not process further mutations
+      const cancelledCollab = await prisma.collaboration.findUniqueOrThrow({ where: { id } })
+      return NextResponse.json({ collaboration: cancelledCollab })
     }
 
     // Either party or admin can update deliverables
