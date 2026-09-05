@@ -480,7 +480,7 @@ export default function InfluencerDashboard() {
         if (walletRes.ok) {
           const data = await walletRes.json();
           if (data.wallet) {
-            setWalletBalance(Math.round((data.wallet.balance || 0) / 100));
+            setWalletBalance((data.wallet.balance || 0) / 100);
           }
           if (data.transactions) {
             setWalletTransactions(data.transactions);
@@ -3980,7 +3980,7 @@ export default function InfluencerDashboard() {
                   if (walletRes.ok) {
                     const walletData = await walletRes.json();
                     if (walletData.wallet) {
-                      setWalletBalance(Math.round((walletData.wallet.balance || 0) / 100));
+                      setWalletBalance((walletData.wallet.balance || 0) / 100);
                     }
                     if (walletData.transactions) {
                       const txs = walletData.transactions as Array<{ type: string; status: string; amount: number }>;
