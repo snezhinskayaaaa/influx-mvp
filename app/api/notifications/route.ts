@@ -1,12 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
 import { getCurrentUser } from '@/lib/auth'
+import { rateLimit } from '@/lib/rate-limit'
 
 export async function GET() {
   try {
     const user = await getCurrentUser()
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    const { success } = await rateLimit(`notif-get:${user.userId}`, 60, 60000)
+    if (!success) {
+      return NextResponse.json({ error: 'Too many requests' }, { status: 429 })
     }
 
     const notifications = await prisma.notification.findMany({

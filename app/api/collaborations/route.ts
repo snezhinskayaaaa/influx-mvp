@@ -11,6 +11,11 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
+    const { success } = await rateLimit(`collabs-get:${user.userId}`, 60, 60000)
+    if (!success) {
+      return NextResponse.json({ error: 'Too many requests' }, { status: 429 })
+    }
+
     const url = new URL(request.url)
     const page = parseInt(url.searchParams.get('page') || '1')
     const limit = Math.min(parseInt(url.searchParams.get('limit') || '20'), 100)
