@@ -54,14 +54,19 @@ export async function POST(
         return NextResponse.json({ error: 'Please submit a valid URL (https://...)' }, { status: 400 })
       }
 
-      const updated = await prisma.collaboration.update({
-        where: { id },
+      // Atomic status guard — only submit if still in expected status
+      const guard = await prisma.collaboration.updateMany({
+        where: { id, status: { in: ['IN_PROGRESS', 'REVISION', 'CONTENT_REVIEW'] } },
         data: {
           contentUrl: contentUrl.trim(),
           status: 'CONTENT_REVIEW',
           contentSubmittedAt: new Date(),
         },
       })
+      if (guard.count === 0) {
+        return NextResponse.json({ error: 'Collaboration status has already changed' }, { status: 409 })
+      }
+      const updated = await prisma.collaboration.findUniqueOrThrow({ where: { id } })
 
       // Fire-and-forget notification: draft submitted for review
       notifyBrandContentSubmitted(collaboration.campaign.brand.userId, collaboration.influencer.handle, collaboration.campaign.title)
