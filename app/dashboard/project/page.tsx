@@ -381,8 +381,9 @@ export default function BrandDashboard() {
 
     fetchData().finally(() => setIsLoading(false));
 
-    // Poll for updates every 30 seconds
+    // Poll for updates every 30 seconds (skip when tab is hidden)
     const interval = setInterval(() => {
+      if (document.visibilityState !== 'visible') return;
       fetchData();
     }, 30000);
 

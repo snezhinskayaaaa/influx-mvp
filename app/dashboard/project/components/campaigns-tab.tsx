@@ -215,6 +215,7 @@ export function CampaignsTab({
   useEffect(() => {
     if (!selectedCampaignDetails) return;
     const interval = setInterval(() => {
+      if (document.visibilityState !== 'visible') return;
       const current = selectedCampaignRef.current;
       if (current && handleOpenCampaignRef.current) handleOpenCampaignRef.current(current, true);
     }, 15000);
